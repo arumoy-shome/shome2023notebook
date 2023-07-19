@@ -60,3 +60,4 @@ if __name__ == "__main__":
                 ))
 
         pd.concat(frames).to_csv(args.notebook.replace("ipynb", "csv"))
+        print(f'INFO:ipynb2csv:wrote {args.notebook.replace("ipynb", "csv")}')

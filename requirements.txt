@@ -1,5 +1,2 @@
-kaggle
-nbconvert
-nbformat
-ipython
 pandas
+numpy
