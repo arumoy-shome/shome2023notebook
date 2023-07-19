@@ -29,27 +29,6 @@ if __name__ == "__main__":
 
     series = []
     for idx, row in rows.iterrows():
-        # all rows above current `row`
-        chunk = df.iloc[:idx]
-
-        if not chunk.empty:
-            # we are not at top edge, we should have at least 1 row above
-
-            try:
-                above = chunk.loc[
-                    (chunk.cell_type == "code") &
-                    (chunk.index != idx)
-                ].iloc[-1]
-            except IndexError:
-                # there may be no code cells above current row, in which case loc returns empty
-                # dataframe and iloc then raises an IndexError. We don't do anything in this case.
-                pass
-            else:
-                # we can have multiple code cells with same index, the
-                # code in all of them is the same so we just pick the
-                # last one
-                series.append(above)
-
         # add the current row with visualisation & assert statement
         series.append(row)
 

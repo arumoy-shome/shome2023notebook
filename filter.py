@@ -4,8 +4,10 @@ import argparse
 import pandas as pd
 pd.set_option("display.max_columns", 10)
 
+
 def print_match():
     print(f'{args.csv.replace("csv", "ipynb")}')
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -29,7 +31,8 @@ if __name__ == "__main__":
     rows = df.loc[df["image"].notna()]
 
     contains_assert = rows["source"].str.contains("assert").any()
-    contains_ml_lib = rows["source"].str.contains(r"pandas|numpy|scipy|sklearn|torch|dask|tensorflow").any()
+    contains_ml_lib = rows["source"].str.contains(
+        r"pandas|numpy|scipy|sklearn|torch|dask|tensorflow").any()
     # TODO implement this search: we need to isolate md cells and
     # match in there
     # contains_markdown = ???
@@ -41,5 +44,3 @@ if __name__ == "__main__":
     else:
         if contains_assert and contains_ml_lib:
             print_match()
-
-
