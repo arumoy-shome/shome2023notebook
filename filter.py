@@ -31,22 +31,19 @@ def get_proximity_cells(
             # add cell with visualisation
             cells.append(cell)
 
-        # current cell & all cells below it; we cannot use idx+1 since we may be at the bottom edge
-        chunk = all_cells.iloc[idx:]
+        chunk = all_cells.loc[all_cells.index > idx]
 
-        if not len(chunk) == 1:
-            # we are not at the bottom edge, we should have at least 1 cell below the cell with
-            # visualisation
-            try:
-                below = chunk.loc[
-                    (chunk.cell_type == "code") &
-                    (chunk.index != idx)
-                ].iloc[0]
-            except IndexError:
-                # there were no code cells below the cell with visualistion; don't do anything
-                pass
-            else:
-                cells.append(below)
+        try:
+            below = chunk.loc[
+                (chunk.cell_type == "code") &
+                (chunk.index != idx)
+            ].iloc[0]
+        except IndexError:
+            # chunk is empty or there were no code cells below the cell with visualistion
+            # don't do anything
+            pass
+        else:
+            cells.append(below)
 
     return pd.DataFrame(cells)
 
