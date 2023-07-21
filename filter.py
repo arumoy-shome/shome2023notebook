@@ -45,6 +45,16 @@ def get_proximity_cells(
     return pd.DataFrame(cells)
 
 
+def filter(df: pd.DataFrame, args: argparse.Namespace) -> pd.DataFrame:
+    if args.no_shape:
+        return df.loc[
+                (df.source.str.contains("assert")) &
+                ~(df.source.str.contains("shape"))
+                ]
+    else:
+        return df
+
+
 def print_match() -> None:
     print(f'{args.csv.replace("csv", "ipynb")}')
 
@@ -56,6 +66,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "csv",
         help="Path to csv file",
+    )
+    parser.add_argument(
+        "--no-shape",
+        help="Exclude asserts that check shape",
+        action="store_true",
+        default=False,
     )
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -93,4 +109,4 @@ if __name__ == "__main__":
         print("DEBUG:something went horribly wrong!")
         exit()
 
-    check(cells) and print_match()
+    not cells.empty and check(filter(cells, args)) and print_match()
