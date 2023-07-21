@@ -34,10 +34,7 @@ def get_proximity_cells(
         chunk = all_cells.loc[all_cells.index > idx]
 
         try:
-            below = chunk.loc[
-                (chunk.cell_type == "code") &
-                (chunk.index != idx)
-            ].iloc[0]
+            below = chunk.loc[(chunk.cell_type == "code")].iloc[0]
         except IndexError:
             # chunk is empty or there were no code cells below the cell with visualistion
             # don't do anything
