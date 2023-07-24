@@ -11,6 +11,7 @@ With the `--strict` flag, the script will only flag notebooks if the assert stat
 code cell below the visualisation cell. This flag takes precedence over `--proximity`.
 """
 
+import ast
 import argparse
 import pandas as pd
 pd.set_option("display.max_columns", 10)
@@ -46,13 +47,24 @@ def get_proximity_cells(
 
 
 def filter(df: pd.DataFrame, args: argparse.Namespace) -> pd.DataFrame:
+    filtered = df.copy()
     if args.no_shape:
-        return df.loc[
-                (df.source.str.contains("assert")) &
-                ~(df.source.str.contains("shape"))
-                ]
-    else:
-        return df
+        filtered = filtered.loc[
+            (filtered.source.str.contains("assert")) &
+            ~(filtered.source.str.contains("shape"))
+        ]
+
+    if args.max_num_lines:
+        filtered["source_num_lines"] = filtered.source.apply(
+            ast.literal_eval
+        ).apply(
+            lambda x: len(x)
+        )
+        filtered = filtered.loc[
+            (filtered.source_num_lines <= args.max_num_lines)
+        ]
+
+    return filtered
 
 
 def print_match() -> None:
@@ -85,6 +97,12 @@ if __name__ == "__main__":
         help="Check only in cells below visualisation cells",
         action="store_true",
         default=False,
+    )
+    parser.add_argument(
+        "--max-num-lines",
+        help="Restrict max number of lines in the cell containing assert",
+        type=int,
+        default=None,
     )
     args = parser.parse_args()
 
