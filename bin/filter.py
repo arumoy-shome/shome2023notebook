@@ -14,6 +14,7 @@ code cell below the visualisation cell. This flag takes precedence over `--proxi
 import ast
 import argparse
 import pandas as pd
+
 pd.set_option("display.max_columns", 10)
 
 
@@ -22,9 +23,9 @@ def check(df: pd.DataFrame) -> bool:
 
 
 def get_proximity_cells(
-        all_cells: pd.DataFrame,
-        viz_cells: pd.DataFrame,
-        strict: bool = False,
+    all_cells: pd.DataFrame,
+    viz_cells: pd.DataFrame,
+    strict: bool = False,
 ) -> pd.DataFrame:
     cells = []
     for idx, cell in viz_cells.iterrows():
@@ -50,19 +51,15 @@ def filter(df: pd.DataFrame, args: argparse.Namespace) -> pd.DataFrame:
     filtered = df.copy()
     if args.no_shape:
         filtered = filtered.loc[
-            (filtered.source.str.contains("assert")) &
-            ~(filtered.source.str.contains("shape"))
+            (filtered.source.str.contains("assert"))
+            & ~(filtered.source.str.contains("shape"))
         ]
 
     if args.max_num_lines:
-        filtered["source_num_lines"] = filtered.source.apply(
-            ast.literal_eval
-        ).apply(
+        filtered["source_num_lines"] = filtered.source.apply(ast.literal_eval).apply(
             lambda x: len(x)
         )
-        filtered = filtered.loc[
-            (filtered.source_num_lines <= args.max_num_lines)
-        ]
+        filtered = filtered.loc[(filtered.source_num_lines <= args.max_num_lines)]
 
     return filtered
 
@@ -108,8 +105,11 @@ if __name__ == "__main__":
 
     all_cells = pd.read_csv(args.csv, index_col=0)
 
-    contains_ml_lib = all_cells["source"].str.contains(
-        r"pandas|numpy|scipy|sklearn|torch|dask|tensorflow").any()
+    contains_ml_lib = (
+        all_cells["source"]
+        .str.contains(r"pandas|numpy|scipy|sklearn|torch|dask|tensorflow")
+        .any()
+    )
 
     viz_cells = all_cells.loc[all_cells["image"].notna()]
 
