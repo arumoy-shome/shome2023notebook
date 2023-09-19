@@ -1,3 +1,5 @@
+*.pdf
 notebooks/
 data/
 *.csv
+presentation/siesta-2023_files
