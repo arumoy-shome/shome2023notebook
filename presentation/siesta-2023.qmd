@@ -1,0 +1,224 @@
+---
+title: "Bridging the Gap between Visual and Analytical ML Testing"
+subtitle: "SIESTA 2023"
+date: 2023-09-11
+mainfont: "Iosevka Aile"
+monofont: "Iosevka"
+affiliations:
+  - id: tud
+    name: "Delft University of Technology"
+author:
+  - name: "[***Aru***]{.underline}moy Shome"
+    affiliation:
+      - ref: tud
+  - name: "Luis Cruz"
+    affiliation:
+      - ref: tud
+  - name: "Arie van Deursen"
+    affiliation:
+      - ref: tud
+format:
+  revealjs:
+    theme: [default, custom.scss]
+license: "CC BY"
+copyright:
+  holder: "Arumoy Shome"
+  year: 2023
+bibliography: siesta-2023.bib
+---
+
+## 🤫🤫🤫🤫
+
+::: {.callout-tip title="Towards Understanding Machine Learning Testing in Practice [@shome2023towards]"}
+:::
+
+::: {.callout-important title="Discretion is advised!"}
+~~Some~~Most parts of this presentation are unpublished!
+:::
+
+## ML Testing
+
+::: {.callout-tip title="Machine Learning Testing: Survey, Landscapes, and Horizons[@zhang2020machine]"}
+:::
+
+::: {.fragment}
+![ML lifecycle](ml-lifecycle.svg){#fig-ml-lifecycle}
+:::
+## From Implicit Expectations...
+
+:::: {.columns}
+
+::: {.column width="60%"}
+![](histogram.jpg){width="50%"}
+
+![](qqplot.png){width="50%"}
+:::
+
+::: {.column width="40%" .fragment}
++ Tend to be messy/quick/hacks
++ Exploratory, data understanding/sense making
++ Domain expertise and knowledge of practitioner *embedded* in visualisations
+:::
+::::
+## ...To Explicit Tests
+:::: {.columns}
+::: {.column width="40%"}
++ Verifiable across entire ML lifecycle
++ Scales across org/team change
++ Scales to large-scale production systems and big data
++ Eg. *Shapiro-Wilk Test* of normality
+:::
+
+::: {.column width="60%" .fragment}
+```python
+import numpy as np
+from scipy import stats
+
+x = stats.norm.rvs(size=100)
+shapiro_test = stats.shapiro(x)
+
+assert shapiro_test.pvalue <= 0.05
+```
+:::
+::::
+
+## The Hunt for Data Properties {.smaller}
+
+:::: {.columns}
+::: {.column width="50%"}
+**Literature**
+
++ Review of conferences and journals focusing on visualisations: HCI,
+SE, VIZ, ML & DMM
++ Review of grey literature
+:::
+
+::: {.column width="50%"}
+**Computational NBs**
+
++ Kaggle
++ Github
++ @pimentel2019large & @quaranta2021kgtorrent
+:::
+::::
+
+## Here Come the Numbers {.smaller}
+
+::: {.callout-important title="1.7K"}
+Notebooks from Github with an `assert` statement
+:::
+
+::: {.callout-warning title="337"}
+Notebooks with related `assert` & visualisation pairs
+:::
+
+::: {.callout-note title="90"}
+Notebooks analysed in full depth
+:::
+
+::: {.callout-tip title="22"}
+Examples of `assert` & visualisation pairs
+:::
+
+# Results
+
+## Area under ROC curve {.smaller}
+
+:::: {.columns}
+::: {.column}
+![](select-09.png)
+:::
+
+::: {.column}
+```python
+assert roc_auc_score(
+    y_test, wv_model.predict_proba(X_test_wv)[:, 1]
+) > 0.92,
+"something's wrong with your features"
+```
+:::
+::::
+## Loss, convergence {.smaller}
+
+:::: {.columns}
+::: {.column}
+![Type 1](select-12.png){#fig-left}
+:::
+
+::: {.column}
+![Type 2](select-267.png){#fig-right}
+:::
+::::
+
+:::: {.columns}
+:::{.column}
+```python
+assert np.mean(history[:10]) >np.mean(history[-10:]),
+"RNN didn't converge"
+```
+:::
+
+::: {.column}
+```python
+# assert we actually descended at each step
+for i in range(1, n_steps):
+    assert (
+        loss_array_true_grad[i] - loss_array_true_grad[i-1]
+    ) <= 0
+```
+:::
+::::
+
+::: {.callout-warning title="Smell"}
+The assertion for @fig-right is brittle compared to @fig-left.
+:::
+## Decision boundary & accuracy of classifier {.smaller}
+
+:::: {.columns}
+::: {.column}
+![](select-04.png)
+:::
+
+::: {.column}
+```python
+assert accuracy_score(y_test, pred) >0.95
+```
+:::
+::::
+
+::: {.callout-note title="Open question"}
+Some visualisations are more complex compared to their counter-part
+assertion. Is it because we don't yet know how to write better
+assertions for such visualisations?
+:::
+## Hyper-parameter grid search
+
+:::: {.columns}
+::: {.column}
+![](select-290.png){width="60%"}
+:::
+
+::: {.column}
+::: {.callout-note title="Qualitative analysis of hyper parameters"}
+The author is visually checking all combinations of two hyper
+parameters `C` and `gamma` to identify the combinations that cause the
+model to {under,over}fit.
+:::
+:::
+::::
+
+# Our objective is to [*recommend*]{.underline} analytical tests automatically {.r-text-fit}
+
+## Thank You
+
+::: {layout-nrow="2"}
+![](qr-cat.jpeg)
+
+![](qr-lugano.jpeg)
+
+![](qr-illustrate.jpeg)
+
+![](qr-picaso.jpeg)
+:::
+## Refs {.smaller}
+
