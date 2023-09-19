@@ -1,4 +1,6 @@
-*.pdf
+report/esecfse24.pdf
+catalogue/catalogue.pdf
+presentation/siesta-2023.html
 notebooks/
 data/
 *.csv

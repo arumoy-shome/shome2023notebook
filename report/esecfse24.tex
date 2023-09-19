@@ -213,12 +213,14 @@ summarises our observations from the various cell arrangements.
     \emph{\textbf{Observations}}\\
     \midrule
     Assertion above visualisation cell &
-    The assertions in this arrangement were typically not related to
-    the visualisation below. Often, a markdown cell present between
-    the assertion and visualisation code cells, would mark the
-    begining of a new section in the notebook. In other cases, the
-    assertions were typically pre-condition checks to ensure that the
-    visualisation code would not encounter any errors.\\
+    The assertions in this arrangement were typically not related to the visualisation below. Often, a markdown cell present between the assertion and visualisation code cells, would mark the begining of a new section in the notebook. In other cases, the assertions were typically pre-condition checks to ensure that the visualisation code would not encounter any errors. Pre-condition checks typically include checking the shape of features that are used in the visualisation. Or checking that the length of the ``x''and ``y`` features are the same to ensure a continuous line in the plot.\\
+    Assertion in the visualisation cell &
+    There are two possible scenarios here:
+    \begin{enumerate}
+    \item[2.1]{This is the first one.}
+    \item[2.2]{This is the second one.}
+    \end{enumerate}\\
+
     \bottomrule
   \end{tabular}
   \label{tab:cell-arrangement}
