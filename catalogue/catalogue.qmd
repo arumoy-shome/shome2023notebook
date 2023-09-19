@@ -1,0 +1,439 @@
+---
+title: Visualisation, assertion catalogue
+author: Arumoy Shome
+mainfont: "Iosevka Aile"
+monofont: "Iosevka"
+monofontoptions:
+  - Scale=0.9
+format: pdf
+---
+
+## (04) SVM decision boundary, accuracy
+![](select-04.png)
+
+```python
+assert accuracy_score(y_test, pred) > 0.95
+```
+
+## (05) input image, accuracy
+![](select-05.png)
+
+```python
+assert accuracy > 0.85, "Poor accuracy {:.3f}".format(accuracy)
+```
+
+## (09) roc, auc
+![](select-09.png)
+
+```python
+assert roc_auc_score(y_test, wv_model.predict_proba(X_test_wv)[:, 1]) > 0.92,
+"something's wrong with your features"
+```
+
+## (12) loss, convergence
+![](select-12.png)
+
+```python
+assert np.mean(history[:10]) >np.mean(history[-10:]), "RNN didn't converge"
+```
+
+::: {.callout-note}
+This is the most common visualisation,assertion pair.
+:::
+
+## (13) lineplot, correlation
+![](select-13.png)
+
+```python
+assert answer_nine() >= -1. and answer_nine() <= 1.,
+"Q9: A valid correlation should between -1 to 1!"
+```
+
+# (35) input image, `predict_proba`
+
+![](select-35a.png)
+
+```python
+np.testing.assert_almost_equal(pred_proba, 2.0355723e-05, decimal=3)
+```
+
+![](select-35b.png)
+
+```python
+np.testing.assert_almost_equal(pred_proba, 0.9988895, decimal=3)
+```
+
+::: {.callout-warning title="Smell"}
+How did the author identify the probability threshold? Perhaps
+comparision with ge/le is better?
+:::
+
+# (47) log-scale lineplot, coefficient & intercept
+
+![](select-47.png)
+
+```python
+assert l.coef_ < 0, "Curve must be decreasing"
+assert l.intercept_ > 1, "Curve must start higher"
+assert l.score(np.log(X).reshape((-1,1)), np.log(values)) > 0.9, "Unusually large error."
+```
+
+::: {.callout-caution}
+We need to revisit this one!
+:::
+
+# (61) various image rescaling techniques
+
+::: {layout-ncol=3}
+![Original input image](select-61a.png)
+
+![Rescaled image](select-61b.png)
+
+![Decomposed image](select-61c.png)
+:::
+
+# (63) visual and analytical assertion on mean recall
+
+![](select-63.png)
+
+```python
+assert np.mean(dev_recall_history[-10:]) > 0.85, "Please train for at least 85% recall on test set. "\
+                                                  "You may need to change vectorizer model for that."
+```
+
+# (65) Scaling and Normalization
+
+![](select-65a.png)
+
+```python
+assert scaled_data[scaled_data.argmax()] <= 1
+assert scaled_data[scaled_data.argmin()] >= 0
+```
+
+::: {.callout-warning title="Smell"}
+Perhaps the visualisation is redundant?
+:::
+
+![](select-65b.png)
+
+```python
+assert normalized_data[normalized_data.argmax()] < 10
+assert normalized_data[normalized_data.argmin()] > -7
+```
+
+::: {.callout-warning title="Smell"}
+How did the author identify the thresholds?
+:::
+
+::: {.callout-tip title="Visual testing"}
+This is the most trivial example of visual testing - checking the
+distribution of features.
+:::
+
+# (78) confusion matrix, false positive/negative
+
+![](select-78.pdf){width="50%"}
+
+```python
+assert conf_mat.shape == (2,2)
+assert conf_mat[0][1] < 7
+assert conf_mat[1][0] < 3
+```
+
+::: {.callout-warning title="Smell"}
+The values should be divided by $n$ (total number of observations) to
+account for bias in the dataset.
+:::
+
+# (82) DNN mean reward history
+
+![](select-82.png)
+
+```python
+assert np.mean(mean_rw_history[-10:]) > 10.
+```
+
+# (86) lolopy performance testing
+
+![](select-86.png)
+
+```python
+lolopy_timing = interp1d(results['n'], results['lolopy_train'])
+lolo_timing = interp1d(results['n'], results['scala_train'])
+slowdown = lolopy_timing(100) / lolo_timing(100)
+print('Training slowdown: {:.2f}'.format(slowdown))
+assert slowdown < 2
+```
+
+::: {.callout-caution}
+This is more devops/mlops imo, do we include in this our current
+paper?
+:::
+
+# (88) histograms for outlier detection
+
+![](select-88a.png)
+
+::: {.callout-tip title="Visual testing"}
+A very nice example of a visualisation to determine/understand the
+property of the underlying dataset. Check the NB for more details.
+:::
+
+![](select-88b.png)
+
+::: {.callout-warning title="Smell"}
+The author identifies outliers in the dataset using histograms.
+Typically a boxplot is better for outlier detection?
+:::
+
+# (110) data property from domain expertise
+
+![](select-110.png)
+
+```python
+# In the plot it looks like there are no exceptions, but let's query
+the dataset to be 100% sure
+days_with_more_than_6_entries_per_day = df_daily_data.groupby('datum').filter(lambda x: len(x) > 6).index
+
+assert len(days_with_more_than_6_entries_per_day) == 0
+```
+
+# (117) time-series spot checking
+
+::: {layout-ncol=2}
+![Spot checking $y$, $x$](select-117a.png){#fig-117a}
+
+![Check error of prediction](select-117b.png){#fig-117b}
+:::
+
+In @fig-117a the author spot checks the values of $y$ at specific values
+of $x$.
+
+```python
+# y_t[i] are the number of cases on the i-th day
+assert y_t[0] == 85
+assert y_t[10] == 1452
+assert y_t[800] == 65032
+```
+
+::: {.callout-warning title="Smell"}
+It is difficult to identify the exact value of $y$ from a
+visualisation. When the data changes, the assert will fail right away.
+:::
+
+In @fig-117b the author evalues the performance of a predictor using a
+custom measure/metric. Performance also visually checked using a
+lineplot.
+
+```python
+# Result of the wfc function for the best choice of s
+assert np.isclose(best_wfv, 7685.546728971963, 0.001)
+```
+
+# (143) input image, `predict_proba`
+
+::: {layout-nrow=2}
+![](select-143a.png)
+
+![](select-143b.png)
+
+![](select-143c.png)
+
+![](select-143d.png)
+:::
+
+```python
+assert 0 <= predict_image(face_model, TP_URL).first().prediction <= 1
+assert 0 <= predict_image(face_model, TN_URL).first().prediction <= 1 
+assert 0 <= predict_image(face_model, FP_URL).first().prediction <= 1
+assert 0 <= predict_image(face_model, FN_URL).first().prediction <= 1
+```
+
+::: {.callout-warning title="Smell"}
+The assertions are on the theoretical limits of probability.
+:::
+
+![](select-143g.png)
+
+::: {.callout-tip title="Visual Testing"}
+The author is visualising the decision boundary of a MLP along with the
+accuracy of the model. 
+:::
+
+# (152) visual & statistical distribution check
+
+![](select-152a.png)
+
+```python
+for feature in range(data_transformed.shape[1]):
+    assert kstest(data_transformed[:, feature], 'norm').statistic < 1e-2
+```
+
+![](select-152b.png)
+
+::: {.callout-tip title="Visual Testing"}
+We need to revisit this, but I think the author is trying to validate if the
+output generated by the GAN is similar to the original data.
+:::
+
+# (153) bootstrap estimate of mean & variance
+
+::: {layout-ncol=2}
+![Mean](select-153a.png){#fig-153a}
+
+![Variance](select-153b.png){#fig-153b}
+:::
+
+The assertions for Figure @fig-153a and @fig-153b are the following.
+
+```python
+assert 80 < boot_mean_mean < 81
+assert 0.3 < boot_var_mean < 0.5
+```
+
+```python
+assert 7 < boot_mean_std < 10
+assert 0.23 < boot_var_std < 0.29
+```
+
+::: {.callout-warning title="Smell"}
+While the mean of the sample can be identified from the histogram, I don't
+think the same holds for the variance?
+:::
+
+# (165) pie chat
+
+![](select-165.png)
+
+```python
+assert_equal(num_passengers_by_sex.index.tolist(), ["female", "male"])
+```
+
+# (172) image augmentation
+
+::: {layout-ncol=2}
+![Original image](select-172a.png)
+
+![augmented image](select-172b.png)
+:::
+
+```python
+assert not np.allclose(x_aug, x_original)
+```
+
+# (202) input image and predictions
+
+![](select-202a.png)
+
+::: {.callout-tip title="Visual Testing"}
+This is a fairly common example of visual testing where the image input along
+with the prediction of the model is visualised.
+
+Although we can use various performance metrics (accuracy, precision, recall,
+etc), this form of qualitative testing is still prominent when working with
+images.
+:::
+
+# (204) logistic regression
+
+![](select-204a.png)
+
+::: {.callout-tip title="Visual Testing"}
+I think the author is trying to visualise the results of the optimization here? Need second opinion.
+:::
+
+![](select-204b.png)
+
+```python
+ans4 = compute_loss(X_expanded, y, w)
+np.testing.assert_almost_equal(ans4, 0.3042764)
+```
+
+::: {.callout-warning title="Smell"}
+Better to use ge/le comparison rather than hardcoded threshold?
+:::
+
+# (210) great expectations
+
+![](select-210.pdf)
+
+```python
+result = solar.expect_column_values_to_be_between(field_map["date"], 
+                                                    solar[field_map["date"]].min(), 
+                                                    pd.Timestamp.now(),
+                                                    parse_strings_as_datetimes=True)
+```
+
+# (228) linear approximation using domain knowledge
+
+::: {layout-ncol=2}
+![](select-228a.png){#fig-228a}
+
+![](select-228b.png){#fig-228b}
+:::
+
+For Figure @fig-228a.
+
+```python
+assert np.allclose(y_approx.mean(), 0)
+assert np.allclose(y_approx.std(), 0.6721265191518054)
+```
+
+For Figure @fig-228b.
+
+```python
+assert np.allclose(y_long.mean(), 0.2742076173424)
+```
+
+::: {.callout-warning title="Smell"}
+Its not possible to identify the mean of a distribution from the visualisation to such precision. I think a ge/le comparison is better.
+:::
+
+# (267) loss is decreasing
+
+![](select-267.png)
+
+```python
+# assert we actually descended at each step
+for i in range(1, n_steps): 
+    assert (loss_array_true_grad[i] - loss_array_true_grad[i-1]) <= 0
+```
+
+::: {.callout-warning title="Smell"}
+The author checks that the loss is decreasing at each step/epoch. How do we ensure that we are not stuck in a local minimum with this assertion style? Perhaps its better to keep it general and only check if the last $n$ observations is lower than the first $n$ observations?
+:::
+
+# (275) loss, accuracy
+
+![Loss](select-275.png)
+
+```python
+acc = compute_test_accuracy(model)
+assert acc>0.96, "Bidirectional RNNs are better than this!"
+```
+
+::: {.callout-caution title="Luis"}
+The visualisation is of the loss, but the assertion is on the accuracy. They feel "kind of" related? What to do here?
+:::
+
+# (290) hyper-parameters
+
+![](select-290.png)
+
+::: {.callout-tip title="Visual testing"}
+Qualitative assessment of hyper-paramer configuration that causes
+over-fitting in model.
+:::
+
+# (332) recurrent neural networks
+
+![True vs. predicted labels](select-332a.png){#fig-332a}
+
+```python
+r2_gru = r2_score(y_test, y_pred)
+assert r2_gru > 0.6
+```
+
+::: {.callout-note}
+The $R^2$ or coefficient of determination is derived from the predicted and actual labels.
+:::
