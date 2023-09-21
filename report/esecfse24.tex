@@ -25,7 +25,21 @@
 %%\acmSubmissionID{123-A56-BU3}
 
 \usepackage{listings}
+
+\lstdefinestyle{mystyle}{
+  basicstyle=\ttfamily\footnotesize,
+  breakatwhitespace=true,
+  breaklines=true,
+  keepspaces=true,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=2,
+  captionpos=b
+}
+\lstset{style=mystyle}
 \usepackage{graphicx}
+\usepackage{caption}
 
 \begin{document}
 
@@ -34,12 +48,32 @@
 \author{Anon}
 
 \begin{abstract}
-  A clear and well-documented \LaTeX\ document is presented as an
-  article formatted for publication by ACM in a conference proceedings
-  or journal publication. Based on the ``acmart'' document class, this
-  article presents and explains many of the common variations, as well
-  as many of the formatting elements an author may use in the
-  preparation of the documentation of their work.
+% what is the problem?
+% why is this an important problem to solve?
+% what did we do?
+% what did we find?
+
+Testing ML systems is a highly interactive process which demands a
+human-in-the-loop approach. In addition to writing tests for the code
+base, practitioners are required to analyse and interpret several
+visualisations using their domain expertise to validate if an ML system
+satisfies the required set of functional and non-functional properties.
+Visualisations are frequently used to qualitatively assess various
+parts of an ML pipeline. However, implicit knowledge gained from
+visualisations must be translated to explicit analytical tests that fail
+when there is change in any component of the ML pipeline. We conduct an
+empirical analysis of Jupyter notebooks to catalogue the state-of-the-
+art mappings between ML visualisations and assertions. We mine Github to
+collect Jupyter Notebooks that contain assertions written in Python. We
+develop a novel methodology to identify 1764 notebooks which contain an
+assertion below a visualisation. We manually analyse the 1.7K notebooks
+and identify 551 notebooks where at least one pair of visualisation and
+assertion are semantically related to one another. We further read and
+understand 90 notebooks in depth to identify 26 qualitative and their
+corresponding quantitative testing patterns. We showcase five such
+patterns in this paper and plan to make the entire catalogue publicly
+available in the near future.
+
 \end{abstract}
 
 \maketitle
@@ -52,6 +86,7 @@
 
 \section{Preliminaries}\label{sec:prelim}
 \subsection{Related Work}\label{sec:related}
+% summarise existing work in SE on computational NBs: bavishi2021vizsmith, pimentel2019large, quaranta2021kgtorrent
 \subsection{Background}\label{sec:background}
 \subsection{Internal Structure of Jupyter Notebooks}\ref{sec:nbformat}
 % TODO we need to explain the json structure of jupyter notebooks, we reference this in the methodology to explain the github query.
@@ -60,7 +95,8 @@
 
 \section{Methodology}\label{sec:method}
 % TODO is there a scientific term in SE research to explain reading code in detail?
-% NOTE: we looked for symmantic similarity between the visualisation and assertion code
+% NOTE we looked for semantic similarity between the visualisation and assertion code
+
 This section presents the methodology used to conduct the empirical
 study presented in Section~\ref{sec:intro}. Figure~\ref{fig:method}
 presents an overview of all relevant steps used in this study. The
@@ -72,11 +108,11 @@ visualisation and assertion pairs.
 
 The yellow boxes in the data collection phase represent filters that
 were applied to the 54K notebooks obtained from Gihub, to obtain the
-final sample size of 1.7K notebooks used in the empirical study. The
-red boxes represent the exclusion criteria used during phase two to
-remove notebooks note relevant for this study. Finally, the green
-boxes in phase 3 represent the manual analysis conducted to identify
-the final 29 visualisation and assertion pairs.
+final sample size of 1.7K notebooks used in the empirical study. The red
+boxes represent the exclusion criteria used during phase two to remove
+notebooks note relevant for this study. Finally, the green boxes in
+phase 3 represent the manual analysis conducted to identify the final 29
+visualisation and assertion pairs.
 
 Boxes appearning next to one-another imply that they were applied
 using an "OR" operator. While boxes appearning below one-another imply
@@ -270,7 +306,7 @@ The initial sample size of 54K notebooks from Github, was reduced to the final s
   \label{tab:exclusion-criteria}
 \end{table}
 
-\subsection{Deeper Analysis of Notebooks}\ref{sec:deep-dive}
+\subsection{Deeper Analysis of Notebooks}\label{sec:deep-dive}
 % describe the steps used for the deeper analysis of NBs
 % - we read the NBs in top-down fashion
 % - reading the introductory md cell at the top often gives the context for the contents of the NB (eg. what type of ML model? which part of the ML lifecycle is this relevant for?)
@@ -281,45 +317,85 @@ The initial sample size of 54K notebooks from Github, was reduced to the final s
 % - we fould 29 unique patterns from the 90 NBs; we highlight the 5 most interesting patterns in results
 
 \section{Results}\label{sec:result}
-This study identified 26 patterns of testing using visualisation and assertion. This section highlights five interesting patterns in more detail. We provide the complete catalogue of visualisation and assertion pairs as supplemental material.
+This study identified 26 patterns of testing using visualisation and
+assertion. This section highlights five interesting patterns in more
+detail. We provide the complete catalogue of visualisation and
+assertion pairs as supplemental material.
 
-\subsection{Decision boundary of SVM and accuracy}
+\subsection{Decision boundary}\label{sec:svm}
 
-% % TODO try using the minipage environment
-% \begin{table}
-%   \centering
-%   \caption{TODO}
-%   \begin{tabular}[t]{p{0.5\textwidth} p{0.5\textwidth}}
-%   \toprule
-%   \textbf{Visualisation} &
-%   \textbf{Assertion}\\
-%   \midrule
-%   \includegraphics[width=\linewidth]{../catalogue/select-04.png} &
-%   \begin{verbatim}
-%   assert accuracy_score(y_test, pred) > 0.95
-%   \end{verbatim}\\
-%   \includegraphics[width=\linewidth]{../catalogue/select-09.png} &
-%   \begin{verbatim}
-%   assert roc_auc_score(
-%     y_test,
-%     wv_model.predict_proba(X_test_wv)[:, 1]
-%   ) > 0.92,
-%     "something's wrong with your featurs"
-%   \end{verbatim}\\
-%   \bottomrule
-%   \end{tabular}
-%   \label{TODO}
-% \end{table}
+% TODO try using captionof for the listing as well, so that the caption for the listing and figure align at the bottom
+\begin{minipage}{0.5\textwidth}
+  \begin{lstlisting}[language=Python, caption=Assertion on the accuracy of the ML model.]
+assert accuracy_score(y_test, pred) > 0.95
+  \end{lstlisting}
+  \label{lst:svm}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+  \includegraphics[width=\linewidth]{../catalogue/select-04.png}
+  \captionof{figure}{Visualisation of the decision boundary of a SVM.}
+  \label{fig:svm}
+\end{minipage}
+
+Figure~\ref{fig:svm} presents a visualisation of the decision boundaries of a Support Vector Machine (SVM). The author is visualising how the SVM is distinguishing between the two classes present in the dataset. Listing~\ref{lst:svm} shows the corresponding assertion defined below the visualisation.
+
+The assertion is  
+\subsection{ROC Curve}
 
 \begin{minipage}{0.5\textwidth}
   \begin{lstlisting}[language=Python]
-    assert accuracy_score(y_test, pred) > 0.95
+assert roc_auc_score(y_test, wv_model.predict_proba(X_test_wv)[:, 1] ) > 0.92, "something's wrong with your features"
   \end{lstlisting}
-  \begin{minipage}{0.5\textwidth}
-    \includegraphics{../catalogue/select-04.png}
-  \end{minipage}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+  \includegraphics[width=\linewidth]{../catalogue/select-09.png}
 \end{minipage}
 
+\subsection{Training loss}
+
+\begin{minipage}{0.5\textwidth}
+  \begin{lstlisting}[language=Python]
+assert np.mean(history[:10]) >np.mean(history[-10:]), "RNN didn't converge"
+  \end{lstlisting}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+  \includegraphics[width=\linewidth]{../catalogue/select-12.png}
+\end{minipage}
+
+\begin{minipage}{0.5\textwidth}
+  \begin{lstlisting}[language=Python]
+# assert we actually descended at each step
+for i in range(1, n_steps):
+    assert loss_array_true_grad[i] - loss_array_true_grad[i-1]) <= 0
+  \end{lstlisting}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+  \includegraphics[width=\linewidth]{../catalogue/select-267.png}
+\end{minipage}
+
+\subsection{Coefficient of Determination}
+
+\begin{minipage}{0.5\textwidth}
+  \begin{lstlisting}[language=Python]
+r2_gru = r2_score(y_test, y_pred)
+assert r2_gru > 0.6
+  \end{lstlisting}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+  \includegraphics[width=\linewidth]{../catalogue/select-332a.png}
+\end{minipage}
+
+\subsection{Time-series Prediction}
+
+\begin{minipage}{0.5\textwidth}
+  \begin{lstlisting}[language=Python]
+# Result of the wfc function for the best choice of s
+assert np.isclose(best_wfv, 7685.546728971963, 0.001)
+  \end{lstlisting}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+  \includegraphics[width=\linewidth]{../catalogue/select-117b.png}
+\end{minipage}
 
 \section{Discussion}\label{sec:discuss}
 \section{Threats to Validity}\label{sec:threats}
