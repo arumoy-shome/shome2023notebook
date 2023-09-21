@@ -23,7 +23,9 @@
 %% receive a unique submission ID from the organizers
 %% of the event, and this ID should be used as the parameter to this command.
 %%\acmSubmissionID{123-A56-BU3}
-\usepackage{multirow}
+
+\usepackage{listings}
+\usepackage{graphicx}
 
 \begin{document}
 
@@ -46,18 +48,19 @@
 % what problem are we trying to solve?
 % what is our motivation here?
 
+% NOTE our methodology of finding visualisation and assertion that are related is a (pretty good) contribution.
+
 \section{Preliminaries}\label{sec:prelim}
 \subsection{Related Work}\label{sec:related}
 \subsection{Background}\label{sec:background}
 \subsection{Internal Structure of Jupyter Notebooks}\ref{sec:nbformat}
-% we need to explain the json structure of jupyter notebooks, we
-% reference this in the methodology to explain the github query.
+% TODO we need to explain the json structure of jupyter notebooks, we reference this in the methodology to explain the github query.
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{bibliography}
 
 \section{Methodology}\label{sec:method}
-% TODO is there a scientific term in SE research to explain reading
-% code in detail?
+% TODO is there a scientific term in SE research to explain reading code in detail?
+% NOTE: we looked for symmantic similarity between the visualisation and assertion code
 This section presents the methodology used to conduct the empirical
 study presented in Section~\ref{sec:intro}. Figure~\ref{fig:method}
 presents an overview of all relevant steps used in this study. The
@@ -138,7 +141,7 @@ appear in all python testing libraries.
     |"scipy"|"numpy"|"pandas"}.\\
     \emph{\textbf{F3}} &
     Notebooks that contain visualisations &
-    Section~\ref{sec:nbformat} describes the internal json structure
+    Section~\ref{sec:nbformat} describes the internal son structure
     of Jupyter notebooks. Visualisations are stored as binary strings
     under the \texttt{"image/png"} field.\\
     \emph{\textbf{F4}} &
@@ -164,8 +167,7 @@ initial sample of 54K notebooks mined from Github. The table provides
 a short description of the filter along with our rationale for using
 them.
 
-% TODO don't mention quantity of random sample; then we need to
-% explain/defend this choice
+% TODO don't mention quantity of random sample; then we need to explain/defend this choice
 We used an iterative approach to determine the effectiveness of each
 filter that was used. We applied each filter in the same order as
 presented in Table~\ref{tab:filters}, starting with F1. We randomly
@@ -176,6 +178,7 @@ visualisation and assertion pairs. In each new iteration, we
 progressively add the other filters and include the filter if the
 number of relevant visualisation and assertion pairs increases.
 
+% TODO maybe use colors from red-green to denote arrangements that produced better results? (instead of binary)
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{nb-structure.pdf}
@@ -184,88 +187,142 @@ number of relevant visualisation and assertion pairs increases.
   \label{fig:cell-arrangement}
 \end{figure}
 
-For RQ1, we are interested in finding empirical evidence of
-visualisations and corresponding assertions used in the wild. To
-answer this question, we further reduce our notebook sample size by
-assuming a specific order in which the visualisation and assertion
-code cells appear in the notebooks. Figure~\ref{fig:cell-arrangement}
-presents a visual representation of various arrangements of code cells
-that may occur in notebooks. Note that the visual representation omits
-markdown cells since we only consider the order of code cells in our
-analysis. In the actual notebook however, one or more markdown cells
-may be present between the visualisation and assertion cells.
+For RQ1, we are interested in finding empirical evidence of visualisations and corresponding assertions used in the wild. To answer this question, we further reduce our notebook sample size by assuming a specific order in which the visualisation and assertion code cells appear in the notebooks. Figure~\ref{fig:cell-arrangement} presents a visual representation of various arrangements of code cells that may occur in notebooks. Note that the visual representation omits markdown cells since we only consider the order of code cells in our analysis. In the actual notebook however, one or more markdown cells may be present between the visualisation and assertion cells.
 
-As explained above, the selected arrangement of code cells was
-discovered by qualitatively analysing a random sample of notebooks
-with the code cell arrangements presented in
-Figure~\ref{fig:cell-arrangement}. We observed the signal-to-noise
-ratio for each cell arrangement. And picked the arrangement with the
-least signal-to-noise ratio. Table~\ref{tab:cell-arrangement}
-summarises our observations from the various cell arrangements.
+As explained above, the selected arrangement of code cells was discovered by qualitatively analysing a random sample of notebooks with the code cell arrangements presented in Figure~\ref{fig:cell-arrangement}. We observed the signal-to-noise ratio for each cell arrangement. And picked the arrangement with the least signal-to-noise ratio. Table~\ref{tab:cell-arrangement} summarises our observations from the various cell arrangements.
 
+% TODO give more examples (from our data) of what a pre/post condition check is
 \begin{table}
   \centering
   \caption{Observations from random samples of notebooks with various
   cell arrangement.}
-  \begin{tabular}{p{0.4\textwidth} p{0.4\textwidth}}
+  \begin{tabular}{l p{0.4\textwidth} p{0.4\textwidth}}
     \toprule
+    \emph{\textbf{ID}}&
     \emph{\textbf{Cell arrangement}} &
     \emph{\textbf{Observations}}\\
     \midrule
+    1 &
     Assertion above visualisation cell &
     The assertions in this arrangement were typically not related to the visualisation below. Often, a markdown cell present between the assertion and visualisation code cells, would mark the begining of a new section in the notebook. In other cases, the assertions were typically pre-condition checks to ensure that the visualisation code would not encounter any errors. Pre-condition checks typically include checking the shape of features that are used in the visualisation. Or checking that the length of the ``x''and ``y`` features are the same to ensure a continuous line in the plot.\\
-    Assertion in the visualisation cell &
-    There are two possible scenarios here:
-    \begin{enumerate}
-    \item[2.1]{This is the first one.}
-    \item[2.2]{This is the second one.}
-    \end{enumerate}\\
-
+    2.1 &
+    Assertion in the visualisation cell: assertion above visualisation code &
+    Our observations were similar to that of arrangement 1. the assertions defined above the visualistion code were more likely to be pre-condition checks.\\
+    2.2 &
+    Assertion in the visualisation cell: assertion below visualisation code &
+    We found several examples where the assertion was related to the visualisation. Most often however, the assertions were post-condition checks to ensure the correctness of the visualisation itself. The signal-to-noise ratio in this arrangement was also higher compared to arrangement 3.2.\\
+    3.1 &
+    Assertion below visualisation cell: assertion cell more than 10 lines &
+    The assertions in this arrangement were frequently related to the visualisation above. In some cases, a markdown cell between the visualisation and assertion marked the begining of a new section in the notebook indicating that the visualisation and assertion were not related to each other. We also observed instances where the assertion cell defined a new class or several helper methods that were not related to the visualisation above. This motivated our decision to only flag notebooks where the assertion cell was no longer than 10 lines.\\
+    3.2 &
+    Assertion below visualisation cell: assertion cell has max 10 lines &
+    This arrangement had the highest signal-to-noise ratio. We observed that most notebook authors followed the convension of writing their motivation for the visualisation in a markdown cell, before writing the code for the visualisation. The visualisations were often followed by another markdown cell to record the author's observations. And finally, the observations were translated to a analytical test using \texttt{``assert''} or other testing methods from external libraries.\\
     \bottomrule
   \end{tabular}
   \label{tab:cell-arrangement}
 \end{table}
 
-We assume, that the visualisation and assertion pairs of interest, are
-more likely to occur in notebooks where the assertion follow
-
 \subsection{Identifying Related Visualisation and Assertion
-Pairs}\ref{sec:identify-related-pairs}
-% at some point, I think we will have to explain what a
-% pre/post-condition check is; then we can ellaborate on our
-% experiments with the strictness and proximity of the assert
-% statement
-% - we have to justify that most of the examples we found when the
-% assertion was in the same cell, were pre/post-conditions; whereas
-% looking at assertions in the next code cell was more fruitful
+Pairs}\label{sec:identify-related-pairs}
+
+% TODO the numbers don't line up, because the annotations were not perfect. We 161 instances where I did not SELECT the notebook but also did not assign it an EC. How do we handle this?
+% NOTE move the 161 with the 337, then we can say we had 500+ notebooks and we cannot analyse them all in depth...
+The initial sample size of 54K notebooks from Github, was reduced to the final sample size of 1.7K after applying the filters presented in Section~\ref{sec:data-collect}. We analysed all 1.7K notebooks manually to further identify 337 notebooks that contained at least one pair of visualisation and assertions that were related to each other. Table~\ref{tab:exclusion-criteria} presents the exclusion criteria used in this phase of the analysis, along with the number of notebooks that were excluded based on each criteria.
 
 \begin{table}
   \centering
-  \caption{Exclusion criterion used to reduce sample size of notebooks
-    prior to conducting manual analysis to identify related
-    visualisation and assertion pairs.}
-  \begin{tabular}{l p{0.3\linewidth} p{0.3\linewidth}}
+  \caption{Exclusion criteria used during phase 2 to identify related visualisation and assertion pairs.}
+  \begin{tabular}{l p{0.3\textwidth} p{0.4\textwidth} p{0.1\textwidth}}
     \toprule
     \textbf{ID} &
-    \textbf{Exclusion Criteria(EC)} &
-    \textbf{Rationale}\\
+    \textbf{Exclusion Criteria} &
+    \textbf{Rationale} &
+    \textbf{Num. excluded NBs}\\
     \midrule
     \textbf{EC1} &
-    NB does not contain popular data science or machine
-    learning libraries &
-    \texttt{"pandas|numpy|scipy|sklearn |torch|dask|tensorflow"}\\
+    Notebook not written in English &
+    % TODO find a better way to phrase this?
+    We excluded notebooks that were not authored in English since that is the primary language of all authors of this paper. &
+    159\\
     \textbf{EC2} &
-    NB does not contain any visualisations &
-    TODO\\
+    Notebook does not contain a trained ML model &
+    % TODO need to explain this better, we have notebooks with diverse python libraries; different ML models work differently so we need to understand the maths behind it.
+    We excluded notebooks that did not train an ML model. We found several notebooks that were on topics related to ML such as linear algebra, optimization and loss functions to name a few. However, identifying how the visualisation and assertion pairs can be applied to a production ML system, requires a deep understanding of several python libraries and the inner workings of various ML models. This was deemed beyond the scope of this research project. &
+    383\\
+    \textbf{EC2} &
+    Notebook contains incorrect code &
+    % TODO our filter excludes NBs without images, we have to defend why this EC is still required: jupyter adds the "image/png" field regardless of error in code
+    We excluded notebooks that contained incorrect code that did not produce a visualisation. We also excluded notebooks that used \texttt{assert} statements to stop execution of a code cell. &
+    31\\
     \textbf{EC3} &
-    NB conforms to a strict structure as explained in~\ref{REFME} &
-    TODO\\
+    % TODO is there technical terminology for what we did to identify if the visualisation & assertion are related to one another?
+    % TODO I think we need a brief paragraph on how we prompted ChatGPT, this stuff probably needs to go outside of a table!
+    The visualisation and assertion are not related &
+    We excluded notebooks where the visualisation and assertion pairs were unrelated. We manually analyse the source code of the visualisation and the assertion to determine if they are related to one another. In some instances, the tracing was not straightforward or the code was not well written. In such cases, we used one-shot prompt engineering with ChatGPT 4.0 model to derive the link between the visualisation and the assertion. &
+    440\\
+    \textbf{EC4} &
+    The assertion is a pre or post-condition check &
+    % TODO we have to give examples of pre/post condition checks. I think this content needs to be outside of a table!
+    We excluded &
+    200\\
     \bottomrule
   \end{tabular}
-  \label{tab:pre-exclusion-criteria}
+  \label{tab:exclusion-criteria}
 \end{table}
+
 \subsection{Deeper Analysis of Notebooks}\ref{sec:deep-dive}
-\section{Threats to Validity}\ref{sec:threats}
+% describe the steps used for the deeper analysis of NBs
+% - we read the NBs in top-down fashion
+% - reading the introductory md cell at the top often gives the context for the contents of the NB (eg. what type of ML model? which part of the ML lifecycle is this relevant for?)
+% - reading the md cell above visualisation to understand context/motivation of visualisation
+% - reading the source code that produces the visualisation
+% - reading md cell after visualisation to understand the author's interpretation/observations from visualisation
+% - reading the assertion
+% - we fould 29 unique patterns from the 90 NBs; we highlight the 5 most interesting patterns in results
+
+\section{Results}\label{sec:result}
+This study identified 26 patterns of testing using visualisation and assertion. This section highlights five interesting patterns in more detail. We provide the complete catalogue of visualisation and assertion pairs as supplemental material.
+
+\subsection{Decision boundary of SVM and accuracy}
+
+% % TODO try using the minipage environment
+% \begin{table}
+%   \centering
+%   \caption{TODO}
+%   \begin{tabular}[t]{p{0.5\textwidth} p{0.5\textwidth}}
+%   \toprule
+%   \textbf{Visualisation} &
+%   \textbf{Assertion}\\
+%   \midrule
+%   \includegraphics[width=\linewidth]{../catalogue/select-04.png} &
+%   \begin{verbatim}
+%   assert accuracy_score(y_test, pred) > 0.95
+%   \end{verbatim}\\
+%   \includegraphics[width=\linewidth]{../catalogue/select-09.png} &
+%   \begin{verbatim}
+%   assert roc_auc_score(
+%     y_test,
+%     wv_model.predict_proba(X_test_wv)[:, 1]
+%   ) > 0.92,
+%     "something's wrong with your featurs"
+%   \end{verbatim}\\
+%   \bottomrule
+%   \end{tabular}
+%   \label{TODO}
+% \end{table}
+
+\begin{minipage}{0.5\textwidth}
+  \begin{lstlisting}[language=Python]
+    assert accuracy_score(y_test, pred) > 0.95
+  \end{lstlisting}
+  \begin{minipage}{0.5\textwidth}
+    \includegraphics{../catalogue/select-04.png}
+  \end{minipage}
+\end{minipage}
+
+
+\section{Discussion}\label{sec:discuss}
+\section{Threats to Validity}\label{sec:threats}
 % defend use of github as source for notebooks:
 % - why did kaggle not work (refer to notes)
 % - why did the existing replication packages not work?
@@ -276,6 +333,7 @@ Pairs}\ref{sec:identify-related-pairs}
 % - testing interface. This is a good compromise between doing an
 % - exhaustive search of all testing method names in the python
 % - ecosystem and then doing a search for each of those patterns
+\section{Conclusion}\label{sec:conclude}
 
 \end{document}
 
