@@ -52,27 +52,7 @@
 % why is this an important problem to solve?
 % what did we do?
 % what did we find?
-
-Testing ML systems is a highly interactive process which demands a
-human-in-the-loop approach. In addition to writing tests for the code
-base, practitioners are required to analyse and interpret several
-visualisations using their domain expertise to validate if an ML system
-satisfies the required set of functional and non-functional properties.
-Visualisations are frequently used to qualitatively assess various
-parts of an ML pipeline. However, implicit knowledge gained from
-visualisations must be translated to explicit analytical tests that fail
-when there is change in any component of the ML pipeline. We conduct an
-empirical analysis of Jupyter notebooks to catalogue the state-of-the-
-art mappings between ML visualisations and assertions. We mine Github to
-collect Jupyter Notebooks that contain assertions written in Python. We
-develop a novel methodology to identify 1764 notebooks which contain an
-assertion below a visualisation. We manually analyse the 1.7K notebooks
-and identify 551 notebooks where at least one pair of visualisation and
-assertion are semantically related to one another. We further read and
-understand 90 notebooks in depth to identify 26 qualitative and their
-corresponding quantitative testing patterns. We showcase five such
-patterns in this paper and plan to make the entire catalogue publicly
-available in the near future.
+Testing ML systems is a highly interactive process which demands a human-in-the-loop approach. In addition to writing tests for the code base, practitioners are required to analyse and interpret several visualisations using their domain expertise to validate if an ML system satisfies the required set of functional and non-functional properties. Visualisations are frequently used to qualitatively assess various parts of an ML pipeline. However, implicit knowledge gained from visualisations must be translated to explicit analytical tests that fail when there is change in any component of the ML pipeline. We conduct an empirical analysis of Jupyter notebooks to catalogue the state-of-the- art mappings between ML visualisations and assertions. We mine Github to collect Jupyter Notebooks that contain assertions written in Python. We develop a novel methodology to identify 1764 notebooks which contain an assertion below a visualisation. We manually analyse the 1.7K notebooks and identify 551 notebooks where at least one pair of visualisation and assertion are semantically related to one another. We further read and understand 90 notebooks in depth to identify 26 qualitative and their corresponding quantitative testing patterns. We showcase five such patterns in this paper and plan to make the entire catalogue publicly available in the near future.
 
 \end{abstract}
 
@@ -121,6 +101,7 @@ used in the search query.
 
 More details regarding each phase of the methodology is presented below.
 
+% TODO update the numbers
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{method.pdf}
@@ -337,29 +318,67 @@ assert accuracy_score(y_test, pred) > 0.95
   \label{fig:svm}
 \end{minipage}
 
-Figure~\ref{fig:svm} presents a visualisation of the decision boundaries of a Support Vector Machine (SVM). The author is visualising how the SVM is distinguishing between the two classes present in the dataset. Listing~\ref{lst:svm} shows the corresponding assertion defined below the visualisation.
+% is the data from the training or testing set?
+% what is the info obtained from the visualisation?
+% what is the assertion doing? what is the info obtained here?
+% does the assertion reflect the info obtained from the visualisation?
 
-The assertion is  
-\subsection{ROC Curve}
+Figure~\ref{fig:svm} presents a visualisation obtained from a notebook that performs binary classification using Support Vector Machines (SVM). The model is trained on the \texttt{make\_circles}~\footnote{REFME} dataset obtained from scikit-learn~\footnote{REFME}. The visualisation shows the two classes present in the training set, and the decision boundary of the model.
+
+Listing~\ref{lst:svm} shows the corresponding assertion that was defined below Figure~\ref{fig:svm} in the notebook. The assertion checks if the model accuracy is above a threshold specified by the author of the notebook.
+
+% NOTE it seems wrong that the visualisation is on the training set but the assertion is on the test set; but at the same time, it does seem "natural" to visualise the training set and calculate accuracy on the test set?
+
+\subsection{Input Image, \texttt{predict\_proba}}
+
+Figures~\ref{fig:football} and~\ref{fig:tennisball} are obtained from a notebook that uses a pre-trained image classifier from GluonCV library~\footnote{https://cv.gluon.ai}, to identify images that contain tennis balls.
+
+Listing~\ref{lst:football} presents the assertion related to Figure~\ref{fig:football}. The assertion checks if the probability estimate of the model for the given input image, is close to the specified value with a precision of up to three decimal places. Since the model is trained to detect tennis ball, and the input image is of a football, the specified probability estimate is very low.
 
 \begin{minipage}{0.5\textwidth}
   \begin{lstlisting}[language=Python]
-assert roc_auc_score(y_test, wv_model.predict_proba(X_test_wv)[:, 1] ) > 0.92, "something's wrong with your features"
+np.testing.assert_almost_equal(pred_proba, 2.0355723e-05, decimal=3)
   \end{lstlisting}
+  \captionof{lstlisting}{Assertion to check if the probability estimate of the model is close to the specified value. The input image is of a football. Since the model is trained to detect tennis balls, the specified value is very small.}
+  \label{lst:football}
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
-  \includegraphics[width=\linewidth]{../catalogue/select-09.png}
+  \includegraphics[width=\linewidth]{../catalogue/select-35a.png}
+  \captionof{figure}{Random Input image of a football from the test set.}
+  \label{fig:football}
+\end{minipage}
+
+In contrast, Listing~\ref{lst:tennisball} specifies a much higher probability estimate since the input image contains tennis balls.
+
+\begin{minipage}{0.5\textwidth}
+  \begin{lstlisting}[language=Python]
+np.testing.assert_almost_equal(pred_proba, 0.9988895, decimal=3)
+  \end{lstlisting}
+  \captionof{lstlisting}{Assertion to check if the probability estimate of the model is close to the specified value. Compared to Figure~\ref{fig:football}, the specified value is much higher, since the input image is of tennis balls.}
+  \label{lst:tennisball}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+  \includegraphics[width=\linewidth]{../catalogue/select-35b.png}
+  \captionof{figure}{Random input image of tennis balls from the test set.}
+  \label{fig:tennisball}
 \end{minipage}
 
 \subsection{Training loss}
+
+% TODO this is also a condition0 example, the NB was flagged for another viz,assert pair that is not relevant to us. How do we handle this? Because this is a really nice example to have!
+Figure~\ref{fig:loss-relaxed} shows the loss of a Recurrent Neural Network (RNN) over the trainin epochs. The visualisation was obtained from a notebook that trains an RNN to generate human names.
 
 \begin{minipage}{0.5\textwidth}
   \begin{lstlisting}[language=Python]
 assert np.mean(history[:10]) >np.mean(history[-10:]), "RNN didn't converge"
   \end{lstlisting}
+  \captionof{lstlisting}{Assertion to check that the mean of first 10 observations of training loss is higher than the mean of last 10 observations. In other words, the assertion checks that the loss decreased after training and the model converged to an optimal minima.}
+  \label{lst:loss-relaxed}
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
   \includegraphics[width=\linewidth]{../catalogue/select-12.png}
+  \captionof{figure}{Loss over training epochs of an ML model.}
+  \label{fig:loss-relaxed}
 \end{minipage}
 
 \begin{minipage}{0.5\textwidth}
@@ -368,21 +387,37 @@ assert np.mean(history[:10]) >np.mean(history[-10:]), "RNN didn't converge"
 for i in range(1, n_steps):
     assert loss_array_true_grad[i] - loss_array_true_grad[i-1]) <= 0
   \end{lstlisting}
+  \captionof{lstlisting}{Assertion to check that the loss at each iteration $n$ is less than or equal to the loss at $n-1$.}
+  \label{lst:loss-strict}
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
   \includegraphics[width=\linewidth]{../catalogue/select-267.png}
+  \captionof{figure}{Another example of the same visualisation presented in Figure~\ref{fig:loss-relaxed}. The visualisation shows the training loss of an ML model over time.}
+  \label{fig:loss-strict}
 \end{minipage}
 
 \subsection{Coefficient of Determination}
+
+Figure~\ref{fig:r2} shows a visualisation obtained from a notebook that trains a RNN to predict the levels of Nitrogen Dioxide ($NO_2$) in the next 24 hour window. The model is trained using time-series data consisting of historical readings of $NO_2$ and meteorological data such as temparate, humidity, wind speed, and such.
+
+% I want to say that the spread of the points should be close to the diagonal to indicate a good fit which is not the case here.
+The visualisation shows a scatterplot of the real and predicted values of $NO_2$ from the test set. The scatterplot shows a linear relationship between the ground truth and predictions indicating that the model learned something during training. However, the spread of the points is wide indicating that it can be improved with more fine tuning.
+
+Listing~\ref{lst:r2} presents the corresponding analytical test which was defined below Figure~\ref{fig:r2}. The Coefficient of Determination ($R^2$) is calculated using the \texttt{r2\_score} method from scikit-learn~\footnote{REFME}. The assertion checks that the $R^2$ is higher than a specified threshold.
+
 
 \begin{minipage}{0.5\textwidth}
   \begin{lstlisting}[language=Python]
 r2_gru = r2_score(y_test, y_pred)
 assert r2_gru > 0.6
   \end{lstlisting}
+  \captionof{lstlisting}{Assertion to check that the Coefficient of Determination ($R^2$) is higer than the specified threshold.}
+  \label{lst:r2}
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
   \includegraphics[width=\linewidth]{../catalogue/select-332a.png}
+  \captionof{figure}{Scatterplot of the actual and predicted labels of a dataset. The visualisation shows that there is a linear relationship between the true and predicted labels.}
+  \label{fig:r2}
 \end{minipage}
 
 \subsection{Time-series Prediction}
@@ -398,6 +433,13 @@ assert np.isclose(best_wfv, 7685.546728971963, 0.001)
 \end{minipage}
 
 \section{Discussion}\label{sec:discuss}
+% NOTE comment on the over-whelming presence of magic thresholds in ML testing! where are authors getting these numbers from? link this to requirements engineering?
+
+% NOTE comment on the anti-patterns in testing that we observe in the 5 patterns presented
+
+% NOTE link the qualitative and quantitative testing to the ML lifecycle: how some tests will let practitioner know when something changes
+
+% NOTE comment on evolution? we have to look at the entire lifecycle of a visualisation: notebooks are run iteratively?
 \section{Threats to Validity}\label{sec:threats}
 % defend use of github as source for notebooks:
 % - why did kaggle not work (refer to notes)
