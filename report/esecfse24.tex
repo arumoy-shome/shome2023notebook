@@ -65,13 +65,83 @@ Testing ML systems is a highly interactive process which demands a human-in-the-
 % NOTE our methodology of finding visualisation and assertion that are related is a (pretty good) contribution.
 
 \section{Preliminaries}\label{sec:prelim}
-\subsection{Related Work}\label{sec:related}
-% summarise existing work in SE on computational NBs: bavishi2021vizsmith, pimentel2019large, quaranta2021kgtorrent
-\subsection{Background}\label{sec:background}
-\subsection{Internal Structure of Jupyter Notebooks}\ref{sec:nbformat}
+\subsection{ML Testing}\label{sec:ml-testing}
+% zhang2020machine
+
+% The emphasis is primarily on image datasets and DNNs, specifically
+% CNNs & RNNs. Almost all papers are vested in the notion of addressing
+% qualitative metrics such as robustness, safety & privacy. Of these 3
+% robustness appears most frequently because it is the easiest to define
+% in terms of quantitative metrics.
+
+% The two most common domains are safety-critical systems (such as
+% autonomous driving) & neural machine translation (NMT)
+% [ji2021automated, sun2020automatic, he2020structure].
+
+% The proposed testing techniques can be classified into 4
+% categories:
+
+% 1. Improvements over existing test adequacy metrics such as neuron
+%    coverage which was proposed by DeepExplore & DeepGauge
+%    [gerasimou2020importance].
+% 2. Formal verification methods which try to provide formal guarantee
+%    of robustness against adversarial examples [zhu2021deepmemory,
+%    baluta2021scalable].
+% 3. Data augmentation techniques which generate adversarial examples to
+%    be used during training to improve robustness of models. There are
+%    techniques based on fuzzing & seach based software testing
+%    (SBST) [braiek2019deepevolution, gao2020fuzz] and mutation testing
+%    [wang2021robot, zhang2020white].
+% 4. And finally some papers propose adversarial detection during
+%    runtime [xiao2021self, wang2020dissector, wang2019adversarial,
+%    berend2020cats].
+
+
+\subsection{Computational Notebooks and Software
+  Engineering}\label{sec:notebooks}
+
+% NOTE maybe this should be about jupyter notebook mining and work
+% done? Then we can say that these are the only two publicly available
+% datasets with notebooks; and the challenges we faced when trying to
+% use them!
+
+% TODO review Kastner's bib, he also has a section dedicated to prior
+% work done using notebooks!
+
+% TODO we need to defend why we did not use kgtorrent dataset for our analysis. We can say that we performed analysis on random samples of notebooks from kaggle and did not find that many interesting examples?
+
+% TODO some form of introduction to the notion of computational notebooks; literal programming?
+
+\citeauthor{quaranta2021kgtorrent} mine Kaggle~\footnote{https://kaggle.com} and present \textit{KGTorrent}, a public dataset consisting of approximately 2.5 million Jupyter notebooks written in Python. The dataset also contains a relational database dump of metadata regarding publicly available notebooks on Kaggle. The KGTorrent dataset is publicly available on Zenodo, in the form of a 81TB compressed file.
+
+\citeauthor{pimentel2019large} mine 1.4 million notebooks from Github to conduct an empirical study on the good and bad coding practices when developing software using computational notebooks. The authors also make their dataset of notebooks publicly available on Zenodo~\footnote{https://zenodo.org/record/2592524}. Computational notebooks were originally designed to promote sharing reproducible research since they allow presenting information by interweaving natural text, code and other multimedia such as tables, images and videos. However, the authors discover that Jupyter notebooks are far from being reproducible due to bad coding practices such as lack of separation of concern, testing and versioning.
+
+% TODO yang2021subtle: data scientists spend most of their time preparing the data ('data wrangling'). Authors propose WrangleDoc, a tool that automatically generates documentation of data wrangling code and what effect it has on the data. They integrate their tool with JupyterLab and evaluate using 100 notebooks from Kaggle and also with practitioners.
+
+% TODO head2019managing: notebooks do not follow best practices. authors typically work in an iterative fashion, often experimenting with different versions of code to analyse data and produce meaningful visualisations. This leads to duplicates and messy notebooks. The paper presents a code gathering tool that allows notebook authors to review various versions and only keep the relevant version. Paper performs qualitative usability study using 12 participants.
+
+% TODO kery2018story: study with 21 participants on coding practices when working in notebooks. Authors observe that practitioners often have multiple versions that lead to problems and reduced readability. Participants typically create narative through order of cells rather than with the use of markdown cells. Paper then conducts survey with 45 data scientists and provides design guidelines for future literate programming tools.
+
+% TODO chattopadhyay2020wrong: semi-structed interviews (n=20) and survey (n=156) to understand pain points when working with notebooks. Guidelines on design of computational notebooks.
+
+% TODO psallidas2019data: paper conducts a super massive empirical study: 6M python notebooks from github, 2M enterprise DS pipelines (anonymous company name), source code and metadata from 900+ releases 12 important DS libraries. Paper provides high-level guidelines on what technologies DS practitioners should focus and what system builders should focus on to serve practitioners better.
+
+% TODO kandel2012enterprise: semi-structured interview study (n=35) with data analysts from 25 organizations across diverse sectors. Relationship between data analysis and how oganizational features of enterprise affect it. Recurring painpoints, open challenges and guidelines for building better visual analysis research.
+
+% TODO liu2019understanding: 
+\subsection{Visualisations and Software Engineering}\label{sec:visualisations}
+
+% bavishi2021vizsmith
+% ??
+
+\subsection{Technical Background}\label{sec:background}
+\subsubsection{Internal Structure of Jupyter Notebooks}\ref{sec:nbformat}
 % TODO we need to explain the json structure of jupyter notebooks, we reference this in the methodology to explain the github query.
-\bibliographystyle{ACM-Reference-Format}
-\bibliography{bibliography}
+
+\subsubsection{Pre and Post-Condition Checks}\ref{sec:pre-post-cond}
+% TODO explain and give examples of what we mean by pre/post-condition checks with examples
+
+% TODO contrast this to the type of tests we are actually looking for! Why are pre/post conditions not valuable to look at?
 
 \section{Methodology}\label{sec:method}
 % TODO is there a scientific term in SE research to explain reading code in detail?
@@ -422,6 +492,8 @@ assert r2_gru > 0.6
 
 \subsection{Time-series Prediction}
 
+% TODO this is condition0! find an alternative!
+
 \begin{minipage}{0.5\textwidth}
   \begin{lstlisting}[language=Python]
 # Result of the wfc function for the best choice of s
@@ -453,5 +525,7 @@ assert np.isclose(best_wfv, 7685.546728971963, 0.001)
 % - ecosystem and then doing a search for each of those patterns
 \section{Conclusion}\label{sec:conclude}
 
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{bibliography}
 \end{document}
 
