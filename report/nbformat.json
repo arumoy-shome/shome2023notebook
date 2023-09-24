@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "kernel_info": {...},
+    "language_info": {...},
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Hello world example\n",
+        "The following cell contains python code for greeting people!\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "def greet(name):\n",
+        "    print(f'Hello, {name}!')\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [...],
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "<base64-encoded-png-data>"
+          }
+        }
+      ]
+    }
+  ]
+}

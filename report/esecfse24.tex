@@ -112,11 +112,24 @@ Testing ML systems is a highly interactive process which demands a human-in-the-
 
 % TODO some form of introduction to the notion of computational notebooks; literal programming?
 
+Computational notebooks have been ubiquitously adopted by the machine learning community for developing ML enabled systems. Although originally intended to promote reproducible software, computational notebooks are infamous for the exact opposite since they do not follow software engineering best practices.
+
+The process of understanding and cleaning the underlying training data---commonly referred to as "data wrangling"---tends to dominate the ML development workflow~\cite{CITME}. Data wrangling is high iterative. Practitioners often explore several hypotheses, visual designs, methods, tools, algorithms and data sources to arrive at the final implementation. Studies have been conducted to understand how practitioners generate, evaluate and manage such alternatives. ~\cite{liu2019understanding,kandel2012enterprise}.
+
+Developing software in computational notebooks introduces a new paradigm for writing code. In addition to code, notebooks also contain additional information in the form of natural language text and images. To better understand the process of working within computational notebooks and the challenges faced along the way, studies with human subjects have been conducted\cite{head2019managing}.
+
+
+ ML practitioners often experiment with several versions of code to implement the same functionality. Prior work has explored how practitioners manage the different versions of code and the challenges that they face along the way.
+
 \citeauthor{quaranta2021kgtorrent} mine Kaggle~\footnote{https://kaggle.com} and present \textit{KGTorrent}, a public dataset consisting of approximately 2.5 million Jupyter notebooks written in Python. The dataset also contains a relational database dump of metadata regarding publicly available notebooks on Kaggle. The KGTorrent dataset is publicly available on Zenodo, in the form of a 81TB compressed file.
 
-\citeauthor{pimentel2019large} mine 1.4 million notebooks from Github to conduct an empirical study on the good and bad coding practices when developing software using computational notebooks. The authors also make their dataset of notebooks publicly available on Zenodo~\footnote{https://zenodo.org/record/2592524}. Computational notebooks were originally designed to promote sharing reproducible research since they allow presenting information by interweaving natural text, code and other multimedia such as tables, images and videos. However, the authors discover that Jupyter notebooks are far from being reproducible due to bad coding practices such as lack of separation of concern, testing and versioning.
 
 % TODO yang2021subtle: data scientists spend most of their time preparing the data ('data wrangling'). Authors propose WrangleDoc, a tool that automatically generates documentation of data wrangling code and what effect it has on the data. They integrate their tool with JupyterLab and evaluate using 100 notebooks from Kaggle and also with practitioners.
+
+% code quality; reproducibility; best practices...
+\citeauthor{pimentel2019large} mine 1.4 million notebooks from Github to conduct an empirical study on the good and bad coding practices when developing software using computational notebooks. The authors also make their dataset of notebooks publicly available on Zenodo~\footnote{https://zenodo.org/record/2592524}. Computational notebooks were originally designed to promote sharing reproducible research since they allow presenting information by interweaving natural text, code and other multimedia such as tables, images and videos. However, the authors discover that Jupyter notebooks are far from being reproducible due to bad coding practices such as lack of separation of concern, testing and versioning.
+
+% TODO psallidas2019data: paper conducts a super massive empirical study: 6M python notebooks from github, 2M enterprise DS pipelines (anonymous company name), source code and metadata from 900+ releases 12 important DS libraries. Paper provides high-level guidelines on what technologies DS practitioners should focus and what system builders should focus on to serve practitioners better.
 
 % TODO head2019managing: notebooks do not follow best practices. authors typically work in an iterative fashion, often experimenting with different versions of code to analyse data and produce meaningful visualisations. This leads to duplicates and messy notebooks. The paper presents a code gathering tool that allows notebook authors to review various versions and only keep the relevant version. Paper performs qualitative usability study using 12 participants.
 
@@ -124,12 +137,14 @@ Testing ML systems is a highly interactive process which demands a human-in-the-
 
 % TODO chattopadhyay2020wrong: semi-structed interviews (n=20) and survey (n=156) to understand pain points when working with notebooks. Guidelines on design of computational notebooks.
 
-% TODO psallidas2019data: paper conducts a super massive empirical study: 6M python notebooks from github, 2M enterprise DS pipelines (anonymous company name), source code and metadata from 900+ releases 12 important DS libraries. Paper provides high-level guidelines on what technologies DS practitioners should focus and what system builders should focus on to serve practitioners better.
 
-% TODO kandel2012enterprise: semi-structured interview study (n=35) with data analysts from 25 organizations across diverse sectors. Relationship between data analysis and how oganizational features of enterprise affect it. Recurring painpoints, open challenges and guidelines for building better visual analysis research.
+% DONE kandel2012enterprise: semi-structured interview study (n=35) with data analysts from 25 organizations across diverse sectors. Relationship between data analysis and how oganizational features of enterprise affect it. Recurring painpoints, open challenges and guidelines for building better visual analysis research.
 
-% TODO liu2019understanding: semi-structed interview study (n=12) with data workers with various expertise and domain knowledge. Paper wants to understand the process behind exploring "alternatives": different hypothesis, visual design, methods, tools, algorithms, data sources. The studies explores the motivation behind exploring such alternatives, how alternatives help with sense making process, high-level process of alternatives and how practitioners generate, explore and manage such alternatives.
+% DONE liu2019understanding: semi-structed interview study (n=12) with data workers with various expertise and domain knowledge. Paper wants to understand the process behind exploring "alternatives": different hypothesis, visual design, methods, tools, algorithms, data sources. The studies explores the motivation behind exploring such alternatives, how alternatives help with sense making process, high-level process of alternatives and how practitioners generate, explore and manage such alternatives.
 
+computational notebooks have been widely adopted by the data science and machine learning community for developing ML models. Unlike traditional software, ML enabled systems evolve through change in not only the code base, but also the complexity of the model and the underlying training data.
+
+Naturally, research is active in understanding the process of developing using notebooks. Prior work has looked into best practices
 \subsection{Visualisations and Machine Learning}\label{sec:visualisations}
 
 % TODO bavishi2021vizsmith: paper presents VizSmith, an automatic
@@ -175,6 +190,18 @@ Testing ML systems is a highly interactive process which demands a human-in-the-
 \subsection{Technical Background}\label{sec:background}
 \subsubsection{Internal Structure of Jupyter Notebooks}\ref{sec:nbformat}
 % TODO we need to explain the json structure of jupyter notebooks, we reference this in the methodology to explain the github query.
+
+\lstinputlisting[]{nbformat.json}
+\captionof{lstlisting}{Internal JSON structure of Jupyter Notebooks.}
+\label{lst:nbformat}
+
+The data comprised within Jupyter Notebooks is stored in the JSON format, and thus can be parsed programmatically. Listing~\ref{lst:nbformat} shows the internal json structure of Jupyter Notebooks, adopted from the official nbformat website.~\footnote{https://nbformat.readthedocs.io/en/latest/index.html}. For simplicity, we only show the parts that are relevant for this study.
+
+Notebooks contain four top level keys namely \texttt{metadata}, \texttt{nbformat}, \texttt{nbformat\_minor} and \texttt{cells}. The \texttt{matadata} key consists of additional information regarding the notebook such as the kernel and programming language. \texttt{nbformat} and \texttt{nbformat\_minor} contain the version of nbformat used in the notebook. The \texttt{cells} key consists of a list of all cells within the notebook.
+
+Listing~\ref{lst:nbformat} presents three examples of cells. Each cell is represented as a dictionary with the \texttt{cell\_type}, \texttt{metadata} and \texttt{source} keys. Cells can be of three types: "markdown", "code" or "raw". The contents of each cell can be found within the \texttt{source} key, as a list of strings.
+
+The output generated by a code cell is stored within the \texttt{outputs} key. Static visualisations are stored as base64 encoded png images under the \texttt{"image/png"} key, which is nested within the \texttt{data} key inside \texttt{outputs}. Since a cell can generate multiple outputs, the \texttt{outputs} key is a list.
 
 \subsubsection{Pre and Post-Condition Checks}\ref{sec:pre-post-cond}
 % TODO explain and give examples of what we mean by pre/post-condition checks with examples
@@ -415,9 +442,10 @@ assertion pairs as supplemental material.
 
 % TODO try using captionof for the listing as well, so that the caption for the listing and figure align at the bottom
 \begin{minipage}{0.5\textwidth}
-  \begin{lstlisting}[language=Python, caption=Assertion on the accuracy of the ML model.]
+  \begin{lstlisting}[language=Python]
 assert accuracy_score(y_test, pred) > 0.95
   \end{lstlisting}
+  \captionof{lstlisting}{Assertion on the accuracy of the ML model.}
   \label{lst:svm}
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
