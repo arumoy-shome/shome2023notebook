@@ -100,92 +100,28 @@ Testing ML systems is a highly interactive process which demands a human-in-the-
 \subsection{Computational Notebooks and Software
   Engineering}\label{sec:notebooks}
 
-% NOTE maybe this should be about jupyter notebook mining and work
-% done? Then we can say that these are the only two publicly available
-% datasets with notebooks; and the challenges we faced when trying to
-% use them!
+%% UNDERSTANDING PAIN POINTS:
+Computational notebooks have been ubiquitously adopted by the machine learning community for developing ML enabled systems. Although originally intended to promote reproducible software, computational notebooks are far from being reproducible due to lack of software engineering best practices such as separation of concern, testing and versioning~\cite{pimentel2019large, CITME}. Prior studies have been conducted using human participants to gain a deeper understanding of the challenges faced by ML practitioners when developing ML enabled software in notebooks. The studies find that ML practitioners work in a highly iterative fashion, often experimenting with multiple strategies to analyse the data or produce meaninful visualisations. The findings from these studies can be used as guidelines for improving existing notebook technologies or designing new ones~\cite{kandel2012enterprise, kery2018story, liu2019understanding, chattopadhyay2020wrong}.
 
-% TODO review Kastner's bib, he also has a section dedicated to prior
-% work done using notebooks!
-
-% TODO we need to defend why we did not use kgtorrent dataset for our analysis. We can say that we performed analysis on random samples of notebooks from kaggle and did not find that many interesting examples?
-
-% TODO some form of introduction to the notion of computational notebooks; literal programming?
-
-Computational notebooks have been ubiquitously adopted by the machine learning community for developing ML enabled systems. Although originally intended to promote reproducible software, computational notebooks are infamous for the exact opposite since they do not follow software engineering best practices.
-
-The process of understanding and cleaning the underlying training data---commonly referred to as "data wrangling"---tends to dominate the ML development workflow~\cite{CITME}. Data wrangling is high iterative. Practitioners often explore several hypotheses, visual designs, methods, tools, algorithms and data sources to arrive at the final implementation. Studies have been conducted to understand how practitioners generate, evaluate and manage such alternatives. ~\cite{liu2019understanding,kandel2012enterprise}.
-
-Developing software in computational notebooks introduces a new paradigm for writing code. In addition to code, notebooks also contain additional information in the form of natural language text and images. To better understand the process of working within computational notebooks and the challenges faced along the way, studies with human subjects have been conducted\cite{head2019managing}.
-
-
- ML practitioners often experiment with several versions of code to implement the same functionality. Prior work has explored how practitioners manage the different versions of code and the challenges that they face along the way.
-
-\citeauthor{quaranta2021kgtorrent} mine Kaggle~\footnote{https://kaggle.com} and present \textit{KGTorrent}, a public dataset consisting of approximately 2.5 million Jupyter notebooks written in Python. The dataset also contains a relational database dump of metadata regarding publicly available notebooks on Kaggle. The KGTorrent dataset is publicly available on Zenodo, in the form of a 81TB compressed file.
-
-
-% TODO yang2021subtle: data scientists spend most of their time preparing the data ('data wrangling'). Authors propose WrangleDoc, a tool that automatically generates documentation of data wrangling code and what effect it has on the data. They integrate their tool with JupyterLab and evaluate using 100 notebooks from Kaggle and also with practitioners.
+% sense-making; data wrangling
+The process of understanding and cleaning the underlying training data---commonly referred to as "data wrangling"---tends to dominate the ML development workflow~\cite{CITME}. Practitioners often explore several hypotheses, visual designs, methods, tools, algorithms and data sources to arrive at the final implementation. Studies have been conducted to understand how practitioners generate, evaluate and manage such alternatives. ~\cite{liu2019understanding,kandel2012enterprise}.
 
 % code quality; reproducibility; best practices...
-\citeauthor{pimentel2019large} mine 1.4 million notebooks from Github to conduct an empirical study on the good and bad coding practices when developing software using computational notebooks. The authors also make their dataset of notebooks publicly available on Zenodo~\footnote{https://zenodo.org/record/2592524}. Computational notebooks were originally designed to promote sharing reproducible research since they allow presenting information by interweaving natural text, code and other multimedia such as tables, images and videos. However, the authors discover that Jupyter notebooks are far from being reproducible due to bad coding practices such as lack of separation of concern, testing and versioning.
+In an attempt to improve the reproducibility of computational notebooks, large-scale empirical studies have been conducted. \citeauthor{pimentel2019large} mine 1.4 million notebooks from Github to conduct an empirical study on the good and bad coding practices when developing software using computational notebooks. The authors also make their dataset of notebooks publicly available on Zenodo~\footnote{https://zenodo.org/record/2592524}. 
+\citeauthor{psallidas2019data} conducts a large-scale empirical analysis of six million python notebooks from Github, two million enterprise data science pipelines obtained from an anonymous company and source code and metadata from over 900 releases of 12 important data science libraries. The authors provide a bird-eye view into the evolving landscape of computational notebooks. Their findings can be used by system builders for improving data science tools and also by data science practitioners to understand the current trends and what technologies they should focus on. To enable future research on computational notebooks, \citeauthor{quaranta2021kgtorrent} mine Kaggle~\footnote{https://kaggle.com} and present \textit{KGTorrent}, a public dataset consisting of approximately 2.5 million Jupyter notebooks written in Python. The dataset also contains a relational database dump of metadata regarding publicly available notebooks on Kaggle. The KGTorrent dataset is publicly available on Zenodo~\footnote{https://zenodo.org/record/4468523}.
 
-% TODO psallidas2019data: paper conducts a super massive empirical study: 6M python notebooks from github, 2M enterprise DS pipelines (anonymous company name), source code and metadata from 900+ releases 12 important DS libraries. Paper provides high-level guidelines on what technologies DS practitioners should focus and what system builders should focus on to serve practitioners better.
+%% TOOLS for working with notebooks:
+Several tools have been proposed in the literature to aid ML practitioners when working with computational notebooks. \citeauthor{yang2021subtle} propose \textit{WrangleDoc}, a tool to automatically generate documentation of data wrangling code. Given a snippet of data wrangling code as input, WrangleDoc can explain what effect it has on the data. Since ML development is highly iterative, notebooks become messy over time and accumulate duplicate versions of code. \citeauthor{head2019managing} propose a code gathering tool that allows practitioners to review and keep the relevant version of code. \citeauthor{bavishi2021vizsmith} proposes \textit{VizSmith}, an automatic data visualisation framework. Given as input a pandas dataframe and a list of columns the user wishes to visualise, the tool can automatically produce visualisations of the specified columns.
 
-% TODO head2019managing: notebooks do not follow best practices. authors typically work in an iterative fashion, often experimenting with different versions of code to analyse data and produce meaningful visualisations. This leads to duplicates and messy notebooks. The paper presents a code gathering tool that allows notebook authors to review various versions and only keep the relevant version. Paper performs qualitative usability study using 12 participants.
-
-% TODO kery2018story: study with 21 participants on coding practices when working in notebooks. Authors observe that practitioners often have multiple versions that lead to problems and reduced readability. Participants typically create narative through order of cells rather than with the use of markdown cells. Paper then conducts survey with 45 data scientists and provides design guidelines for future literate programming tools.
-
-% TODO chattopadhyay2020wrong: semi-structed interviews (n=20) and survey (n=156) to understand pain points when working with notebooks. Guidelines on design of computational notebooks.
-
-
-% DONE kandel2012enterprise: semi-structured interview study (n=35) with data analysts from 25 organizations across diverse sectors. Relationship between data analysis and how oganizational features of enterprise affect it. Recurring painpoints, open challenges and guidelines for building better visual analysis research.
-
-% DONE liu2019understanding: semi-structed interview study (n=12) with data workers with various expertise and domain knowledge. Paper wants to understand the process behind exploring "alternatives": different hypothesis, visual design, methods, tools, algorithms, data sources. The studies explores the motivation behind exploring such alternatives, how alternatives help with sense making process, high-level process of alternatives and how practitioners generate, explore and manage such alternatives.
-
-computational notebooks have been widely adopted by the data science and machine learning community for developing ML models. Unlike traditional software, ML enabled systems evolve through change in not only the code base, but also the complexity of the model and the underlying training data.
-
-Naturally, research is active in understanding the process of developing using notebooks. Prior work has looked into best practices
 \subsection{Visualisations and Machine Learning}\label{sec:visualisations}
 
-% TODO bavishi2021vizsmith: paper presents VizSmith, an automatic
-% data visualisation framework that accepts data in the form of pandas
-% dataframe along with a list of columns the user wishes to visualise.
-% The tool then automatically produces visualisations for the
-% specified columns.
+% NOTE I think the literature in this section is irrelevant to our study...
 
-% TODO amershi2015modeltracker: model building is a cognitively
-% disruptive step; practitioners are required to iterate between model
-% building and error analysis. Paper presents ModelTracker, a
-% visualisation tool that presents all the information in traditional
-% summary statistics along with the performance of the model. Tool
-% validated with users who used the tool for 6 months in a production
-% setting.
+As ML slowly augment into software systems in safety-critical domains, emphasis has been put into explainability of ML models. ML models and the underlying data is complex and multi-dimensional. Naturally, visual analytics has been widely adopted by the ML community to aid in understanding the nature of the data and the internal workings of an ML model. Prior studies have been conducted to understand how visual analytics techniques are currently being used in ML. \citeauthor{yuan2021survey} conduct a systematic review of 259 papers and propose a taxonomy of visual analytics techniques for ML. \citeauthor{hohman2019visual} conduct a survey of visual analytics techniques for Deep Learning Models. The findings of the study indicate that visual analytics has been widely adopted in ML for model explanation, interpretation, debugging and improvement.
 
-% TODO gortler2022neo: Research with ML practitioners at Apple and
-% identify traditional confusion matrix does not support complex data
-% structures that are prevalent today. Paper proposes Neo, an
-% interactive and multi-output confusion matrix.
+In particular, several tools have been proposed by the visual analytics research community to aid practitioners in understanding how their ML models operate. \citeauthor{wexler2020if} propose the \textit{What-If} tool, which allows users to visually analyse and verify their hypotheses regarding the training data and how the model works. With a trained model and a sample dataset as input, the What-If tool allows users to produce counterfactual reasoning, investigate the decision boundaries of the model and how the model predictions are affected by change in data. \citeauthor{ahn2023escape} propose \textit{ESCAPE}, a visual analytics tool that allows users to identify systemmatic errors in ML enabled systems. Through a human-in-the-loop approach, the tool helps identify spurious associations and concept associated misclassifications in the model. To reduce the cognitive load of ML practitioners during model building phase, \citeauthor{amershi2015modeltracker} propose \textit{ModelTracker}. Given a trained model and a sample dataset, ModelTracker presents all the information in traditional summary statistics along with the performance of the model.
 
-% TODO yang2022pattern: Paper conducts study on interaction techniques for Multivariate matrix visualisations.
-
-% TODO wang2023gam: paper proposes GAM COACH, a tool that generates customizable counterfactual explanations for Generalized Additive Models (GAMs). The tools uses interactive visualisations to allow users to iteratively generate algorithmic recourse plans. The tool is qualitatively validated by users(n=41).
-
-% TODO ahn2023escape: paper proposes ESCAPE, a visual analytics tool that allows users to identify systematic errors in AI enabled systems. The tool promotes a human-in-the-loop approach to identify spurious associations and concept associated misclassifications.
-
-% TODO wang2023drava: paper proposes DRAVA, a visual analytics tool to relate human concepts with semantic dimensions extracted by ML models during Disentangled representation learning>. The tool also provides feedback to minimize the mismatches and helps practitioners obtain data insights fron concept-driven exploration. The tool is validated using application scenarios in an experimental setting.
-
-% TODO robertson2023angler: authors propose ANGLER, a visual analytics tools to help practitioners prioritise machine translation model improvements. Tool is validated with machine translation experts (n=7). The tool allows users to validate interesting hypotheses for prioritising model improvements.
-
-% TODO bernard2019visual: paper proposes visual-analytics tool to perform data pre-processing of multi-variate time series data.
-
-% TODO gschwandtner2018know: paper proposes visual analytics technique to perform data profiling of time series data
-
-% TODO yuan2021survey: survey of visual analytics techniques used in ML. Paper proposes taxonomy of visual analytics techniques: before model building, during model building and after model building.
-
-% TODO wexler2020if: paper proposes WHAT-IF tool, a model agnostic, interactive visualisation tool the understanding ML models. The tool allows users to visually analyse and verify their hypothesis regarding the training data and how the model works. The tool requires a trained model and a sample dataset. The tool is integrated with Tensorflow, Jupyter and Collaboratory notebooks. The tool allows conterfactual reasoning, investigate decision boundariesa and investigate how change in data affects the prediction.
-
-% TODO hohman2019visual: survey of visual analytics techniques specifically for deep learning models. Visual analytics has been rapidly used for model explanation, interpretation, debugging and improvement.
-
+Due to the highly pervasive nature of ML, several specialised visual analytics tools have also been proposed. \citeauthor{wang2023gam} propose \textit{GAM Coach}, a visual analytics tool that generates counterfactual explanations for Generalised Additive Models (GAMs). \citeauthor{bernard2019visual} and \citeauthor{gschwandtner2018know} propose specialised visual analytics tools for time-series data. \citeauthor{gortler2022neo} and \citeauthor{yang2022pattern} study and suggest improvements to traditional confusion matrix and multivariate matrix visualisations respectively. \citeauthor{robertson2023angler} propose \textit{Angler}, a visual analytics tool to help practitioners prioritise machine translation model improvements. \citeauthor{wang2023drava} propose \textit{Drava}, a tool to help practitioners relate human concepts with semantic dimensions extracted by ML models during disentangled representation learning.
 
 \subsection{Technical Background}\label{sec:background}
 \subsubsection{Internal Structure of Jupyter Notebooks}\ref{sec:nbformat}
