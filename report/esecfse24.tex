@@ -52,50 +52,39 @@
 % why is this an important problem to solve?
 % what did we do?
 % what did we find?
-Testing ML systems is a highly interactive process which demands a human-in-the-loop approach. In addition to writing tests for the code base, practitioners are required to analyse and interpret several visualisations using their domain expertise to validate if an ML system satisfies the required set of functional and non-functional properties. Visualisations are frequently used to qualitatively assess various parts of an ML pipeline. However, implicit knowledge gained from visualisations must be translated to explicit analytical tests that fail when there is change in any component of the ML pipeline. We conduct an empirical analysis of Jupyter notebooks to catalogue the state-of-the- art mappings between ML visualisations and assertions. We mine Github to collect Jupyter Notebooks that contain assertions written in Python. We develop a novel methodology to identify 1764 notebooks which contain an assertion below a visualisation. We manually analyse the 1.7K notebooks and identify 551 notebooks where at least one pair of visualisation and assertion are semantically related to one another. We further read and understand 90 notebooks in depth to identify 26 qualitative and their corresponding quantitative testing patterns. We showcase five such patterns in this paper and plan to make the entire catalogue publicly available in the near future.
+Testing ML systems is a highly interactive process which demands a human-in-the-loop approach. In addition to writing tests for the code base, practitioners are required to analyse and interpret several visualisations using their domain expertise to validate if an ML system satisfies the required set of functional and non-functional properties. Visualisations are frequently used to qualitatively assess various parts of an ML pipeline. However, implicit knowledge gained from visualisations must be translated to explicit analytical tests that fail when there is change in any component of the ML pipeline. We conduct an empirical analysis of Jupyter notebooks to catalogue the state-of-the-art mappings between ML visualisations and assertions. We mine Github to collect Jupyter Notebooks that contain assertions written in Python. We develop a novel methodology to identify 1764 notebooks which contain an assertion below a visualisation. We manually analyse the 1.7K notebooks and identify 551 notebooks where at least one pair of visualisation and assertion are semantically related to one another. We further read and understand 90 notebooks in depth to identify 26 qualitative and their corresponding quantitative testing patterns. We showcase five such patterns in this paper and plan to make the entire catalogue publicly available in the near future.
 
 \end{abstract}
 
 \maketitle
 
 \section{Introduction}\label{sec:intro}
-% what problem are we trying to solve?
-% what is our motivation here?
+Artificial Intelligence (AI) is here to stay. Recent years show a shift from chasing high correctness of ML models to ensuring that they are safe for application in safety-critical domains such as healthcare, finance and autonomous driving. With the advent of Large Language Models, the power of AI to directly influence the daily lives of humans is growing at a radical pace. As reports of "hallucinated" facts, racist predicts and autonomous car crashes steadily increase, ensuring that ML systems function as they were intended to, takes precedence.
 
-% NOTE our methodology of finding visualisation and assertion that are related is a (pretty good) contribution.
+Visualisations are used throughout the ML development lifecycle. In the early stages of the ML development lifecycle, visualisations are extensively used for make sense of the data and understanding its statistical properties. During the model development phase, visualisations are used to summarise various metrics and summary statistics of the model's performance. Once the model is deployed in production, visualisations are used to continually monitor their performance and trigger a new training cycle once their performance drops below a certain threshold.
+
+The research questions along with the contributions of this paper are as follows.
+\begin{description}
+\item[RQ1.] How frequently do ML practitioners formulate analytical tests from the visualisations they create to test ML systems?
+
+We mine 54K Jupyter notebooks from Github that contain an assertion written in Python. We develop a novel technique to identify 1764 notebooks which an assertion below a visualisation. We manually analyse the 1.7K notebooks and identify 551 notebooks that contain at least one pair of visualisation and assertion that are semantically related to each other.
+
+\item[RQ2.] What are the types of visualisation and assertion pairs typically used by ML practitioners when testing ML systems?
+
+From the 553 notebooks, we further perform an in-depth analyse of 90 notebooks. We identify 26 unique visualisation and assertion pairs. We discuss five such pairs in this paper and plan to release the full catalogue publicly in the near future.
+
+\end{description}
+
+This paper is organised as follows...
 
 \section{Preliminaries}\label{sec:prelim}
+
 \subsection{ML Testing}\label{sec:ml-testing}
-% zhang2020machine
 
-% The emphasis is primarily on image datasets and DNNs, specifically
-% CNNs & RNNs. Almost all papers are vested in the notion of addressing
-% qualitative metrics such as robustness, safety & privacy. Of these 3
-% robustness appears most frequently because it is the easiest to define
-% in terms of quantitative metrics.
+Testing ML enabled software systems poses more challenges compared to their traditional counter part. While traditional software systems mature through change in their codebase, ML enabled systems experience change in the training data and the machine learning model in addition to the codebase. With ML being adopted into safety-critical domains that can affect human lives, ensuring that ML systems are correct, robust to data perturbations and not biased by race, colour and gender is of paramount importance. Existing scientific literature on ML testing broadly focuses on two aspects. First, the functional property of correctness of the model in making predictions for previously unseen data. And the non-functional property of fairness towards humans of different race, colour, gender, sexual orientation and disabilities.
 
-% The two most common domains are safety-critical systems (such as
-% autonomous driving) & neural machine translation (NMT)
-% [ji2021automated, sun2020automatic, he2020structure].
-
-% The proposed testing techniques can be classified into 4
-% categories:
-
-% 1. Improvements over existing test adequacy metrics such as neuron
-%    coverage which was proposed by DeepExplore & DeepGauge
-%    [gerasimou2020importance].
-% 2. Formal verification methods which try to provide formal guarantee
-%    of robustness against adversarial examples [zhu2021deepmemory,
-%    baluta2021scalable].
-% 3. Data augmentation techniques which generate adversarial examples to
-%    be used during training to improve robustness of models. There are
-%    techniques based on fuzzing & seach based software testing
-%    (SBST) [braiek2019deepevolution, gao2020fuzz] and mutation testing
-%    [wang2021robot, zhang2020white].
-% 4. And finally some papers propose adversarial detection during
-%    runtime [xiao2021self, wang2020dissector, wang2019adversarial,
-%    berend2020cats].
-
+% TODO verify that the papers cited are actually on test adequacy metrics
+To test the correctness of ML models, several improvements over existing test adequacy metrics have been proposed. Tools such as \textit{DeepExplore} and \textit{DeepGauge} propose new test adequacy metrics such as neuron coverage adapted for ML enabled software systems~\cite{pei2017deepexplore, ma2018deepgauge, gerasimou2020importance}. Formal verification methods have also been proposed that try to provide formal guarantee of robustness against adversarial examples. Such methods however are only feasible for statistical ML models and become computationally expensive for more complex models such as deep neural networks~\cite{zhu2021deepmemory, baluta2021scalable}. Several works have been conducted on generating and detecting adversarial inputs for ML models. Data augmentation techniques based on fuzzing, search based software testing and mutation testing have been proposed to generate adversarial examples that can be used during model training to improve its robustness~\cite{braiek2019deepevolution, gao2020fuzz, wang2021robot, zhang2020white}. It is however not possible to include all variations and types of adversarial examples into the training data. Thus several methods have also been proposed to detect adversarial inputs during runtime~\cite{xiao2021self, wang2020dissector, wang2019adversarial, berend2020cats}.
 
 \subsection{Computational Notebooks and Software
   Engineering}\label{sec:notebooks}
@@ -124,7 +113,7 @@ In particular, several tools have been proposed by the visual analytics research
 Due to the highly pervasive nature of ML, several specialised visual analytics tools have also been proposed. \citeauthor{wang2023gam} propose \textit{GAM Coach}, a visual analytics tool that generates counterfactual explanations for Generalised Additive Models (GAMs). \citeauthor{bernard2019visual} and \citeauthor{gschwandtner2018know} propose specialised visual analytics tools for time-series data. \citeauthor{gortler2022neo} and \citeauthor{yang2022pattern} study and suggest improvements to traditional confusion matrix and multivariate matrix visualisations respectively. \citeauthor{robertson2023angler} propose \textit{Angler}, a visual analytics tool to help practitioners prioritise machine translation model improvements. \citeauthor{wang2023drava} propose \textit{Drava}, a tool to help practitioners relate human concepts with semantic dimensions extracted by ML models during disentangled representation learning.
 
 \subsection{Technical Background}\label{sec:background}
-\subsubsection{Internal Structure of Jupyter Notebooks}\ref{sec:nbformat}
+\subsubsection{Internal Structure of Jupyter Notebooks}\label{sec:nbformat}
 % TODO we need to explain the json structure of jupyter notebooks, we reference this in the methodology to explain the github query.
 
 \lstinputlisting[]{nbformat.json}
@@ -145,34 +134,14 @@ The output generated by a code cell is stored within the \texttt{outputs} key. S
 % TODO contrast this to the type of tests we are actually looking for! Why are pre/post conditions not valuable to look at?
 
 \section{Methodology}\label{sec:method}
-% TODO is there a scientific term in SE research to explain reading code in detail?
-% NOTE we looked for semantic similarity between the visualisation and assertion code
+This section presents the methodology used to conduct the empirical study introduced in Section~\ref{sec:intro}. Figure~\ref{fig:method} presents an overview of all relevant steps used in this study. The empirical analysis comprises of three distinct phases namely: \textit{the data collection phase}, \textit{identification of related visualisation and assertion pairs} and finally a \textit{complete analysis of the notebooks} to identify the final set of 26 visualisation and assertion pairs.
 
-This section presents the methodology used to conduct the empirical
-study presented in Section~\ref{sec:intro}. Figure~\ref{fig:method}
-presents an overview of all relevant steps used in this study. The
-empirical analysis comprises of three distinct phases namely:
-\textit{the data collection phase}, \textit{identification of related
-visualisation and assertion pairs} and finally a \textit{complete
-analysis of the notebooks} to identify the final set of 29
-visualisation and assertion pairs.
+The yellow boxes in the data collection phase represent filters that were applied to the initial corpus of 54K notebooks, to obtain the final sample size of 1.7K notebooks used in the empirical study. The red boxes represent the exclusion criteria used during phase two to remove notebooks note relevant for this study. Finally, the green boxes in phase 3 represent the manual analysis conducted to identify the final 26 visualisation and assertion pairs.
 
-The yellow boxes in the data collection phase represent filters that
-were applied to the 54K notebooks obtained from Gihub, to obtain the
-final sample size of 1.7K notebooks used in the empirical study. The red
-boxes represent the exclusion criteria used during phase two to remove
-notebooks note relevant for this study. Finally, the green boxes in
-phase 3 represent the manual analysis conducted to identify the final 29
-visualisation and assertion pairs.
-
-Boxes appearning next to one-another imply that they were applied
-using an "OR" operator. While boxes appearning below one-another imply
-an "AND" operator. Text in double quotes represent the string pattern
-used in the search query.
+Boxes appearning next to one-another imply that they were applied using an "OR" operator. While boxes appearning below one-another imply an "AND" operator. Text in double quotes represent the string pattern used in the search query.
 
 More details regarding each phase of the methodology is presented below.
 
-% TODO update the numbers
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{method.pdf}
@@ -183,77 +152,24 @@ More details regarding each phase of the methodology is presented below.
 
 \subsection{Data Collection}\label{sec:data-collect}
 
-We mined public repositories from Github to collect Jupyter
-notebooks---files with the \texttt{.ipynb} extension---that contain
-the keyword ``assert'' in them.
+We mined public repositories from Github to collect Jupyter notebooks that contain the keyword ``assert'' in them. We intentionally keep the search criteria on Github broad by only checking for the appropriate filetype and the presence of the ``assert'' keyword. This is because, the ``assert'' keyword is used in python to define tests. Additionally, popular python libraries which provide a testing interface (such as nose, unittest and numpy), contain the same keyword in their API. Our search criteria captures a large initial sample of $54,070$ notebooks with a variety of testing statements. Our approach also prevents the need to craft a custom search query based on an exhaustive list of keywords that appear in all python testing libraries.
 
-% TODO is it clear what I am trying to say here?
-% FIXME is "testing statement" the right terminology?
+We use the Github advanced search syntax~\footnote{REFME} to isolate Jupyter Notebook. This translates to the following Github search query: \texttt{filename:"Jupyter Notebooks"}. Additionally, we include the ``assert'' keyword in the search query with an \texttt{AND} operator. The final search query is as follows: \texttt{filename:"Jupyter Notebooks" AND "assert"}.
 
-We intentionally keep the search criteria on Github broad by only
-checking for the appropriate filetype and the presence of the
-``assert'' keyword. This is because, the ``assert'' keyword is used in
-python to define tests. Additionally, popular python libraries which
-provide a testing interface (such as nose, unittest and numpy),
-contain the same keyword in their API. Thus, our search criteria
-captures a large initial sample of $54,070$ notebooks with a variety
-of testing statements. Our approach also prevents the need to craft a
-custom search query based on an exhaustive list of keywords that
-appear in all python testing libraries.
+The above search query results in approximately 54K notebooks. To further reduce the sample size, we exclude notebooks that do not use popular ML libraries. We perform a string search to identify notebooks that import at least one of the ML libraries. The string patterns are derived from the python module name used in the import statements. The regex search query is as follows: \texttt{tensorflow|dask|torch|sklearn|scipy|numpy|pandas}.
 
-\begin{table}
+We programmatically parse the JSON structure of the notebooks and represent each notebook as a pandas dataframe for further analysis. We map each cell as a row in the dataframe. For each cell, we store the \texttt{cell\_type}, the \texttt{source} of the cell and the base64 encoded PNG string, into the corresponding columns of the dataframe. We exclude notebooks that do not contain any visualisations by checking if the image column of the dataframe is empty. The internal structure of Jupyter notebooks is presented in Section~\ref{sec:nbformat}.
+
+\begin{figure}
   \centering
-  \caption{Filters used during data collection phase.}
-  \begin{tabular}{l p{0.4\textwidth} p{0.4\textwidth}}
-    \toprule
-    \textbf{ID} &
-    \textbf{Filter} &
-    \textbf{Rationale}\\
-    \midrule
-    \emph{\textbf{F1}} &
-    Files with extension \texttt{.ipynb} &
-    This translates to the following Github search query:
-    \texttt{filename:"Jupyter Notebook"}.\\
-    \emph{\textbf{F2}} &
-    Notebooks with \texttt{"assert"} keyword &
-    \texttt{"assert"} is used in python to define tests. Additionally,
-    it also appears in other python libraries which provide their own
-    testing interface.\\
-    \emph{\textbf{F2}} &
-    Notebooks with popular data science or machine learning libraries &
-    The list of python libraries is derived by performing a web search
-    along with the author's prior knowledge and expertise in ML. We
-    combine the patterns using an \texttt{"OR"} operator. The final
-    regex pattern is the following:
-    \texttt{"tensorflow"|"dask"|"torch"|"sklearn"
-    |"scipy"|"numpy"|"pandas"}.\\
-    \emph{\textbf{F3}} &
-    Notebooks that contain visualisations &
-    Section~\ref{sec:nbformat} describes the internal son structure
-    of Jupyter notebooks. Visualisations are stored as binary strings
-    under the \texttt{"image/png"} field.\\
-    \emph{\textbf{F4}} &
-    Notebooks where the assertion appears below the visualisation &
-    The code cell containing the assertion must be defined below the
-    cell that produces the visualisation. Any number of markdown cells
-    may appear between the visualisation and assertion cells. See
-    Section~\ref{sec:cell-arrangement} for detailed explanation.\\
-    \emph{\textbf{F5}} &
-    Notebooks where the assertion cell is not longer than 10 lines &
-    The code cell containing the assertion should not be longer than
-    10 lines. The threshold for max lines was derived based on our
-    observations from a random sample of 50 notebooks. See
-    Section~\ref{sec:cell-arrangement} for detailed explanation.\\
-    \bottomrule
-  \end{tabular}
-  \label{tab:filters}
-\end{table}
+  \includegraphics[width=\textwidth]{nb-structure.pdf}
+  \caption{Arrangement of code cells containing assertion and
+    visualisation.}
+  \label{fig:cell-arrangement}
+\end{figure}
 
-Table~\ref{tab:filters} summarises the filters used during the data
-collection phase to obtain the final sample of 1.7K notebooks from the
-initial sample of 54K notebooks mined from Github. The table provides
-a short description of the filter along with our rationale for using
-them.
+For RQ1, we are interested in finding empirical evidence of visualisations and corresponding assertions used in the wild. To answer this question, we further reduce our notebook sample size by assuming a specific order in which the visualisation and assertion code cells appear in the notebooks. Figure~\ref{fig:cell-arrangement} presents a visual representation of various arrangements of code cells that may occur in notebooks. Note that the visual representation omits markdown cells since we only consider the order of code cells in our analysis. In the actual notebook however, one or more markdown cells may be present between the visualisation and assertion cells.
+
 
 % TODO don't mention quantity of random sample; then we need to explain/defend this choice
 We used an iterative approach to determine the effectiveness of each
@@ -265,17 +181,6 @@ presented in Section~\ref{REFME} and observe the number of related
 visualisation and assertion pairs. In each new iteration, we
 progressively add the other filters and include the filter if the
 number of relevant visualisation and assertion pairs increases.
-
-% TODO maybe use colors from red-green to denote arrangements that produced better results? (instead of binary)
-\begin{figure}
-  \centering
-  \includegraphics[width=\textwidth]{nb-structure.pdf}
-  \caption{Arrangement of code cells containing assertion and
-    visualisation.}
-  \label{fig:cell-arrangement}
-\end{figure}
-
-For RQ1, we are interested in finding empirical evidence of visualisations and corresponding assertions used in the wild. To answer this question, we further reduce our notebook sample size by assuming a specific order in which the visualisation and assertion code cells appear in the notebooks. Figure~\ref{fig:cell-arrangement} presents a visual representation of various arrangements of code cells that may occur in notebooks. Note that the visual representation omits markdown cells since we only consider the order of code cells in our analysis. In the actual notebook however, one or more markdown cells may be present between the visualisation and assertion cells.
 
 As explained above, the selected arrangement of code cells was discovered by qualitatively analysing a random sample of notebooks with the code cell arrangements presented in Figure~\ref{fig:cell-arrangement}. We observed the signal-to-noise ratio for each cell arrangement. And picked the arrangement with the least signal-to-noise ratio. Table~\ref{tab:cell-arrangement} summarises our observations from the various cell arrangements.
 
