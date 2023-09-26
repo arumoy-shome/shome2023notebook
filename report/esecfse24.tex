@@ -24,18 +24,29 @@
 %% of the event, and this ID should be used as the parameter to this command.
 %%\acmSubmissionID{123-A56-BU3}
 
+\usepackage{xcolor}
 \usepackage{listings}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\definecolor{backcolor}{rgb}{0.95,0.95,0.92}
 
 \lstdefinestyle{mystyle}{
   basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{blue},
+  stringstyle=\color{red},
+  commentstyle=\color{green},
   breakatwhitespace=true,
   breaklines=true,
   keepspaces=true,
   showspaces=false,
   showstringspaces=false,
   showtabs=false,
-  tabsize=2,
-  captionpos=b
+  tabsize=4,
+  captionpos=b,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  backgroundcolor=\color{backcolor},
 }
 \lstset{style=mystyle}
 \usepackage{graphicx}
@@ -271,98 +282,86 @@ This study identified 26 patterns of testing using visualisation and assertion. 
 
 \subsection{Decision boundary}\label{sec:svm}
 
-\begin{minipage}{0.5\textwidth}
-  \begin{lstlisting}[language=Python]
-assert accuracy_score(y_test, pred) > 0.95
-  \end{lstlisting}
-  \captionof{lstlisting}{Assertion on the accuracy of the ML model.}
-  \label{lst:svm}
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
-  \includegraphics[width=\linewidth]{../catalogue/select-04-linear.png}
-  \captionof{figure}{Visualisation of the decision boundary of a SVM with a linear kernel.}
+% NOTE something about how the visualisation helps with interpretability of how the model is classifying the data?
 
-  \includegraphics[width=\linewidth]{../catalogue/select-04-rbf.png}
-  \captionof{figure}{Visualisation of the decision boundary of a SVM with a RBF kernel.}
+% NOTE the author is using the visualisation to iteratively check/test how different kernels perform on the data; can also use it for hyper-parameter tuning?
+
+% NOTE: visualisation can provide qualitative assessment of under/overfitting
+
+% NOTE: better assertion: perhaps on the support vectors?
+
+\begin{figure}
+  \subcaptionbox{Visualisation of the decision boundary of a SVM with a linear kernel.\label{fig:svm-linear}}{\includegraphics[width=0.45\linewidth]{../catalogue/select-04-linear.png}}
+  \hfill
+  \subcaptionbox{Visualisation of the decision boundary of a SVM with a RBF kernel.\label{fig:svm-rbf}}{\includegraphics[width=0.45\linewidth]{../catalogue/select-04-rbf.png}}
+  \caption{Visualisation of the decision boundary of a SVM trained using different kernels.}
   \label{fig:svm}
-\end{minipage}
+\end{figure}
 
-Figures~\ref{fig:svm} presents visualisations obtained from a notebook that performs binary classification using Support Vector Machines (SVM). The model is trained on the \texttt{make\_circles}~\footnote{REFME} dataset obtained from scikit-learn~\footnote{REFME}. The visualisations show the two classes present in the training set, and the decision boundary of the model when trained first using a linear kernel and later with a RBF kernel. Listing~\ref{lst:svm} shows the corresponding assertion that was defined below the visualisations presented in Figure~\ref{fig:svm}. The assertion checks if the model accuracy is above a threshold specified by the author of the notebook.
+\begin{lstlisting}[language=Python]
+assert accuracy_score(y_test, pred) > 0.95
+\end{lstlisting}
+\captionof{lstlisting}{Assertion on the accuracy of the ML model.}\label{lst:svm}
 
+Figures~\ref{fig:svm} presents visualisations obtained from a notebook that performs binary classification using Support Vector Machines (SVM). The model is trained on the \texttt{make\_circles}~\footnote{REFME} dataset obtained from scikit-learn~\footnote{REFME}. The visualisations show the two classes present in the training set, and the decision boundary of the model when trained first using a linear kernel (Figure~\ref{fig:svm-linear}) and later with a RBF kernel (Figure~\ref{fig:svm-rbf}). Listing~\ref{lst:svm} shows the corresponding assertion that was defined below the visualisations. The assertion checks if the model accuracy is above a threshold specified by the author of the notebook.
 
-% NOTE it seems wrong that the visualisation is on the training set but the assertion is on the test set; but at the same time, it does seem "natural" to visualise the training set and calculate accuracy on the test set?
+Visualising the decision boundary of a SVM provides a visual understanding of how the model is performing for a given dataset. Mis-classified examples can be seen on the wrong side of the decision boundary. The visualisation can also be used to check if the model is overfitting or underfitting the data. For instance, in Figure~\ref{fig:svm-linear} we observe that the model is underfitting since a linear kernel too simply for the underlying data.
 
 \subsection{Input Image, \texttt{predict\_proba}}
 
-\begin{minipage}{0.5\textwidth}
+\begin{figure}
+  \subcaptionbox{Random input image of a football from the test set.\label{fig:football}}{\includegraphics[width=0.45\linewidth]{../catalogue/select-35a.png}}
+  \hfill
+  \subcaptionbox{Random input image of tennis balls from the test set.\label{fig:tennisball}}{\includegraphics[width=0.45\linewidth]{../catalogue/select-35b.png}}
+  \caption{Visualisation of random input images for a pre-trained image classifier.}
+  \label{fig:balls}
+\end{figure}
+
+\begin{minipage}{0.45\textwidth}
   \begin{lstlisting}[language=Python]
 np.testing.assert_almost_equal(pred_proba, 2.0355723e-05, decimal=3)
   \end{lstlisting}
   \captionof{lstlisting}{Assertion to check if the probability estimate of the model is close to the specified value. The input image is of a football. Since the model is trained to detect tennis balls, the specified value is very small.}
   \label{lst:football}
 \end{minipage}
-\begin{minipage}{0.5\textwidth}
-  \includegraphics[width=\linewidth]{../catalogue/select-35a.png}
-  \captionof{figure}{Random Input image of a football from the test set.}
-  \label{fig:football}
-\end{minipage}
-
-Figures~\ref{fig:football} and~\ref{fig:tennisball} are obtained from a notebook that uses a pre-trained image classifier from GluonCV library~\footnote{https://cv.gluon.ai}, to identify images that contain tennis balls.The visualisations are of two random input images, one from each class in the dataset. Listing~\ref{lst:football} presents the assertion related to Figure~\ref{fig:football}. The assertion checks if the probability estimate of the model for the given input image, is close to the specified value with a precision of up to three decimal places. Since the model is trained to detect tennis ball, and the input image contains a footbal, the specified probability estimate is very low. In contrast, Listing~\ref{lst:tennisball} specifies a much higher probability estimate since the input image contains tennis balls.
-
-% NOTE when working with images, we tend to see that the input image is visualised (so human can manually validate), something to do with expensive labelling?
-% NOTE is this a good pattern? this test does not generalise across all possible input images?
-
-\begin{minipage}{0.5\textwidth}
+\hfill
+\begin{minipage}{0.45\textwidth}
   \begin{lstlisting}[language=Python]
 np.testing.assert_almost_equal(pred_proba, 0.9988895, decimal=3)
   \end{lstlisting}
   \captionof{lstlisting}{Assertion to check if the probability estimate of the model is close to the specified value. Compared to Figure~\ref{fig:football}, the specified value is much higher, since the input image is of tennis balls.}
   \label{lst:tennisball}
 \end{minipage}
-\begin{minipage}{0.5\textwidth}
-  \includegraphics[width=\linewidth]{../catalogue/select-35b.png}
-  \captionof{figure}{Random input image of tennis balls from the test set.}
-  \label{fig:tennisball}
-\end{minipage}
 
-\subsection{Training loss}
+Figure~\ref{fig:balls} presents visualisations obtained from a notebook that uses a pre-trained image classifier from GluonCV library~\footnote{https://cv.gluon.ai}, to identify images that contain tennis balls.The visualisations are of two random input images, one from each class in the dataset. Listing~\ref{lst:football} presents the assertion related to Figure~\ref{fig:football}. The assertion checks if the probability estimate of the model for the given input image, is close to the specified value with a precision of up to three decimal places. Since the model is trained to detect tennis ball, and the input image contains a footbal, the specified probability estimate is very low. In contrast, Listing~\ref{lst:tennisball} specifies a much higher probability estimate since the input image contains tennis balls.
 
-% TODO this is also a condition0 example, the NB was flagged for another viz,assert pair that is not relevant to us. How do we handle this? Because this is a really nice example to have!
-Figure~\ref{fig:loss-relaxed} shows the loss of a Recurrent Neural Network (RNN) over the trainin epochs. The visualisation was obtained from a notebook that trains an RNN to generate human names.
+The above testing technique can be used to spot-check a few hand-picked examples of edge cases or adversarial examples which the model may find difficult to classify. The technique can also be generalized by constructing a large dataset containing all the edge cases that the develop may wish to check. And the assertion can be called on the probability estimate for image.
 
-\begin{minipage}{0.5\textwidth}
+% NOTE when working with images, we tend to see that the input image is visualised (so human can manually validate), something to do with expensive labelling?
+% NOTE is this a good pattern? this test does not generalise across all possible input images?
+
+\subsection{Normality}\label{sec:normal}
+
+\begin{minipage}{0.45\textwidth}
   \begin{lstlisting}[language=Python]
-assert np.mean(history[:10]) >np.mean(history[-10:]), "RNN didn't converge"
+for feature in range(data_transformed.shape[1]):
+  assert kstest(data_transformed[:, feature], 'norm').statistic < 1e-2
   \end{lstlisting}
-  \captionof{lstlisting}{Assertion to check that the mean of first 10 observations of training loss is higher than the mean of last 10 observations. In other words, the assertion checks that the loss decreased after training and the model converged to an optimal minima.}
-  \label{lst:loss-relaxed}
+  \captionof{lstlisting}{Assertion to check that each feature in a dataset is normal. The distribution of each feature is compared to that of a normal distribution using the Kolmogorov-Smirnov test for goodness of fit from the scipy library.}
+  \label{lst:kstest}
 \end{minipage}
-\begin{minipage}{0.5\textwidth}
-  \includegraphics[width=\linewidth]{../catalogue/select-12.png}
-  \captionof{figure}{Loss over training epochs of an ML model.}
-  \label{fig:loss-relaxed}
-\end{minipage}
-
-\begin{minipage}{0.5\textwidth}
-  \begin{lstlisting}[language=Python]
-# assert we actually descended at each step
-for i in range(1, n_steps):
-    assert loss_array_true_grad[i] - loss_array_true_grad[i-1]) <= 0
-  \end{lstlisting}
-  \captionof{lstlisting}{Assertion to check that the loss at each iteration $n$ is less than or equal to the loss at $n-1$.}
-  \label{lst:loss-strict}
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
-  \includegraphics[width=\linewidth]{../catalogue/select-267.png}
-  \captionof{figure}{Another example of the same visualisation presented in Figure~\ref{fig:loss-relaxed}. The visualisation shows the training loss of an ML model over time.}
-  \label{fig:loss-strict}
+\hfill
+\begin{minipage}{0.45\textwidth}
+  \includegraphics[width=\linewidth]{../catalogue/select-152a.png}
+  \captionof{figure}{Visualisation of the distribution of a feature from the dataset.}
+  \label{fig:kstest}
 \end{minipage}
 
 \subsection{Coefficient of Determination}
 
 Figure~\ref{fig:r2} shows a visualisation obtained from a notebook that trains a RNN to predict the levels of Nitrogen Dioxide ($NO_2$) in the next 24 hour window. The model is trained using time-series data consisting of historical readings of $NO_2$ and meteorological data such as temparate, humidity, wind speed, and such. The visualisation shows a scatterplot of the real and predicted values of $NO_2$ from the test set. The scatterplot shows a linear relationship between the ground truth and predictions indicating that the model learned something during training. However, the spread of the points is wide indicating that it can be improved with more fine tuning. Listing~\ref{lst:r2} presents the corresponding analytical test which was defined below Figure~\ref{fig:r2}. The Coefficient of Determination ($R^2$) is calculated using the \texttt{r2\_score} method from scikit-learn. The assertion checks that the $R^2$ is higher than a specified threshold.
 
-\begin{minipage}{0.5\textwidth}
+\begin{minipage}{0.45\textwidth}
   \begin{lstlisting}[language=Python]
 r2_gru = r2_score(y_test, y_pred)
 assert r2_gru > 0.6
@@ -370,7 +369,8 @@ assert r2_gru > 0.6
   \captionof{lstlisting}{Assertion to check that the Coefficient of Determination ($R^2$) is higer than the specified threshold.}
   \label{lst:r2}
 \end{minipage}
-\begin{minipage}{0.5\textwidth}
+\hfill
+\begin{minipage}{0.45\textwidth}
   \includegraphics[width=\linewidth]{../catalogue/select-332a.png}
   \captionof{figure}{Scatterplot of the actual and predicted labels of a dataset. The visualisation shows that there is a linear relationship between the true and predicted labels.}
   \label{fig:r2}
@@ -378,7 +378,7 @@ assert r2_gru > 0.6
 
 \subsection{Normalization}
 
-\begin{minipage}{0.5\textwidth}
+\begin{minipage}{0.45\textwidth}
   \begin{lstlisting}[language=Python]
 assert normalized_data[normalized_data.argmax()] < 10
 assert normalized_data[normalized_data.argmin()] > -7
@@ -386,13 +386,15 @@ assert normalized_data[normalized_data.argmin()] > -7
   \captionof{lstlisting}{Assertion to check that the min and max of a feature fall within specified thresholds derived from the visualisation presented in Figure~\ref{fig:normal}.}
   \label{lst:normal}
 \end{minipage}
-\begin{minipage}{0.5\textwidth}
+\hfill
+\begin{minipage}{0.45\textwidth}
   \includegraphics[width=\linewidth]{../catalogue/select-65b.png}
   \captionof{figure}{Histogram showing the distribution of a feature before and after normalisation.}
   \label{fig:normal}
 \end{minipage}
 
 \section{Discussion}\label{sec:discuss}
+
 % NOTE comment on the over-whelming presence of magic thresholds in ML testing! where are authors getting these numbers from? link this to requirements engineering?
 
 % NOTE comment on the anti-patterns in testing that we observe in the 5 patterns presented
@@ -400,6 +402,16 @@ assert normalized_data[normalized_data.argmin()] > -7
 % NOTE link the qualitative and quantitative testing to the ML lifecycle: how some tests will let practitioner know when something changes
 
 % NOTE comment on evolution? we have to look at the entire lifecycle of a visualisation: notebooks are run iteratively?
+
+\subsection{Evolution and Provenance of Visualisations}\label{sec:evolution}
+% NOTE ML development is iterative, visualisations are compared against one another, to qualitatively validate performance/different strategies of model performance? It will be an interesting direction to explore how visualisations evolve?
+
+\subsection{Something about magic thresholds}\label{sec:magic-threshold}
+% NOTE we observe that most analytical test translates to comparing a value against a threshold; this indicates the open challenges in ML testing; either we don't yet know how to translate analytical tests from visualisations or we cannot do this in the first place and we must use a hybrid approach?
+
+\subsection{Warning System}\label{sec:drift}
+% NOTE with the assertions, the implicit expectations are translated to explicit expectations. Which will fail if the expectations are no longer satisfied
+
 \section{Threats to Validity}\label{sec:threats}
 % defend use of github as source for notebooks:
 % - why did kaggle not work (refer to notes)
