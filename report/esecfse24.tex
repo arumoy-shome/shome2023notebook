@@ -284,7 +284,15 @@ The initial sample size of 54K notebooks from Github, was reduced to the final s
 We qualitatively assess the comments made for all notebooks during the analysis conducted in phase two of the study, as described in Section~\ref{sec:identify-related-pairs}. We perform an in-depth analysis of 90 short-listed notebooks to identify unique ML testing tasks. The in-depth analysis was conducted by reading and understanding the entire contents of the notebooks in a top-down order. During the analysis, we note several data points such as the primary objective of the notebook, the type of ML problem, the type of ML model and the type of data. We manually read and comprehend each code cell in the notebooks. When present, we also read the markdown cells above and below code cells to gain further context from the notebook author. For instance, we find that markdown cells above a visualisation cell typically motivates the need for the visualisation. A markdown cell directly below a visualisation often records the observations made by the notebook author from the visualisation.
 
 \section{Results}\label{sec:result}
+
+% TODO move the stuff for RQ1 from methodology here!
+
+% NOTE the 5 pairs is to illustrate the 26 total pairs/approach we found for testing ML systems
+
+% NOTE visual+analytical test is a new "strategy" for testing AI
+
 This study identified 26 patterns of testing using visualisation and assertion. This section highlights five interesting patterns in more detail. We plan to release the entire catalogue of patterns publicly in the near future.
+
 
 \subsection{Decision boundary}\label{sec:svm}
 
@@ -296,6 +304,10 @@ This study identified 26 patterns of testing using visualisation and assertion. 
 
 % NOTE: better assertion: perhaps on the support vectors?
 
+% NOTE assertion created was a single metric (performance): we need tools/guidelines to help practitioners capture what they see in visualisations; community failing to help practitioners what they are visualising
+
+% NOTE assertion is not capturing the whole thing, only assert == we lose a lot of info, we need both
+
 \begin{figure}
   \subcaptionbox{Visualisation of the decision boundary of a SVM with a linear kernel.\label{fig:svm-linear}}{\includegraphics[width=0.45\linewidth]{../catalogue/select-04-linear.png}}
   \hfill
@@ -303,15 +315,20 @@ This study identified 26 patterns of testing using visualisation and assertion. 
   \caption{Visualisation of the decision boundary of a SVM trained using different kernels.}
   \label{fig:svm}
 \end{figure}
-
 \begin{lstlisting}[language=Python]
 assert accuracy_score(y_test, pred) > 0.95
 \end{lstlisting}
 \captionof{lstlisting}{Assertion on the accuracy of the ML model.}\label{lst:svm}
 
-Figures~\ref{fig:svm} presents visualisations obtained from a notebook that performs binary classification using Support Vector Machines (SVM). The model is trained on the \texttt{make\_circles}~\footnote{REFME} dataset obtained from scikit-learn~\footnote{REFME}. The visualisations show the two classes present in the training set, and the decision boundary of the model when trained first using a linear kernel (Figure~\ref{fig:svm-linear}) and later with a RBF kernel (Figure~\ref{fig:svm-rbf}). Listing~\ref{lst:svm} shows the corresponding assertion that was defined below the visualisations. The assertion checks if the model accuracy is above a threshold specified by the author of the notebook.
+Figures~\ref{fig:svm} presents visualisations obtained from a notebook that performs binary classification using Support Vector Machines (SVM). The model is trained on the \texttt{make\_circles}~\footnote{REFME} dataset obtained from scikit-learn~\footnote{REFME}. The visualisations show the two classes present in the training set, and the decision boundary of the model when trained first using a linear kernel (Figure~\ref{fig:svm-linear}) and later with a RBF kernel (Figure~\ref{fig:svm-rbf}).
 
-Visualising the decision boundary of a SVM provides a visual understanding of how the model is performing for a given dataset. Mis-classified examples can be seen on the wrong side of the decision boundary. The visualisation can also be used to check if the model is overfitting or underfitting the data. For instance, in Figure~\ref{fig:svm-linear} we observe that the model is underfitting since a linear kernel too simply for the underlying data.
+% NOTE maybe we need to ellaborate; the linear kernel was above the rbf; based on observations from the linear kernel, the author decides to try the rbf kernel; then after experimenting with hyper-parameters the author puts an assertion that captures the model's performance at that specific point in time.
+
+The visualisations presented in Figure~\ref{fig:svm} contain several useful information that can be used to test and debug ML models. Humans are tuned to recognise visual patterns~\cite{CITEME}. Visualisations in Figure~\ref{fig:svm}, allows ML practitioners to quickly identify mis-classified examples. Additionally, observing the complexity of the decision boundary is a quick way to determine if the model is under or overfitting the data. For instance, in Figure~\ref{fig:svm-linear} we observe that the model is underfitting since a linear kernel too simply for the underlying data. The visualisation also allows ML practitioners to compare different ML models or variants of the same ML model to iteratively find a model that best fits the underlying training data. In this case for instance, the author of the notebook First trained the SVM with a linear kernel. And upon realising that the data is not linearly separable, chose the RBF kernel.
+
+Listing~\ref{lst:svm} shows the corresponding assertion that was defined below the visualisations. The assertion checks if the model accuracy is above a threshold specified by the author of the notebook. The assertion is derived from the observations made from the visualisation in Figure~\ref{fig:svm-rbf}. The visulisation shows that the model is able to classify the data well which is why the notebook author sets the threshold for the accuracy in the assertion to a high value.
+
+The assertion however, is only able to capture the information pertaining to the performance of the model. While the rest of the information that is gained from the qualitative assessment using visualisation is lost.
 
 \subsection{Input Image, \texttt{predict\_proba}}
 
@@ -327,7 +344,7 @@ Visualising the decision boundary of a SVM provides a visual understanding of ho
   \begin{lstlisting}[language=Python]
 np.testing.assert_almost_equal(pred_proba, 2.0355723e-05, decimal=3)
   \end{lstlisting}
-  \captionof{lstlisting}{Assertion to check if the probability estimate of the model is close to the specified value. The input image is of a football. Since the model is trained to detect tennis balls, the specified value is very small.}
+  \captionof{lstlisting}{Assertion below Figure~\ref{fig:football}. It checks if the probability estimate of the model is close to the specified value. The input image is of a football. Since the model is trained to detect tennis balls, the specified value is very small.}
   \label{lst:football}
 \end{minipage}
 \hfill
@@ -335,16 +352,15 @@ np.testing.assert_almost_equal(pred_proba, 2.0355723e-05, decimal=3)
   \begin{lstlisting}[language=Python]
 np.testing.assert_almost_equal(pred_proba, 0.9988895, decimal=3)
   \end{lstlisting}
-  \captionof{lstlisting}{Assertion to check if the probability estimate of the model is close to the specified value. Compared to Figure~\ref{fig:football}, the specified value is much higher, since the input image is of tennis balls.}
+  \captionof{lstlisting}{Assertion below Figure~\ref{fig:tennisball}. Compared to Listing~\ref{lst:football}, the specified value is much higher, since the input image contains tennis balls.}
   \label{lst:tennisball}
 \end{minipage}
 
-Figure~\ref{fig:balls} presents visualisations obtained from a notebook that uses a pre-trained image classifier from GluonCV library~\footnote{https://cv.gluon.ai}, to identify images that contain tennis balls.The visualisations are of two random input images, one from each class in the dataset. Listing~\ref{lst:football} presents the assertion related to Figure~\ref{fig:football}. The assertion checks if the probability estimate of the model for the given input image, is close to the specified value with a precision of up to three decimal places. Since the model is trained to detect tennis ball, and the input image contains a footbal, the specified probability estimate is very low. In contrast, Listing~\ref{lst:tennisball} specifies a much higher probability estimate since the input image contains tennis balls.
+Figure~\ref{fig:balls} presents visualisations obtained from a notebook that uses a pre-trained image classifier from the GluonCV library~\footnote{https://cv.gluon.ai}, to identify images that contain tennis balls. The visualisations are of two random input images, one from each class in the dataset. Listing~\ref{lst:football} presents the assertion related to Figure~\ref{fig:football}. The assertion checks if the probability estimate of the model for the given input image, is close to the specified value with a precision of up to three decimal places. Since the model is trained to detect tennis ball, and the input image contains a footbal, the specified probability estimate is very low. In contrast, Listing~\ref{lst:tennisball} specifies a much higher probability estimate since the input image contains tennis balls.
 
-The above testing technique can be used to spot-check a few hand-picked examples of edge cases or adversarial examples which the model may find difficult to classify. The technique can also be generalized by constructing a large dataset containing all the edge cases that the develop may wish to check. And the assertion can be called on the probability estimate for image.
+The above visualisation and assertion pair can be used to spot-check a few edge-cases or adversarial examples which the model may find difficult to classify. It is unclear however, how the specified thresholds were obtained since the authors do not provide additional explanation in the notebook. The threshold may have been derived based on the domain expertise of the ML practitioner. Another alternative could be to define them during the Requirements Engineering phase, by discussing with all involved stakeholders\cite{CITEME}.
 
-% NOTE when working with images, we tend to see that the input image is visualised (so human can manually validate), something to do with expensive labelling?
-% NOTE is this a good pattern? this test does not generalise across all possible input images?
+In contrast to the visualisation and assertion pair in Section~\ref{sec:svm}, the assertion here is able to capture the author's motivation for visualising the input image along with the information obtained from it. Regardless, the notebook author still visualises the input image. This is a recurring phenomenon that we observe in other visualisation and assertion pairs in our catalogue. We discuss this phenomenon further in Section~\ref{sec:visual}.
 
 \subsection{Normality}\label{sec:normal}
 
@@ -363,9 +379,25 @@ for feature in range(data_transformed.shape[1]):
   \label{fig:kstest}
 \end{minipage}
 
+% NOTE assertion and viz are perfect fit; 
+
+% NOTE despite the analytical test, practitioners need to visualise this, we need visual confirmation; we cannot get rid of visualisations. we need both!
+
+The visualisation in Figure~\ref{fig:kstest} is obtained from a notebook that trains a Generative Adversarial Network (GAN) to generate data which simulates a neutrino particle detector. The notebook author transforms the training data by normalising it using the \texttt{QuantileTransform} from scikit-learn~\footnote{REFME}. After performing the transformation, the author performs a visual check by plotting the distribution of a feature from the dataset as shown in Figure~\ref{fig:kstest}. The visualisation shows a bell-shaped curve indicating that the data is normal and that the transformation worked. The author then defines the assertion presented in Listing~\ref{lst:kstest} which reflects their observation made from the visualisation.
+
+The assertion in Listing~\ref{lst:kstest} formally verifies that all features in the dataset have a normal distribution. The assertion iterates through each column in the dataset and performs the Kolmogorov-Smirnov test to check that the distribution of the feature is similar to that of a normal distribution.
+
+% NOTE I want to say that we don't even think about the fact that we always use a histogram to do this! its second nature, we are taught to do this, without thinking why!
+
+Checking the distribution of the training data is a very common task performed during the data understanding or exploratory data analysis phase of the ML development lifecycle. Several ML models assume normality in the underlying training data. The verification is often performed visually using a histogram and checking that the distribution shows a "bell-shaped" curve\cite{CITME}. However, in a production environment where ML models are continually trained using new batches of data, this assumption of normality may not always hold. The formal assertion presented in Listing~\ref{lst:kstest} makes this assumption explicit. And causes the automated ML pipeline to fail if our expectations regarding the data are no longer satisfied.
+
 \subsection{Coefficient of Determination}
 
-Figure~\ref{fig:r2} shows a visualisation obtained from a notebook that trains a RNN to predict the levels of Nitrogen Dioxide ($NO_2$) in the next 24 hour window. The model is trained using time-series data consisting of historical readings of $NO_2$ and meteorological data such as temparate, humidity, wind speed, and such. The visualisation shows a scatterplot of the real and predicted values of $NO_2$ from the test set. The scatterplot shows a linear relationship between the ground truth and predictions indicating that the model learned something during training. However, the spread of the points is wide indicating that it can be improved with more fine tuning. Listing~\ref{lst:r2} presents the corresponding analytical test which was defined below Figure~\ref{fig:r2}. The Coefficient of Determination ($R^2$) is calculated using the \texttt{r2\_score} method from scikit-learn. The assertion checks that the $R^2$ is higher than a specified threshold.
+% NOTE this vis,assert is model agnostic!
+
+% NOTE assertion captured what they visualised
+
+% NOTE visualisation helps to check for outliers: we are humans, we look at visual patterns, quick and easier to observe fro visualisations
 
 \begin{minipage}{0.45\textwidth}
   \begin{lstlisting}[language=Python]
@@ -382,22 +414,46 @@ assert r2_gru > 0.6
   \label{fig:r2}
 \end{minipage}
 
+Figure~\ref{fig:r2} shows a visualisation obtained from a notebook that trains a RNN to predict the levels of Nitrogen Dioxide ($NO_2$) in the next 24 hour window. The model is trained using time-series data consisting of historical readings of $NO_2$ and meteorological data such as temparate, humidity, wind speed, and such. The visualisation shows a scatterplot of the real and predicted values of $NO_2$ from the test set. The scatterplot shows a linear relationship between the ground truth and predictions indicating that the model was able to learn certain patterns in the training data. The spread of $y_{pred}$ at any given $y_{true}$ is wide. For example, at $y_{true} = 80$, the prediction can range anywhere between 30 and 120. This Indicates that the model was not able to fit the training data that well, and can be improved with fine-tuning.
+
+% TODO more context on r2_score, it fits a linear regression model and checks the blah blah blah
+Listing~\ref{lst:r2} presents the corresponding analytical test which was defined below Figure~\ref{fig:r2}. The author uses \texttt{r2\_score} metric from the scikit-learn library to quantify the performance of the model. The \texttt{r2\_score} method fits a linear regression model on the true and predicted labels and computed the Coefficient of Determination ($R^2$) based on the residuals of the linear regression model. The assertion checks that the $R^2$ score of the model is always higher than $0.6$. Since the best score possible is $1.0$, the specified threshold indicates that the author wants to ensure that $y_{pred}$ and $y_{true}$ are always linearly related to each other.
+
+Similar to Figure~\ref{fig:svm}, the visualisation in Figure~\ref{fig:r2} allows ML practitioners to visually assess is the model is under or overfitting the training data. If the spread of $y_{pred}$ is wide, it indicates that the model is under-fitting. In contrast, if the spread is very close to the diagonal line, it indicates that the model is most likely overfitting. The visualisation can also be used to verify if there are any outliers in the predictions, for a given input. The assertion in Listing~\ref{lst:r2} however, does not capture such information. It can only check if the performance of the model is better than a specific threshold.
+
 \subsection{Normalization}
 
+% TODO check the notebook again for implementation of normalization
+
+\begin{figure}
+  \subcaptionbox{Histogram showing the distribution of a feature before and after scaling.\label{fig:scale}}{\includegraphics[width=0.45\linewidth]{../catalogue/select-65a.png}}
+  \hfill
+  \subcaptionbox{Histogram showing the distribution of a feature before and after normalisation.\label{fig:normal}}{\includegraphics[width=0.45\linewidth]{../catalogue/select-65b.png}}
+  \caption{Visualisation of data before and after various data pre-processing techniques.}
+  \label{fig:data-pre-process}
+\end{figure}
+
+\begin{minipage}{0.45\textwidth}
+  \begin{lstlisting}[language=Python]
+assert scaled_data[scaled_data.argmax()] <= 1
+assert scaled_data[scaled_data.argmix()] >= 0
+  \end{lstlisting}
+  \captionof{lstlisting}{Assertion to check that the mix and max of a feature fall within specified threshold derived from the visualisation presented in Figure~\ref{fig:scale}.}
+  \label{lst:scale}
+\end{minipage}
+\hfill
 \begin{minipage}{0.45\textwidth}
   \begin{lstlisting}[language=Python]
 assert normalized_data[normalized_data.argmax()] < 10
 assert normalized_data[normalized_data.argmin()] > -7
   \end{lstlisting}
-  \captionof{lstlisting}{Assertion to check that the min and max of a feature fall within specified thresholds derived from the visualisation presented in Figure~\ref{fig:normal}.}
+  \captionof{lstlisting}{Similar premise as Listing~\ref{lst:scale}, however this assertion is based on Figure~\ref{fig:normal}.}
   \label{lst:normal}
 \end{minipage}
-\hfill
-\begin{minipage}{0.45\textwidth}
-  \includegraphics[width=\linewidth]{../catalogue/select-65b.png}
-  \captionof{figure}{Histogram showing the distribution of a feature before and after normalisation.}
-  \label{fig:normal}
-\end{minipage}
+
+Visualisations presented in Figure~\ref{fig:data-pre-process} were obtained from a notebook that presents a tutorial on scaling and normalization---two common data pre-processing techniques in ML. The visualisations show a comparison of the data before and after each pre-processing technique is applied to a feature from the data. The author scales the data using the \texttt{MinMaxScaler} from the scikit-learn library~\footnote{REFME}, between $[0, 1]$. The author performs a visual check, by comparing the distribution of the data before and after scaling, using a histogram (as shown in Figure~\ref{fig:scale}). Similarly, the author normalises the data using the \texttt{PowerTransformer} class from scikit-learn~footnote{REFME}, and performs a visual check as shown in Figure~\ref{fig:normal}.
+
+Listing~\ref{lst:scale}~and~\ref{lst:normal} show the assertions that were defined below Figure~\ref{fig:scale}~and~\ref{fig:normal} respectively. Both assertions check that the min and max of the feature is within the expected bounds after applying the respective pre-processing technique. The assertion in Listing~\ref{lst:scale} is felt to be unneccessary since the min and max thresholds are set to the theoretical limits. The assertions in Listing~\ref{normal} are more relevant, however it is not clear why the author include such a wide margin in the thresholds.
 
 \section{Discussion}\label{sec:discuss}
 
@@ -409,17 +465,28 @@ assert normalized_data[normalized_data.argmin()] > -7
 
 % NOTE comment on evolution? we have to look at the entire lifecycle of a visualisation: notebooks are run iteratively?
 
-\subsection{Evolution and Provenance of Visualisations}\label{sec:evolution}
-% NOTE ML development is iterative, visualisations are compared against one another, to qualitatively validate performance/different strategies of model performance? It will be an interesting direction to explore how visualisations evolve?
+\subsection{From Implicit Expectations to Explicit Assertions}
+% NOTE regeneration of the model does not change this observation at this point in time 
+
+% NOTE discuss the pros and cons of having a qualiative assessment: they are dense with useful information; humans need visual patterns!
+
+% NOTE then show that we also need qualitative assessment that can capture our expectations; this is important so that the model never violates that we understand from the visualisations
+
+% NOTE now is the time to talk about how assertions act as documentation of the domain expertise and knowledge extracted from the visualisation from the original creator; this also scales as the system complexity and composition of the team/organisation evolves!
 
 \subsection{Something about magic thresholds}\label{sec:magic-threshold}
 % NOTE we observe that most analytical test translates to comparing a value against a threshold; this indicates the open challenges in ML testing; either we don't yet know how to translate analytical tests from visualisations or we cannot do this in the first place and we must use a hybrid approach?
 
-\subsection{Warning System}\label{sec:drift}
-% NOTE with the assertions, the implicit expectations are translated to explicit expectations. Which will fail if the expectations are no longer satisfied
+% NOTE this is a better place to talk about the magic threshold phenomenon; link this to the magic number smell in software engineering, but in ML it is very prevalent and an alternative is not always clear
 
-\subsection{Mining ML visualisations/notebooks}
-% NOTE we can perform further analysis by mining jupyter notebooks, in particular the visualisations?
+% NOTE and then motivate how we need more tools/techniques to aid practitioners to extract/translate all the info from visualisations into qualitative assertions!
+
+\subsection{Humans need visual confirmation}\label{sec:visual}
+% NOTE even though analytical tests are sufficient; humans still prefer visual confirmation
+
+% NOTE when working with image dataset, we observe in our catalogue that practitioners prefers to also visually check the input image
+
+% NOTE more detailed discussion on how a lot of information can be condensed into a single visualition and how humans are good at observing visual patterns
 
 \section{Threats to Validity}\label{sec:threats}
 % defend use of github as source for notebooks:
