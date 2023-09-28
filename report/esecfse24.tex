@@ -63,7 +63,18 @@
 % why is this an important problem to solve?
 % what did we do?
 % what did we find?
-Testing ML systems is a highly interactive process which demands a human-in-the-loop approach. In addition to writing tests for the code base, practitioners are required to analyse and interpret several visualisations using their domain expertise to validate if an ML system satisfies the required set of functional and non-functional properties. Visualisations are frequently used to qualitatively assess various parts of an ML pipeline. However, implicit knowledge gained from visualisations must be translated to explicit analytical tests that fail when there is change in any component of the ML pipeline. We conduct an empirical analysis of Jupyter notebooks to catalogue the state-of-the-art mappings between ML visualisations and assertions. We mine Github to collect Jupyter Notebooks that contain assertions written in Python. We develop a novel methodology to identify 1764 notebooks which contain an assertion below a visualisation. We manually analyse the 1.7K notebooks and identify 551 notebooks where at least one pair of visualisation and assertion are semantically related to one another. We further read and understand 90 notebooks in depth to identify 26 qualitative and their corresponding quantitative testing patterns. We showcase five such patterns in this paper and plan to make the entire catalogue publicly available in the near future.
+Testing ML systems is a highly interactive process which demands
+  a human-in-the-loop approach. In addition to writing tests for the
+  code base, practitioners are required to analyse and interpret
+  several visualisations using their domain expertise to validate if
+  an ML system satisfies the required set of functional and
+  non-functional properties. Visualisations are frequently used to
+  qualitatively assess various parts of an ML pipeline. However,
+  implicit knowledge gained from visualisations must be translated to
+  explicit analytical tests that fail when there is change in any
+  component of the ML pipeline. We conduct an empirical analysis of
+  Jupyter notebooks to catalogue the state-of-the-art mappings between
+  ML visualisations and assertions. We mine Github to collect Jupyter Notebooks that contain assertions written in Python. We develop a novel methodology to identify 1764 notebooks which contain an assertion below a visualisation. We manually analyse the 1.7K notebooks and identify 551 notebooks where at least one pair of visualisation and assertion are semantically related to one another. We further read and understand 90 notebooks in depth to identify 26 qualitative and their corresponding quantitative testing patterns. We showcase five such patterns in this paper and plan to make the entire catalogue publicly available in the near future.
 
 \end{abstract}
 
@@ -90,9 +101,14 @@ From the 551 notebooks, we further perform an in-depth analysis of 90 notebooks.
 
 \end{description}
 
+% TODO what are the primary findings of this paper...
+
 The paper is organised as follows. Section~\ref{sec:prelim} summarises the related literature and technical information relevant to this study. The methodology for the empirical study is explained in Section~\ref{sec:method} and the results of the study are presented in Section~\ref{sec:result}. The paper concludes with a discussion on the implications of our results (Section~\ref{sec:discuss}), threats to validity (Section~\ref{sec:threats}) and future work (Section~\ref{sec:conclude}).
 
 \section{Preliminaries}\label{sec:prelim}
+
+% TODO how is our work different from prior work?
+
 This section summarises the body of prior scientific work that has been done in ML Testing, computational notebooks and visual analytics. The section concludes with an overview of technical knowledge required for this paper.
 
 \subsection{ML Testing}\label{sec:ml-testing}
@@ -113,47 +129,132 @@ Computational notebooks have been ubiquitously adopted by the machine learning c
 
 Studies with human subjects have been conducted to gain a deeper understanding of the challenges faced by ML practitioners when developing ML models inside notebooks. The results indicate that ML practitioners work in a highly iterative fashion, often experimenting with multiple strategies to analyse the data or produce meaningful visualisations~\cite{kandel2012enterprise, kery2018story, liu2019understanding, chattopadhyay2020wrong}. Studies have also been conducted to understand how practitioners generate, evaluate and manage alternative hypothesis, visual designs, methods, tools, algorithms and data sources to arrive at the final implementation~\cite{liu2019understanding,kandel2012enterprise}. The findings from these studies can be used as guidelines for improving existing notebook technologies or designing new ones.
 
-Since ML development is highly iterative, notebooks become messy over time and accumulate duplicate versions of code. \citeauthor{head2019managing} propose a code gathering tool that allows practitioners to review and keep the relevant version of code.
-
-Several tools have been proposed in the literature to aid ML practitioners when working with computational notebooks.
-
-\citeauthor{yang2021subtle} propose \textit{WrangleDoc}, a tool to automatically generate documentation of data wrangling code. Given a snippet of data wrangling code as input, WrangleDoc can explain what effect it has on the data.
-
-
-\citeauthor{bavishi2021vizsmith} proposes \textit{VizSmith}, an automatic data visualisation framework. Given as input a pandas dataframe and a list of columns the user wishes to visualise, the tool can automatically produce visualisations of the specified columns.
+To manage and prune the multiple versions of code that accumulate over time when developing in notebooks, \citeauthor{head2019managing} propose a code gathering tool that allows practitioners to review and only keep the relevant version of code. Other tools such as \textit{WrangleDoc} and \textit{VizSmith} have also been proposed to aid ML practitioners when working within computational notebooks~\cite{yang2021subtle, bavishi2021vizsmith}.
 
 \subsection{Visualisations and Machine Learning}\label{sec:visualisations}
 
-% NOTE I think the literature in this section is irrelevant to our study...
+As ML augment software systems in safety-critical domains, emphasis has been put into explainability of ML models. ML models and the underlying data is complex and multi-dimensional. To combat the ``curse of dimensionality'', visual analytics has been widely adopted by the ML community to understand the data and the internal workings of ML models.
 
-As ML slowly augment into software systems in safety-critical domains, emphasis has been put into explainability of ML models. ML models and the underlying data is complex and multi-dimensional. Naturally, visual analytics has been widely adopted by the ML community to aid in understanding the nature of the data and the internal workings of an ML model. Prior studies have been conducted to understand how visual analytics techniques are currently being used in ML. \citeauthor{yuan2021survey} conduct a systematic review of 259 papers and propose a taxonomy of visual analytics techniques for ML. \citeauthor{hohman2019visual} conduct a survey of visual analytics techniques for Deep Learning Models. The findings of the study indicate that visual analytics has been widely adopted in ML for model explanation, interpretation, debugging and improvement.
+Prior studies have been conducted to understand how visual analytics techniques are currently being used in ML. \citeauthor{yuan2021survey} conduct a systematic review of 259 papers and propose a taxonomy of visual analytics techniques for ML. \citeauthor{hohman2019visual} conduct a survey of visual analytics techniques for Deep Learning Models. The findings of the study indicate that visual analytics has been widely adopted in ML for model explanation, interpretation, debugging and improvement.
 
-In particular, several tools have been proposed by the visual analytics research community to aid practitioners in understanding how their ML models operate. \citeauthor{wexler2020if} propose the \textit{What-If} tool, which allows users to visually analyse and verify their hypotheses regarding the training data and how the model works. With a trained model and a sample dataset as input, the What-If tool allows users to produce counterfactual reasoning, investigate the decision boundaries of the model and how the model predictions are affected by change in data. \citeauthor{ahn2023escape} propose \textit{ESCAPE}, a visual analytics tool that allows users to identify systemmatic errors in ML enabled systems. Through a human-in-the-loop approach, the tool helps identify spurious associations and concept associated misclassifications in the model. To reduce the cognitive load of ML practitioners during model building phase, \citeauthor{amershi2015modeltracker} propose \textit{ModelTracker}. Given a trained model and a sample dataset, ModelTracker presents all the information in traditional summary statistics along with the performance of the model.
+Several tools have been proposed by the visual analytics research community to aid practitioners in understanding how their ML models operate. \citeauthor{wexler2020if} propose \textit{What-If}, a visual analytics tool to explore alternative hypotheses, generate counterfactual reasoning, investigate decision boundaries of the model and how change in data affects the model predictions. To reduce the cognitive load of ML practitioners during model building phase, \citeauthor{amershi2015modeltracker} propose \textit{ModelTracker}. Given a trained model and a sample dataset, ModelTracker presents all the information in traditional summary statistics along with the performance of the model.
 
-Due to the highly pervasive nature of ML, several specialised visual analytics tools have also been proposed. \citeauthor{wang2023gam} propose \textit{GAM Coach}, a visual analytics tool that generates counterfactual explanations for Generalised Additive Models (GAMs). \citeauthor{bernard2019visual} and \citeauthor{gschwandtner2018know} propose specialised visual analytics tools for time-series data. \citeauthor{gortler2022neo} and \citeauthor{yang2022pattern} study and suggest improvements to traditional confusion matrix and multivariate matrix visualisations respectively. \citeauthor{robertson2023angler} propose \textit{Angler}, a visual analytics tool to help practitioners prioritise machine translation model improvements. \citeauthor{wang2023drava} propose \textit{Drava}, a tool to help practitioners relate human concepts with semantic dimensions extracted by ML models during disentangled representation learning.
+\textit{ESCAPE}, \textit{GAM Coach}, \textit{Angler} and \textit{Drava} are a few other tools that have been proposed to handle specialised use-cases such as identifying systemmatic errors in ML models, generating counterfactual explanations for Generalised Additive Models, prioritising machine translation model improvements and relating human concepts with semantic dimensions extracted by ML models during disentangled representation learning\cite{ahn2023escape, wang2023gam, robertson2023angler, wang2023drava}.
 
-\subsection{Technical Background}\label{sec:background}
-\subsubsection{Internal Structure of Jupyter Notebooks}\label{sec:nbformat}
-% TODO we need to explain the json structure of jupyter notebooks, we reference this in the methodology to explain the github query.
+\subsection{Internal Structure of Jupyter Notebooks}\label{sec:nbformat}
 
-\lstinputlisting[]{nbformat.json}
-\captionof{lstlisting}{Internal JSON structure of Jupyter Notebooks.}
-\label{lst:nbformat}
+\begin{minipage}{0.45\textwidth}
+  \begin{lstlisting}
+{
+  "metadata": {
+    "kernel_info": {...},
+    "language_info": {...},
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "cells": [ # dictionary of all cells in notebook ]
+}
+  \end{lstlisting}
+  \captionof{lstlisting}{Top-level JSON format of Jupyter notebooks. See Listing~\ref{lst:cell-md}, \ref{lst:cell-code} and \ref{lst:cell-output} for internal structure of various cells.}
+  \label{lst:nbformat}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+  \begin{lstlisting}
+{
+  "cell_type": "markdown",
+  "metadata": {},
+  "source": [
+    "# Hello world example\n",
+    "The following cell contains python code for greeting people!\n"
+  ]
+}
+  \end{lstlisting}
+  \captionof{lstlisting}{JSON structure of markdown cells.}
+  \label{lst:cell-md}
+\end{minipage}
+\begin{minipage}{0.45\textwidth}
+  \begin{lstlisting}
+{
+  "cell_type": "code",
+  "metadata": {},
+  "source": [
+    "def greet(name):\n",
+    "    print(f'Hello, {name}!')\n"
+  ]
+}
+  \end{lstlisting}
+  \captionof{lstlisting}{JSON structure of code cells.}
+  \label{lst:cell-code}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+  \begin{lstlisting}
+{
+  "cell_type": "code",
+  "metadata": {},
+  "source": [...],
+  "outputs": [
+    {
+      "output_type": "display_data",
+      "data": {
+        "image/png": "<base64-encoded-png-data>"
+      }
+    }
+  ]
+}
+  \end{lstlisting}
+  \captionof{lstlisting}{JSON structure of code cells with an image output.}
+  \label{lst:cell-output}
+\end{minipage}
 
-The data comprised within Jupyter Notebooks is stored in the JSON format, and thus can be parsed programmatically. Listing~\ref{lst:nbformat} shows the internal json structure of Jupyter Notebooks, adopted from the official nbformat website.~\footnote{https://nbformat.readthedocs.io/en/latest/index.html}. For simplicity, we only show the parts that are relevant for this study.
+The data comprised within Jupyter Notebooks is stored in the JSON format, and thus can be parsed programmatically. Listing~\ref{lst:nbformat} shows the top-level json structure of Jupyter Notebooks, adopted from the official nbformat website.~\footnote{https://nbformat.readthedocs.io/en/latest/index.html}. For simplicity, we only show the parts that are relevant for this study and hide the irrelevant parts using ellipsis.
 
 Notebooks contain four top level keys namely \texttt{metadata}, \texttt{nbformat}, \texttt{nbformat\_minor} and \texttt{cells}. The \texttt{matadata} key consists of additional information regarding the notebook such as the kernel and programming language. \texttt{nbformat} and \texttt{nbformat\_minor} contain the version of nbformat used in the notebook. The \texttt{cells} key consists of a list of all cells within the notebook.
 
-Listing~\ref{lst:nbformat} presents three examples of cells. Each cell is represented as a dictionary with the \texttt{cell\_type}, \texttt{metadata} and \texttt{source} keys. Cells can be of three types: "markdown", "code" or "raw". The contents of each cell can be found within the \texttt{source} key, as a list of strings.
+Listings~\ref{lst:cell-md},~\ref{lst:cell-code} and ~\ref{lst:cell-output} present three examples of cells. Each cell is represented as a dictionary with the \texttt{cell\_type}, \texttt{metadata} and \texttt{source} keys. Cells can be of three types: ``markdown'', ``code'' or ``raw''. The contents of each cell can be found within the \texttt{source} key, as a list of strings.
 
-The output generated by a code cell is stored within the \texttt{outputs} key. Static visualisations are stored as base64 encoded png images under the \texttt{"image/png"} key, which is nested within the \texttt{data} key inside \texttt{outputs}. Since a cell can generate multiple outputs, the \texttt{outputs} key is a list.
+Outputs generated by a code cell are stored as a list within the \texttt{outputs} key as seen in Listing~\ref{lst:cell-output}. Static visualisations are stored as base64 encoded png images under the \texttt{"image/png"} key, which is nested within the \texttt{data} key inside \texttt{outputs}.
 
-\subsubsection{Pre and Post-Condition Checks}\ref{sec:pre-post-cond}
-% TODO explain and give examples of what we mean by pre/post-condition checks with examples
+\subsection{Post-Condition Checks}\label{sec:post-cond}
 
-% TODO contrast this to the type of tests we are actually looking for! Why are pre/post conditions not valuable to look at?
+We found several instances of visualisation and assertion pairs which were realated to one another. However the assertions did not test a property of the ML system that was derived from the visualisation. Instead, the assertions were used to test the correctness of the code that produced the visualisation. Such assertions (and the corresponding visualisations) were excluded from this study. Table~\ref{tab:post-cond}provides examples of post-condition checks which were frequently observed in this study.
 
-During the empirical analysis conducted for this study, we found several instances of where the assertions were related to the visualisation above. However, they were not relevant to this study since they did not test the property of the data or the model. 
+\begin{table}
+\centering
+\caption{Frequent examples of post-condition checks observed in this study.}
+\begin{tabular}{p{0.3\textwidth} p{0.4\textwidth} p{0.3\textwidth}}
+\toprule
+\emph{\textbf{Visualisation}}&
+\emph{\textbf{Post-condition check}}&
+\emph{\textbf{Rationale}}\\
+\midrule
+\includegraphics[width=\linewidth]{post-cond-01.png}&
+\begin{lstlisting}[language=Python]
+assert f1.gca().has_data()
+\end{lstlisting}&
+The assertion checks if the output of the visualisation code cell contains an image.\\
+\includegraphics[width=\linewidth]{post-cond-02.png}&
+\begin{lstlisting}[language=Python]
+assert_almost_equal(sigmoid(-50), 0, delta=1e-10)
+assert_almost_equal(sigmoid(0), 0.5, delta=1e-10)
+assert_almost_equal(sigmoid(50), 1, delta=1e-10)
+\end{lstlisting}&
+The assertions are spot-checking the sigmoid activation function.\\
+\includegraphics[width=\linewidth]{post-cond-03.png}&
+\begin{lstlisting}[language=Python]
+# The axis should contain 5 bars
+assert len(ax.containers[0]) == 5
+
+# One of the x tick labels should be "blue"
+tick_text = [tick.get_text() for tick in ax.get_xticklabels()]
+assert "blue" in tick_text
+\end{lstlisting}&
+The asserts are validating the correctness of the visualisation itself.\\
+\bottomrule
+\end{tabular}
+\label{tab:post-cond}
+\end{table}
 
 \section{Methodology}\label{sec:method}
 This section presents the methodology used to conduct the empirical study introduced in Section~\ref{sec:intro}. Figure~\ref{fig:method} presents an overview of all relevant steps used in this study. The empirical analysis comprises of three distinct phases namely: \textit{the data collection phase}, \textit{identification of related visualisation and assertion pairs} and finally a \textit{complete analysis of the notebooks} to identify the final set of 26 visualisation and assertion pairs.
@@ -396,7 +497,7 @@ The assertion in Listing~\ref{lst:kstest} formally verifies that all features in
 
 Checking the distribution of the training data is a very common task performed during the data understanding or exploratory data analysis phase of the ML development lifecycle. Several ML models assume normality in the underlying training data. The verification is often performed visually using a histogram and checking that the distribution shows a "bell-shaped" curve\cite{CITME}. However, in a production environment where ML models are continually trained using new batches of data, this assumption of normality may not always hold. The formal assertion presented in Listing~\ref{lst:kstest} makes this assumption explicit. And causes the automated ML pipeline to fail if our expectations regarding the data are no longer satisfied.
 
-\subsection{Coefficient of Determination}
+\subsection{Coefficient of Determination}\label{sec:r2}
 
 % NOTE this vis,assert is model agnostic!
 
@@ -470,14 +571,26 @@ Listing~\ref{lst:scale}~and~\ref{lst:normal} show the assertions that were defin
 
 % NOTE comment on evolution? we have to look at the entire lifecycle of a visualisation: notebooks are run iteratively?
 
+\subsection{New form of testing}
+% NOTE some form of commentary on the fact that is form of qualitative and quantitative testing is happening but not that popular yet!
+
+% NOTE so we need more tools to aid practitioners to encourage this form of testing and also help them translate qualitative properties into quantitative tests!
+
 \subsection{From Implicit Expectations to Explicit Assertions}
 % NOTE regeneration of the model does not change this observation at this point in time 
 
-% NOTE discuss the pros and cons of having a qualiative assessment: they are dense with useful information; humans need visual patterns!
+% NOTE discuss the pros and cons of having a qualitative assessment: they are dense with useful information; humans need visual patterns!
 
 % NOTE then show that we also need qualitative assessment that can capture our expectations; this is important so that the model never violates that we understand from the visualisations
 
 % NOTE now is the time to talk about how assertions act as documentation of the domain expertise and knowledge extracted from the visualisation from the original creator; this also scales as the system complexity and composition of the team/organisation evolves!
+
+% NOTE what are the benefits using visualisations to assess the
+% quality of ML systems? They are packed with a lot of
+% information. And humans are cognitively tuned to identify patterns
+% in visualisations.
+
+Visualisations condense valuable information that is easy to understand for humans.
 
 \subsection{Something about magic thresholds}\label{sec:magic-threshold}
 % NOTE we observe that most analytical test translates to comparing a value against a threshold; this indicates the open challenges in ML testing; either we don't yet know how to translate analytical tests from visualisations or we cannot do this in the first place and we must use a hybrid approach?
