@@ -504,13 +504,10 @@ Assertions or analytical tests extracted from ML visualisations can reduce this 
 
 Results for RQ1 indicate that combining ML visualisations with analytical assertions is an emerging testing practice within the ML community. However in results from RQ2, we see several examples of assertions that fail to capture all the information gained from its visual counter-part. Our observations indicate a need to bridge the gap between qualitative assessment of ML systems using visualisations and deriving analytical assertions from the visualisations. We find the need for automated tools that make this translation process easier for AI practitioners.
 
-\section{Threats to Validity}\label{sec:threats}
-% defend use of github as source for notebooks:
-% - why did kaggle not work (refer to notes)
-% - why did the existing replication packages not work?
+\section{Threats to Validity and Future Work}\label{sec:threats}
+The empirical analysis presented in this study uses Jupyter notebooks mined from Github. To the best of our knowledge, \cite{pimentel2019large} and \cite{quaranta2021kgtorrent} are the only two prior studies which provide a public dataset of Jupyter Notebooks. We faced several technical challenges while trying to access the notebooks provided by these authors and thus decided to mine our own data from Github. We invite the scientific community to extend our catalogue of visual and analytical testing patterns, using the corpus of notebooks provided by the above authors.
 
-% TODO defend the use of a simple search query on github
-Our approach also prevents the need to craft a custom search query based on an exhaustive list of keywords that appear in all python testing libraries. We intentionally keep the search criteria on Github broad by only checking for the appropriate filetype and the presence of the ``assert'' keyword. This is because, the ``assert'' keyword is used in python to define tests. Additionally, popular python libraries which provide a testing interface (such as nose, unittest and numpy), contain the same keyword in their API. 
+In Section~\ref{sec:data-collect}, we intentionally keep the search criteria on Github broad by only checking for the appropriate filetype and the presence of the ``assert'' keyword. Besides being used to define tests in the Python programming language, ``assert'' also appears in several external python libraries that provide a testing interface (for instance nose, unittest and numpy). Our approach provides captures a rich variety of assertion statements while preventing the need to craft a custom search query based on an enhaustive list of keywords that appear in all Python testing libraries.
 
 % TODO don't mention quantity of random sample; then we need to explain/defend this choice
 We used an iterative approach to determine the effectiveness of each filter that was used. We applied each filter in the same order as presented in Table~\ref{tab:filters}, starting with F1. We randomly sampled 50 notebooks from the population of notebooks obtained after applying the filter. We then conduct the qualitative assessment presented in Section~\ref{REFME} and observe the number of related visualisation and assertion pairs. In each new iteration, we progressively add the other filters and include the filter if the number of relevant visualisation and assertion pairs increases.
