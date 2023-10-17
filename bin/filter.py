@@ -1,14 +1,10 @@
 """Check for assert statements in juptyer notebooks.
 
-Without any flags, the script will check for assert statements only in code cells that produce
-a visualisation. The search is not greedy by default. It will print the notebook to stdin if at
-least 1 assert statement exists in the notebook.
+Without any flags, the script will check for assert statements only in code cells that produce a visualisation. The search is not greedy by default. It will print the notebook to stdin if at least 1 assert statement exists in the notebook.
 
-With the `--proximity` flag, the script will also check in code cells directly below the
-visualisation cells.
+With the `--proximity` flag, the script will also check in code cells directly below the visualisation cells.
 
-With the `--strict` flag, the script will only flag notebooks if the assert statements is in the
-code cell below the visualisation cell. This flag takes precedence over `--proximity`.
+With the `--strict` flag, the script will only flag notebooks if the assert statements is in the code cell below the visualisation cell. This flag takes precedence over `--proximity`.
 """
 
 import ast
