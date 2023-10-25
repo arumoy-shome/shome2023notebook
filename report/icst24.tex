@@ -557,7 +557,10 @@ The results from RQ2 provide emprical evidence to support the use of visualisati
 
 Assertions or analytical tests extracted from ML visualisations can reduce this manual verification effort. Assertions encapsulate the knowledge gained from the visualisation with regards to the property of the ML system which is currently under test. Formal assertions document the observations made by the AI practitioner regarding the model or the data, at a specific point in time. These observations should not be violated by the future model development cycles unless the requirements of the ML system are changed. Assertions scale across organizational or personnel changes as future AI practitioners can refer to the assertions to understand how the visualisations were previously interpreted.
 
-Results for RQ1 indicate that combining ML visualisations with analytical assertions is an emerging testing practice within the ML community. However in results from RQ2, we see several examples of assertions that fail to capture all the information gained from its visual counter-part. Our observations indicate a need to bridge the gap between qualitative assessment of ML systems using visualisations and deriving analytical assertions from the visualisations. We find the need for automated tools that make this translation process easier for AI practitioners.
+The results for RQ1 indicate that the combination of machine learning visualizations with analytical assertions is an emerging testing practice within the machine learning community. We found only 54,000 notebooks that contain the keyword "assert" and an image, while there are more than a million Jupyter notebooks available on GitHub. This suggests that the practice of assertion is still relatively uncommon.
+We believe that this is due to a lack of knowledge among practitioners regarding testing approaches and the absence of adequate tooling to support the assertion of model properties. We delve into this issue further in Section~\ref{sec:fw}.
+
+Additionally the results from RQ2, we see several examples of assertions that fail to capture all the information gained from its visual counter-part. Our observations indicate a need to bridge the gap between qualitative assessment of ML systems using visualisations and deriving analytical assertions from the visualisations. We find the need for automated tools that make this translation process easier for AI practitioners.
 
 \section{Threats to Validity and Future Work}\label{sec:threats}
 
@@ -572,7 +575,24 @@ We used an iterative approach to determine the effectiveness of each filter that
 
 \section{Conclusion}\label{sec:conclude}
 
-This study mined 54K Jupyter Notebooks that contained an assertion. Further analysis identified 1.7K notebooks which contained an assertion directly below a visualisation. Of the 1.7K notebooks, 551 notebooks contained a visualisation and assertion pair which were semantically related to each other. A deeper analysis of 90 Jupyter notebooks revealved 26 unique ML testing tasks which utilised a combination of visualisations and assertions.
+
+In this study, we delved into the fusion of visualizations and analytical assertions in the testing of machine learning (ML) systems. Our investigation unveiled the emerging practice of crafting analytical assertions based on visual insights, a technique that bridges the qualitative and quantitative aspects of ML testing.
+
+Testing ML systems in Jupyter Notebooks remains a burgeoning practice, with only a minority of notebooks adopting this approach. In total, we identified 269 pairs of visualizations and assertions that exhibited semantic correlation within 1.7k notebooks. Within these pairs, our analysis unveiled several key insights: nearly 40\% of the pairs included magic thresholds, 75\% of the assertions employed comparison operators, and 16\% of the assertions made use of external testing libraries. Furthermore, we observed that 22\% of the assertions did not utilize a comparison operator or a magic threshold.
+
+Additionally, our study brought to light recurring testing patterns, underscoring the need yo enhance the alignment between visualizations and their corresponding assertions.
+This research serves as a first step in comprehending the landscape of ML testing in Notebooks, emphasizing the potential for the development of more effective tools and practices to streamline the validation of visualizations and elevate the quality of analytical assertions.
+
+\section{Future Work}\label{sec:fw}
+
+This study underscores the imperative to enhance the current state of machine learning (ML) testing. Our observations have pointed to several potential future directions that could advance this field:
+
+1. Tailored Assertion Tools: There is a clear need for assertion tools specifically designed to cater to the requirements of ML practitioners. These tools should provide assistance in identifying the most suitable visualizations for testing specific properties of ML systems. Customized solutions that streamline the process of connecting visual insights to analytical assertions would significantly benefit practitioners in this domain.
+
+2. Automation of Assertions: The manual translation of insights derived from visualizations into analytical assertions presents a substantial challenge. Future work should focus on the development of automated tools that can assist AI practitioners in this translation process. By automating the generation of assertions from visual information, these tools can promote broader adoption of assertions in ML notebooks, reducing the burden of manual effort.
+
+3. Dynamic Testing in Real-World Scenarios: Extending ML testing to dynamic real-world scenarios is a critical avenue for future exploration. This entails developing techniques and frameworks that allow assertions to adapt to evolving data distributions, changing model requirements, and continuous system updates. Research in this area will contribute to the development of ML systems that remain reliable and relevant throughout their operational lifecycles.
+
 
 \bibliographystyle{IEEEtran}
 \bibliography{bibliography}
