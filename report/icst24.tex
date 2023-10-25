@@ -48,6 +48,11 @@
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+    
+%%%TRASH luis
+\usepackage{pifont}
+\newcommand{\luis}[1]{\textcolor{teal}{\ding{46}~\textbf{Luis:~}#1}}
+%%%%%
 
 \begin{document}
 
@@ -439,9 +444,9 @@ assert np.mean(dev_recall_history[-10:]) > 0.85, "Please train for at least 85% 
   \label{tab:compare-op-asserts}
 \end{table}
 
-In a total of 269 VA pairs, 202 assertions (75\%) contain a comparison operator such as \emph{equal to}, \emph{lesser than} or \emph{greater than}. Table~\ref{tab:compare-op-asserts} presents the most frequently observed assertions that conform to this pattern. An overwhelming majority of assertions compare the value of a performance metric---typically the accuracy or recall---against a ``magic threshold'' defined by the notebook author.
+In a total of 269 VA pairs, 202 assertions (75\%) contain a comparison operator such as \emph{equal to}, \emph{lesser than} or \emph{greater than}. Table~\ref{tab:compare-op-asserts} presents the most frequently observed assertions that conform to this pattern.
 
-We also observe that 46\% of the assertions with a comparison operator contain a ``magic threshold'' defined by the author. It is unclear however, how the specified thresholds were obtained since the authors do not provide additional explanation in the notebook. The threshold could have been derived based on the domain expertise of the ML practitioner. Another alternative could be to define them during the Requirements Engineering phase, though discussions with all involved stakeholders\cite{CITEME}.
+An overwhelming majority of assertions compare the value of a performance metric---typically the accuracy or recall---against a ``magic threshold'' defined by the notebook author. This covers 46\% of the assertions with a comparison operator. It is unclear however, how the specified thresholds were obtained since the authors do not provide additional explanation in the notebook. The threshold could have been derived based on domain expertise. Another alternative could be to define them during the Requirements Engineering phase, through discussions with all involved stakeholders\cite{CITEME}.\luis{Agathe Balayn might have something on these lines}
 
 \begin{figure}
   \includegraphics[width=\linewidth]{../catalogue/select-16.png}
