@@ -284,7 +284,7 @@ Figure~\ref{fig:method} summarises the methodology used to collect related VA pa
 
 \subsection{Data Collection}\label{sec:data-collect}
 
-We mined public repositories from Github to collect $54,070$ Jupyter notebooks that contain the keyword ``assert'' in them. We use the Github advanced search syntax~\footnote{https://docs.github.com/en/search-github/searching-on-github/searching-code} to isolate Jupyter Notebook. Additionally, we include the ``assert'' keyword in the search query with an \texttt{AND} operator. The final search query is as follows: \texttt{"image/png" AND "assert" language:"Jupyter Notebook"}.
+We mined public repositories from Github to collect $54,070$ Jupyter notebooks that contain the keyword ``assert'' in them. We use the Github advanced search syntax~\footnote{https://docs.github.com/en/search-github/searching-on-github/searching-code} to isolate Jupyter Notebook. Additionally, we include the ``assert'' keyword in the search query with an \texttt{AND} operator. The final search query is as follows: \texttt{"image/png" AND "assert" language:"Jupyter Notebook"}.\footnote{Collected on June 22, 2023}
 
 To further reduce the sample size, we exclude notebooks that do not use popular ML or Data Science (DS) libraries. We perform a string search to identify notebooks that import at least one of the libraries. The string patterns are derived from the python module name used in the import statements. The regex search query is as follows: \texttt{tensorflow|dask|torch|sklearn|scipy|numpy| pandas}.
 
