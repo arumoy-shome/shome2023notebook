@@ -40,8 +40,7 @@
   captionpos=b,
   numbers=left,
   numberstyle=\tiny\color{gray},
-  backgroundcolor=\color{backcolor},
-  morekeywords= [2]{assert},
+  backgroundcolor=\color{backcolor}
 }
 \lstset{style=mystyle}
 \usepackage{graphicx}
@@ -229,19 +228,19 @@ Listings~\ref{lst:cell-md},~\ref{lst:cell-code} and~\ref{lst:cell-output} presen
 \emph{\textbf{Rationale}}\\
 \hline
 \includegraphics[width=\linewidth]{post-cond-01.png}&
-\begin{lstlisting}{language=Python}
+\begin{lstlisting}[language=Python]
 assert f1.gca().has_data()
 \end{lstlisting}&
 The assertion checks if the output of the visualisation code cell contains an image.\\
 \includegraphics[width=\linewidth]{post-cond-02.png}&
-\begin{lstlisting}{language=Python}
+\begin{lstlisting}[language=Python]
 assert_almost_equal(sigmoid(-50), 0, delta=1e-10)
 assert_almost_equal(sigmoid(0), 0.5, delta=1e-10)
 assert_almost_equal(sigmoid(50), 1, delta=1e-10)
 \end{lstlisting}&
 The assertions are spot-checking the sigmoid activation function.\\
 \includegraphics[width=\linewidth]{post-cond-03.png}&
-\begin{lstlisting}{language=Python}
+\begin{lstlisting}[language=Python]
 # The axis should contain 5 bars
 assert len(ax.containers[0]) == 5
 
@@ -424,20 +423,20 @@ We further analysed the 269 VA pairs obtained from RQ1, and identified three tes
   \caption{Most frequently occurring assertions that use a comparison operator.}
   \begin{tabular}{m{0.9\linewidth}}
     \hline
-    \begin{lstlisting}{language=Python}
+    \begin{lstlisting}[language=Python]
 assert accuracy_score(y_test, pred) > 0.95
     \end{lstlisting}\\
-    \begin{lstlisting}{language=Python}
+    \begin{lstlisting}[language=Python]
 assert HISTORY['test_accuracy'][-1] > 0.92
     \end{lstlisting}\\
-    \begin{lstlisting}{language=Python}
+    \begin{lstlisting}[language=Python]
 assert np.mean(mean_rw_history[-10:]) > 10.
 print("That's good enough for tutorial.")
     \end{lstlisting}\\
-    \begin{lstlisting}{language=Python}
+    \begin{lstlisting}[language=Python]
 assert np.mean(metrics['dev_bleu'][-10:], axis=0)[1] > 35, "We kind of need a higher bleu BLEU from you. Kind of right now."
     \end{lstlisting}\\
-    \begin{lstlisting}{language=Python}
+    \begin{lstlisting}[language=python]
 assert np.mean(dev_recall_history[-10:]) > 0.85, "Please train for at least 85% recall on test set. You may need to change vectorizer model for that."
     \end{lstlisting}\\
     \hline
@@ -454,7 +453,7 @@ An overwhelming majority of assertions compare the value of a performance metric
   \caption{Visualisation of the training loss of an ML model.}\label{fig:loss}
 \end{figure}
 
-\begin{lstlisting}[caption={Assertion to check that the mean of the first 10 observations of the loss is higher than the mean of the last 10 observations. In other words, the assertion checks if the loss function is converging to an optimal minima.}, label={lst:loss}]{language=Python}
+\begin{lstlisting}[language=Python, caption={Assertion to check that the mean of the first 10 observations of the loss is higher than the mean of the last 10 observations. In other words, the assertion checks if the loss function is converging to an optimal minima.}, label={lst:loss}]
 assert np.mean(train_history[:10], axis=0)[1] > np.mean(train_history[-10:], axis=0)[1], "The model didn't converge."
 \end{lstlisting}
 
@@ -467,12 +466,12 @@ In contrast to the assertions presented in Table~\ref{tab:compare-op-asserts}, L
   \label{fig:data-pre-process}
 \end{figure}
 
-\begin{lstlisting}[caption={Assertion to check that the mix and max of a feature fall within specified threshold derived from the visualisation presented in Figure~\ref{fig:scale}.}, label={lst:scale}]{language=Python}
+\begin{lstlisting}[language=Python, caption={Assertion to check that the mix and max of a feature fall within specified threshold derived from the visualisation presented in Figure~\ref{fig:scale}.}, label={lst:scale}]
 assert scaled_data[scaled_data.argmax()] <= 1
 assert scaled_data[scaled_data.argmix()] >= 0
 \end{lstlisting}
 
-\begin{lstlisting}[caption={Similar premise as Listing~\ref{lst:scale}, however this assertion is based on Figure~\ref{fig:normal}.}, label={lst:normal}]{language=Python}
+\begin{lstlisting}[language=Python, caption={Similar premise as Listing~\ref{lst:scale}, however this assertion is based on Figure~\ref{fig:normal}.}, label={lst:normal}]
 assert normalized_data[normalized_data.argmax()] < 10
 assert normalized_data[normalized_data.argmin()] > -7
 \end{lstlisting}
@@ -481,7 +480,7 @@ Visualisations in Figure~\ref{fig:data-pre-process} were obtained from a noteboo
 
 Listing~\ref{lst:scale} and~\ref{lst:normal} show the assertions that were defined below Figure~\ref{fig:scale} and~\ref{fig:normal} respectively. Both assertions check that the min and max of the feature is within the expected bounds after applying the respective pre-processing technique. In contrast to assertions presented in Table~\ref{tab:compare-op-asserts}, it is clear that the thresholds are derived from the corresponding visualisations.
 
-\begin{lstlisting}[caption={Assertion to check that an augmented image is different from the original.}, label={lst:no-comp-magic}]{language=Python}
+\begin{lstlisting}[language=Python, caption={Assertion to check that an augmented image is different from the original.}, label={lst:no-comp-magic}]
 assert not np.allclose(x_aug, x_original)
 \end{lstlisting}
 
@@ -491,7 +490,7 @@ Most notebooks examined in this study do no use any external testing libraries. 
 
 This study found 42 VA pairs where an external testing library was used. Listing~\ref{lst:np-almost-equal} shows an assertion that uses the \texttt{assert\_almost\_equal} method from the \texttt{numpy.testing} module. The assertion checks if the loss of the model is similar to the specified value, up to a desired precision. Due to the stochastic nature of ML, results obtained from two separate development cycles will slightly differ. The assertion presented in Listing~\ref{lst:np-almost-equal} is found to be robust towards such perturbations and will only fail if there is a significant change in the performance of the model.
 
-\begin{lstlisting}[caption={Assertion to check that the loss of the model is similar to the specified value.}, label={lst:np-almost-equal}]{language=Python}
+\begin{lstlisting}[language=Python, caption={Assertion to check that the loss of the model is similar to the specified value.}, label={lst:np-almost-equal}]
 ans4 = compute_loss(X_expanded, y, w)
 np.testing.assert_almost_equal(ans4, 0.3042764) 
 \end{lstlisting}
@@ -507,7 +506,7 @@ We performed an in-depth analysis of 34 unique VA pairs. This was conducted by r
   \caption{Visualisation of the decision boundary of a SVM trained using different kernels.}\label{fig:svm}
 \end{figure}
 
-\begin{lstlisting}[caption={Assertion on the accuracy of the ML model.}, label={lst:svm}]{language=Python}
+\begin{lstlisting}[language=Python, caption={Assertion on the accuracy of the ML model.}, label={lst:svm}]
 assert accuracy_score(y_test, pred) > 0.95
 \end{lstlisting}
 
@@ -517,7 +516,7 @@ The visualisations contain several useful information that can be used to test a
 
 Listing~\ref{lst:svm} shows the corresponding assertion that was defined below the visualisations. The assertion checks if the model accuracy is above a threshold specified by the author. The assertion however, is only able to capture the information pertaining to the performance of the model. While the rest of the information that is gained from the qualitative assessment using visualisation is lost.
 
-\begin{lstlisting}[caption={Assertion to check that the Coefficient of Determination ($R^2$) is higher than the specified threshold.}, label={lst:r2}]{language=Python}
+\begin{lstlisting}[language=Python, caption={Assertion to check that the Coefficient of Determination ($R^2$) is higher than the specified threshold.}, label={lst:r2}]
 r2_gru = r2_score(y_test, y_pred)
 assert r2_gru > 0.6
 \end{lstlisting}
@@ -533,7 +532,7 @@ Listing~\ref{lst:r2} presents the corresponding analytical test which was define
 
 Similar to Figure~\ref{fig:svm}, the visualisation in Figure~\ref{fig:r2} allows ML practitioners to visually assess if the model is under or overfitting the training data. If the spread of $y_{pred}$ is wide, it indicates that the model is under-fitting. In contrast, if the spread is very close to the diagonal line, it indicates that the model is most likely overfitting. The visualisation can also be used to verify if there are any outliers in the predictions, for a given input. The assertion in Listing~\ref{lst:r2} however, does not capture such information. It can only check if the performance of the model is better than a specific threshold.
 
-\begin{lstlisting}[caption={Assertion to check that each feature in a dataset is normal. The distribution of each feature is compared to that of a normal distribution using the Kolmogorov-Smirnov test for goodness of fit from the scipy library.}, label={lst:kstest}]{language=Python}
+\begin{lstlisting}[language=Python, caption={Assertion to check that each feature in a dataset is normal. The distribution of each feature is compared to that of a normal distribution using the Kolmogorov-Smirnov test for goodness of fit from the scipy library.}, label={lst:kstest}]
 for feature in range(data_transformed.shape[1]):
 assert kstest(data_transformed[:, feature], 'norm').statistic < 1e-2
 \end{lstlisting}
