@@ -543,7 +543,7 @@ Similar to Figure~\ref{fig:svm}, the visualisation in Figure~\ref{fig:r2} allows
 
 \begin{lstlisting}[language=Python, caption={Assertion to check that each feature in a dataset is normal. The distribution of each feature is compared to that of a normal distribution using the Kolmogorov-Smirnov test for goodness of fit from the scipy library.}, label={lst:kstest}]
 for feature in range(data_transformed.shape[1]):
-assert kstest(data_transformed[:, feature], 'norm').statistic < 1e-2
+  assert kstest(data_transformed[:, feature], 'norm').statistic < 1e-2
 \end{lstlisting}
 
 \begin{figure}
