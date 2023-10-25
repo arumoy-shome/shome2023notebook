@@ -19,24 +19,32 @@
 \usepackage{subcaption}
 \usepackage{array}
 \usepackage{framed}
+\usepackage{tabularx}
+\usepackage{booktabs}
 \newcommand{\highlight}[1]{\begin{framed}%
   \noindent\emph{#1}
 \end{framed}}
 
 \definecolor{backcolor}{rgb}{0.95,0.95,0.92}
+\colorlet{punct}{red!60!black}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
 
 \lstdefinestyle{mystyle}{
+  language=Python,
   basicstyle=\ttfamily\footnotesize,
-  keywordstyle=\color{blue},
-  stringstyle=\color{red},
-  commentstyle=\color{green},
+  keywordstyle=\color{delim},
+  stringstyle=\color{punct},
+  commentstyle=\color{numb},
   breakatwhitespace=true,
   breaklines=true,
   keepspaces=true,
   showspaces=false,
   showstringspaces=false,
   showtabs=false,
-  tabsize=4,
+  tabsize=2,
+  stepnumber=1,
+  numbersep=3pt,
   captionpos=b,
   numbers=left,
   numberstyle=\tiny\color{gray},
@@ -221,26 +229,26 @@ Listings~\ref{lst:cell-md},~\ref{lst:cell-code} and~\ref{lst:cell-output} presen
 \begin{table*}
 \centering
 \caption{Frequent examples of post-condition checks observed in this study.}
-  \begin{tabular}{m{0.2\textwidth} m{0.4\textwidth} m{0.3\textwidth}}
-\hline
+  \begin{tabular}{@{}m{0.2\textwidth} m{0.4\textwidth} m{0.3\textwidth}@{}}
+\toprule
 \emph{\textbf{Visualisation}}&
 \emph{\textbf{Post-condition check}}&
 \emph{\textbf{Rationale}}\\
-\hline
+\midrule
 \includegraphics[width=\linewidth]{post-cond-01.png}&
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python,belowskip=0pt,aboveskip=0pt]
 assert f1.gca().has_data()
 \end{lstlisting}&
 The assertion checks if the output of the visualisation code cell contains an image.\\
 \includegraphics[width=\linewidth]{post-cond-02.png}&
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python,belowskip=0pt,aboveskip=0pt]
 assert_almost_equal(sigmoid(-50), 0, delta=1e-10)
 assert_almost_equal(sigmoid(0), 0.5, delta=1e-10)
 assert_almost_equal(sigmoid(50), 1, delta=1e-10)
 \end{lstlisting}&
 The assertions are spot-checking the sigmoid activation function.\\
 \includegraphics[width=\linewidth]{post-cond-03.png}&
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python,belowskip=0pt,aboveskip=0pt]
 # The axis should contain 5 bars
 assert len(ax.containers[0]) == 5
 
@@ -249,7 +257,7 @@ tick_text = [tick.get_text() for tick in ax.get_xticklabels()]
 assert "blue" in tick_text
 \end{lstlisting}&
 The asserts are validating the correctness of the visualisation itself.\\
-\hline
+\bottomrule
 \end{tabular}
 \label{tab:post-cond}
 \end{table*}
@@ -270,9 +278,9 @@ Figure~\ref{fig:method} summarises the methodology used to collect related VA pa
 
 \subsection{Data Collection}\label{sec:data-collect}
 
-We mined public repositories from Github to collect $54,070$ Jupyter notebooks that contain the keyword ``assert'' in them. We use the Github advanced search syntax~\footnote{https://docs.github.com/en/search-github/searching-on-github/searching-code} to isolate Jupyter Notebook. Additionally, we include the ``assert'' keyword in the search query with an \texttt{AND} operator. The final search query is as follows: \texttt{filename:"Jupyter Notebooks" AND "assert"}.
+We mined public repositories from Github to collect $54,070$ Jupyter notebooks that contain the keyword ``assert'' in them. We use the Github advanced search syntax~\footnote{https://docs.github.com/en/search-github/searching-on-github/searching-code} to isolate Jupyter Notebook. Additionally, we include the ``assert'' keyword in the search query with an \texttt{AND} operator. The final search query is as follows: \texttt{"image/png" AND "assert" language:"Jupyter Notebook"}.
 
-To further reduce the sample size, we exclude notebooks that do not use popular ML or Data Science (DS) libraries. We perform a string search to identify notebooks that import at least one of the libraries. The string patterns are derived from the python module name used in the import statements. The regex search query is as follows: \texttt{tensorflow|dask|torch|sklearn|scipy|numpy|pandas}.
+To further reduce the sample size, we exclude notebooks that do not use popular ML or Data Science (DS) libraries. We perform a string search to identify notebooks that import at least one of the libraries. The string patterns are derived from the python module name used in the import statements. The regex search query is as follows: \texttt{tensorflow|dask|torch|sklearn|scipy|numpy| pandas}.
 
 We programmatically parse the JSON structure of the notebooks (more details regarding the internal structure of Jupyter notebooks is presented in Section~\ref{sec:nbformat}) and represent each notebook as a pandas dataframe for further analysis. Each cell is mapped as a row in the dataframe. For each cell, we store the \texttt{cell\_type}, the \texttt{source} of the cell and the base64 encoded PNG string, into the corresponding columns of the dataframe. Notebooks without any visualisations are excluded by checking if the image column of  the dataframe is empty.
 
@@ -297,34 +305,34 @@ We observed the best results in notebooks with Arrangement 3.2---where the asser
   \centering
   \caption{Observations from random samples of notebooks with various
   cell arrangement.}
-  \begin{tabular}{l p{0.2\textwidth} p{0.2\textwidth}}
-    \hline
+  \begin{tabular}{@{}l p{0.13\textwidth} p{0.27\textwidth}@{}}
+    \toprule
     \emph{\textbf{ID}}&
     \emph{\textbf{Cell arrangement}} &
     \emph{\textbf{Observations}}\\
-    \hline
+    \midrule
     1 &
     Assertion cell above visualisation cell &
     Least likely to be related to the visualisation below.\\
-    \hline
+    \midrule
     \multicolumn{3}{l}{\textbf{Assertion and visualisation in the same code cell}}\\
-    \hline
+    \midrule
     2.1 &
     Assertion above visualisation code &
     More likely to be a pre-condition check.\\
     2.2 &
     Assertion below visualisation code &
     More likely to be a post-condition check.\\
-    \hline
+    \midrule
     \multicolumn{3}{l}{\textbf{Assertion cell below visualisation cell}}\\
-    \hline
+    \midrule
     3.1 &
     Assertion cell more than 10 lines &
     Better signal-to-noise ratio compared to Arrangement 2.1. However, More likely to be post-condition check or unrelated to the visualisation above.\\
     3.2 &
     Assertion cell has max 10 lines &
     Most likely to be related to the visualisation above.\\
-    \hline
+    \bottomrule
   \end{tabular}
   \label{tab:cell-arrangement}
 \end{table}
@@ -352,12 +360,12 @@ Finally, notebooks that were not authored entirely in English or contained fault
 \begin{table}
   \centering
   \caption{Inclusion-Exclusion criteria used to identify related visualisation-assertion pairs.}\label{tab:exclusion-criteria}
-  \begin{tabular}{l p{0.2\textwidth} r}
-    \hline
+  \begin{tabularx}{0.47\textwidth}{@{}l X r@{}}
+    \toprule
     \textbf{ID} &
     \textbf{Exclusion Criteria} &
-    \textbf{Num. excluded NBs}\\
-    \hline
+    \textbf{\# excluded NBs}\\
+    \midrule
     \textbf{EC1} &
     The visualisation and assertion are not related &
     560\\
@@ -376,11 +384,11 @@ Finally, notebooks that were not authored entirely in English or contained fault
     \textbf{EC6} &
     Notebook contains incorrect code &
     34\\
-    \hline
+    \midrule
     \multicolumn{2}{c}{\emph{\textbf{Total number of NBs excluded:}}} &
     1507\\
-    \hline
-  \end{tabular}
+    \bottomrule
+  \end{tabularx}
 \end{table}
 
 \section{Results}\label{sec:result}
@@ -397,13 +405,13 @@ We further analysed the 269 VA pairs obtained from RQ1, and identified three tes
 \begin{table}
   \centering
   \caption{Testing patterns observed in the visualisation-assertion pairs.}
-  \begin{tabular}{l p{0.3\textwidth} c c}
-    \hline
+  \begin{tabularx}{0.45\textwidth}{@{}l X r r@{}}
+    \toprule
     \textbf{ID} &
     \textbf{Description} &
     \multicolumn{2}{c}{\textbf{Count}}\\
     & & Yes & No\\
-    \hline
+    \midrule
     \textbf{P1} &
     Does the assertion use a comparison operator (such as \emph{eq, lt, gt})? &
     202 & 67\\
@@ -411,35 +419,30 @@ We further analysed the 269 VA pairs obtained from RQ1, and identified three tes
     Does the assertion use magic thresholds? &
     101 & 168\\
     \textbf{P3} &
-    Does the assertion use an external testing library (such as \texttt{numpy.testing}? &
+    Does the assertion use an external testing library (such as \texttt{numpy.testing})? &
     42 & 227\\
-    \hline
-  \end{tabular}
+    \bottomrule
+  \end{tabularx}
   \label{tab:testing-patterns}
 \end{table}
 
 \begin{table}
   \centering
   \caption{Most frequently occurring assertions that use a comparison operator.}
-  \begin{tabular}{m{0.9\linewidth}}
-    \hline
-    \begin{lstlisting}[language=Python]
-assert accuracy_score(y_test, pred) > 0.95
-    \end{lstlisting}\\
-    \begin{lstlisting}[language=Python]
-assert HISTORY['test_accuracy'][-1] > 0.92
-    \end{lstlisting}\\
-    \begin{lstlisting}[language=Python]
+  \begin{tabular}{@{}m{0.9\linewidth}@{}}
+    \toprule
+    \begin{lstlisting}[language=Python,belowskip=0pt,aboveskip=0pt]
+assert accuracy_score(y_test, pred) > 0.95\end{lstlisting}\\
+    \begin{lstlisting}[language=Python,belowskip=0pt,aboveskip=0pt]
+assert HISTORY['test_accuracy'][-1] > 0.92\end{lstlisting}\\
+    \begin{lstlisting}[language=Python,belowskip=0pt,aboveskip=0pt]
 assert np.mean(mean_rw_history[-10:]) > 10.
-print("That's good enough for tutorial.")
-    \end{lstlisting}\\
-    \begin{lstlisting}[language=Python]
-assert np.mean(metrics['dev_bleu'][-10:], axis=0)[1] > 35, "We kind of need a higher bleu BLEU from you. Kind of right now."
-    \end{lstlisting}\\
-    \begin{lstlisting}[language=python]
-assert np.mean(dev_recall_history[-10:]) > 0.85, "Please train for at least 85% recall on test set. You may need to change vectorizer model for that."
-    \end{lstlisting}\\
-    \hline
+print("That's good enough for tutorial.")\end{lstlisting}\\
+    \begin{lstlisting}[language=Python,belowskip=0pt,aboveskip=0pt]
+assert np.mean(metrics['dev_bleu'][-10:], axis=0)[1] > 35, "We kind of need a higher bleu BLEU from you. Kind of right now."\end{lstlisting}\\
+    \begin{lstlisting}[language=python,belowskip=0pt,aboveskip=0pt]
+assert np.mean(dev_recall_history[-10:]) > 0.85, "Please train for at least 85% recall on test set. You may need to change vectorizer model for that."\end{lstlisting}\\
+    \bottomrule
   \end{tabular}
   \label{tab:compare-op-asserts}
 \end{table}
