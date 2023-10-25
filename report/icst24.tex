@@ -51,6 +51,12 @@
   backgroundcolor=\color{backcolor}
 }
 \lstset{style=mystyle}
+
+\lstset{emph={%  
+    assert%
+    },emphstyle={\color{delim}}%
+}%
+
 \usepackage{graphicx}
 \usepackage{caption}
 
@@ -229,7 +235,7 @@ Listings~\ref{lst:cell-md},~\ref{lst:cell-code} and~\ref{lst:cell-output} presen
 \begin{table*}
 \centering
 \caption{Frequent examples of post-condition checks observed in this study.}
-  \begin{tabular}{@{}m{0.2\textwidth} m{0.4\textwidth} m{0.3\textwidth}@{}}
+  \begin{tabular}{@{}m{0.2\textwidth} m{0.42\textwidth} m{0.28\textwidth}@{}}
 \toprule
 \emph{\textbf{Visualisation}}&
 \emph{\textbf{Post-condition check}}&
