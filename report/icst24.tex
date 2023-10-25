@@ -349,7 +349,21 @@ We observed the best results in notebooks with Arrangement 3.2---where the asser
 
 The initial sample size of 54K notebooks from Github, was reduced to the final sample size of 1.7K after applying the filters presented in Section~\ref{sec:data-collect}. We analysed all 1.7K notebooks manually to further identify 269 VA pairs that were semantically related to each other.
 
-We manually analysed the source code of the visualisation and assertion code cells. And excluded VA pairs that were not related to each other. We encountered several instances where the tracing was not straightforward due to lack of sufficient context from surrounding markdown cells or poor coding practices---such as use of obscure variable names or deeply nested function calls. In such cases, we used one-shot prompt engineering~\cite{liu2023pretrain} with the ChatGPT 4.0 model to determine if the visualisation and assertion were related to each other.
+We manually analysed the source code of the visualisation and assertion code cells. And excluded VA pairs that were not related to each other. We encountered several instances where the tracing was not straightforward due to lack of sufficient context from surrounding markdown cells or poor coding practices---such as use of obscure variable names or deeply nested function calls. In such cases, we used one-shot prompt engineering~\cite{liu2023pretrain} with the ChatGPT 4.0 model to understand the code used to create the visualisation. Listing~\ref{lst:prompt} shows the prompt used for such cases. In a few cases, where the explaination of the visualisation code was not sufficient, we used the ChatGPT model to confirm our annotation of the VA pair. Listing~\ref{lst:prompt-follow-up} shows the prompt used in such cases.
+
+\begin{lstlisting}[caption={Prompt used for ChatGPT 4.0 model to understand visualisation code.}, label={lst:prompt}]
+Explain the following Python code:
+
+<code for visualisation>
+
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Prompt used for ChatGPT 4.0 model to confirm if a VA pair are related to each other.}, label={lst:prompt-follow-up}]
+Is the following Python assertion related to the visualisation code?
+
+<code for assertion>
+
+\end{lstlisting}
 
 Notebooks not related to ML or Data Science (DS) were excluded from this study. We found several notebooks from other domains such as cryptography, scientific simulations, genetic algorithms and fluid dynamics. Such notebooks were captured in Phase 1 because they imported one of the popular python libraries (typically numpy or pandas). However, the visualisation and assertion pairs discovered within these notebooks were not related to ML or DS.
 
@@ -582,14 +596,9 @@ Additionally, in the results from RQ2\luis{this is RQ3}, we see several examples
 
 \section{Threats to Validity and Future Work}\label{sec:threats}
 
-The empirical analysis presented in this study uses Jupyter notebooks mined from Github. To the best of our knowledge, \cite{pimentel2019large} and \cite{quaranta2021kgtorrent} are the only two prior studies which provide a public dataset of Jupyter Notebooks. We faced several technical challenges while trying to access the notebooks provided by these authors and thus decided to mine our own data from Github. However, 24\% of the notebooks had to be excluded from the study since they were not related to ML or DS (Section~\ref{sec:identify-related-pairs} and Table~\ref{tab:exclusion-criteria}). We wish to extend our analysis to notebooks collected from Kaggle since Kaggle is predominantly targetted towards the ML and DS community.
+The empirical analysis presented in this study uses Jupyter notebooks mined from Github. To the best of our knowledge,~\cite{pimentel2019large} and~\cite{quaranta2021kgtorrent} are the only two prior studies which provide a public dataset of Jupyter Notebooks. We faced several technical challenges while trying to access the notebooks provided by these authors and thus decided to mine our own data from Github. However, 24\% of the notebooks had to be excluded from the study since they were not related to ML or DS (Section~\ref{sec:identify-related-pairs} and Table~\ref{tab:exclusion-criteria}). We wish to extend our analysis to notebooks collected from Kaggle since Kaggle is predominantly targetted towards the ML and DS community.
 
-In Section~\ref{sec:data-collect}, we intentionally keep the search criteria on Github broad by only checking for the appropriate filetype and the presence of the ``assert'' keyword. Besides being used to define tests in the Python programming language, ``assert'' also appears in several external python libraries that provide a testing interface (for instance nose\footnote{}, unittest and numpy). Our approach provides captures a rich variety of assertion statements while preventing the need to craft a custom search query based on an enhaustive list of keywords that appear in all Python testing libraries.
-
-% TODO don't mention quantity of random sample; then we need to explain/defend this choice
-We used an iterative approach to determine the effectiveness of each filter that was used. We applied each filter in the same order as presented in Table~\ref{tab:filters}, starting with F1. We randomly sampled 50 notebooks from the population of notebooks obtained after applying the filter. We then conduct the qualitative assessment presented in Section~\ref{REFME} and observe the number of related visualisation and assertion pairs. In each new iteration, we progressively add the other filters and include the filter if the number of relevant visualisation and assertion pairs increases.
-
-% TODO defend use of one-shot prompt engineering for identifying related visualisation and assertion code cells; how did we mitigate this threat?
+In Section~\ref{sec:data-collect}, we intentionally keep the search criteria on Github broad by only checking for the appropriate filetype and the presence of the ``assert'' keyword. Besides being used to define tests in the Python programming language, ``assert'' also appears in several external python libraries that provide a testing interface (for instance nose~\footnote{http://readthedocs.org/docs/nose/}, unittest~\footnote{https://docs.python.org/3/library/unittest.html} and numpy~\footnote{https://numpy.org/doc/stable/reference/routines.testing.html}). Our approach captures a rich variety of assertion statements while preventing the need to craft a custom search query based on an enhaustive list of keywords that appear in several Python testing libraries.
 
 \section{Conclusion}\label{sec:conclude}
 
