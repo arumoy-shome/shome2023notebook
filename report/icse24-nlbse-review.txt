@@ -1,0 +1,273 @@
+Dear Arumoy Shome,
+
+Thank you for your submission to the NLBSE research track. After the
+peer-review process, we accepted 10 out of 16 papers received.
+
+We are happy to inform you that your paper
+
+Towards Automatic Translation of Machine Learning Visual Insights to
+Analytical Assertions
+
+has been accepted for inclusion in the program of the 3rd Workshop on
+Natural Language-based Software Engineering (NLBSE 2024), co-located
+with ICSE 2024. Congratulations!
+
+All submissions were reviewed by at least two members of the program
+committee. An online discussion was held after the reviews were
+complete until reaching a consensus for each paper. We enclose below
+the reviewers' comments for your submission.
+
+For the final version of your paper, please make sure to address all
+the reviewers' concerns and incorporate their suggestions.
+
+IMPORTANT INFORMATION
+
+1. The camera-ready deadline is January 25th (AoE), 2024.
+
+2. In the next days, you will be contacted by the publisher with the
+   instructions for preparing the camera-ready version of your paper.
+
+3. The given page limits (8 pages for full papers, 4 pages for short
+   papers, and 2 pages for position papers) are strict.
+
+4. The list of authors (names, emails, affiliations, order) and the
+   title of the paper are not allowed to be changed. If a correction
+   is needed, please email us ASAP.
+
+5. For each accepted paper, a presentation by one of the authors at
+   the workshop is required. For registration information, please
+   visit the ICSE conference web page.
+
+We thank you again for your submission and your interest in NLBSE 2024.
+
+
+Best Regards,
+Maliheh Izadi, Andrea Di Sorbo, and Sebastiano Panichella
+NLBSE 2024 Co-chairs
+
+SUBMISSION: 8
+TITLE: Towards Automatic Translation of Machine Learning Visual Insights to Analytical Assertions
+
+
+----------------------- REVIEW 1 ---------------------
+SUBMISSION: 8
+TITLE: Towards Automatic Translation of Machine Learning Visual Insights to Analytical Assertions
+AUTHORS: Arumoy Shome, Luis Cruz and Arie van Deursen
+
+----------- Overall evaluation -----------
+SCORE: 2 (accept)
+----- TEXT:
+Paper summary:
+
+In this study, the authors present their vision which revolves around
+the development a novel tool that creates analytical assertion
+statements from visual properties, with the goal of enhancing key
+parts of the ML development process. The initial step of their
+proposal involves constructing a new taxonomy to organize 269 Visual
+Assertions (VA) related to ML verification tasks. By utilizing 269 VA
+pairs from previous research, the authors lay a solid foundation for
+their study, which aids in the fine-tuning and assessment of their
+proposed approach. Moreover, the authors propose to augment this set
+of VA pairs further by gathering more visual assertions, thus
+expanding the context of the study. The research will advance by
+exploring three specific Research Questions (RQs) in addition to the
+one on taxonomy. These RQs are designed to delve into critical issues,
+such as the role of multimodal data like images and text and the
+comparison of the authors' proposed method with the latest open-source
+Large Language Models (LLMs) and, at the same time, commercial
+solutions such as ChatGPT, which builds on the backbone of FM
+(Foundation Models).
+
+Overall Comments for authors:
+
+This proposal offers a quite reasonable number of insights concerning
+the research direction the authors intend to follow as for translating
+visual properties into analytical assertion statements. The motivation
+behind the future study is convincing and reasons well within the
+scope of this workshop. Additionally, the formulated RQs, four (4) in
+total, seem to tackle the problem's relevant aspects.
+
+On a different note, more concrete references to baseline methods
+against which the authors planned to compare their future techniques
+could provide deeper insights. This is particularly relevant to RQ3,
+where various AI models will be tested for generating assertions from
+visualizations. In this context, I would have anticipated the authors
+to reference existing established baselines in the field of assertion
+statement generation, such as those reported below:
+
+[1] “Generating Accurate Assert Statements for Unit Test Cases using Pretrained Transformers” —Tufano et al.
+
+[2] “Studying the usage of text-to-text transfer transformer to support code-related tasks” —Mastropaolo et al.
+
+[3] “Using Transfer-Learning for Code-Related Tasks”
+—Mastropaolo et al.
+
+This leads me to question whether the authors fully understand the
+breadth of the current state-of-the-art in terms of approaches and
+techniques for automatically generating assert statements.
+
+Beyond the previously mentioned concern, considering this is a project
+yet to be realized, I believe the authors have done quite a good job
+in clarifying the interaction between various elements. This
+encompasses components like the formulated research questions,
+anticipated results (Section 4), and a succinct discussion on how the
+forthcoming study might enhance AI interpretability and contribute to
+the field of automated testing.
+
+
+Strengths:
+
+- The proposal is well written and strikes for a good balance in terms
+  of “what it has to be done” and technical details.
+- The study design the authors intend to follow for investigating the
+  problem of translating visual proprieties into assertion is solid.
+- Should the authors adhere to the proposal's direction while tackling
+  the problem, I think the final study will produce important
+  contributions, such as a taxonomy and empirical experimentation
+  pertinent to the task under consideration.
+
+
+Weaknesses:
+
+- The motivation behind the problem could have been better articulated
+- For RQ3, tangible and applicable examples of baselines are
+  necessary, as this paper aims to envision potential solutions for
+  a specific problem by discussing practical approaches
+
+Comments on Rigor:
+
+The proposal is well documented, and it seems the authors will adopt
+reasonable practices in the forthcoming investigations. To this end,
+I found a great idea to reinforce the manual analysis used to
+establish whether a given visualization and assertion are related, as
+the resulting dataset can steer further investigation on this topic.
+Following this trajectory, conducting a qualitative study with human
+participants to evaluate the effectiveness of various techniques in
+converting visual properties into assertions is extremely valuable,
+and I urge the authors to incorporate this additional analysis into
+their future research. Moreover, I believe that conducting statistical
+tests would nicely supplement the quantitative measures already
+discussed in the paper. With that in mind, my final note to the
+authors is a reminder to incorporate a comprehensive discussion of the
+literature regarding the generation of assert statements. In summary,
+if the final investigation delivers on the promises made in the
+proposal, I am quite confident that the work will be sufficiently
+robust for significant software engineering forums.
+
+Comments on the Relevance of the Contribution to SE:
+
+This work aligns well with the scope of this forum. Specifically, it
+offers a robust proposal that anticipates a study with key
+contributions, including a taxonomy organizing VA pairs around ML
+verification tasks and an empirical analysis of how state-of-the-art
+techniques compare to the envisioned approach in automatically
+generating assertions from visual properties.
+
+
+Comments on Novelty:
+
+The method by which the author plans to tackle the problem outlined in
+this preliminary study is innovative in terms of applying techniques
+proven effective for different but related tasks in the automatic
+generation of analytical assertions from visualizations.
+
+
+Comments on Verifiability and Transparency:
+
+Given that the study is yet to be conducted and relies on the results
+of a paper whose dataset will be released upon acceptance, there isn't
+much to discuss at this stage. However, I trust that the authors will
+publicly share the scripts, dataset, and results of the forthcoming
+investigation in accordance with open science principles.
+
+Comments on Presentation:
+
+The manuscript is coherent and well-expressed. All the critical
+aspects of the problem being studied are thoroughly addressed.
+However, I noticed a minor stylistic issue: the authors appear to
+insert a space in decimal numbers, as seen on Page 1, Line 18 (54,
+070). For the sake of style and consistency, I would recommend not
+doing this.
+
+****Notes for the camera-ready of the paper****
+
+- Try to justify the motivation behind the problem better
+- Considering that the 4-page limit has not been reached, I would like
+  the authors to briefly acknowledge the presence of different yet
+  similar works in the realm of assert generation. To this end,
+  I think it is reasonable to include those in the introduction if the
+  authors feel comfortable doing it, or alternatively, a new section
+  towards the end of the paper can be created.
+
+
+
+----------------------- REVIEW 2 ---------------------
+SUBMISSION: 8
+TITLE: Towards Automatic Translation of Machine Learning Visual Insights to Analytical Assertions
+AUTHORS: Arumoy Shome, Luis Cruz and Arie van Deursen
+
+----------- Overall evaluation -----------
+SCORE: 1 (weak accept)
+----- TEXT:
+
+This paper presents an interesting research direction, aiming to
+develop an automated tool for translating visual properties observed
+in Machine Learning visualizations into Python assertions. The tool is
+intended to streamline the manual verification process in the ML
+development cycle, which is crucial due to changing real-world data
+and assumptions post-deployment.
+
+Overall, this research not only contributes to the field of ML system
+validation but also explores innovative ways to leverage AI for
+automating and enhancing software engineering practices in ML.
+However, here are some suggested improvements:
+
+(1) One improvement that could be made is to clearly state in the
+introduction what is meant by "visualisation assertions", preferably
+with examples, which may be confusing to those unfamiliar with the
+term.
+
+(2) Additionally, more details should be provided in the `OUR VISION'
+section, especially on how the taxonomy was constructed and the
+specific methods used to compare and evaluate the AI models. This
+would help readers understand the approach in more depth.
+
+(3) Another area for improvement is that the article does not give
+specific detailed analyses of the experimental results, nor does it
+compare and discuss the strengths and limitations of different methods
+and models.
+
+(4) There are some minor typographical errors. For example, Line 133
+should writen "RQ4" instead of "RQ3".
+
+
+
+----------------------- REVIEW 3 ---------------------
+SUBMISSION: 8
+TITLE: Towards Automatic Translation of Machine Learning Visual Insights to Analytical Assertions
+AUTHORS: Arumoy Shome, Luis Cruz and Arie van Deursen
+
+----------- Overall evaluation -----------
+SCORE: 2 (accept)
+----- TEXT:
+
+The paper proposes an approach to develop automated assertion
+generation for ML visualizations. The study builds upon the findings
+of previous empirical work by the same authors, currently under
+revision, involving the mining of 54K+ Jupiter notebooks from GitHub.
+
+The paper is relevant for the audience and holds good potential for
+triggering discussion at the workshop. It also does a good job in
+formulating the research goals in form of research questions. Also,
+the vision proposed is clearly described and, overall, the paper is
+well-written.
+
+The paper looks like an executive summary of the research plans the
+authors intend to execute in the future. The text could be improved by
+better describing some actionable parts included in their future
+development plans. Expressions such as 'we plan to create
+a high-quality dataset of VA pairs which can be used to train and test
+...' could be substantiated by providing a more detailed description
+of the methodology the authors intend to follow to implement their
+research plan. This would definitely help enrich the discussion at the
+workshop.

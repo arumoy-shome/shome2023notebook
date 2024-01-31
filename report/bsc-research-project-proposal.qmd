@@ -1,0 +1,109 @@
+---
+title: "Bsc. Research Project Proposal"
+author: "Arumoy Shome"
+format:
+  pdf:
+    mainfont: "Iosevka Aile"
+    monofont: "Iosevka"
+bibliography: bibliography.bib
+csl: acm-sig.csl
+---
+
+# Introduction
+
+Visualisations are employed at various stages of a Machine Learning
+(ML) pipeline. They are used to understand and verify data properties
+during the early stages, summarise metrics and fine-tune models during
+development, and monitor performance post-deployment. The iterative
+and experimental nature of building ML systems heavily relies on
+insights from visualisations to guide design and implementation
+decisions
+[@yuan2020survey;@hohman2019visual;@amershi2015modeltracker;@wexler2019what-if;@shome2022data;@haakman2021ai].
+
+However, real-world data that ML systems encounter post-deployment
+seldom remain static. They often change as a reflection of the world,
+potentially violating initial assumptions made during development
+[@amershi2019software;@lwakatare2021on]. Every subsequent iteration of
+the ML development cycle used to retrain and update the ML model,
+therefore demands manual validation of the visualisations that were
+used to test ML system properties.
+
+Assertions or analytical tests derived from ML visualisations can
+significantly reduce manual verification efforts. Such formal
+assertions record the AI practitioner's observations about the model
+or data at a specific moment. They also serve as a reference point for
+future AI practitioners to understand the interpretations made from
+earlier visualisations.
+
+In a prior study, we mined $54,070$ Jupyter notebooks from Github and
+created a high-quality dataset of $269$ semantically related
+visualisation-assertion (VA) pairs. The input feature space comprises
+of a rich source of information comprising of visualisations, Python
+source code, and associated markdown text.
+
+This research project will focus on developing automated tools using
+state-of-the-art Large Language Models (LLMs) that aid ML
+practitioners when working with visualisations. The research questions
+for this project are categorised into 3 distinct tracks and presented
+below.
+
+
+# Track 1: Exploring Multi-Model Input Feature Space for Translating ML Visualisation to Python Assertions
+
+This track will focus on exploring various multi-model input feature
+space for the LLMs. Students will work with various open-source LLMs
+from the HuggingFace library and develop an optimal training set that
+produces the best results. There are 3 research questions here:
+
++ **RQ1**: Can image-to-text models translate visual properties
+  observed in ML visualisation to Python assertions?
+
+  The objective here is to experiment with various image-to-text
+  models with a dataset comprising of PNG images containing
+  visualisations obtained from Jupyter Notebooks.
+
++ **RQ2**: Does a multi-modal dataset improve the results of the AI
+  models?
+
+  Here we will augment the dataset with additional features extracted
+  from the Python code that produces the visualisation and the
+  surrounding Markdown text written by the notebook authors.
+
++ **RQ3**: Do LLMs4Code models perform better compared to
+  general-purpose LLMs?
+
+  There are several LLMs that have been trained on a large corpus of
+  code written in programming languages. The objective of RQ3 is to
+  compare such models with general purpose LLMs and determine if they
+  are better suited for the task.
+
+# Track 2: Detecting "Smelly" Python Visualisation Code
+
+This track will focus on creating an automated tool that can detect
+code smells in the Python code that generate ML visualisations.
+
++ **RQ4**: What are the most frequently occuring code smells in ML
+  visualisation code written in Python?
+
+  The focus here will be to propose code smells observed in Python
+  code that generate visualisations. This track is more open-ended as
+  students can propose code smells from different aspects such as
+  design of the visualisation and performance of the underlying code.
+
+# Track 3: Automatically Detecting "Related" VA Pairs in Jupyter Notebooks
+
+Creating a dataset of semantically related VA pairs requires a lot of
+manual effort. This track will focus on exploring strategies to
+automate this process.
+
++ **RQ5**: Can code similarity metrics automatically detect related
+  VA pairs?
+
+  In this RQ the focus will be on experimenting with various code
+  similarity metrics [@eghbali2022crystalbleu] which can automatically
+  detect if a given VA pair are related to each other.
+
+# References
+
+::: {#refs}
+:::

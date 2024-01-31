@@ -1,0 +1,233 @@
+Dear Arumoy,
+
+Thank you for your submission to the 17th IEEE International
+Conference on Software Testing, Verification and Validation (ICST)
+2024.
+
+We regret to inform you that your paper
+
+  Bridging the Gap Between Visual and Analytical Machine Learning
+  Testing
+
+has not been selected for inclusion in the program of ICST 2024.
+
+Each paper was reviewed by at least three members of the Program
+Committee (PC), and was discussed among the PC and the program chairs.
+
+We appreciate your submission and encourage you to pursue further your
+research in this field and submit your results to other tracks of ICST
+2024 or to the next edition of ICST. We hope the reviews will be
+helpful to you.
+
+Best regards, Greg and Shiva.
+
+SUBMISSION: 114 TITLE: Bridging the Gap Between Visual and Analytical
+Machine Learning Testing
+
+
+----------------------- REVIEW 1 ---------------------
+SUBMISSION: 114
+TITLE: Bridging the Gap Between Visual and Analytical Machine Learning
+Testing AUTHORS: Arumoy Shome, Thomas Durieux, Luis Cruz and Arie van
+Deursen
+
+----------- Overall evaluation -----------
+
+This paper presents an empirical study exploring how ML visualisations
+are related to assertions in Jupyter notebooks. The study reveals that
+creating analytical assertions from visualisations is still an
+emerging testing practice, and the majority of the assertions are
+unable to capture all information from their visual counterparts.
+
+The study is timely, relevant, and presents interesting findings.
+However, some findings are not well backed up with sufficient
+analysis. In addition, the study does not present a sound overview of
+related work, and the methodology part needs additional details in
+many places.
+
+- In Section III-A, the statement "To further reduce the sample size,
+  ..." needs to be further motivated. How does sample size affect your
+  subsequent analysis?
+
+- In Section III-A, the statement "To identify visualisation and
+  assertion pairs that are semantically related to one another, ...",
+  you need to explicitly define and explain the term "related" in this
+  context. Overall, the concept has been quite vague throughout the
+  paper.
+
+- In Section III-A, you have "..., we only consider notebooks in which
+  the visualisation and assertion code cells appear in a specific
+  order", which would miss out a lot of potentially relevant
+  notebooks. Then, you also present several observations from manual
+  analysis with respect to different orders. Such observations need to
+  be appropriately documented. For example, TABLE II says observations
+  from random samples. How many are there? How generalizable are they?
+
+- The last five paragraphs in Section III-A fit better into Section
+  III-B.
+
+- In Section III-B, the choice of ChatGPT 4.0 for understanding the
+  visualization code and the relation between visualizations and
+  assertions, which largely impact the results of the study, needs to
+  be further demonstrated.
+
+- In Section IV-C, details are missing for how were the 34 unique VA
+  pairs selected.
+
+- Throughout the paper, an overview of relevant studies for analyzing
+  visualization code and assertions is missing. An accurate
+  representation of the state of the art should be presented either in
+  Section II or Section V.
+
+- In Section V, the statement "..., while there are more than a
+  million Jupyter notebooks available" is unclear regarding how many
+  of them actually used visualisation.
+
+- In Section V, you also have to consider another aspect - the
+  intention of visualisation and assertion from the authors - in your
+  analysis. Do they intend to capture all information from
+  visualisation in their assertions, and do they need additional
+  testing libraries to fulfill their goals?
+
+- Section VI does not provide any discussion over threats to validity.
+
+
+
+----------------------- REVIEW 2 ---------------------
+SUBMISSION: 114
+TITLE: Bridging the Gap Between Visual and Analytical Machine Learning
+Testing AUTHORS: Arumoy Shome, Thomas Durieux, Luis Cruz and Arie van
+Deursen
+
+----------- Overall evaluation -----------
+# Summary
+
+The paper focuses on quality assessment of Machine Learning models.
+Specifically, the authors focus on interpretable visualizations and
+the corresponding assertion-based tests in which those are translated.
+The authors conduct a large empirical study involving 1700 Jupyter
+notebooks. Through this analysis, they uncover three prevalent testing
+patterns and identify various limitations in current practices.
+
+# Strengths
+
+* Interesting and novel study with meaningful questions and insightful
+  answers produced by manual analysis of the results
+* Replication package contains what is declared in the paper
+* Usage of examples to clarify the findings
+
+# Weaknesses
+* The authors assert that they have extracted knowledge about ML
+  practitioners, but the findings lack validation through interactions
+  with real practitioners engaged in industrial problems (e.g.,
+  through interviews as in [1]).
+* The paper lacks a clear description of the manual analysis process
+
+# Novelty and comparison to Related Work
+
+The study described by this manuscript is original and worth to be
+explored. The authors describe in detail the related work. I suggest
+adding a discussion on existing empirical studies on ML practice that
+perform mining of open source repositories, e.g., [1, 2].
+
+# Significance and Soundness
+
+This work can have a positive impact on current practice. I suggest to
+address the following points to improve the soundness of the
+experimental design:
+
+* Jupyter notebooks found on GitHub may not be representative of
+  “real” projects, e.g., industrial ones. The authors should discuss
+  the threat of not having conducted an assessment involving
+  practitioners to validate their findings.
+* Information on who performed manual analysis (e.g., to apply
+  inclusion/exclusion, extraction of common patterns for RQ2 or the
+  in-depth analysis in RQ3) and how consensus was achieved is missing.
+* Threats to validity should be classified according to the guidelines
+  for experimental studies in software engineering [3].
+
+# Presentation
+
+The quality of the presentation is very high, with clear and helpful
+images and listings. I suggest to perform a lightweight proofreading
+to check possible typos, such as: Page 2: in-depth analyse -> in-depth
+analysis Page 2: DeepExplore -> DeepXplore
+
+# References
+
+[1] Humbatova et al., “Taxonomy of real faults in deep learning
+systems”, ICSE 2020
+[2] Chen et al., “An empirical study on deployment faults of deep
+learning based mobile applications”, ICSE 2021
+[3] Wohlin et al, Experimentation in Software Engineering, 2012
+
+
+----------------------- REVIEW 3 ---------------------
+SUBMISSION: 114
+TITLE: Bridging the Gap Between Visual and Analytical Machine Learning
+Testing AUTHORS: Arumoy Shome, Thomas Durieux, Luis Cruz and Arie van
+Deursen
+
+----------- Overall evaluation -----------
+
+Paper summary: This paper conducted an empirical study on how
+visualisations are used to test specific properties of ML systems.
+Specifically, the authors first mined Github to collect 54K Jupyter
+Notebooks that contain assertions written in Python, then they further
+identified 1764 notebooks that contain an assertion related to
+visualisation. After that, the authors further analyzed 269
+visualisation-assertion pairs, observations are summarised and
+findings regarding testing visualisation of ML are reported.
+
+Strengths:
++ This work focuses on an important topic;
+
+Weaknesses:
+- Motivation of study visualisation in assertion-based testing
+  mechanism is weak; The practical value of such an empirical is
+  limited;
+- Missing useful take-home messages;
+- Analysis is somehow superficial;
+- Many writing and language issues;
+
+===Detailed Comments===
+
+a) Out of the 54K Jupyter notebooks only 269 samples were found that
+have visualisation-assertion pairs. Such a small number of real cases
+could reflect that 1) it's basically impractical to use visualisation
+in assertion and 2) there may exist other approaches to test ML
+visualisation with not though the assertion. This is quite reasonable
+as the assertion mechanism was designed for visualisation testing.
+GUI-related testing framework might be a better fit for this issue.
+Thus studying the visualisation in assertion-based testing mechanisms
+is questionable.
+
+In addition, authors did not give practical suggestions or guidelines
+on how to use visualisations for testing various properties of machine
+learning systems.
+
+b) In Section III-B, authors used five criteria to identify related
+visualisation-assertion pairs, What are the reasons that these five
+criteria were adopted? Based on what the authors described, this is a
+manual or semi-manual process, what effort did authors have done for
+avoiding any potential human bias during the filtering?
+
+c) "Here, we used one-shot prompt engineering [41] with the ChatGPT
+4.0 model to understand the code used to create the visualization"
+
+I really did not get it here, why do authors use ChatGPT to analyze
+the code instead of manual analysis to ensure the quality, as there
+are only 269 data samples?
+
+In addition, ChatGPT is non-deterministic, given the identical inputs
+it can yield different outputs. I am wondering whether the authors
+have examined how the non-deterministicness of ChatGPT affects the
+results of this work.
+
+d) Table IV shows the summarized three testing patterns, do there
+exist any overlaps between different two patterns?
+
+Also, what are the principles for creating/determining a test pattern?
+
+e) To answer RQ3, the authors analyzed 34 samples, how these 34 data
+samples were selected?

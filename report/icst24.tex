@@ -102,7 +102,31 @@ email address or ORCID}
 
 \begin{abstract}
 
-  Testing ML systems is a highly interactive process which demands a human-in-the-loop approach. In addition to writing tests for the code base, practitioners are required to analyse and interpret several visualisations using their domain expertise to validate if an ML system satisfies the required set of functional and non-functional properties. Visualisations are frequently used to qualitatively assess various parts of an ML pipeline. However, implicit knowledge gained from visualisations must be translated to explicit analytical tests that fail when there is change in any component of the ML pipeline. We conduct an empirical analysis of Jupyter notebooks to catalogue the state-of-the-art mappings between ML visualisations and assertions. We mine Github to collect 54K Jupyter Notebooks that contain assertions written in Python. We develop a novel methodology to identify 1764 notebooks which contain an assertion below a visualisation. We manually analyse the 1.7K notebooks and identify 269 visualisation-assertion pairs that are semantically related to one another. We further investigate the 269 visualisation-assertion pairs and identify three frequently occurring testing patterns. We perform an in-depth analysis of 34 visualisation-assertion pairs and find that the assertions often fail to capture all the information present in their visual counter-part. Empirical evidence obtained in this study indicates that current software testing methods fail to address the unique challenges of ML. And emphasises the need for automated tools that bridge the gap between visual assessments and analytical assertions.
+  Testing ML systems is a highly interactive process which demands a
+  human-in-the-loop approach. In addition to writing tests for the
+  code base, practitioners are required to analyse and interpret
+  several visualisations using their domain expertise to validate if
+  an ML system satisfies the required set of functional and
+  non-functional properties. Visualisations are frequently used to
+  qualitatively assess various parts of an ML pipeline. However,
+  implicit knowledge gained from visualisations must be translated to
+  explicit analytical tests that fail when there is change in any
+  component of the ML pipeline. We conduct an empirical analysis of
+  Jupyter notebooks to catalogue the state-of-the-art mappings between
+  ML visualisations and assertions. We mine Github to collect 54K
+  Jupyter Notebooks that contain assertions written in Python. We
+  develop a novel methodology to identify 1764 notebooks which contain
+  an assertion below a visualisation. We manually analyse the 1.7K
+  notebooks and identify 269 visualisation-assertion pairs that are
+  semantically related to one another. We further investigate the 269
+  visualisation-assertion pairs and identify three frequently
+  occurring testing patterns. We perform an in-depth analysis of 34
+  visualisation-assertion pairs and find that the assertions often
+  fail to capture all the information present in their visual
+  counter-part. Empirical evidence obtained in this study indicates
+  that current software testing methods fail to address the unique
+  challenges of ML. And emphasises the need for automated tools that
+  bridge the gap between visual assessments and analytical assertions.
 
 \end{abstract}
 
@@ -112,68 +136,238 @@ email address or ORCID}
 
 \section{Introduction}\label{sec:intro}
 
-Visualisations are used throughout the ML development lifecycle to test various properties of the ML system. In the early stages of the ML development lifecycle, visualisations are extensively used to make sense of the data and verify its statistical properties. During the model development phase, visualisations are used to summarise metrics, contrast different learning algorithms and iteratively fine-tune ML models. Once the model is deployed in production, visualisations are used to continually monitor their performance and trigger a new training cycle once their performance drops below a certain threshold~\cite{yuan2021survey,hohman2019visual,amershi2015modeltracker,wexler2020if}.
+Visualisations are used throughout the ML development lifecycle to
+test various properties of the ML system. In the early stages of the
+ML development lifecycle, visualisations are extensively used to make
+sense of the data and verify its statistical properties. During the
+model development phase, visualisations are used to summarise metrics,
+contrast different learning algorithms and iteratively fine-tune ML
+models. Once the model is deployed in production, visualisations are
+used to continually monitor their performance and trigger a new
+training cycle once their performance drops below a certain
+threshold~\cite{yuan2021survey,hohman2019visual,amershi2015modeltracker,wexler2020if}.
 
-Building ML systems is highly iterative and experimental. Information gained from ML visualisations is used to make design and implementation decisions for the following steps of the ML pipeline. For instance, we may visualise the distribution of our training data and find that it is normally distributed. Based on this information, we may opt for a Linear Regression model which assumes normality in the underlying data. However, such expectations regarding the data may be violated once the ML system is deployed in production, where the data constantly changes as a reflect of the real world~\cite{amershi2019software,sambasivan2021everyone,breck2019data,baylor2017tfx}.
+Building ML systems is highly iterative and experimental. Information
+gained from ML visualisations is used to make design and
+implementation decisions for the following steps of the ML pipeline.
+For instance, we may visualise the distribution of our training data
+and find that it is normally distributed. Based on this information,
+we may opt for a Linear Regression model which assumes normality in
+the underlying data. However, such expectations regarding the data may
+be violated once the ML system is deployed in production, where the
+data constantly changes as a reflect of the real
+world~\cite{amershi2019software,sambasivan2021everyone,breck2019data,baylor2017tfx}.
 
-Implicit expectations obtained from visualisations must therefore be translated to analytical tests that fail once our expectations regarding the ML system are no longer satisfied.
+Implicit expectations obtained from visualisations must therefore be
+translated to analytical tests that fail once our expectations
+regarding the ML system are no longer satisfied.
 
-In contrast to prior work, we approach ML testing from a new perspective. We conduct an empirical analysis of computational notebooks obtained from Github, to understand the process of testing ML systems in practice. In particular, we focus on the combination of a qualitative form of testing (using visualisations) and a quantitative form of testing (using analytical assertions). The research questions along with the contributions of this paper are as follows.
+In contrast to prior work, we approach ML testing from a new
+perspective. We conduct an empirical analysis of computational
+notebooks obtained from Github, to understand the process of testing
+ML systems in practice. In particular, we focus on the combination of
+a qualitative form of testing (using visualisations) and a
+quantitative form of testing (using analytical assertions). The
+research questions along with the contributions of this paper are as
+follows.
 
 \begin{description}
-  \item[RQ1.] \textbf{How frequently are analytical tests formulated from visualisations created to test ML systems?}
+  \item[RQ1.] \textbf{How frequently are analytical tests formulated
+    from visualisations created to test ML systems?}
 
-We mine 54K Jupyter notebooks from Github that contain an assertion written in Python. We develop an automated technique to identify 1764 notebooks with an assertion below a visualisation. We manually analyse the 1.7K notebooks and identify 269 visualisation-assertion (VA) pairs that are semantically related to each other. We plan to release this catalogue of VA pairs publicly.
+    We mine 54K Jupyter notebooks from Github that contain an assertion
+    written in Python. We develop an automated technique to identify 1764
+    notebooks with an assertion below a visualisation. We manually analyse
+    the 1.7K notebooks and identify 269 visualisation-assertion (VA) pairs
+    that are semantically related to each other. We plan to release this
+    catalogue of VA pairs publicly.
 
-\item[RQ2.] \textbf{What patterns are frequently observed in VA pairs used to test ML systems?}
+\item[RQ2.] \textbf{What patterns are frequently observed in VA pairs
+  used to test ML systems?}
 
-We analyse the 269 VA pairs from RQ1, and observe three testing patterns that frequently occur in the VA pairs.
+  We analyse the 269 VA pairs from RQ1, and observe three testing
+  patterns that frequently occur in the VA pairs.
 
-\item[RQ3.] \textbf{Do the assertions capture all the information obtained from the corresponding visualisation?}
+\item[RQ3.] \textbf{Do the assertions capture all the information
+  obtained from the corresponding visualisation?}
 
-We further perform an in-depth analyse of 34 VA pairs (and their corresponding notebooks). We observe that assertions often cannot capture all the information obtained from the visualisation.
+  We further perform an in-depth analyse of 34 VA pairs (and their
+  corresponding notebooks). We observe that assertions often cannot
+  capture all the information obtained from the visualisation.
 
 \end{description}
 
-Our observations indicate that formulating analytical assertions from visualisations is an emerging testing technique. However, the assertions found in this study often do not reflect the information obtained from their visual counter-part. This study finds the need for automated tools that can reduce the manual effort necessary to validate visualisations in ML systems. And help ML practitioners to formulate better analytical assertions from visualisations.
+Our observations indicate that formulating analytical assertions from
+visualisations is an emerging testing technique. However, the
+assertions found in this study often do not reflect the information
+obtained from their visual counter-part. This study finds the need for
+automated tools that can reduce the manual effort necessary to
+validate visualisations in ML systems. And help ML practitioners to
+formulate better analytical assertions from visualisations.
 
-The replication package for this study is made public on Figshare\footnote{The replication package can be found at this URL: https://figshare.com/s/9347228011999cba29f5}.
+The replication package for this study is made public on
+Figshare\footnote{The replication package can be found at this URL:
+https://figshare.com/s/9347228011999cba29f5}.
 
 \section{Preliminaries}\label{sec:prelim}
 
-This section summarises prior scientific work that has been done in ML Testing, computational notebooks and visual analytics. The section concludes with an overview of technical knowledge required for this paper.
+This section summarises prior scientific work that has been done in ML
+Testing, computational notebooks and visual analytics. The section
+concludes with an overview of technical knowledge required for this
+paper.
 
 \subsection{ML Testing}\label{sec:ml-testing}
 
-Testing ML enabled software systems poses more challenges compared to their traditional counter part. While traditional software systems mature through change in their codebase, ML enabled systems additionally experience change in the training data and the machine learning model~\cite{sculley2015hidden,amershi2019software,sambasivan2021everyone}. With ML being adopted into safety-critical domains that can affect human lives, ensuring that ML systems are correct, robust to data perturbations and not biased by race, colour or gender is of paramount importance. Existing scientific literature on ML testing broadly focuses on two aspects. First, on functional properties such as correctness and robustness of the model towards unseen data. And second, on non-functional properties such as fairness, interpretability and privacy~\cite{zhang2020machine,mehrabi2021survey,chen2022fairness}.
+Testing ML enabled software systems poses more challenges compared to
+their traditional counter part. While traditional software systems
+mature through change in their codebase, ML enabled systems
+additionally experience change in the training data and the machine
+learning
+model~\cite{sculley2015hidden,amershi2019software,sambasivan2021everyone}.
+With ML being adopted into safety-critical domains that can affect
+human lives, ensuring that ML systems are correct, robust to data
+perturbations and not biased by race, colour or gender is of paramount
+importance. Existing scientific literature on ML testing broadly
+focuses on two aspects. First, on functional properties such as
+correctness and robustness of the model towards unseen data. And
+second, on non-functional properties such as fairness,
+interpretability and
+privacy~\cite{zhang2020machine,mehrabi2021survey,chen2022fairness}.
 
-To test the correctness of ML models, several improvements over existing test adequacy metrics have been proposed. Tools such as \textit{DeepExplore} and \textit{DeepGauge} propose new test adequacy metrics such as neuron coverage adapted for ML enabled software systems~\cite{pei2017deepexplore, ma2018deepgauge, gerasimou2020importance}. Formal verification methods have also been proposed that try to provide formal guarantee of robustness against adversarial examples. Such methods however are only feasible for statistical ML models and become computationally expensive for more complex models such as deep neural networks~\cite{zhu2021deepmemory, baluta2021scalable}. Several works have been conducted on generating and detecting adversarial inputs for ML models. Data augmentation techniques based on fuzzing, search based software testing and mutation testing have been proposed to generate adversarial examples that can be used during model training to improve its robustness~\cite{braiek2019deepevolution, gao2020fuzz, wang2021robot, zhang2020white}. It is however not possible to include all variations of adversarial examples into the training data. Thus, methods have been proposed to detect adversarial inputs during runtime~\cite{xiao2021self, wang2020dissector, wang2019adversarial, berend2020cats}.
+To test the correctness of ML models, several improvements over
+existing test adequacy metrics have been proposed. Tools such as
+\textit{DeepExplore} and \textit{DeepGauge} propose new test adequacy
+metrics such as neuron coverage adapted for ML enabled software
+systems~\cite{pei2017deepexplore, ma2018deepgauge,
+  gerasimou2020importance}. Formal verification methods have also been
+proposed that try to provide formal guarantee of robustness against
+adversarial examples. Such methods however are only feasible for
+statistical ML models and become computationally expensive for more
+complex models such as deep neural networks~\cite{zhu2021deepmemory,
+  baluta2021scalable}. Several works have been conducted on generating
+and detecting adversarial inputs for ML models. Data augmentation
+techniques based on fuzzing, search based software testing and
+mutation testing have been proposed to generate adversarial examples
+that can be used during model training to improve its
+robustness~\cite{braiek2019deepevolution, gao2020fuzz, wang2021robot,
+  zhang2020white}. It is however not possible to include all
+variations of adversarial examples into the training data. Thus,
+methods have been proposed to detect adversarial inputs during
+runtime~\cite{xiao2021self, wang2020dissector, wang2019adversarial,
+  berend2020cats}.
 
-In contrast to existing scientific contributions, we conduct a large-scale empirical analysis of Jupyter Notebooks to understand the process of testing ML systems. Specifically, we focus on how visualisations are used to test specific properties of ML systems. We further investigate how frequently analytical tests are formulated based on the information gained from the visualisations.
+In contrast to existing scientific contributions, we conduct a
+large-scale empirical analysis of Jupyter Notebooks to understand the
+process of testing ML systems. Specifically, we focus on how
+visualisations are used to test specific properties of ML systems. We
+further investigate how frequently analytical tests are formulated
+based on the information gained from the visualisations.
 
 \subsection{Computational Notebooks and Software Engineering}\label{sec:notebooks}
 
-Computational notebooks have been ubiquitously adopted by the machine learning community for developing ML enabled systems. Although originally intended to promote reproducible software, computational notebooks are far from being reproducible due to lack of software engineering best practices such as separation of concern, testing and versioning~\cite{pimentel2019large,wang2020better,chattopadhyay2020wrong}.
+Computational notebooks have been ubiquitously adopted by the machine
+learning community for developing ML enabled systems. Although
+originally intended to promote reproducible software, computational
+notebooks are far from being reproducible due to lack of software
+engineering best practices such as separation of concern, testing and
+versioning~\cite{pimentel2019large,wang2020better,chattopadhyay2020wrong}.
 
-\emph{Psallidas et al} provide an overview of the evolving landscape of computational notebooks by analysing six million Python notebooks, two million enterprise Data Science (DS) pipelines, source code and metadata from over 900 releases of 12 important DS libraries. Their findings can be used by system builders for improving DS tools and also by DS practitioners to understand the current trends in technologies they should focus on. \emph{Pimentel et al} mined 1.4 million notebooks from Github to conduct an empirical study on the coding practices in computational notebooks. Based on their analysis, the authors propose guidelines on improving reproducibility of computational notebooks. To enable future research on computational notebooks, \emph{Quaranta et al} mine Kaggle and present \textit{KGTorrent}, a public dataset consisting of approximately 2.5 million Jupyter notebooks written in Python. The dataset also contains a relational database dump of metadata regarding publicly available notebooks on Kaggle.
+\emph{Psallidas et al} provide an overview of the evolving landscape
+of computational notebooks by analysing six million Python notebooks,
+two million enterprise Data Science (DS) pipelines, source code and
+metadata from over 900 releases of 12 important DS libraries. Their
+findings can be used by system builders for improving DS tools and
+also by DS practitioners to understand the current trends in
+technologies they should focus on. \emph{Pimentel et al} mined 1.4
+million notebooks from Github to conduct an empirical study on the
+coding practices in computational notebooks. Based on their analysis,
+the authors propose guidelines on improving reproducibility of
+computational notebooks. To enable future research on computational
+notebooks, \emph{Quaranta et al} mine Kaggle and present
+\textit{KGTorrent}, a public dataset consisting of approximately 2.5
+million Jupyter notebooks written in Python. The dataset also contains
+a relational database dump of metadata regarding publicly available
+notebooks on Kaggle.
 
-Studies with human subjects have been conducted to gain a deeper understanding of the challenges faced by ML practitioners when developing ML models inside notebooks. The results indicate that ML practitioners work in a highly iterative fashion, often experimenting with multiple strategies to analyse the data or produce meaningful visualisations~\cite{kandel2012enterprise, kery2018story, liu2019understanding, chattopadhyay2020wrong}. Studies have also been conducted to understand how practitioners generate, evaluate and manage alternative hypothesis, visual designs, methods, tools, algorithms and data sources to arrive at the final implementation~\cite{liu2019understanding,kandel2012enterprise}. The findings from these studies can be used as guidelines for improving existing notebook technologies or designing new ones.
+Studies with human subjects have been conducted to gain a deeper
+understanding of the challenges faced by ML practitioners when
+developing ML models inside notebooks. The results indicate that ML
+practitioners work in a highly iterative fashion, often experimenting
+with multiple strategies to analyse the data or produce meaningful
+visualisations~\cite{kandel2012enterprise, kery2018story,
+  liu2019understanding, chattopadhyay2020wrong}. Studies have also
+been conducted to understand how practitioners generate, evaluate and
+manage alternative hypothesis, visual designs, methods, tools,
+algorithms and data sources to arrive at the final
+implementation~\cite{liu2019understanding,kandel2012enterprise}. The
+findings from these studies can be used as guidelines for improving
+existing notebook technologies or designing new ones.
 
-To manage and prune multiple versions of code that accumulate over time when developing in notebooks, \emph{Head et al} propose a code gathering tool that allows practitioners to review and only keep the relevant version of code. Other tools such as \textit{WrangleDoc} and \textit{VizSmith} have also been proposed to aid ML practitioners when working within computational notebooks~\cite{yang2021subtle, bavishi2021vizsmith}.
+To manage and prune multiple versions of code that accumulate over
+time when developing in notebooks, \emph{Head et al} propose a code
+gathering tool that allows practitioners to review and only keep the
+relevant version of code. Other tools such as \textit{WrangleDoc} and
+\textit{VizSmith} have also been proposed to aid ML practitioners when
+working within computational notebooks~\cite{yang2021subtle,
+  bavishi2021vizsmith}.
 
-Jupyter notebooks have been widely adopted by the DS and ML communities to develop ML pipelines~\cite{wang2020assessing,pimentel2019large,quaranta2021kgtorrent}. Computational notebooks provide a rich source of data in the form of natural text, code and visualisations. Computational notebooks also allow ML practitioners to present the knowledge gained from the analysis in a narrative that can be shared with others~\cite{rule2018exploration}. This study leverages the computational narrative present within notebooks to identify visualisations and assertions that are semantically linked to each other.
+Jupyter notebooks have been widely adopted by the DS and ML
+communities to develop ML
+pipelines~\cite{wang2020assessing,pimentel2019large,quaranta2021kgtorrent}.
+Computational notebooks provide a rich source of data in the form of
+natural text, code and visualisations. Computational notebooks also
+allow ML practitioners to present the knowledge gained from the
+analysis in a narrative that can be shared with
+others~\cite{rule2018exploration}. This study leverages the
+computational narrative present within notebooks to identify
+visualisations and assertions that are semantically linked to each
+other.
 
 \subsection{Visualisations and Machine Learning}\label{sec:visualisations}
 
-As ML augment software systems in safety-critical domains, emphasis has been put into explainability of ML models. ML models and the underlying data is complex and multi-dimensional. To combat the ``curse of dimensionality'', visual analytics has been widely adopted by the ML community to understand the data and the internal workings of ML models~\cite{yuan2021survey,hohman2019visual,wexler2020if}.
+As ML augment software systems in safety-critical domains, emphasis
+has been put into explainability of ML models. ML models and the
+underlying data is complex and multi-dimensional. To combat the
+``curse of dimensionality'', visual analytics has been widely adopted
+by the ML community to understand the data and the internal workings
+of ML models~\cite{yuan2021survey,hohman2019visual,wexler2020if}.
 
-Prior studies have been conducted to understand how visual analytics techniques are currently being used in ML. \emph{Yuan et al} conduct a systematic review of 259 papers and propose a taxonomy of visual analytics techniques for ML. \emph{Hohman et al} conduct a survey of visual analytics techniques for Deep Learning Models. The findings of the study indicate that visual analytics has been widely adopted in ML for model explanation, interpretation, debugging and improvement.
+Prior studies have been conducted to understand how visual analytics
+techniques are currently being used in ML. \emph{Yuan et al} conduct a
+systematic review of 259 papers and propose a taxonomy of visual
+analytics techniques for ML. \emph{Hohman et al} conduct a survey of
+visual analytics techniques for Deep Learning Models. The findings of
+the study indicate that visual analytics has been widely adopted in ML
+for model explanation, interpretation, debugging and improvement.
 
-Several tools have been proposed by the visual analytics research community to aid practitioners in understanding how their ML models operate. \emph{Wexler et al} propose \textit{What-If}, a visual analytics tool to explore alternative hypotheses, generate counterfactual reasoning, investigate decision boundaries of the model and how change in data affects the model predictions. To reduce the cognitive load of ML practitioners during model building phase, \emph{Amershi et al} propose \textit{ModelTracker}. Given a trained model and a sample dataset, ModelTracker presents all the information in traditional summary statistics along with the performance of the model.
+Several tools have been proposed by the visual analytics research
+community to aid practitioners in understanding how their ML models
+operate. \emph{Wexler et al} propose \textit{What-If}, a visual
+analytics tool to explore alternative hypotheses, generate
+counterfactual reasoning, investigate decision boundaries of the model
+and how change in data affects the model predictions. To reduce the
+cognitive load of ML practitioners during model building phase,
+\emph{Amershi et al} propose \textit{ModelTracker}. Given a trained
+model and a sample dataset, ModelTracker presents all the information
+in traditional summary statistics along with the performance of the
+model.
 
-\textit{ESCAPE}, \textit{GAM Coach}, \textit{Angler} and \textit{Drava} are a few other tools that have been proposed to handle specialised use-cases such as identifying systematic errors in ML models, generating counterfactual explanations for Generalised Additive Models, prioritising machine translation model improvements and relating human concepts with semantic dimensions extracted by ML models during disentangled representation learning\cite{ahn2023escape, wang2023gam, robertson2023angler, wang2023drava}.
+\textit{ESCAPE}, \textit{GAM Coach}, \textit{Angler} and
+\textit{Drava} are a few other tools that have been proposed to handle
+specialised use-cases such as identifying systematic errors in ML
+models, generating counterfactual explanations for Generalised
+Additive Models, prioritising machine translation model improvements
+and relating human concepts with semantic dimensions extracted by ML
+models during disentangled representation learning\cite{ahn2023escape,
+  wang2023gam, robertson2023angler, wang2023drava}.
 
-In contrast to prior work which propose dedicated visual analytics tools, this study focuses on visualisations within computational notebooks. We focus on visualisations produced by AI practitioners using Python libraries (such as Matplotlib or Seaborn). Additional context provided by surrounding code and markdown cells are used to understand the motivation for creating the visualisation and the information gained from it.
+In contrast to prior work which propose dedicated visual analytics
+tools, this study focuses on visualisations within computational
+notebooks. We focus on visualisations produced by AI practitioners
+using Python libraries (such as Matplotlib or Seaborn). Additional
+context provided by surrounding code and markdown cells are used to
+understand the motivation for creating the visualisation and the
+information gained from it.
 
 \subsection{Internal Structure of Jupyter Notebooks}\label{sec:nbformat}
 
@@ -274,7 +468,14 @@ We found several instances of visualisation and assertion pairs which were relat
 
 \section{Methodology}\label{sec:method}
 
-Figure~\ref{fig:method} summarises the methodology used to collect related visualisation-assertion (VA) pairs from Jupyter notebooks. The yellow boxes represent filters that were applied to the initial corpus of 54K notebooks, to obtain the final sample size of 1.7K notebooks used in the empirical study. The red boxes represent the exclusion criteria used to exclude VA pairs not relevant for this study. Text in double quotes represent the string pattern used in the search query. Each phase of the methodology is explained in more detail below.
+Figure~\ref{fig:method} summarises the methodology used to collect
+related visualisation-assertion (VA) pairs from Jupyter notebooks. The
+yellow boxes represent filters that were applied to the initial corpus
+of 54K notebooks, to obtain the final sample size of 1.7K notebooks
+used in the empirical study. The red boxes represent the exclusion
+criteria used to exclude VA pairs not relevant for this study. Text in
+double quotes represent the string pattern used in the search query.
+Each phase of the methodology is explained in more detail below.
 
 \begin{figure*}
   \centering
@@ -286,11 +487,29 @@ Figure~\ref{fig:method} summarises the methodology used to collect related visua
 
 \subsection{Data Collection}\label{sec:data-collect}
 
-We mined public repositories from Github to collect $54,070$ Jupyter notebooks that contain the keyword ``assert'' in them. We use the Github advanced search syntax~\footnote{https://docs.github.com/en/search-github/searching-on-github/searching-code} to isolate Jupyter Notebook. Additionally, we include the ``assert'' keyword in the search query with an \texttt{AND} operator. The final search query is as follows: \texttt{"image/png" AND "assert" language:"Jupyter Notebook"}.\footnote{Collected on June 22, 2023}
+We mined public repositories from Github to collect $54,070$ Jupyter
+notebooks that contain the keyword ``assert'' in them. We use the
+Github advanced search
+syntax~\footnote{https://docs.github.com/en/search-github/searching-on-github/searching-code}
+to isolate Jupyter Notebook. Additionally, we include the ``assert''
+keyword in the search query with an \texttt{AND} operator. The final
+search query is as follows: \texttt{"image/png" AND "assert"
+  language:"Jupyter Notebook"}.\footnote{Collected on June 22, 2023}
 
-To further reduce the sample size, notebooks that do not use popular ML or Data Science (DS) libraries are excluded. A string search is used to identify notebooks that import at least one of the libraries. The string patterns are derived from the python module name used in the import statements. The regex search query is as follows: \texttt{tensorflow|dask|torch|sklearn|scipy|numpy| pandas}.
+To further reduce the sample size, notebooks that do not use popular
+ML or Data Science (DS) libraries are excluded. A string search is
+used to identify notebooks that import at least one of the libraries.
+The string patterns are derived from the python module name used in
+the import statements. The regex search query is as follows:
+\texttt{tensorflow|dask|torch|sklearn|scipy|numpy| pandas}.
 
-We programmatically parse the JSON structure of the notebooks and represent each notebook as a pandas dataframe for further analysis. Each cell is mapped as a row in the dataframe. For each cell, we store the \texttt{cell\_type}, the \texttt{source} of the cell and the base64 encoded PNG string, into the corresponding columns of the dataframe. Notebooks without any visualisations are excluded by checking if the image column of the dataframe is empty.
+We programmatically parse the JSON structure of the notebooks and
+represent each notebook as a pandas dataframe for further analysis.
+Each cell is mapped as a row in the dataframe. For each cell, we store
+the \texttt{cell\_type}, the \texttt{source} of the cell and the
+base64 encoded PNG string, into the corresponding columns of the
+dataframe. Notebooks without any visualisations are excluded by
+checking if the image column of the dataframe is empty.
 
 \begin{figure}
   \centering
@@ -299,15 +518,58 @@ We programmatically parse the JSON structure of the notebooks and represent each
     visualisation.}\label{fig:cell-arrangement}
 \end{figure}
 
-To identify visualisation and assertion pairs that are semantically related to one another, we only consider notebooks in which the visualisation and assertion code cells appear in a specific order. Figure~\ref{fig:cell-arrangement} presents a visual representation of various arrangements of code cells that may occur in notebooks. Note that the visual representation omits markdown cells since we only consider the order of code cells in our analysis. In the actual notebook however, one or more markdown cells may be present between the visualisation and assertion cells.
+To identify visualisation and assertion pairs that are semantically
+related to one another, we only consider notebooks in which the
+visualisation and assertion code cells appear in a specific order.
+Figure~\ref{fig:cell-arrangement} presents a visual representation of
+various arrangements of code cells that may occur in notebooks. Note
+that the visual representation omits markdown cells since we only
+consider the order of code cells in our analysis. In the actual
+notebook however, one or more markdown cells may be present between
+the visualisation and assertion cells.
 
-We conduct the manual analysis presented in Section~\ref{sec:identify-related-pairs} for a small random sample of notebooks containing each cell arrangement. We observed the signal-to-noise ratio---notebooks with related VA pairs versus not---for each cell arrangement and picked the arrangement with the best results. Table~\ref{tab:cell-arrangement} presents the cell arrangement in ascending order of signal-to-noise ratio with a summary of our observations.
+We conduct the manual analysis presented in
+Section~\ref{sec:identify-related-pairs} for a small random sample of
+notebooks containing each cell arrangement. We observed the
+signal-to-noise ratio---notebooks with related VA pairs versus
+not---for each cell arrangement and picked the arrangement with the
+best results. Table~\ref{tab:cell-arrangement} presents the cell
+arrangement in ascending order of signal-to-noise ratio with a summary
+of our observations.
 
-Assertions defined in a cell above the visualisation cell, were typically not related to each other. A markdown cell present between the assertion and visualisation code cells, would often mark the beginning of a new section in the notebook. In other cases, the assertions were checks to ensure that the visualisation code would not encounter any errors. This observation also holds for Arrangement 2.1, where the assertion is defined above the visualisation code, but within the same code cell. Common examples of such checks include checking the shape of features that are used in the visualisation. Or checking that the length of the features used as the ``x''and ``y`` axes in the figure are the same to ensure a continuous line in the plot.
+Assertions defined in a cell above the visualisation cell, were
+typically not related to each other. A markdown cell present between
+the assertion and visualisation code cells, would often mark the
+beginning of a new section in the notebook. In other cases, the
+assertions were checks to ensure that the visualisation code would not
+encounter any errors. This observation also holds for Arrangement 2.1,
+where the assertion is defined above the visualisation code, but
+within the same code cell. Common examples of such checks include
+checking the shape of features that are used in the visualisation. Or
+checking that the length of the features used as the ``x''and ``y``
+axes in the figure are the same to ensure a continuous line in the
+plot.
 
-The signal-to-noise ratio improved in the sample of notebooks where the assertions were defined below the visualisation code. The visualisation and assertions pairs observed in Arrangement 2.2 and 3.1 were often related to each other, but were post-condition checks. Section~\ref{sec:post-cond} provides more details on post-condition checks and our rationale for excluding them from this study.
+The signal-to-noise ratio improved in the sample of notebooks where
+the assertions were defined below the visualisation code. The
+visualisation and assertions pairs observed in Arrangement 2.2 and 3.1
+were often related to each other, but were post-condition checks.
+Section~\ref{sec:post-cond} provides more details on post-condition
+checks and our rationale for excluding them from this study.
 
-We observed the best results in notebooks with Arrangement 3.2---where the assertion cell was not longer than 10 lines and was defined below the visualisation cell. We observed that some notebook authors followed the convention of writing their motivation for the visualisation in a markdown cell, before writing the code for the visualisation. The visualisations were often followed by another markdown cell to record the author's observations. And finally, the observations were translated to a analytical test using an \texttt{assert} statement or other testing methods from external libraries. The restriction on the number of lines in the assertion cell was introduced to exclude instances where the assertion cell contained a new class definition or several helper functions that were not related to the visualisation above.
+We observed the best results in notebooks with Arrangement 3.2---where
+the assertion cell was not longer than 10 lines and was defined below
+the visualisation cell. We observed that some notebook authors
+followed the convention of writing their motivation for the
+visualisation in a markdown cell, before writing the code for the
+visualisation. The visualisations were often followed by another
+markdown cell to record the author's observations. And finally, the
+observations were translated to a analytical test using an
+\texttt{assert} statement or other testing methods from external
+libraries. The restriction on the number of lines in the assertion
+cell was introduced to exclude instances where the assertion cell
+contained a new class definition or several helper functions that were
+not related to the visualisation above.
 
 \begin{table}
   \centering
@@ -575,23 +837,90 @@ Checking the distribution of the training data is a very common task performed d
 
 \section{Implications}\label{sec:discuss}
 
-The results from RQ1 provide empirical evidence to support the use of visualisations to test various properties of ML systems. Visualisations are an efficient and effective medium to present complex information, that is easier to interpret by humans with the aid of visual cues. Visualisations used to test ML system properties however, demand manual verification effort. Information gained from visualisations and subsequent decisions made based on this information, must be manually verified in every iteration of the ML development cycle.
+The results from RQ1 provide empirical evidence to support the use of
+visualisations to test various properties of ML systems.
+Visualisations are an efficient and effective medium to present
+complex information, that is easier to interpret by humans with the
+aid of visual cues. Visualisations used to test ML system properties
+however, demand manual verification effort. Information gained from
+visualisations and subsequent decisions made based on this
+information, must be manually verified in every iteration of the ML
+development cycle.
 
-% NOTE link to accumulation of technical debt due to highly experimental nature, and constant change in the system
+% NOTE link to accumulation of technical debt due to highly
+% experimental nature, and constant change in the system
 
-Assertions or analytical tests extracted from ML visualisations can reduce this manual verification effort. Assertions encapsulate the knowledge gained from the visualisation with regards to the property of the ML system which is currently under test. Formal assertions document the observations made by the AI practitioner regarding the model or the data, at a specific point in time. These observations should not be violated by the future model development cycles unless the requirements of the ML system are changed. Assertions scale across organisational or personnel changes as future AI practitioners can refer to the assertions to understand how the visualisations were previously interpreted.
+Assertions or analytical tests extracted from ML visualisations can
+reduce this manual verification effort. Assertions encapsulate the
+knowledge gained from the visualisation with regards to the property
+of the ML system which is currently under test. Formal assertions
+document the observations made by the AI practitioner regarding the
+model or the data, at a specific point in time. These observations
+should not be violated by the future model development cycles unless
+the requirements of the ML system are changed. Assertions scale across
+organisational or personnel changes as future AI practitioners can
+refer to the assertions to understand how the visualisations were
+previously interpreted.
 
-The results for RQ1 indicate that the combination of ML visualisations with analytical assertions is an emerging testing practice within the machine learning community. We found only $54,070$ notebooks that contain the keyword ``assert'', while there are more than a million Jupyter notebooks available on GitHub. This suggests that writing assertions in computational notebooks is still relatively uncommon. We believe that this is due to a lack of knowledge among practitioners regarding testing approaches and the absence of adequate tooling to support the assertion of model properties. We argue that guidelines on ML coding practices require improvement. And advocate the need to steer education and research of Software Engineering practices towards the specific challenges faced when contributing to ML software systems.
+The results for RQ1 indicate that the combination of ML visualisations
+with analytical assertions is an emerging testing practice within the
+machine learning community. We found only $54,070$ notebooks that
+contain the keyword ``assert'', while there are more than a million
+Jupyter notebooks available on GitHub. This suggests that writing
+assertions in computational notebooks is still relatively uncommon. We
+believe that this is due to a lack of knowledge among practitioners
+regarding testing approaches and the absence of adequate tooling to
+support the assertion of model properties. We argue that guidelines on
+ML coding practices require improvement. And advocate the need to
+steer education and research of Software Engineering practices towards
+the specific challenges faced when contributing to ML software
+systems.
 
-In the 1764 notebooks analysed in this study, several visualisations lack assertions. However, implicit expectations still exist within each visualisation which cannot be readily validated by other project collaborators. ML testing demands proficiency in Machine Learning, Software Testing, and the underlying Mathematical concepts. This further highlights the need for refining the education for these professionals and crafting tools to compensate for gaps in their knowledge.
+In the 1764 notebooks analysed in this study, several visualisations
+lack assertions. However, implicit expectations still exist within
+each visualisation which cannot be readily validated by other project
+collaborators. ML testing demands proficiency in Machine Learning,
+Software Testing, and the underlying Mathematical concepts. This
+further highlights the need for refining the education for these
+professionals and crafting tools to compensate for gaps in their
+knowledge.
 
-Results from RQ2 reveal two challenges in the current landscape of ML testing. The assertions in the VA pairs identified in this study lack dedicated testing libraries. This indicates that the current culture of testing ML code is still in its infancy and ML practitioners are not yet exploring software testing libraries. Second, the existing testing libraries are not tuned to the specifics of ML code and practitioners have to fall back to basic built-in approaches.
+Results from RQ2 reveal two challenges in the current landscape of ML
+testing. The assertions in the VA pairs identified in this study lack
+dedicated testing libraries. This indicates that the current culture
+of testing ML code is still in its infancy and ML practitioners are
+not yet exploring software testing libraries. Second, the existing
+testing libraries are not tuned to the specifics of ML code and
+practitioners have to fall back to basic built-in approaches.
 
-The widespread use of ``magic'' thresholds---often rooted in domain expertise or experience obtained over time---poses risks to maintainability of ML projects. We advocate that such thresholds are documented for future reference. And find a clear need for automated tools that highlight undocumented choices or suggest standardized documentation in Markdown or code annotations.
+The widespread use of ``magic'' thresholds---often rooted in domain
+expertise or experience obtained over time---poses risks to
+maintainability of ML projects. We advocate that such thresholds are
+documented for future reference. And find a clear need for automated
+tools that highlight undocumented choices or suggest standardized
+documentation in Markdown or code annotations.
 
-In the results from RQ3, we see several examples of assertions that fail to capture all the information gained from its visual counter-part. This can lead to a mismatch of expectations in future versions of the ML software. For instance, another project collaborator might run the code with a new version of the dataset or a different learning technique and assume that if the assertions run successfully, the expected patterns from the visualisation are also satisfied. The examples presented in Section~\ref{sec:result-rq3} show that deriving assertions from visualisations is not trivial. Basic visualisation patterns require complex mathematical techniques which may be beyond the expertise of an ML developer.
+In the results from RQ3, we see several examples of assertions that
+fail to capture all the information gained from its visual
+counter-part. This can lead to a mismatch of expectations in future
+versions of the ML software. For instance, another project
+collaborator might run the code with a new version of the dataset or a
+different learning technique and assume that if the assertions run
+successfully, the expected patterns from the visualisation are also
+satisfied. The examples presented in Section~\ref{sec:result-rq3} show
+that deriving assertions from visualisations is not trivial. Basic
+visualisation patterns require complex mathematical techniques which
+may be beyond the expertise of an ML developer.
 
-For example, a linear correlation between the true and predicted labels is evident in Figure~\ref{fig:r2}. Yet, its formal assertion in Listing~\ref{lst:r2} necessitates defining an appropriate threshold for the coefficient of determination metric. Our results show that current software testing practices fail to capture the idiosyncrasies of ML code. There is a pressing need for automated tools, that bridge the disparity between the qualitative evaluation of ML systems using visualisations and the extraction of analytical assertions from these visuals.
+For example, a linear correlation between the true and predicted
+labels is evident in Figure~\ref{fig:r2}. Yet, its formal assertion in
+Listing~\ref{lst:r2} necessitates defining an appropriate threshold
+for the coefficient of determination metric. Our results show that
+current software testing practices fail to capture the idiosyncrasies
+of ML code. There is a pressing need for automated tools, that bridge
+the disparity between the qualitative evaluation of ML systems using
+visualisations and the extraction of analytical assertions from these
+visuals.
 
 \section{Threats to Validity and Future Work}\label{sec:threats}
 
