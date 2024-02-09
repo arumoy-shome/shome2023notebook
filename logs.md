@@ -2,6 +2,19 @@
 title: shome2023llm logbook
 ---
 
+# 2024-01-24 Meeting with Mali
+
+## Models (focus on code input)
++ CodeBERT (start here)
++ Incoder (Meta)
++ CodeT5+
++ UnixCoder
++ ChatGPT 3.5 turbo
+
+## Evaluation strategy
++ Cross-validation
++ No data leakage
+
 # Bsc. Research Project Proposal
 
 Based on dicussion during the group meeting and Luis, the proposal

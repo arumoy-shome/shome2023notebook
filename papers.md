@@ -46,6 +46,8 @@ The papers are organised as follows:
 
 # Inbox
 
+Papers to review.
+
 ## obrien202223
 
 Saved because typically papers from Sumon are high-quality. Also could
@@ -90,28 +92,6 @@ Maybe skim this one.
   year          = {2023},
   month         = nov,
   collection    = {ESEC/FSE ’23}
-}
-```
-
-## grotov2022large-scale
-
-For related work/discussion sections.
-
-```bibtex
-@InProceedings{   grotov2022large-scale,
-  series        = {MSR ’22},
-  title         = {A large-scale comparison of Python code in Jupyter
-                  notebooks and scripts},
-  url           = {http://dx.doi.org/10.1145/3524842.3528447},
-  doi           = {10.1145/3524842.3528447},
-  booktitle     = {Proceedings of the 19th International Conference on Mining
-                  Software Repositories},
-  publisher     = {ACM},
-  author        = {Grotov, Konstantin and Titov, Sergey and Sotnikov,
-                  Vladimir and Golubev, Yaroslav and Bryksin, Timofey},
-  year          = {2022},
-  month         = may,
-  collection    = {MSR ’22}
 }
 ```
 
@@ -1049,29 +1029,6 @@ tool.
 }
 ```
 
-## mondal2023cell2doc
-
-Read the methodology in detail, relevant for our data collection
-process.
-
-``` bibtex
-
-
-@InProceedings{   mondal2023cell2doc,
-  title         = {Cell2Doc: ML Pipeline for Generating Documentation in
-                  Computational Notebooks},
-  url           = {http://dx.doi.org/10.1109/ASE56229.2023.00200},
-  doi           = {10.1109/ase56229.2023.00200},
-  booktitle     = {2023 38th IEEE/ACM International Conference on Automated
-                  Software Engineering (ASE)},
-  publisher     = {IEEE},
-  author        = {Mondal, Tamal and Barnett, Scott and Lal, Akash and
-                  Vedurada, Jyothi},
-  year          = {2023},
-  month         = sep
-}
-```
-
 ## [TODO]{.todo .TODO} salama2021practitioners {#salama2021practitioners}
 
 Recommendation from Luis, white paper on Google\'s approach to MLOps.
@@ -1111,8 +1068,6 @@ are promising.
 }
 ```
 
-\>
-
 # Testing
 
 ## wang2023distxplore
@@ -1147,7 +1102,101 @@ time trying decipher what the authors are trying to do.
 
 # LLMs
 
+## mondal2023cell2doc
+
+Read the methodology in detail, relevant for our data collection
+process.
+
+All code present in [this github
+repo](https://github.com/jyothivedurada/KaggleDocGen).
+
+Raw notebooks mined from Kaggle present [in this zenodo
+repo](https://doi.org/10.5281/zenodo.8265137).
+
+```bibtex
+@InProceedings{   mondal2023cell2doc,
+  title         = {Cell2Doc: ML Pipeline for Generating Documentation in
+                  Computational Notebooks},
+  url           = {http://dx.doi.org/10.1109/ASE56229.2023.00200},
+  doi           = {10.1109/ase56229.2023.00200},
+  booktitle     = {2023 38th IEEE/ACM International Conference on Automated
+                  Software Engineering (ASE)},
+  publisher     = {IEEE},
+  author        = {Mondal, Tamal and Barnett, Scott and Lal, Akash and
+                  Vedurada, Jyothi},
+  year          = {2023},
+  month         = sep
+}
+```
+
+## wang2023codet5
+
+Investigate how we can use the model for one/few shot prompt
+engineering.
+
+```bibtex
+@Misc{            wang2023codet5,
+  title         = {CodeT5+: Open Code Large Language Models for Code
+                  Understanding and Generation},
+  author        = {Yue Wang and Hung Le and Akhilesh Deepak Gotmare and Nghi
+                  D. Q. Bui and Junnan Li and Steven C. H. Hoi},
+  year          = {2023},
+  eprint        = {2305.07922},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.CL}
+}
+```
+
+## lu2021codexglue
+
+Benchmark dataset from Microsoft for various LLM4SE tasks.
+
+Here is [the accompanying website](https://microsoft.github.io/CodeXGLUE).
+
+```bibtex
+@Misc{            lu2021codexglue,
+  title         = {CodeXGLUE: A Machine Learning Benchmark Dataset for Code
+                  Understanding and Generation},
+  author        = {Shuai Lu and Daya Guo and Shuo Ren and Junjie Huang and
+                  Alexey Svyatkovskiy and Ambrosio Blanco and Colin Clement
+                  and Dawn Drain and Daxin Jiang and Duyu Tang and Ge Li and
+                  Lidong Zhou and Linjun Shou and Long Zhou and Michele
+                  Tufano and Ming Gong and Ming Zhou and Nan Duan and Neel
+                  Sundaresan and Shao Kun Deng and Shengyu Fu and Shujie
+                  Liu},
+  year          = {2021},
+  eprint        = {2102.04664},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.SE}
+}
+```
+
 # Notebooks
+
+## grotov2022large-scale
+
+For related work/discussion sections.
+
+They also release a public dataset of [Jupyter Notebooks from
+Github](https://zenodo.org/records/6383115) analysed in their study.
+
+```bibtex
+@InProceedings{   grotov2022large-scale,
+  series        = {MSR ’22},
+  title         = {A large-scale comparison of Python code in Jupyter
+                  notebooks and scripts},
+  url           = {http://dx.doi.org/10.1145/3524842.3528447},
+  doi           = {10.1145/3524842.3528447},
+  booktitle     = {Proceedings of the 19th International Conference on Mining
+                  Software Repositories},
+  publisher     = {ACM},
+  author        = {Grotov, Konstantin and Titov, Sergey and Sotnikov,
+                  Vladimir and Golubev, Yaroslav and Bryksin, Timofey},
+  year          = {2022},
+  month         = may,
+  collection    = {MSR ’22}
+}
+```
 
 ## DONE ramasamy2023visualising
 
@@ -1180,6 +1229,55 @@ contains several forks and dead-ends.
 }
 ```
 # Empirical Methods
+
+Papers that use empirical methods in their methodology.
+
+## beller2021what
+
+Another one from Caro. Here, the authors state explicitly that they
+more than 1 person did the manual analysis and had a discussion
+afterwards to resolve disagreements.
+
+```bibtex
+@Misc{            beller2021what,
+  title         = {What It Would Take to Use Mutation Testing in Industry--A
+                  Study at Facebook},
+  author        = {Moritz Beller and Chu-Pan Wong and Johannes Bader and
+                  Andrew Scott and Mateusz Machalica and Satish Chandra and
+                  Erik Meijer},
+  year          = {2021},
+  eprint        = {2010.13464},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.SE}
+}
+```
+
+## beller2014modern
+
+Recommendation from Caro regarding use of inter-rater agreement
+between multiple annotators when conducting manual analysis.
+
+The authors calculate Kappa for 100 random samples only. The threats
+to validity section is very well written, and defends this choice of
+calculating Kappa only on a small sample.
+
+```bibtex
+@InProceedings{   beller2014modern,
+  series        = {ICSE ’14},
+  title         = {Modern code reviews in open-source projects: which
+                  problems do they fix?},
+  url           = {http://dx.doi.org/10.1145/2597073.2597082},
+  doi           = {10.1145/2597073.2597082},
+  booktitle     = {Proceedings of the 11th Working Conference on Mining
+                  Software Repositories},
+  publisher     = {ACM},
+  author        = {Beller, Moritz and Bacchelli, Alberto and Zaidman, Andy
+                  and Juergens, Elmar},
+  year          = {2014},
+  month         = may,
+  collection    = {ICSE ’14}
+}
+```
 
 ## fregnan2022first
 
