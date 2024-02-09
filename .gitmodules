@@ -1,0 +1,3 @@
+[submodule "vendor/mondal2023cell2doc"]
+	path = vendor/mondal2023cell2doc
+	url = git@github.com:jyothivedurada/KaggleDocGen.git
