@@ -1,4 +1,14 @@
 #!/usr/bin/env bash
 
-find data/assert_notebooks -name '*.ipynb' -not -path '*/.ipynb_checkpoints/*' -print0 |
-    xargs -0 -n 1 -P 0 python ipynb2csv.py
+if [[ -z "$1" ]]; then
+  echo "ipynb2csv:ERROR: did not provide valid directory containing notebooks."
+  exit 1
+fi
+
+if [[ ! -d "$1" ]]; then
+  echo "ipynb2csv:ERROR: $1 is not a valid directory."
+  exit 1
+fi
+
+find "$1" -name '*.ipynb' -not -path '*/.ipynb_checkpoints/*' -print0 |
+  xargs -0 -n 1 -P 0 python bin/ipynb2csv.py
