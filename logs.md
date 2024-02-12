@@ -2,6 +2,36 @@
 title: shome2023llm logbook
 ---
 
+# 2024-02-12 review and planning
+
+There are 3 tracks that I need to work on moving forward:
+1. **Data Annotations**: Luis is already helping annotate the original VA
+   pairs from Github. I might need to jump into annotations for VA
+   pairs collected from Kaggle is the preliminary study returns
+   positive results.
+2. **Data Collection**: The existing VA pairs from Github are bogus. And
+   we need a high quality dataset if we want to fine-tune LLMs since
+   current code LLMs do not understand the kind of code-translation we
+   are trying to do. Before moving on to KGTorrent dataset which is
+   massive, I am trying to replicate my existing scripts on the
+   mondal2023cell2doc dataset which is only 5K notebooks extracted
+   from KGTorrent.
+3. **LLM fine-tuning**: Assume that we fix the data-quality issue,
+   I still have a lot to do with setting up the pipeline for
+   fine-tuning or prompting the LLMs. Each model is unique, and this
+   will also take considerable amount of time.
+
+The biggest threat we currently have is that our VA pairs turn out to
+be not good enough to produce meaningful results in existing LLMs. We
+have 2 strategies for moving forward when this happens:
+
+1. Pivot the ASE papers's focus to the presence of `assert` statements
+   in Jupyter notebooks. We conduct more general analytics with the
+   entire corpus of notebooks to strengthen our position on the
+   importance of assertions and how this is not being done yet.
+2. Propose an entirely new LLM capable of translating visualisation
+   code to assertions.
+
 # 2024-01-24 Meeting with Mali
 
 ## Models (focus on code input)

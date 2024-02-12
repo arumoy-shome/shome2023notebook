@@ -340,29 +340,6 @@ Detecting data leakage in data science notebooks.
 }
 ```
 
-## blasi2022call
-
-Automated test case generation tool (using LLMs). Good for related
-work section.
-
-```bibtex
-@InProceedings{   blasi2022call,
-  series        = {ASE ’22},
-  title         = {Call Me Maybe: Using NLP to Automatically Generate Unit
-                  Test Cases Respecting Temporal Constraints},
-  url           = {http://dx.doi.org/10.1145/3551349.3556961},
-  doi           = {10.1145/3551349.3556961},
-  booktitle     = {Proceedings of the 37th IEEE/ACM International Conference
-                  on Automated Software Engineering},
-  publisher     = {ACM},
-  author        = {Blasi, Arianna and Gorla, Alessandra and Ernst, Michael D.
-                  and Pezzè, Mauro},
-  year          = {2022},
-  month         = oct,
-  collection    = {ASE ’22}
-}
-```
-
 ## xie2022boosting
 
 Skim to understand basics of Metamorphic Testing.
@@ -406,27 +383,6 @@ notebooks with related VA-pairs?
 }
 ```
 
-## rao2023cat-lm
-
-Authors propose an LLM based tool that generates tests given code
-(not ML).
-
-```bibtex
-@InProceedings{   rao2023cat-lm,
-  title         = {CAT-LM Training Language Models on Aligned Code And
-                  Tests},
-  url           = {http://dx.doi.org/10.1109/ASE56229.2023.00193},
-  doi           = {10.1109/ase56229.2023.00193},
-  booktitle     = {2023 38th IEEE/ACM International Conference on Automated
-                  Software Engineering (ASE)},
-  publisher     = {IEEE},
-  author        = {Rao, Nikitha and Jain, Kush and Alon, Uri and Goues,
-                  Claire Le and Hellendoorn, Vincent J.},
-  year          = {2023},
-  month         = sep
-}
-```
-
 ## tıraşoğlu2023open
 
 ```bibtex
@@ -461,27 +417,6 @@ Data-centric DL testing tool.
   publisher     = {IEEE},
   author        = {Missaoui, Sondess and Gerasimou, Simos and Matragkas,
                   Nicholas},
-  year          = {2023},
-  month         = sep
-}
-```
-
-## TODO yan2023closer
-
-Read the methodology & evaluation sections, authors use ChatGPT in the
-study.
-
-```bibtex
-
-@InProceedings{   yan2023closer,
-  title         = {A Closer Look at Different Difficulty Levels Code
-                  Generation Abilities of ChatGPT},
-  url           = {http://dx.doi.org/10.1109/ASE56229.2023.00096},
-  doi           = {10.1109/ase56229.2023.00096},
-  booktitle     = {2023 38th IEEE/ACM International Conference on Automated
-                  Software Engineering (ASE)},
-  publisher     = {IEEE},
-  author        = {Yan, Dapeng and Gao, Zhipeng and Liu, Zhiming},
   year          = {2023},
   month         = sep
 }
@@ -688,49 +623,6 @@ skim these papers for the related work section.
 }
 ```
 
-## patra2022nalin
-
-Authors mine Jupyter Notebooks, skim methodology.
-
-```bibtex
-@InProceedings{   patra2022nalin,
-  series        = {ICSE ’22},
-  title         = {Nalin: learning from runtime behavior to find name-value
-                  inconsistencies in jupyter notebooks},
-  url           = {http://dx.doi.org/10.1145/3510003.3510144},
-  doi           = {10.1145/3510003.3510144},
-  booktitle     = {Proceedings of the 44th International Conference on
-                  Software Engineering},
-  publisher     = {ACM},
-  author        = {Patra, Jibesh and Pradel, Michael},
-  year          = {2022},
-  month         = may,
-  collection    = {ICSE ’22}
-}
-```
-
-## TODO saha2022sapientml
-
-Read the methodology, they mined Kaggle for ML pipelines and datasets.
-
-```bibtex
-@InProceedings{   saha2022sapientml,
-  series        = {ICSE ’22},
-  title         = {SapientML: synthesizing machine learning pipelines by
-                  learning from human-writen solutions},
-  url           = {http://dx.doi.org/10.1145/3510003.3510226},
-  doi           = {10.1145/3510003.3510226},
-  booktitle     = {Proceedings of the 44th International Conference on
-                  Software Engineering},
-  publisher     = {ACM},
-  author        = {Saha, Ripon K. and Ura, Akira and Mahajan, Sonal and Zhu,
-                  Chenguang and Li, Linyi and Hu, Yang and Yoshida, Hiroaki
-                  and Khurshid, Sarfraz and Prasad, Mukul R.},
-  year          = {2022},
-  month         = may,
-  collection    = {ICSE ’22}
-}
-```
 ## TODO biswas2022art
 
 This has been sitting in my reading list for a long time now. Should
@@ -776,30 +668,7 @@ systems reproducible?
 }
 ```
 
-## lemieux2023codamosa
-
-Paper from Microsoft. Read the methodology to learn how they used LLMs
-for code generation. What prompting techniques were used? How did they
-collect the data? How did then handle stochastic nature of output
-generated given same prompt?
-
-``` bibtex
-@InProceedings{   lemieux2023codamosa,
-  title         = {CodaMosa: Escaping Coverage Plateaus in Test Generation
-                  with Pre-trained Large Language Models},
-  url           = {http://dx.doi.org/10.1109/ICSE48619.2023.00085},
-  doi           = {10.1109/icse48619.2023.00085},
-  booktitle     = {2023 IEEE/ACM 45th International Conference on Software
-                  Engineering (ICSE)},
-  publisher     = {IEEE},
-  author        = {Lemieux, Caroline and Inala, Jeevana Priya and Lahiri,
-                  Shuvendu K. and Sen, Siddhartha},
-  year          = {2023},
-  month         = may
-}
-```
-
-## [TODO]{.todo .TODO} mailach2023socio-technical {#mailach2023socio-technical}
+## TODO mailach2023socio-technical
 
 More general paper, could be useful for introduction or discussion.
 
@@ -818,7 +687,7 @@ More general paper, could be useful for introduction or discussion.
 }
 ```
 
-## [TODO]{.todo .TODO} liu2023contrabert {#liu2023contrabert}
+## TODO liu2023contrabert
 
 Could be interesting to generate discussion points/future work.
 
@@ -838,51 +707,7 @@ Could be interesting to generate discussion points/future work.
 }
 ```
 
-## [TODO]{.todo .TODO} jiang2023empirical {#jiang2023empirical}
-
-Empirical study on model-reuse of PTMs.
-
-``` bibtex
-@InProceedings{   jiang2023empirical,
-  title         = {An Empirical Study of Pre-Trained Model Reuse in the
-                  Hugging Face Deep Learning Model Registry},
-  url           = {http://dx.doi.org/10.1109/ICSE48619.2023.00206},
-  doi           = {10.1109/icse48619.2023.00206},
-  booktitle     = {2023 IEEE/ACM 45th International Conference on Software
-                  Engineering (ICSE)},
-  publisher     = {IEEE},
-  author        = {Jiang, Wenxin and Synovic, Nicholas and Hyatt, Matt and
-                  Schorlemmer, Taylor R. and Sethi, Rohan and Lu, Yung-Hsiang
-                  and Thiruvathukal, George K. and Davis, James C.},
-  year          = {2023},
-  month         = may
-}
-```
-
-## [TODO]{.todo .TODO} xia2023balancing {#xia2023balancing}
-
-Authors propose a tool that heuristically determines the optimal
-threshold in ML tests. We saw several assertions in our dataset with
-such thresholds. This paper may provide ideas for the discussion
-section.
-
-``` bibtex
-@InProceedings{   xia2023balancing,
-  title         = {Balancing Effectiveness and Flakiness of Non-Deterministic
-                  Machine Learning Tests},
-  url           = {http://dx.doi.org/10.1109/ICSE48619.2023.00154},
-  doi           = {10.1109/icse48619.2023.00154},
-  booktitle     = {2023 IEEE/ACM 45th International Conference on Software
-                  Engineering (ICSE)},
-  publisher     = {IEEE},
-  author        = {Xia, Chunqiu Steven and Dutta, Saikat and Misailovic, Sasa
-                  and Marinov, Darko and Zhang, Lingming},
-  year          = {2023},
-  month         = may
-}
-```
-
-## [TODO]{.todo .TODO} hu2023aries {#hu2023aries}
+## TODO hu2023aries
 
 Paper proposes a tool that can estimate the performance of a DNN on
 unlabelled data, using the information from the prior labelled data.
@@ -903,7 +728,7 @@ unlabelled data, using the information from the prior labelled data.
 }
 ```
 
-## [TODO]{.todo .TODO} riccio2023when {#riccio2023when}
+## TODO riccio2023when
 
 Authors perform an empirical study to evaluate the effectiveness of
 automated validators for Test Input Generators (TIGs). I see the
@@ -925,7 +750,7 @@ automatic validation.
 }
 ```
 
-## [TODO]{.todo .TODO} liu2023syntax {#liu2023syntax}
+## TODO liu2023syntax
 
 Authors propose a tool that translates programs written in one
 programming language to another. We are also \"translating\" code,
@@ -947,7 +772,7 @@ used?
 }
 ```
 
-## [TODO]{.todo .TODO} mahbub2023explaining {#mahbub2023explaining}
+## TODO mahbub2023explaining
 
 Authors develop a tool that generates natural language text from corpus
 of buggy code. They also perform a user-study with 2 participants. Read
@@ -970,7 +795,7 @@ the human study.
 }
 ```
 
-## [TODO]{.todo .TODO} guan2023comprehensive {#guan2023comprehensive}
+## TODO guan2023comprehensive
 
 Authors create a dataset of Model Optimization Bugs (MOBs). Read the
 data collection part, could be interesting for us.
@@ -991,7 +816,7 @@ data collection part, could be interesting for us.
 }
 ```
 
-## [TODO]{.todo .TODO} croft2023data {#croft2023data}
+## TODO croft2023data
 
 Use this paper to motivate our manual annotation of dataset.
 
@@ -1009,7 +834,7 @@ Use this paper to motivate our manual annotation of dataset.
 }
 ```
 
-## [TODO]{.todo .TODO} you2023regression {#you2023regression}
+## TODO you2023regression
 
 The methodology could be useful to craft evaluation of our LLM based
 tool.
@@ -1029,7 +854,7 @@ tool.
 }
 ```
 
-## [TODO]{.todo .TODO} salama2021practitioners {#salama2021practitioners}
+## TODO salama2021practitioners
 
 Recommendation from Luis, white paper on Google\'s approach to MLOps.
 Should provide material for the story.
@@ -1044,7 +869,7 @@ Should provide material for the story.
 }
 ```
 
-## [TODO]{.todo .TODO} li2023assisting {#li2023assisting}
+## TODO li2023assisting
 
 Recommendation from Luis, authors conduct a study on using chatGPT for
 program comprehension. They focus on a bug detection program. Results
@@ -1069,6 +894,29 @@ are promising.
 ```
 
 # Testing
+
+## TODO xia2023balancing
+
+Authors propose a tool that heuristically determines the optimal
+threshold in ML tests. We saw several assertions in our dataset with
+such thresholds. This paper may provide ideas for the discussion
+section.
+
+``` bibtex
+@InProceedings{   xia2023balancing,
+  title         = {Balancing Effectiveness and Flakiness of Non-Deterministic
+                  Machine Learning Tests},
+  url           = {http://dx.doi.org/10.1109/ICSE48619.2023.00154},
+  doi           = {10.1109/icse48619.2023.00154},
+  booktitle     = {2023 IEEE/ACM 45th International Conference on Software
+                  Engineering (ICSE)},
+  publisher     = {IEEE},
+  author        = {Xia, Chunqiu Steven and Dutta, Saikat and Misailovic, Sasa
+                  and Marinov, Darko and Zhang, Lingming},
+  year          = {2023},
+  month         = may
+}
+```
 
 ## wang2023distxplore
 
@@ -1101,6 +949,115 @@ time trying decipher what the authors are trying to do.
 ```
 
 # LLMs
+
+## TODO jiang2023empirical
+
+Empirical study on model-reuse of PTMs.
+
+``` bibtex
+@InProceedings{   jiang2023empirical,
+  title         = {An Empirical Study of Pre-Trained Model Reuse in the
+                  Hugging Face Deep Learning Model Registry},
+  url           = {http://dx.doi.org/10.1109/ICSE48619.2023.00206},
+  doi           = {10.1109/icse48619.2023.00206},
+  booktitle     = {2023 IEEE/ACM 45th International Conference on Software
+                  Engineering (ICSE)},
+  publisher     = {IEEE},
+  author        = {Jiang, Wenxin and Synovic, Nicholas and Hyatt, Matt and
+                  Schorlemmer, Taylor R. and Sethi, Rohan and Lu, Yung-Hsiang
+                  and Thiruvathukal, George K. and Davis, James C.},
+  year          = {2023},
+  month         = may
+}
+```
+
+## lemieux2023codamosa
+
+Paper from Microsoft. Read the methodology to learn how they used LLMs
+for code generation. What prompting techniques were used? How did they
+collect the data? How did then handle stochastic nature of output
+generated given same prompt?
+
+``` bibtex
+@InProceedings{   lemieux2023codamosa,
+  title         = {CodaMosa: Escaping Coverage Plateaus in Test Generation
+                  with Pre-trained Large Language Models},
+  url           = {http://dx.doi.org/10.1109/ICSE48619.2023.00085},
+  doi           = {10.1109/icse48619.2023.00085},
+  booktitle     = {2023 IEEE/ACM 45th International Conference on Software
+                  Engineering (ICSE)},
+  publisher     = {IEEE},
+  author        = {Lemieux, Caroline and Inala, Jeevana Priya and Lahiri,
+                  Shuvendu K. and Sen, Siddhartha},
+  year          = {2023},
+  month         = may
+}
+```
+
+## TODO yan2023closer
+
+Read the methodology & evaluation sections, authors use ChatGPT in the
+study.
+
+```bibtex
+
+@InProceedings{   yan2023closer,
+  title         = {A Closer Look at Different Difficulty Levels Code
+                  Generation Abilities of ChatGPT},
+  url           = {http://dx.doi.org/10.1109/ASE56229.2023.00096},
+  doi           = {10.1109/ase56229.2023.00096},
+  booktitle     = {2023 38th IEEE/ACM International Conference on Automated
+                  Software Engineering (ASE)},
+  publisher     = {IEEE},
+  author        = {Yan, Dapeng and Gao, Zhipeng and Liu, Zhiming},
+  year          = {2023},
+  month         = sep
+}
+```
+
+## rao2023cat-lm
+
+Authors propose an LLM based tool that generates tests given code
+(not ML).
+
+```bibtex
+@InProceedings{   rao2023cat-lm,
+  title         = {CAT-LM Training Language Models on Aligned Code And
+                  Tests},
+  url           = {http://dx.doi.org/10.1109/ASE56229.2023.00193},
+  doi           = {10.1109/ase56229.2023.00193},
+  booktitle     = {2023 38th IEEE/ACM International Conference on Automated
+                  Software Engineering (ASE)},
+  publisher     = {IEEE},
+  author        = {Rao, Nikitha and Jain, Kush and Alon, Uri and Goues,
+                  Claire Le and Hellendoorn, Vincent J.},
+  year          = {2023},
+  month         = sep
+}
+```
+
+## blasi2022call
+
+Automated test case generation tool (using LLMs). Good for related
+work section.
+
+```bibtex
+@InProceedings{   blasi2022call,
+  series        = {ASE ’22},
+  title         = {Call Me Maybe: Using NLP to Automatically Generate Unit
+                  Test Cases Respecting Temporal Constraints},
+  url           = {http://dx.doi.org/10.1145/3551349.3556961},
+  doi           = {10.1145/3551349.3556961},
+  booktitle     = {Proceedings of the 37th IEEE/ACM International Conference
+                  on Automated Software Engineering},
+  publisher     = {ACM},
+  author        = {Blasi, Arianna and Gorla, Alessandra and Ernst, Michael D.
+                  and Pezzè, Mauro},
+  year          = {2022},
+  month         = oct,
+  collection    = {ASE ’22}
+}
+```
 
 ## mondal2023cell2doc
 
@@ -1173,6 +1130,27 @@ Here is [the accompanying website](https://microsoft.github.io/CodeXGLUE).
 
 # Notebooks
 
+## patra2022nalin
+
+Authors mine Jupyter Notebooks, skim methodology.
+
+```bibtex
+@InProceedings{   patra2022nalin,
+  series        = {ICSE ’22},
+  title         = {Nalin: learning from runtime behavior to find name-value
+                  inconsistencies in jupyter notebooks},
+  url           = {http://dx.doi.org/10.1145/3510003.3510144},
+  doi           = {10.1145/3510003.3510144},
+  booktitle     = {Proceedings of the 44th International Conference on
+                  Software Engineering},
+  publisher     = {ACM},
+  author        = {Patra, Jibesh and Pradel, Michael},
+  year          = {2022},
+  month         = may,
+  collection    = {ICSE ’22}
+}
+```
+
 ## grotov2022large-scale
 
 For related work/discussion sections.
@@ -1228,6 +1206,34 @@ contains several forks and dead-ends.
   month         = mar
 }
 ```
+
+# Mining Software Repositories
+
+Papers with emphasis on data mining.
+
+## TODO saha2022sapientml
+
+Read the methodology, they mined Kaggle for ML pipelines and datasets.
+
+```bibtex
+@InProceedings{   saha2022sapientml,
+  series        = {ICSE ’22},
+  title         = {SapientML: synthesizing machine learning pipelines by
+                  learning from human-writen solutions},
+  url           = {http://dx.doi.org/10.1145/3510003.3510226},
+  doi           = {10.1145/3510003.3510226},
+  booktitle     = {Proceedings of the 44th International Conference on
+                  Software Engineering},
+  publisher     = {ACM},
+  author        = {Saha, Ripon K. and Ura, Akira and Mahajan, Sonal and Zhu,
+                  Chenguang and Li, Linyi and Hu, Yang and Yoshida, Hiroaki
+                  and Khurshid, Sarfraz and Prasad, Mukul R.},
+  year          = {2022},
+  month         = may,
+  collection    = {ICSE ’22}
+}
+```
+
 # Empirical Methods
 
 Papers that use empirical methods in their methodology.
