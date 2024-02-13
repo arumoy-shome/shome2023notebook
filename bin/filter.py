@@ -1,21 +1,32 @@
 """Check for assert statements in juptyer notebooks.
 
-Without any flags, the script will check for assert statements only in code cells that produce a visualisation. The search is not greedy by default. It will print the notebook to stdin if at least 1 assert statement exists in the notebook.
+Without any flags, the script will check for assert statements only in code cells that produce
+a visualisation. The search is not greedy by default. It will print the notebook to stdin if at
+least 1 assert statement exists in the notebook.
 
-With the `--proximity` flag, the script will also check in code cells directly below the visualisation cells.
+With the `--proximity` flag, the script will also check in code cells directly below the
+visualisation cells.
 
-With the `--strict` flag, the script will only flag notebooks if the assert statements is in the code cell below the visualisation cell. This flag takes precedence over `--proximity`.
+With the `--strict` flag, the script will only flag notebooks if the assert statements is in the
+code cell below the visualisation cell. This flag takes precedence over `--proximity`.
 """
 
+import json
 import ast
 import argparse
 import pandas as pd
+import numpy as np
+from io import StringIO
 
 pd.set_option("display.max_columns", 10)
 
 
 def check(df: pd.DataFrame) -> bool:
-    return not df.empty and df["source"].str.contains("assert").any()
+    decision = (
+            not df.empty and
+            df["source"].apply(lambda x: "".join(x)).str.contains("assert").any()
+            )
+    return decision
 
 
 def get_proximity_cells(
@@ -52,16 +63,67 @@ def filter(df: pd.DataFrame, args: argparse.Namespace) -> pd.DataFrame:
         ]
 
     if args.max_num_lines:
-        filtered["source_num_lines"] = filtered.source.apply(ast.literal_eval).apply(
+        filtered["source_num_lines"] = filtered.source.apply(
             lambda x: len(x)
-        )
+            )
         filtered = filtered.loc[(filtered.source_num_lines <= args.max_num_lines)]
 
     return filtered
 
 
 def print_match() -> None:
-    print(f'{args.csv.replace("csv", "ipynb")}')
+    print(f'{args.notebook}')
+
+
+def ipynb_to_dataframe(file: str) -> pd.DataFrame:
+    frames = []
+
+    with open(file) as f:
+        cells = json.load(f)['cells']
+        df = pd.read_json(StringIO(json.dumps(cells)), orient="records")
+
+        # NOTE fill missing outputs with empty list
+        # NOTE we have to iterate through them, cannot do a bulk assignment
+        for idx, row in df.loc[df["outputs"].isna()].iterrows():
+            df.at[idx, "outputs"] = []
+
+        for row in df.itertuples():
+            frame = {
+                    "index": [],
+                    "cell_type": [],
+                    "source": [],
+                    "image": [],
+                    }
+
+            if len(row.outputs) == 0:
+                frame["index"].append(row.Index)
+                frame["cell_type"].append(row.cell_type)
+                frame["source"].append(row.source)
+                frame["image"].append(np.nan)
+                frames.append(pd.DataFrame(
+                    data=frame,
+                    index=frame["index"],
+                    columns=["cell_type", "source", "image"]
+                    ))
+                continue
+
+            for output in row.outputs:
+                try:
+                    frame["image"].append(output["data"]["image/png"])
+                except KeyError:
+                    frame["image"].append(np.nan)
+                finally:
+                    frame["index"].append(row.Index)
+                    frame["cell_type"].append(row.cell_type)
+                    frame["source"].append(row.source)
+
+                frames.append(pd.DataFrame(
+                    data=frame,
+                    index=frame["index"],
+                    columns=["cell_type", "source", "image"]
+                    ))
+
+        return pd.concat(frames)
 
 
 if __name__ == "__main__":
@@ -69,8 +131,8 @@ if __name__ == "__main__":
         description="Check for assert statements in jupyter notebooks"
     )
     parser.add_argument(
-        "csv",
-        help="Path to csv file",
+        "notebook",
+        help="Path to Jupyter Notebook",
     )
     parser.add_argument(
         "--no-shape",
@@ -99,10 +161,14 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    all_cells = pd.read_csv(args.csv, index_col=0)
+    all_cells = ipynb_to_dataframe(args.notebook)
 
     contains_ml_lib = (
+        # NOTE after wrapping the json in StringIO, contains_ml_lib returns False even when the pattern
+        # should match. So I am mapping the source column through a lambda function that joins list of
+        # strings into a single string.
         all_cells["source"]
+        .apply(lambda x: "".join(x))
         .str.contains(r"pandas|numpy|scipy|sklearn|torch|dask|tensorflow")
         .any()
     )
@@ -122,5 +188,4 @@ if __name__ == "__main__":
     else:
         print("DEBUG:something went horribly wrong!")
         exit()
-
     not cells.empty and check(filter(cells, args)) and print_match()

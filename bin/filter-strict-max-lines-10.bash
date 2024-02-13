@@ -11,4 +11,4 @@ if [[ ! -d "$1" ]]; then
 fi
 
 find "$1" -name '*.csv' -print0 |
-  xargs -0 -n 1 -P 0 python filter.py --strict --max-num-lines 10
+  xargs -0 -n 1 -P 0 python bin/filter.py --strict --max-num-lines 10
