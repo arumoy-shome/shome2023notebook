@@ -12,7 +12,6 @@ code cell below the visualisation cell. This flag takes precedence over `--proxi
 """
 
 import json
-import ast
 import argparse
 import pandas as pd
 import numpy as np
@@ -21,16 +20,19 @@ from io import StringIO
 pd.set_option("display.max_columns", 10)
 
 
+def _list_to_str(x):
+    return "".join(x)
+
+
 def check(df: pd.DataFrame) -> bool:
     decision = (
-            not df.empty and
-            df["source"].apply(lambda x: "".join(x)).str.contains("assert").any()
-            )
+        not df.empty and df["source"].apply(_list_to_str).str.contains("assert").any()
+    )
     return decision
 
 
-def get_proximity_cells(
-    all_cells: pd.DataFrame,
+def get_cells(
+    code_cells: pd.DataFrame,
     viz_cells: pd.DataFrame,
     strict: bool = False,
 ) -> pd.DataFrame:
@@ -40,10 +42,10 @@ def get_proximity_cells(
             # add cell with visualisation
             cells.append(cell)
 
-        chunk = all_cells.loc[all_cells.index > idx]
+        chunk = code_cells.loc[code_cells.index > idx]
 
         try:
-            below = chunk.loc[(chunk.cell_type == "code")].iloc[0]
+            below = chunk.iloc[0]
         except IndexError:
             # chunk is empty or there were no code cells below the cell with visualistion
             # don't do anything
@@ -54,7 +56,7 @@ def get_proximity_cells(
     return pd.DataFrame(cells)
 
 
-def filter(df: pd.DataFrame, args: argparse.Namespace) -> pd.DataFrame:
+def filter(df: pd.DataFrame) -> pd.DataFrame:
     filtered = df.copy()
     if args.no_shape:
         filtered = filtered.loc[
@@ -63,24 +65,26 @@ def filter(df: pd.DataFrame, args: argparse.Namespace) -> pd.DataFrame:
         ]
 
     if args.max_num_lines:
-        filtered["source_num_lines"] = filtered.source.apply(
-            lambda x: len(x)
-            )
+        filtered["source_num_lines"] = filtered.source.apply(lambda x: len(x))
         filtered = filtered.loc[(filtered.source_num_lines <= args.max_num_lines)]
 
     return filtered
 
 
 def print_match() -> None:
-    print(f'{args.notebook}')
+    print(f"{args.notebook}")
 
 
-def ipynb_to_dataframe(file: str) -> pd.DataFrame:
+def ipynb_to_dataframe() -> pd.DataFrame:
     frames = []
 
-    with open(file) as f:
-        cells = json.load(f)['cells']
+    with open(args.notebook) as f:
+        cells = json.load(f)["cells"]
         df = pd.read_json(StringIO(json.dumps(cells)), orient="records")
+
+        # early exit if empty notebook or no code cell in notebook
+        if df.empty or df.loc[df["cell_type"] == "code"].empty:
+            exit()
 
         # NOTE fill missing outputs with empty list
         # NOTE we have to iterate through them, cannot do a bulk assignment
@@ -89,22 +93,24 @@ def ipynb_to_dataframe(file: str) -> pd.DataFrame:
 
         for row in df.itertuples():
             frame = {
-                    "index": [],
-                    "cell_type": [],
-                    "source": [],
-                    "image": [],
-                    }
+                "index": [],
+                "cell_type": [],
+                "source": [],
+                "image": [],
+            }
 
             if len(row.outputs) == 0:
                 frame["index"].append(row.Index)
                 frame["cell_type"].append(row.cell_type)
                 frame["source"].append(row.source)
                 frame["image"].append(np.nan)
-                frames.append(pd.DataFrame(
-                    data=frame,
-                    index=frame["index"],
-                    columns=["cell_type", "source", "image"]
-                    ))
+                frames.append(
+                    pd.DataFrame(
+                        data=frame,
+                        index=frame["index"],
+                        columns=["cell_type", "source", "image"],
+                    )
+                )
                 continue
 
             for output in row.outputs:
@@ -117,11 +123,13 @@ def ipynb_to_dataframe(file: str) -> pd.DataFrame:
                     frame["cell_type"].append(row.cell_type)
                     frame["source"].append(row.source)
 
-                frames.append(pd.DataFrame(
-                    data=frame,
-                    index=frame["index"],
-                    columns=["cell_type", "source", "image"]
-                    ))
+                frames.append(
+                    pd.DataFrame(
+                        data=frame,
+                        index=frame["index"],
+                        columns=["cell_type", "source", "image"],
+                    )
+                )
 
         return pd.concat(frames)
 
@@ -134,22 +142,28 @@ if __name__ == "__main__":
         "notebook",
         help="Path to Jupyter Notebook",
     )
-    parser.add_argument(
-        "--no-shape",
-        help="Exclude asserts that check shape",
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        "--vis-cells",
+        help="Check only in visualisation cells",
         action="store_true",
         default=False,
     )
-    group = parser.add_mutually_exclusive_group()
     group.add_argument(
         "--proximity",
-        help="Include code cells below visualisation cells",
+        help="Check in code cells below visualisation cells",
         action="store_true",
         default=False,
     )
     group.add_argument(
         "--strict",
-        help="Check only in cells below visualisation cells",
+        help="Check only in code cells below visualisation cells",
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
+        "--no-shape",
+        help="Exclude asserts that check shape",
         action="store_true",
         default=False,
     )
@@ -161,31 +175,40 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    all_cells = ipynb_to_dataframe(args.notebook)
+    all_cells = ipynb_to_dataframe()
+    code_cells = all_cells.loc[all_cells["cell_type"] == "code"]
+    viz_cells = all_cells.loc[all_cells["image"].notna()]
 
-    contains_ml_lib = (
+    no_ml_lib = not (
         # NOTE after wrapping the json in StringIO, contains_ml_lib returns False even when the pattern
         # should match. So I am mapping the source column through a lambda function that joins list of
         # strings into a single string.
-        all_cells["source"]
-        .apply(lambda x: "".join(x))
+        code_cells["source"]
+        .apply(_list_to_str)
         .str.contains(r"pandas|numpy|scipy|sklearn|torch|dask|tensorflow")
         .any()
     )
 
-    viz_cells = all_cells.loc[all_cells["image"].notna()]
+    no_code_cells = code_cells.empty
+    no_viz_cells = viz_cells.empty
 
-    if not contains_ml_lib or viz_cells.empty:
-        # early exit if the notebook is not ML/DS related
-        # or does not contain any visualisations
+    if no_code_cells or no_ml_lib or no_viz_cells:
+        # early exit if:
+        # notebook does not contain any code cells or
+        # the notebook is not ML/DS related or
+        # notebook does not contain any visualisations
         exit()
-    elif not args.proximity and not args.strict:
+
+    if not args.vis_cells and not args.proximity and not args.strict:
+        cells = code_cells
+    elif args.vis_cells:
         cells = viz_cells
     elif args.proximity:
-        cells = get_proximity_cells(all_cells, viz_cells)
+        cells = get_cells(code_cells, viz_cells)
     elif args.strict:
-        cells = get_proximity_cells(all_cells, viz_cells, strict=True)
+        cells = get_cells(code_cells, viz_cells, strict=True)
     else:
         print("DEBUG:something went horribly wrong!")
         exit()
-    not cells.empty and check(filter(cells, args)) and print_match()
+
+    not cells.empty and check(filter(cells)) and print_match()
