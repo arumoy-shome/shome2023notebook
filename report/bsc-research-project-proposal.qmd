@@ -1,10 +1,7 @@
 ---
-title: "Bsc. Research Project Proposal"
+title: "Automating Insight Extracting from ML Visual Data with Large Language Models"
 author: "Arumoy Shome"
-format:
-  pdf:
-    mainfont: "Iosevka Aile"
-    monofont: "Iosevka"
+format: pdf
 bibliography: bibliography.bib
 csl: acm-sig.csl
 ---

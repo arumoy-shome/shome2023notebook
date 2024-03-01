@@ -1,6 +1,4 @@
-Following are the papers I found while doing an informal survey of
-recent publications. The survey went back 4 years (until and including
-2019). The following venues were reviewed:
+Following are the papers I found while doing an informal survey of recent publications. The survey went back 4 years (until and including 2019). The following venues were reviewed:
 
 -   [ ] ICSE
     -   [x] 2023
@@ -47,6 +45,152 @@ The papers are organised as follows:
 # Inbox
 
 Papers to review.
+
+## TODO wagner2024navigating
+
+Another recommendation from Luis, read this.
+
+```bibtex
+@Article{         wagner2024navigating,
+  title         = {Navigating the Upcoming European Union AI Act},
+  volume        = {41},
+  issn          = {1937-4194},
+  url           = {http://dx.doi.org/10.1109/MS.2023.3322913},
+  doi           = {10.1109/ms.2023.3322913},
+  number        = {1},
+  journal       = {IEEE Software},
+  publisher     = {Institute of Electrical and Electronics Engineers (IEEE)},
+  author        = {Wagner, Matthias and Borg, Markus and Runeson, Per},
+  year          = {2024},
+  month         = jan,
+  pages         = {19–24}
+}
+```
+
+##  TODO vidoni2021evaluating
+
+Recommendation from Luis, must read.
+
+```bibtex
+@InProceedings{   vidoni2021evaluating,
+  title         = {Evaluating Unit Testing Practices in R Packages},
+  url           = {http://dx.doi.org/10.1109/ICSE43902.2021.00136},
+  doi           = {10.1109/icse43902.2021.00136},
+  booktitle     = {2021 IEEE/ACM 43rd International Conference on Software
+                  Engineering (ICSE)},
+  publisher     = {IEEE},
+  author        = {Vidoni, Melina},
+  year          = {2021},
+  month         = may
+}
+```
+
+## bahdanau2016neural
+
+Original paper that proposed the notion of "attention" to improve sequence-to-sequence transformer models.
+
+```bibtex
+@Misc{            bahdanau2016neural,
+  title         = {Neural Machine Translation by Jointly Learning to Align
+                  and Translate},
+  author        = {Dzmitry Bahdanau and Kyunghyun Cho and Yoshua Bengio},
+  year          = {2016},
+  eprint        = {1409.0473},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.CL}
+}
+```
+
+## kalliamvakou2014promises
+
+From our very own Georgios (received MIPS award at MSR '24). They
+analyse the data quality of Github and provide recommendations for
+appraoching Github data for software engineering researchers.
+
+```bibtex
+@InProceedings{   kalliamvakou2014promises,
+  series        = {ICSE ’14},
+  title         = {The promises and perils of mining GitHub},
+  url           = {http://dx.doi.org/10.1145/2597073.2597074},
+  doi           = {10.1145/2597073.2597074},
+  booktitle     = {Proceedings of the 11th Working Conference on Mining
+                  Software Repositories},
+  publisher     = {ACM},
+  author        = {Kalliamvakou, Eirini and Gousios, Georgios and Blincoe,
+                  Kelly and Singer, Leif and German, Daniel M. and Damian,
+                  Daniela},
+  year          = {2014},
+  month         = may,
+  collection    = {ICSE ’14}
+}
+```
+
+## sutskever2014sequence
+
+Original sequence-to-sequence (Seq2Seq) paper from Google that
+inspired transformers.
+
+According to Wikipedia article on
+[Seq2Seq](https://en.wikipedia.org/wiki/Seq2seq) the original idea was
+from the author of word2vec, and Google stole it.
+
+```bibtex
+@Misc{            sutskever2014sequence,
+  title         = {Sequence to Sequence Learning with Neural Networks},
+  author        = {Ilya Sutskever and Oriol Vinyals and Quoc V. Le},
+  year          = {2014},
+  eprint        = {1409.3215},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.CL}
+}
+```
+
+## reimers2019sentence-bert
+
+Recommendation from Jonathan. He advised that Sentence-BERT (SBERT) is
+a better fit for our task of going from text-to-text tokens.
+
+I followed the [tutorial on the website]() and skimmed the paper. The
+code works, however I don't think it fits what I am trying to do. From
+what I understand, SBERT can be used to detect weather two pieces of
+texts are similar to one another (or not).
+
+It does however fit the idea for automating the detection of related
+VA pairs. Something to explore?
+
+```bibtex
+@Misc{            reimers2019sentence-bert,
+  title         = {Sentence-BERT: Sentence Embeddings using Siamese
+                  BERT-Networks},
+  author        = {Nils Reimers and Iryna Gurevych},
+  year          = {2019},
+  eprint        = {1908.10084},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.CL}
+}
+```
+
+## martínez-fernández2022software
+
+```bibtex
+@Article{         martínez-fernández2022software,
+  title         = {Software Engineering for AI-Based Systems: A Survey},
+  volume        = {31},
+  issn          = {1557-7392},
+  url           = {http://dx.doi.org/10.1145/3487043},
+  doi           = {10.1145/3487043},
+  number        = {2},
+  journal       = {ACM Transactions on Software Engineering and Methodology},
+  publisher     = {Association for Computing Machinery (ACM)},
+  author        = {Martínez-Fernández, Silverio and Bogner, Justus and
+                  Franch, Xavier and Oriol, Marc and Siebert, Julien and
+                  Trendowicz, Adam and Vollmer, Anna Maria and Wagner,
+                  Stefan},
+  year          = {2022},
+  month         = apr,
+  pages         = {1–59}
+}
+```
 
 ## obrien202223
 
@@ -250,7 +394,7 @@ collected from open-source AI projects on Github.
 }
 ```
 
-## widyasari2023niche
+## STAR widyasari2023niche
 
 Authors present a dataset of mature ML projects from Github. We can
 use this to mine Jupyter Notebooks for our paper.
@@ -383,10 +527,10 @@ notebooks with related VA-pairs?
 }
 ```
 
-## tıraşoğlu2023open
+## tirasoglu2023open
 
 ```bibtex
-@InProceedings{   tıraşoğlu2023open,
+@InProceedings{   tirasoglu2023open,
   title         = {Open Source Software Tools for Data Management and Deep
                   Model Training Automation},
   url           = {http://dx.doi.org/10.1109/ASE56229.2023.00014},

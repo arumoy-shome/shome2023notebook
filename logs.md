@@ -2,6 +2,68 @@
 title: shome2023llm logbook
 ---
 
+# Better documemtation for python `ast` module
+
+[Green Tree Snakes](https://greentreesnakes.readthedocs.io/en/latest/)
+is an external project that has better documentation for working with
+the Python `ast` module. Link obtained directly from Python
+documentation page for the `ast` module.
+
+# 2024-02-28 luis-aru weekly next steps for ICST resubmission
+
+We agreed that the human study is beneficial for the phd (it probably Will appear as the first chapter of the thesis); but for now we need to beef up the ICST '24 paper with more analytical analysis of `assert` statements and close this chapter.
+
+I have changed my focus for the coming weeks to analysing the Kaggle dataset and performing the analysis.
+
+## Ideas for `assert` analytics
+
+Following some ideas for collecting analytics from Jupyter notebooks regarding assertions in them:
+
+1. Starting from the notebook level:
+   + How many notebooks with/without asserts in the original source?
+2. Then at the cell level:
+   + Ratio of code cells with asserts vs. without asserts? 
+   + Relative position of code cells with assertions (within the notebook)? This one is inspired by quaranta2021kgtorrent.
+   + Contents/keywords of code cell with assert? Similarly, contents/keywords of code cell above the assert? The goal here is to understand/analyse the keywords typically present within assertions. With the analysis of the code cells above the assert is to study if there are patterns in the code that lead to an assertion.
+
+# 2024-02-25 SBERT for automatically identifying related VA pairs #idea
+
+I had a chat with Jonathan last week. He originally mentioned SBERT
+for the translation task. Although we cannot use it for that, I think
+it fits the bill for automatically identifying related VA pairs.
+
+# 2024-02-13 downloading from Zenodo
+
+Zenodo API urls for datsets we are interested in:
+1. mondal2023cell2doc:
+    + base: <https://zenodo.org/api/records/10655071>
+    + file: <https://zenodo.org/api/records/10655071/files/Cell2Doc-Artifacts.zip/content>
+2. quaranta2021kgtorrent:
+    + base: <https://zenodo.org/api/records/4468523>
+    + file: <https://zenodo.org/api/records/4468523/files/KT_dataset.tar.bz2/content>
+
+Get the download url using `curl` on the main records url (note down
+the md5 checksum hash for later):
+
+```sh
+# replace with correct records id
+curl --cookie zenodo.txt 'https://zenodo.org/api/records/xxxxxx?token=<>'
+```
+
+Then download:
+
+```sh
+curl --cookie zenodo.txt 'https://zenodo.org/api/records/8265137/files/Cell2Doc-Artifacts.zip/content?token=<>' --output Cell2Doc-Artifacts.zip
+```
+
+Where `token` is the Zenodo API key.
+
+Validate that data is complete:
+
+```sh
+md5 Cell2Doc-Artifacts.zip
+```
+
 # 2024-02-12 review and planning
 
 There are 3 tracks that I need to work on moving forward:
