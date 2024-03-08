@@ -18,10 +18,14 @@ def ipynb_to_dataframe() -> pd.DataFrame:
     # NOTE: early exit if empty notebook or no code cells
     (df.empty or df.loc[df["cell_type"] == "code"].empty) and exit()
 
-    # NOTE fill missing outputs with empty list
-    # NOTE we have to iterate through them, cannot do a bulk assignment
+    # NOTE: fill missing outputs with empty list
+    # NOTE: we have to iterate through them, cannot do a bulk assignment
     for idx, row in df.loc[df["outputs"].isna()].iterrows():
         df.at[idx, "outputs"] = []
+
+    # NOTE: convert `source` to str dtype
+    # NOTE: `source` can be str or list; following lambda function works on both cases
+    df.loc[:, "source"] = df["source"].apply(lambda x: "".join(x))
 
     return df.loc[:, ["cell_type", "source", "outputs"]]
 
@@ -56,13 +60,6 @@ def get_visualisations():
     return pd.DataFrame(data=cells, index=indices).drop(columns="index")
 
 
-def _to_str(x):
-    """
-    NOTE: This function will work both when x is a list or a str. So we can always call this safely prior to the pandas.Series.str method.
-    """
-    return "".join(x)
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Compute various statistics about Python assert statements in Jupyter Notebooks"
@@ -86,16 +83,14 @@ if __name__ == "__main__":
     else:
         visualisations = pd.DataFrame()
 
-    # NOTE: remove outputs column from all_cells
+    # NOTE: remove outputs column
     all_cells = all_cells.loc[:, ["cell_type", "source"]]
+    code_cells = code_cells.loc[:, ["cell_type", "source"]]
 
     md_cells = all_cells.loc[all_cells["cell_type"] == "markdown"]
 
-    # NOTE: `source` can be str or list; _to_str() works on both cases so we always call it prior to applying pandas.Series.str methods
     # NOTE: this may return false positives (such as the keyword `assert` appearing in a comment)
-    assert_cells = code_cells.loc[
-        code_cells["source"].apply(_to_str).str.contains("assert")
-    ]
+    assert_cells = code_cells.loc[code_cells["source"].str.contains("assert")]
     # NOTE: early exit if we don't have any code cells with `assert`
     assert_cells.empty and exit()
 
