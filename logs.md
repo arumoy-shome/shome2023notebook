@@ -2,6 +2,24 @@
 title: shome2023llm logbook
 ---
 
+# 2024-03-07 brainstorming with Diomidis
+
+Diomidis gave a strong impression that the empirical study of `assert` statements in Python Jupyter Notebooks is a promising direction.
+
+He had the following suggestions for RQs of the paper:
+1. "Density" of `assert` statements: this entails the general statistics we are collecting such as:
+   + number of code cells in the NB
+   + number of markdown cells in the NB
+   + number of code cells with at least 1 `assert` statement
+2. Presence of a message when an `assert` fails
+3. Lexical content: we are collecting the entire contents of the code cells with an `assert` statement
+4. Lexical context: we are also collecting the entire contents of cells (code or markdown) above and below `assert` statements
+5. We are also contributing the dataset of Python assert statements.
+
+For the following re-submission, we are primarily focusing on assertions. But the the dataset we are creating, we will also be able to look into how assertions and visualisations interact with one-another.
+
+Diomidis also proposed that we can create a taxonomy of assert statements. We take a meaningful sample, and create a taxonomy on that. Luis needs to do this as well so that we can calculate the Inter-Rater Agreement.
+
 # Better documemtation for python `ast` module
 
 [Green Tree Snakes](https://greentreesnakes.readthedocs.io/en/latest/)
