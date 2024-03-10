@@ -124,13 +124,12 @@ if __name__ == "__main__":
     # NOTE: make sure that the term `ipynb` only occurs at the end of filename
     # I did this using the following command and checking that it *does not* print anything:
     # $ find data/ -name '*.ipynb' -type f -not -path '*ipynb_checkpoints*' |grep -v 'ipynb$'
-    basename, _ = os.path.basename(args.notebook).split(".")
+    basename, _ = os.path.splitext(args.notebook)
     dirname = os.path.dirname(args.notebook).replace(
         "data/", "data/shome2023notebook/", 1
     )
     if not os.path.exists(dirname):
         os.makedirs(dirname)
-    filepath = os.path.join(dirname, basename)
 
     stats = {
         "notebook": args.notebook,
@@ -140,20 +139,20 @@ if __name__ == "__main__":
     }
     # NOTE: order of headers ["notebook", "num_code_cells", "num_md_cells", "num_assert_cells"]
     pd.DataFrame(data=[stats]).to_csv(
-        filepath + "-stats.csv", index=False, header=False
+        basename + "-stats.csv", index=False, header=False
     )
-    print(f"OUTPUT:{filepath}" + "-stats.csv")
+    print(f"OUTPUT:{basename}" + "-stats.csv")
     # NOTE: order of headers ["index", "cell_type", "source", "notebook"]
     pd.DataFrame(data=assert_content).to_csv(
-        filepath + "-assert-content.csv", header=False
+        basename + "-assert-content.csv", header=False
     )
-    print(f"OUTPUT:{filepath}" + "-assert-content.csv")
+    print(f"OUTPUT:{basename}" + "-assert-content.csv")
     # NOTE: order of headers ["index", "cell_type", "source", "notebook", "location", "assert_cell_index"]
     pd.DataFrame(data=assert_context).to_csv(
-        filepath + "-assert-context.csv", header=False
+        basename + "-assert-context.csv", header=False
     )
     # NOTE: order of headers ["index", "notebook", "image/png"]
-    print(f"OUTPUT:{filepath}" + "-assert-context.csv")
+    print(f"OUTPUT:{basename}" + "-assert-context.csv")
     if not visualisations.empty:
-        visualisations.to_csv(filepath + "-visualisations.csv", header=False)
-        print(f"OUTPUT:{filepath}" + "-visualisations.csv")
+        visualisations.to_csv(basename + "-visualisations.csv", header=False)
+        print(f"OUTPUT:{basename}" + "-visualisations.csv")
