@@ -23,6 +23,13 @@ def ipynb_to_dataframe() -> pd.DataFrame:
     for idx, row in df.loc[df["outputs"].isna()].iterrows():
         df.at[idx, "outputs"] = []
 
+    # NOTE: remove empty cells
+    # These can be of three types: NaN (float) "" (str) or [] (list)
+    df = df.loc[df["source"].notna()]  # handle NaN
+    df = df.loc[
+        df["source"].apply(lambda x: True if x else False)
+    ]  # handle empty "" or []
+
     # NOTE: convert `source` to str dtype
     # NOTE: `source` can be str or list; following lambda function works on both cases
     df.loc[:, "source"] = df["source"].apply(lambda x: "".join(x))
@@ -72,9 +79,6 @@ if __name__ == "__main__":
     print(f"INPUT:{args.notebook}")
 
     all_cells = ipynb_to_dataframe()
-
-    # NOTE: remove empty cells (does this affect the context in any way?)
-    all_cells = all_cells.loc[all_cells["source"].apply(lambda x: len(x) > 0)]
 
     code_cells = all_cells.loc[all_cells["cell_type"] == "code"]
 
