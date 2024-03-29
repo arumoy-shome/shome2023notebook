@@ -11,6 +11,6 @@ if __name__ == "__main__":
     try:
         nb_dict = nbformat.read(args.notebook, nbformat.NO_CONVERT)
     except Exception as err:
-        print(f"ERROR:{args.notebook}:{err}")
+        print(f"ERROR\t{args.notebook}\t{err}")
     else:
-        print(f"INFO:{args.notebook}:is valid")
+        print(f"INFO\t{args.notebook}\tis valid")

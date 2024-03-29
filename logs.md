@@ -2,6 +2,92 @@
 title: shome2023llm logbook
 ---
 
+# 2024-03-29 story for ESEM '24 paper (revised)
+
+We had another meeting with Diomidis and Luis and the discussion there
+helped finalise the story much more. Here it goes:
+
+We begin with a high-level overview of the ML lifecycle--here we
+highlight how there are several components that we need to think about
+when developing ML pipelines. ML pipelines are seldom developed in
+isolation, inside source code files. Instead, they require a more
+interactive and iterative approach.
+
+Computational Notebooks have been widely adopted for developing ML
+pipelines which they support such an iterative development process.
+Within the Python ML community, Jupyter has been widely popular (this is
+why we mine Jupyter Notebooks in particular).
+
+However, traditional practices of writing test suites to ensure the
+correctness of ML pipelines fail to adapt to this new paradigm of
+development. Often, checks are performed manually by the developer by
+simply oberving the output of a code cell. Alternatively, assert
+statements are far more suited for testing within computational
+notebooks (**TODO** this requires a bit more thought and fine-tuning;
+how we want to integrate the implicit vs explicit testing).
+
+RQ1: How are the outputs of code cells used for testing ML pipelines?
+
+    Here we have present the descriptive and lexical analysis of the
+    outputs of code cells.
+
+    RQ1.1: We have to distinguish here between explicit outputs produced
+    with `print` statements and
+    RQ1.2: Implicit outputs from the last statement of a code cell.
+
+RQ2: How are assertions used for testing ML pipelines?
+
+    Here we present the descriptive and lexical analysis of code cells
+    with assertions.
+
+    RQ2.1: Compare and contrast between outputs vs assertions. What are
+    the similarities? Differences?
+
+RQ3: How are visualisations used to test ML pipelines?
+
+    Decisions are not only made using text output in ML pipelines; we
+    use visualisations to understand complexity of the dataset and ML
+    models. Visualisations are a special form of manual test using
+    outputs.
+
+    Extend the descriptive and lexical analysis performed earlier, to
+    code cells that produce a visualisation.
+
+    RQ3.1: Are assertions written to test visual insights gained from
+    visualisations?
+
+    Here we dump all the content from the ICST paper.
+
+# 2024-03-22 story for ESEM '24 paper
+
+Since visualisations are no longer the headline for this paper, I need
+to revisit the story/motivation of what we are trying to do.
+
+The kochhar2017revisiting provided some foundation for this. We need to
+start with background of assertions as an alternative means of testing
+(compared to more traditional test suites written in dedicated test
+files).
+
+Then we need to justify why assertions are a good fit for testing ML
+projects. We can ellaborate how developing ML software is highly
+iterative and requires a lot of experimentation.
+
+Then bring in the popularity of computational notebooks since they
+support this iterative style of development. This is also our reasoning
+for collecting assertions from Jupyter notebooks.
+
+Then we bring in the large-scale empirical analysis of assert statements
+in notebooks that we are performing. Here we highlight the descriptive
+statistics and analysis we conducted.
+
+Next, we go into analysing the outputs of code cells as a means of
+manually validating pre/post conditions or expectations of
+developers. We start by analysing the "text/plain" outputs of
+cells. Next we present the use of visualisations as a more specialised
+case of this manual validation. Here, we want to highlight these cases
+of missed opportunities where assertions can be used to make the
+expectations of developers explicit.
+
 # 2024-03-07 brainstorming with Diomidis
 
 Diomidis gave a strong impression that the empirical study of `assert` statements in Python Jupyter Notebooks is a promising direction.

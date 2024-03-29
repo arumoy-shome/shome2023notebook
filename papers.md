@@ -1039,6 +1039,32 @@ are promising.
 
 # Testing
 
+## STAR TODO kochhar2017revisiting
+
+Recommendation from Luis. Authors analyse the use assertions in a large number
+of Java projects.
+
+The paper presents the same benefits of asserts as we are trying to
+propose in our ICST paper (helpful for documentation and, readability,
+maintainability, etc).
+
+
+```bibtex
+@InProceedings{   kochhar2017revisiting,
+  series        = {EASE’17},
+  title         = {Revisiting Assert Use in GitHub Projects},
+  url           = {http://dx.doi.org/10.1145/3084226.3084259},
+  doi           = {10.1145/3084226.3084259},
+  booktitle     = {Proceedings of the 21st International Conference on
+                  Evaluation and Assessment in Software Engineering},
+  publisher     = {ACM},
+  author        = {Kochhar, Pavneet Singh and Lo, David},
+  year          = {2017},
+  month         = jun,
+  collection    = {EASE’17}
+}
+```
+
 ## TODO xia2023balancing
 
 Authors propose a tool that heuristically determines the optimal
