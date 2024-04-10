@@ -86,6 +86,17 @@ if __name__ == "__main__":
 
     all_cells = ipynb_to_dataframe()
     code_cells = all_cells.loc[all_cells["cell_type"] == "code"]
+
+    import_cells = code_cells.loc[code_cells["source"].str.contains("import")]
+    (
+        import_cells.empty
+        or import_cells.loc[
+            import_cells["source"].str.contains(
+                r"sklearn|torch|tensorflow|keras", regex=True
+            )
+        ].empty
+    ) and exit()
+
     outputs = get_outputs()
     # NOTE: early exit if neither outputs.data.{"image/png","text/plain"} were present
     outputs.empty and exit()
@@ -96,6 +107,6 @@ if __name__ == "__main__":
         os.makedirs(dirname)
 
     # NOTE: order of headers ["index", "notebook", "source", "image/png", "text/plain"]
-    name = dirname + os.path.splitext(filename)[0] + "-outputs.csv"
+    name = os.path.join(dirname, os.path.splitext(filename)[0] + "-outputs.csv")
     outputs.to_csv(name, header=False)
     print(f"OUTPUT:{name}")

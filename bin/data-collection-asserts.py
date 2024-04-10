@@ -14,8 +14,6 @@ def ipynb_to_dataframe() -> pd.DataFrame:
     with open(args.notebook) as f:
         cells = json.load(f)["cells"]
         df = pd.read_json(StringIO(json.dumps(cells)), orient="records")
-        # NOTE: remove outputs column
-        df = df.loc[:, ["cell_type", "source"]]
 
     # NOTE: early exit if empty notebook or no code cells
     (df.empty or df.loc[df["cell_type"] == "code"].empty) and exit()
@@ -31,7 +29,7 @@ def ipynb_to_dataframe() -> pd.DataFrame:
     # NOTE: `source` can be str or list; following lambda function works on both cases
     df.loc[:, "source"] = df["source"].apply(lambda x: "".join(x))
 
-    return df.loc[:, ["cell_type", "source", "outputs"]]
+    return df.loc[:, ["cell_type", "source"]]
 
 
 if __name__ == "__main__":
@@ -48,6 +46,16 @@ if __name__ == "__main__":
     all_cells = ipynb_to_dataframe()
     code_cells = all_cells.loc[all_cells["cell_type"] == "code"]
     md_cells = all_cells.loc[all_cells["cell_type"] == "markdown"]
+
+    import_cells = code_cells.loc[code_cells["source"].str.contains("import")]
+    (
+        import_cells.empty
+        or import_cells.loc[
+            import_cells["source"].str.contains(
+                r"sklearn|torch|tensorflow|keras", regex=True
+            )
+        ].empty
+    ) and exit()
 
     # NOTE: this may return false positives (such as the keyword `assert` appearing in a comment)
     assert_cells = code_cells.loc[code_cells["source"].str.contains("assert")]
@@ -84,13 +92,12 @@ if __name__ == "__main__":
     # NOTE: make sure that the term `ipynb` only occurs at the end of filename
     # I did this using the following command and checking that it *does not* print anything:
     # $ find data/ -name '*.ipynb' -type f -not -path '*ipynb_checkpoints*' |grep -v 'ipynb$'
-    basename, _ = os.path.splitext(args.notebook)
-    dirname = os.path.dirname(args.notebook).replace(
-        "data/", "data/shome2023notebook/", 1
-    )
+    dirname, filename = os.path.split(args.notebook)
+    dirname = dirname.replace("data/", "data/shome2023notebook/", 1)
     if not os.path.exists(dirname):
         os.makedirs(dirname)
 
+    name = os.path.join(dirname, os.path.splitext(filename)[0])
     stats = {
         "notebook": args.notebook,
         "num_code_cells": len(code_cells),
@@ -98,19 +105,13 @@ if __name__ == "__main__":
         "num_assert_cells": len(assert_cells),
     }
     # NOTE: order of headers ["notebook", "num_code_cells", "num_md_cells", "num_assert_cells"]
-    pd.DataFrame(data=[stats]).to_csv(
-        basename + "-stats.csv", index=False, header=False
-    )
-    print(f"OUTPUT:{basename}" + "-stats.csv")
+    pd.DataFrame(data=[stats]).to_csv(name + "-stats.csv", index=False, header=False)
+    print(f"OUTPUT:{name}" + "-stats.csv")
 
     # NOTE: order of headers ["index", "cell_type", "source", "notebook"]
-    pd.DataFrame(data=assert_content).to_csv(
-        basename + "-assert-content.csv", header=False
-    )
-    print(f"OUTPUT:{basename}" + "-assert-content.csv")
+    pd.DataFrame(data=assert_content).to_csv(name + "-assert-content.csv", header=False)
+    print(f"OUTPUT:{name}" + "-assert-content.csv")
 
     # NOTE: order of headers ["index", "cell_type", "source", "notebook", "location", "assert_cell_index"]
-    pd.DataFrame(data=assert_context).to_csv(
-        basename + "-assert-context.csv", header=False
-    )
-    print(f"OUTPUT:{basename}" + "-assert-context.csv")
+    pd.DataFrame(data=assert_context).to_csv(name + "-assert-context.csv", header=False)
+    print(f"OUTPUT:{name}" + "-assert-context.csv")
