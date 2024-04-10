@@ -21,7 +21,7 @@ why we mine Jupyter Notebooks in particular).
 However, traditional practices of writing test suites to ensure the
 correctness of ML pipelines fail to adapt to this new paradigm of
 development. Often, checks are performed manually by the developer by
-simply oberving the output of a code cell. Alternatively, assert
+simply observing the output of a code cell. Alternatively, assert
 statements are far more suited for testing within computational
 notebooks (**TODO** this requires a bit more thought and fine-tuning;
 how we want to integrate the implicit vs explicit testing).

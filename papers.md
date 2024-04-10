@@ -46,6 +46,113 @@ The papers are organised as follows:
 
 Papers to review.
 
+## panourgia2023software
+
+Recommendation from Diomidis, the methodology is similar to what we are
+trying to do for the ESEM paper.
+
+```bibtex
+@Misc{            panourgia2023software,
+  title         = {Software engineering for deep learning applications: usage
+                  of SWEng and MLops tools in GitHub repositories},
+  author        = {Evangelia Panourgia and Theodoros Plessas and Diomidis
+                  Spinellis},
+  year          = {2023},
+  eprint        = {2310.19124},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.SE}
+}
+```
+
+## STAR zhang2020empirical
+
+This paper proposes a taxonomy of faults in ML systems.
+
+```bibtex
+@InProceedings{   zhang2020empirical,
+  series        = {ICSE ’20},
+  title         = {An empirical study on program failures of deep learning
+                  jobs},
+  url           = {http://dx.doi.org/10.1145/3377811.3380362},
+  doi           = {10.1145/3377811.3380362},
+  booktitle     = {Proceedings of the ACM/IEEE 42nd International Conference
+                  on Software Engineering},
+  publisher     = {ACM},
+  author        = {Zhang, Ru and Xiao, Wencong and Zhang, Hongyu and Liu, Yu
+                  and Lin, Haoxiang and Yang, Mao},
+  year          = {2020},
+  month         = jun,
+  collection    = {ICSE ’20}
+}
+```
+
+## STAR humbatova2020taxonomy
+
+```bibtex
+@InProceedings{   humbatova2020taxonomy,
+  series        = {ICSE ’20},
+  title         = {Taxonomy of real faults in deep learning systems},
+  url           = {http://dx.doi.org/10.1145/3377811.3380395},
+  doi           = {10.1145/3377811.3380395},
+  booktitle     = {Proceedings of the ACM/IEEE 42nd International Conference
+                  on Software Engineering},
+  publisher     = {ACM},
+  author        = {Humbatova, Nargiz and Jahangirova, Gunel and Bavota,
+                  Gabriele and Riccio, Vincenzo and Stocco, Andrea and
+                  Tonella, Paolo},
+  year          = {2020},
+  month         = jun,
+  collection    = {ICSE ’20}
+}
+```
+
+## STAR stol2018abc
+
+Another paper referenced in the ESEM research paper track website. Also recommended by Diomidis to use as reference for research methodologies that can be used in SE.
+
+Table 5 summarises the 8 distinct research strategies.
+
+```bibtex
+@Article{         stol2018abc,
+  title         = {The ABC of Software Engineering Research},
+  volume        = {27},
+  issn          = {1557-7392},
+  url           = {http://dx.doi.org/10.1145/3241743},
+  doi           = {10.1145/3241743},
+  number        = {3},
+  journal       = {ACM Transactions on Software Engineering and Methodology},
+  publisher     = {Association for Computing Machinery (ACM)},
+  author        = {Stol, Klaas-Jan and Fitzgerald, Brian},
+  year          = {2018},
+  month         = jul,
+  pages         = {1–51}
+}
+```
+
+## STAR TODO storey2020who
+
+"Peggy" personally presented this paper at SIESTA summer school, but it
+is also referenced in the ESEM research paper track.
+
+```bibtex
+@Article{         storey2020who,
+  title         = {The who, what, how of software engineering research: a
+                  socio-technical framework},
+  volume        = {25},
+  issn          = {1573-7616},
+  url           = {http://dx.doi.org/10.1007/s10664-020-09858-z},
+  doi           = {10.1007/s10664-020-09858-z},
+  number        = {5},
+  journal       = {Empirical Software Engineering},
+  publisher     = {Springer Science and Business Media LLC},
+  author        = {Storey, Margaret-Anne and Ernst, Neil A. and Williams,
+                  Courtney and Kalliamvakou, Eirini},
+  year          = {2020},
+  month         = aug,
+  pages         = {4097–4129}
+}
+```
+
 ## TODO wagner2024navigating
 
 Another recommendation from Luis, read this.
@@ -1039,6 +1146,53 @@ are promising.
 
 # Testing
 
+## dutta2021flex
+
+The first author (Saikat Dutta) seems to be active in the field of
+assertions in ML. Albeit, his focus seems to be on fixing flakiness of
+tests due to the stachastic nature of ML algorithms. We on the other
+hand, are focusing on the automation aspect of assertions.
+
+Regardless, good to mention Dutta's papers in the related work section.
+
+```bibtex
+@InProceedings{   dutta2021flex,
+  series        = {ESEC/FSE ’21},
+  title         = {FLEX: fixing flaky tests in machine learning projects by
+                  updating assertion bounds},
+  url           = {http://dx.doi.org/10.1145/3468264.3468615},
+  doi           = {10.1145/3468264.3468615},
+  booktitle     = {Proceedings of the 29th ACM Joint Meeting on European
+                  Software Engineering Conference and Symposium on the
+                  Foundations of Software Engineering},
+  publisher     = {ACM},
+  author        = {Dutta, Saikat and Shi, August and Misailovic, Sasa},
+  year          = {2021},
+  month         = aug,
+  collection    = {ESEC/FSE ’21}
+}
+```
+
+## dutta2021tera
+
+```bibtex
+@InProceedings{   dutta2021tera,
+  series        = {ISSTA ’21},
+  title         = {TERA: optimizing stochastic regression tests in machine
+                  learning projects},
+  url           = {http://dx.doi.org/10.1145/3460319.3464844},
+  doi           = {10.1145/3460319.3464844},
+  booktitle     = {Proceedings of the 30th ACM SIGSOFT International
+                  Symposium on Software Testing and Analysis},
+  publisher     = {ACM},
+  author        = {Dutta, Saikat and Selvam, Jeeva and Jain, Aryaman and
+                  Misailovic, Sasa},
+  year          = {2021},
+  month         = jul,
+  collection    = {ISSTA ’21}
+}
+```
+
 ## STAR TODO kochhar2017revisiting
 
 Recommendation from Luis. Authors analyse the use assertions in a large number
@@ -1300,6 +1454,16 @@ Here is [the accompanying website](https://microsoft.github.io/CodeXGLUE).
 
 # Notebooks
 
+## STAR TODO mojtaba2023distilkaggle
+
+
+[New dataset of notebooks](https://zenodo.org/records/10317389) from Kaggle (300GB original). The authors extracted the contents of the code cells (which we did as well). However, they did not extract the outputs. Published in MSR '24 so its super fresh, DOI info is not available yet.
+
+[Here is the code](https://github.com/theablemo/DistilKaggle) used by the authors to mine the notebooks.
+
+```bibtex
+```
+
 ## patra2022nalin
 
 Authors mine Jupyter Notebooks, skim methodology.
@@ -1407,6 +1571,58 @@ Read the methodology, they mined Kaggle for ML pipelines and datasets.
 # Empirical Methods
 
 Papers that use empirical methods in their methodology.
+
+## STAR wohlin2012experimentation
+
+This is the bible for empirical studies in Software Engineering. Luis
+recommended this book to be way back in my first year of my Phd. It was
+not that useful back then because we were still trying to find a topic.
+
+Now in my third year, the topic is finalised and this is the time when
+I am fining myself referring back to the chapters of this book to
+understand and identify various methods we can use to analyse the data.
+
+The pdf unfortunately does not have a detailed TOC. [So I refer to the
+TOC on the
+website](https://link-springer-com.tudelft.idm.oclc.org/book/10.1007/978-3-642-29044-2)
+to identify the relevant chapters.
+
+```bibtex
+@Book{            wohlin2012experimentation,
+  title         = {Experimentation in Software Engineering},
+  isbn          = {9783642290442},
+  url           = {http://dx.doi.org/10.1007/978-3-642-29044-2},
+  doi           = {10.1007/978-3-642-29044-2},
+  publisher     = {Springer Berlin Heidelberg},
+  author        = {Wohlin, Claes and Runeson, Per and Höst, Martin and
+                  Ohlsson, Magnus C. and Regnell, Björn and Wesslén,
+                  Anders},
+  year          = {2012}
+}
+```
+
+## priya2020case
+
+Reference paper for conducting research based on case-studies.
+
+```bibtex
+@Article{         priya2020case,
+  title         = {Case Study Methodology of Qualitative Research: Key
+                  Attributes and Navigating the Conundrums in Its
+                  Application},
+  volume        = {70},
+  issn          = {2457-0257},
+  url           = {http://dx.doi.org/10.1177/0038022920970318},
+  doi           = {10.1177/0038022920970318},
+  number        = {1},
+  journal       = {Sociological Bulletin},
+  publisher     = {SAGE Publications},
+  author        = {Priya, Arya},
+  year          = {2020},
+  month         = nov,
+  pages         = {94–110}
+}
+```
 
 ## beller2021what
 
