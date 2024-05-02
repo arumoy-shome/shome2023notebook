@@ -1,52 +1,149 @@
-Following are the papers I found while doing an informal survey of recent publications. The survey went back 4 years (until and including 2019). The following venues were reviewed:
+---
+title: Annotated Bibliography
+---
 
--   [ ] ICSE
-    -   [x] 2023
-    -   [X] 2022
-    -   [ ] 2021
-    -   [ ] 2020
-    -   [ ] 2019
--   [ ] FSE
-    -   [X] 2023
-    -   [X] 2022
-    -   [ ] 2021
-    -   [ ] 2020
-    -   [ ] 2019
--   [ ] ASE
-    -   [X] 2023
-    -   [X] 2022
-    -   [ ] 2021
-    -   [ ] 2020
-    -   [ ] 2019
--   [ ] MSR
-    -   [X] 2023
-    -   [X] 2022
-    -   [ ] 2021
-    -   [ ] 2020
-    -   [ ] 2019
--   [ ] EMSE
-    -   [X] 2024
-    -   [X] 2023
-    -   [ ] 2022
-    -   [ ] 2021
-    -   [ ] 2020
-    -   [ ] 2019
+# @visualisation @data liu2019understanding
 
-The papers are organised as follows:
+```bibtex
+@Article{         liu2019understanding,
+  title         = {Understanding the Role of Alternatives in Data Analysis
+                  Practices},
+  issn          = {2160-9306},
+  url           = {http://dx.doi.org/10.1109/TVCG.2019.2934593},
+  doi           = {10.1109/tvcg.2019.2934593},
+  journal       = {IEEE Transactions on Visualization and Computer Graphics},
+  publisher     = {Institute of Electrical and Electronics Engineers (IEEE)},
+  author        = {Liu, Jiali and Boukhelifa, Nadia and Eagan, James R.},
+  year          = {2019},
+  pages         = {1–1}
+}
+```
 
--   Papers still to be processed are under the `Inbox`{.verbatim}
-    heading
--   The remaining papers are organised under headings based on the
-    primary topic which include:
-    -   `Testing`{.verbatim}: These are papers on testing ML/AI systems
-    -   `LLMs`{.verbatim}: Papers using Large Language Models
-    -   `Notebooks`{.verbatim}: Papers on Computational Notebooks
+# @notebook kery2018story
 
-# Inbox
+```bibtex
+@InProceedings{   kery2018story,
+  series        = {CHI ’18},
+  title         = {The Story in the Notebook: Exploratory Data Science using
+                  a Literate Programming Tool},
+  url           = {http://dx.doi.org/10.1145/3173574.3173748},
+  doi           = {10.1145/3173574.3173748},
+  booktitle     = {Proceedings of the 2018 CHI Conference on Human Factors in
+                  Computing Systems},
+  publisher     = {ACM},
+  author        = {Kery, Mary Beth and Radensky, Marissa and Arya, Mahima and
+                  John, Bonnie E. and Myers, Brad A.},
+  year          = {2018},
+  month         = apr,
+  collection    = {CHI ’18}
+}
+```
 
-Papers to review.
+# @data @visualisation kandel2012enterprise
 
-## panourgia2023software
+```bibtex
+@Article{         kandel2012enterprise,
+  title         = {Enterprise Data Analysis and Visualization: An Interview
+                  Study},
+  volume        = {18},
+  issn          = {1077-2626},
+  url           = {http://dx.doi.org/10.1109/TVCG.2012.219},
+  doi           = {10.1109/tvcg.2012.219},
+  number        = {12},
+  journal       = {IEEE Transactions on Visualization and Computer Graphics},
+  publisher     = {Institute of Electrical and Electronics Engineers (IEEE)},
+  author        = {Kandel, Sean and Paepcke, Andreas and Hellerstein, Joseph
+                  M. and Heer, Jeffrey},
+  year          = {2012},
+  month         = dec,
+  pages         = {2917–2926}
+}
+```
+
+# @notebook @design chattopadhyay2020whats
+
+I used this paper for the ICST submission.
+
+Goes into the workflow in computational notebooks, and the improvements that can be made here from the pain-points.
+
+```bibtex
+@InProceedings{   chattopadhyay2020whats,
+  series        = {CHI ’20},
+  title         = {What’s Wrong with Computational Notebooks? Pain Points,
+                  Needs, and Design Opportunities},
+  url           = {http://dx.doi.org/10.1145/3313831.3376729},
+  doi           = {10.1145/3313831.3376729},
+  booktitle     = {Proceedings of the 2020 CHI Conference on Human Factors in
+                  Computing Systems},
+  publisher     = {ACM},
+  author        = {Chattopadhyay, Souti and Prasad, Ishita and Henley, Austin
+                  Z. and Sarma, Anita and Barik, Titus},
+  year          = {2020},
+  month         = apr,
+  collection    = {CHI ’20}
+}
+```
+# @inbox castano2023exploring
+
+```bibtex
+@InProceedings{   castano2023exploring,
+  title         = {Exploring the Carbon Footprint of Hugging Face’s ML
+                  Models: A Repository Mining Study},
+  url           = {http://dx.doi.org/10.1109/ESEM56168.2023.10304801},
+  doi           = {10.1109/esem56168.2023.10304801},
+  booktitle     = {2023 ACM/IEEE International Symposium on Empirical
+                  Software Engineering and Measurement (ESEM)},
+  publisher     = {IEEE},
+  author        = {Castaño, Joel and Martínez-Fernández, Silverio and
+                  Franch, Xavier and Bogner, Justus},
+  year          = {2023},
+  month         = oct
+}
+```
+
+# @inbox simmons2020large-scale
+
+```bibtex
+@InProceedings{   simmons2020large-scale,
+  series        = {ESEM ’20},
+  title         = {A large-scale comparative analysis of Coding Standard
+                  conformance in Open-Source Data Science projects},
+  url           = {http://dx.doi.org/10.1145/3382494.3410680},
+  doi           = {10.1145/3382494.3410680},
+  booktitle     = {Proceedings of the 14th ACM / IEEE International Symposium
+                  on Empirical Software Engineering and Measurement (ESEM)},
+  publisher     = {ACM},
+  author        = {Simmons, Andrew J. and Barnett, Scott and
+                  Rivera-Villicana, Jessica and Bajaj, Akshat and Vasa,
+                  Rajesh},
+  year          = {2020},
+  month         = oct,
+  collection    = {ESEM ’20}
+}
+```
+
+# @inbox namavar2022controlled
+
+Noor gave one of the keynotes at DeepTest 2024. During his talk, the methodology of this paper seemed similar to what we are trying to do for the ESEM paper.
+
+```bibtex
+@Article{         namavar2022controlled,
+  title         = {A controlled experiment of different code representations
+                  for learning-based program repair},
+  volume        = {27},
+  issn          = {1573-7616},
+  url           = {http://dx.doi.org/10.1007/s10664-022-10223-5},
+  doi           = {10.1007/s10664-022-10223-5},
+  number        = {7},
+  journal       = {Empirical Software Engineering},
+  publisher     = {Springer Science and Business Media LLC},
+  author        = {Namavar, Marjane and Nashid, Noor and Mesbah, Ali},
+  year          = {2022},
+  month         = oct
+}
+```
+
+# @inbox panourgia2023software
 
 Recommendation from Diomidis, the methodology is similar to what we are
 trying to do for the ESEM paper.
@@ -64,7 +161,7 @@ trying to do for the ESEM paper.
 }
 ```
 
-## STAR zhang2020empirical
+# STAR @inbox @taxonomy zhang2020empirical
 
 This paper proposes a taxonomy of faults in ML systems.
 
@@ -86,7 +183,7 @@ This paper proposes a taxonomy of faults in ML systems.
 }
 ```
 
-## STAR humbatova2020taxonomy
+# STAR @inbox @taxonomy humbatova2020taxonomy
 
 ```bibtex
 @InProceedings{   humbatova2020taxonomy,
@@ -106,7 +203,7 @@ This paper proposes a taxonomy of faults in ML systems.
 }
 ```
 
-## STAR stol2018abc
+# STAR @method stol2018abc
 
 Another paper referenced in the ESEM research paper track website. Also recommended by Diomidis to use as reference for research methodologies that can be used in SE.
 
@@ -129,7 +226,7 @@ Table 5 summarises the 8 distinct research strategies.
 }
 ```
 
-## STAR TODO storey2020who
+# STAR @method storey2020who
 
 "Peggy" personally presented this paper at SIESTA summer school, but it
 is also referenced in the ESEM research paper track.
@@ -153,7 +250,7 @@ is also referenced in the ESEM research paper track.
 }
 ```
 
-## TODO wagner2024navigating
+# STAR @inbox wagner2024navigating
 
 Another recommendation from Luis, read this.
 
@@ -174,7 +271,7 @@ Another recommendation from Luis, read this.
 }
 ```
 
-##  TODO vidoni2021evaluating
+# STAR @inbox vidoni2021evaluating
 
 Recommendation from Luis, must read.
 
@@ -192,7 +289,7 @@ Recommendation from Luis, must read.
 }
 ```
 
-## bahdanau2016neural
+# @inbox @nlp bahdanau2016neural
 
 Original paper that proposed the notion of "attention" to improve sequence-to-sequence transformer models.
 
@@ -208,7 +305,7 @@ Original paper that proposed the notion of "attention" to improve sequence-to-se
 }
 ```
 
-## kalliamvakou2014promises
+# @inbox @msr kalliamvakou2014promises
 
 From our very own Georgios (received MIPS award at MSR '24). They
 analyse the data quality of Github and provide recommendations for
@@ -232,7 +329,7 @@ appraoching Github data for software engineering researchers.
 }
 ```
 
-## sutskever2014sequence
+# @inbox @nlp sutskever2014sequence
 
 Original sequence-to-sequence (Seq2Seq) paper from Google that
 inspired transformers.
@@ -252,7 +349,7 @@ from the author of word2vec, and Google stole it.
 }
 ```
 
-## reimers2019sentence-bert
+# @inbox @nlp reimers2019sentence-bert
 
 Recommendation from Jonathan. He advised that Sentence-BERT (SBERT) is
 a better fit for our task of going from text-to-text tokens.
@@ -277,10 +374,10 @@ VA pairs. Something to explore?
 }
 ```
 
-## martínez-fernández2022software
+# @inbox @se4ai martinez-fernandez2022software
 
 ```bibtex
-@Article{         martínez-fernández2022software,
+@Article{         martinez-fernandez2022software,
   title         = {Software Engineering for AI-Based Systems: A Survey},
   volume        = {31},
   issn          = {1557-7392},
@@ -299,7 +396,7 @@ VA pairs. Something to explore?
 }
 ```
 
-## obrien202223
+# @inbox @msr obrien202223
 
 Saved because typically papers from Sumon are high-quality. Also could
 generate ideas for introduction & discussion sections of the paper.
@@ -323,7 +420,7 @@ generate ideas for introduction & discussion sections of the paper.
 }
 ```
 
-## yin2023dynamic
+# @inbox @testing @ml yin2023dynamic
 
 Maybe skim this one.
 
@@ -346,7 +443,7 @@ Maybe skim this one.
 }
 ```
 
-## tufano2022methods2test
+# @inbox @testing tufano2022methods2test
 
 Dataset containing methods and the corresponding unit test for Java
 projects.
@@ -369,7 +466,7 @@ projects.
 }
 ```
 
-## morovati2023bugs
+# STAR @inbox @testing morovati2023bugs
 
 Dataset of defects in ML. Which bugs can our tool catch?
 
@@ -391,7 +488,7 @@ Dataset of defects in ML. Which bugs can our tool catch?
 }
 ```
 
-## bhatia2023towards
+# STAR @inbox @taxonomy bhatia2023towards
 
 Should also reveal interesting stuff.
 
@@ -414,7 +511,7 @@ Should also reveal interesting stuff.
 }
 ```
 
-## lukasczyk2023empirical
+# STAR @inbox @testing @automated @python lukasczyk2023empirical
 
 Automated test generation tool for Python. Interesting read for
 related work.
@@ -437,7 +534,7 @@ related work.
 }
 ```
 
-## herbold2023differential
+# @inbox @testing herbold2023differential
 
 Differential testing for DL. Read the empirical analysis part.
 
@@ -458,7 +555,7 @@ Differential testing for DL. Read the empirical analysis part.
 }
 ```
 
-## tony2023llmseceval
+# @nlp tony2023llmseceval
 
 I am primarily interested in how they organise and present the dataset
 of LLM prompts.
@@ -479,7 +576,7 @@ of LLM prompts.
 }
 ```
 
-## yang2023what
+# STAR @inbox @msr yang2023what
 
 Could also be an interesting read. Authors present dataset of issues
 collected from open-source AI projects on Github.
@@ -501,7 +598,7 @@ collected from open-source AI projects on Github.
 }
 ```
 
-## STAR widyasari2023niche
+# STAR @inbox @msr @ml widyasari2023niche
 
 Authors present a dataset of mature ML projects from Github. We can
 use this to mine Jupyter Notebooks for our paper.
@@ -524,7 +621,7 @@ use this to mine Jupyter Notebooks for our paper.
 }
 ```
 
-## tambon2023silent
+# tambon2023silent
 
 Good paper for the discussion/related work section. Can our tool help
 reduce silent bugs?
@@ -547,7 +644,7 @@ reduce silent bugs?
 }
 ```
 
-## li2022robust
+# li2022robust
 
 Maybe good for discussion section?
 
@@ -569,7 +666,7 @@ Maybe good for discussion section?
 }
 ```
 
-## yang2022data
+# yang2022data
 
 Detecting data leakage in data science notebooks.
 
@@ -591,7 +688,7 @@ Detecting data leakage in data science notebooks.
 }
 ```
 
-## xie2022boosting
+# xie2022boosting
 
 Skim to understand basics of Metamorphic Testing.
 
@@ -612,7 +709,7 @@ Skim to understand basics of Metamorphic Testing.
 }
 ```
 
-## eghbali2022crystalbleu
+# eghbali2022crystalbleu
 
 Could we use code-similarity metrics for reducing the number of
 notebooks with related VA-pairs?
@@ -634,7 +731,7 @@ notebooks with related VA-pairs?
 }
 ```
 
-## tirasoglu2023open
+# tirasoglu2023open
 
 ```bibtex
 @InProceedings{   tirasoglu2023open,
@@ -653,7 +750,7 @@ notebooks with related VA-pairs?
 }
 ```
 
-## missaoui2023semantic
+# missaoui2023semantic
 
 Data-centric DL testing tool.
 
@@ -673,7 +770,7 @@ Data-centric DL testing tool.
 }
 ```
 
-## dey2023challenges
+# dey2023challenges
 
 Skim for essentials of AutoML.
 
@@ -691,7 +788,7 @@ Skim for essentials of AutoML.
 }
 ```
 
-## gao2022adaptive
+# gao2022adaptive
 
 DL testing paper. I am noticing a trend amongst these papers, they are
 all focused on curating better test sets. In contrast, we are studying
@@ -715,7 +812,7 @@ within.
 }
 ```
 
-## yu2022automated
+# yu2022automated
 
 Automatic assertion generation, using IR and DL for traditional SE.
 Good addition for related work.
@@ -739,7 +836,7 @@ Good addition for related work.
 }
 ```
 
-## wang2022bridging
+# wang2022bridging
 
 Authors propose fine-tuning approach for PTMs for the task of code
 understanding. Read the evaluation section, can be helpful for our
@@ -763,7 +860,7 @@ paper.
 }
 ```
 
-## nahar2022collaboration
+# nahar2022collaboration
 
 For introduction and discussion sections.
 
@@ -785,7 +882,7 @@ For introduction and discussion sections.
 }
 ```
 
-## wang2022eagle
+# wang2022eagle
 
 Testing paper. Skim.
 
@@ -807,7 +904,7 @@ Testing paper. Skim.
 }
 ```
 
-## haq2022efficient
+# haq2022efficient
 
 Online testing of DL models deployed in safety-critical conditions. Skim for general understanding.
 
@@ -828,7 +925,7 @@ Online testing of DL models deployed in safety-critical conditions. Skim for gen
 }
 ```
 
-## wei2022free
+# wei2022free
 
 Another DL testing paper, using fuzzing. Skim to grasp basics of
 fuzzing.
@@ -851,7 +948,7 @@ fuzzing.
 }
 ```
 
-## gu2022muffin
+# gu2022muffin
 
 DL testing, albeit not related to what I am doing. But we should still
 skim these papers for the related work section.
@@ -874,7 +971,7 @@ skim these papers for the related work section.
 }
 ```
 
-## TODO biswas2022art
+# TODO biswas2022art
 
 This has been sitting in my reading list for a long time now. Should
 be useful for introduction & discussion.
@@ -897,7 +994,7 @@ be useful for introduction & discussion.
 }
 ```
 
-## chen2022towards
+# chen2022towards
 
 Could be interesting for discussion on how our tool can help make AI
 systems reproducible?
@@ -919,7 +1016,7 @@ systems reproducible?
 }
 ```
 
-## TODO mailach2023socio-technical
+# TODO mailach2023socio-technical
 
 More general paper, could be useful for introduction or discussion.
 
@@ -938,7 +1035,7 @@ More general paper, could be useful for introduction or discussion.
 }
 ```
 
-## TODO liu2023contrabert
+# TODO liu2023contrabert
 
 Could be interesting to generate discussion points/future work.
 
@@ -958,7 +1055,7 @@ Could be interesting to generate discussion points/future work.
 }
 ```
 
-## TODO hu2023aries
+# TODO hu2023aries
 
 Paper proposes a tool that can estimate the performance of a DNN on
 unlabelled data, using the information from the prior labelled data.
@@ -979,7 +1076,7 @@ unlabelled data, using the information from the prior labelled data.
 }
 ```
 
-## TODO riccio2023when
+# TODO riccio2023when
 
 Authors perform an empirical study to evaluate the effectiveness of
 automated validators for Test Input Generators (TIGs). I see the
@@ -1001,7 +1098,7 @@ automatic validation.
 }
 ```
 
-## TODO liu2023syntax
+# TODO liu2023syntax
 
 Authors propose a tool that translates programs written in one
 programming language to another. We are also \"translating\" code,
@@ -1023,7 +1120,7 @@ used?
 }
 ```
 
-## TODO mahbub2023explaining
+# TODO mahbub2023explaining
 
 Authors develop a tool that generates natural language text from corpus
 of buggy code. They also perform a user-study with 2 participants. Read
@@ -1046,7 +1143,7 @@ the human study.
 }
 ```
 
-## TODO guan2023comprehensive
+# TODO guan2023comprehensive
 
 Authors create a dataset of Model Optimization Bugs (MOBs). Read the
 data collection part, could be interesting for us.
@@ -1067,7 +1164,7 @@ data collection part, could be interesting for us.
 }
 ```
 
-## TODO croft2023data
+# TODO croft2023data
 
 Use this paper to motivate our manual annotation of dataset.
 
@@ -1085,7 +1182,7 @@ Use this paper to motivate our manual annotation of dataset.
 }
 ```
 
-## TODO you2023regression
+# TODO you2023regression
 
 The methodology could be useful to craft evaluation of our LLM based
 tool.
@@ -1105,7 +1202,7 @@ tool.
 }
 ```
 
-## TODO salama2021practitioners
+# TODO salama2021practitioners
 
 Recommendation from Luis, white paper on Google\'s approach to MLOps.
 Should provide material for the story.
@@ -1120,7 +1217,7 @@ Should provide material for the story.
 }
 ```
 
-## TODO li2023assisting
+# TODO li2023assisting
 
 Recommendation from Luis, authors conduct a study on using chatGPT for
 program comprehension. They focus on a bug detection program. Results
@@ -1146,7 +1243,7 @@ are promising.
 
 # Testing
 
-## dutta2021flex
+# dutta2021flex
 
 The first author (Saikat Dutta) seems to be active in the field of
 assertions in ML. Albeit, his focus seems to be on fixing flakiness of
@@ -1173,7 +1270,7 @@ Regardless, good to mention Dutta's papers in the related work section.
 }
 ```
 
-## dutta2021tera
+# dutta2021tera
 
 ```bibtex
 @InProceedings{   dutta2021tera,
@@ -1193,7 +1290,7 @@ Regardless, good to mention Dutta's papers in the related work section.
 }
 ```
 
-## STAR TODO kochhar2017revisiting
+# STAR TODO kochhar2017revisiting
 
 Recommendation from Luis. Authors analyse the use assertions in a large number
 of Java projects.
@@ -1219,7 +1316,7 @@ maintainability, etc).
 }
 ```
 
-## TODO xia2023balancing
+# TODO xia2023balancing
 
 Authors propose a tool that heuristically determines the optimal
 threshold in ML tests. We saw several assertions in our dataset with
@@ -1242,7 +1339,7 @@ section.
 }
 ```
 
-## wang2023distxplore
+# wang2023distxplore
 
 Important paper. I think our tool complements this paper. Should
 generate interesting compare & contrast points for the discussion
@@ -1274,7 +1371,7 @@ time trying decipher what the authors are trying to do.
 
 # LLMs
 
-## TODO jiang2023empirical
+# TODO jiang2023empirical
 
 Empirical study on model-reuse of PTMs.
 
@@ -1295,7 +1392,7 @@ Empirical study on model-reuse of PTMs.
 }
 ```
 
-## lemieux2023codamosa
+# lemieux2023codamosa
 
 Paper from Microsoft. Read the methodology to learn how they used LLMs
 for code generation. What prompting techniques were used? How did they
@@ -1318,7 +1415,7 @@ generated given same prompt?
 }
 ```
 
-## TODO yan2023closer
+# TODO yan2023closer
 
 Read the methodology & evaluation sections, authors use ChatGPT in the
 study.
@@ -1339,7 +1436,7 @@ study.
 }
 ```
 
-## rao2023cat-lm
+# rao2023cat-lm
 
 Authors propose an LLM based tool that generates tests given code
 (not ML).
@@ -1360,7 +1457,7 @@ Authors propose an LLM based tool that generates tests given code
 }
 ```
 
-## blasi2022call
+# blasi2022call
 
 Automated test case generation tool (using LLMs). Good for related
 work section.
@@ -1383,7 +1480,7 @@ work section.
 }
 ```
 
-## mondal2023cell2doc
+# mondal2023cell2doc
 
 Read the methodology in detail, relevant for our data collection
 process.
@@ -1410,7 +1507,7 @@ repo](https://doi.org/10.5281/zenodo.8265137).
 }
 ```
 
-## wang2023codet5
+# wang2023codet5
 
 Investigate how we can use the model for one/few shot prompt
 engineering.
@@ -1428,7 +1525,7 @@ engineering.
 }
 ```
 
-## lu2021codexglue
+# lu2021codexglue
 
 Benchmark dataset from Microsoft for various LLM4SE tasks.
 
@@ -1452,9 +1549,7 @@ Here is [the accompanying website](https://microsoft.github.io/CodeXGLUE).
 }
 ```
 
-# Notebooks
-
-## STAR TODO mojtaba2023distilkaggle
+# @msr @notebook mojtaba2023distilkaggle
 
 
 [New dataset of notebooks](https://zenodo.org/records/10317389) from Kaggle (300GB original). The authors extracted the contents of the code cells (which we did as well). However, they did not extract the outputs. Published in MSR '24 so its super fresh, DOI info is not available yet.
@@ -1464,7 +1559,7 @@ Here is [the accompanying website](https://microsoft.github.io/CodeXGLUE).
 ```bibtex
 ```
 
-## patra2022nalin
+# @msr @notebook patra2022nalin
 
 Authors mine Jupyter Notebooks, skim methodology.
 
@@ -1485,7 +1580,7 @@ Authors mine Jupyter Notebooks, skim methodology.
 }
 ```
 
-## grotov2022large-scale
+# @msr @notebook grotov2022large-scale
 
 For related work/discussion sections.
 
@@ -1510,7 +1605,7 @@ Github](https://zenodo.org/records/6383115) analysed in their study.
 }
 ```
 
-## DONE ramasamy2023visualising
+# STAR @notebook ramasamy2023visualising
 
 Jackpot.
 
@@ -1541,11 +1636,7 @@ contains several forks and dead-ends.
 }
 ```
 
-# Mining Software Repositories
-
-Papers with emphasis on data mining.
-
-## TODO saha2022sapientml
+# TODO @msr @ml saha2022sapientml
 
 Read the methodology, they mined Kaggle for ML pipelines and datasets.
 
@@ -1568,11 +1659,7 @@ Read the methodology, they mined Kaggle for ML pipelines and datasets.
 }
 ```
 
-# Empirical Methods
-
-Papers that use empirical methods in their methodology.
-
-## STAR wohlin2012experimentation
+# STAR @method wohlin2012experimentation
 
 This is the bible for empirical studies in Software Engineering. Luis
 recommended this book to be way back in my first year of my Phd. It was
@@ -1601,7 +1688,7 @@ to identify the relevant chapters.
 }
 ```
 
-## priya2020case
+# @method priya2020case
 
 Reference paper for conducting research based on case-studies.
 
@@ -1624,7 +1711,7 @@ Reference paper for conducting research based on case-studies.
 }
 ```
 
-## beller2021what
+# @method beller2021what
 
 Another one from Caro. Here, the authors state explicitly that they
 more than 1 person did the manual analysis and had a discussion
@@ -1644,7 +1731,7 @@ afterwards to resolve disagreements.
 }
 ```
 
-## beller2014modern
+# @method beller2014modern
 
 Recommendation from Caro regarding use of inter-rater agreement
 between multiple annotators when conducting manual analysis.
@@ -1671,7 +1758,7 @@ calculating Kappa only on a small sample.
 }
 ```
 
-## fregnan2022first
+# @method fregnan2022first
 
 This is the paper Alberto presented at SIESTA 2023. Read the
 methodology to understand method used to determine sufficient number

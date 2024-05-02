@@ -2,6 +2,14 @@
 title: shome2023llm logbook
 ---
 
+# big numbers from the analysis
+
++ number of code cells with keyword "assert" (github): 44751
++ number of code cells with keyword "assert" (kaggle): 5897
+
++ number of code cells with output (github): 357661
++ number of code cells with output (kaggle): 1945425
+
 # 2024-03-29 story for ESEM '24 paper (revised)
 
 We had another meeting with Diomidis and Luis and the discussion there
@@ -130,7 +138,7 @@ Following some ideas for collecting analytics from Jupyter notebooks regarding a
    + Relative position of code cells with assertions (within the notebook)? This one is inspired by quaranta2021kgtorrent.
    + Contents/keywords of code cell with assert? Similarly, contents/keywords of code cell above the assert? The goal here is to understand/analyse the keywords typically present within assertions. With the analysis of the code cells above the assert is to study if there are patterns in the code that lead to an assertion.
 
-# 2024-02-25 SBERT for automatically identifying related VA pairs #idea
+# 2024-02-25 SBERT for automatically identifying related VA pairs
 
 I had a chat with Jonathan last week. He originally mentioned SBERT
 for the translation task. Although we cannot use it for that, I think
