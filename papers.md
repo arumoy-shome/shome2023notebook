@@ -1,6 +1,105 @@
----
-title: Annotated Bibliography
----
+
+# @ml @bugs thung2012empirical
+
+Appeared in the related work section of zhang2020empirical.
+
+This is an interesting angle for me as well, because testing is done to reduce the possibility of bugs in the system.
+
+```bibtex
+@InProceedings{   thung2012empirical,
+  title         = {An Empirical Study of Bugs in Machine Learning Systems},
+  url           = {http://dx.doi.org/10.1109/ISSRE.2012.22},
+  doi           = {10.1109/issre.2012.22},
+  booktitle     = {2012 IEEE 23rd International Symposium on Software
+                  Reliability Engineering},
+  publisher     = {IEEE},
+  author        = {Thung, Ferdian and Wang, Shaowei and Lo, David and Jiang,
+                  Lingxiao},
+  year          = {2012},
+  month         = nov
+}
+```
+
+# @se4ai amershi2019software
+
+```bibtex
+@InProceedings{   amershi2019software,
+  doi           = {10.1109/icse-seip.2019.00042},
+  url           = {https://doi.org/10.1109/icse-seip.2019.00042},
+  year          = 2019,
+  month         = may,
+  publisher     = {{IEEE}},
+  author        = {Saleema Amershi and Andrew Begel and Christian Bird and
+                  Robert DeLine and Harald Gall and Ece Kamar and Nachiappan
+                  Nagappan and Besmira Nushi and Thomas Zimmermann},
+  title         = {Software Engineering for Machine Learning: A Case Study},
+  booktitle     = {2019 {IEEE}/{ACM} 41st International Conference on
+                  Software Engineering: Software Engineering in Practice
+                  ({ICSE}-{SEIP})}
+}
+```
+
+# @se4ai @data martinez-plumed2021crisp-dm
+
+```bibtex
+@Article{         martinez-plumed2021crisp-dm,
+  title         = {CRISP-DM Twenty Years Later: From Data Mining Processes to
+                  Data Science Trajectories},
+  volume        = {33},
+  issn          = {2326-3865},
+  url           = {http://dx.doi.org/10.1109/TKDE.2019.2962680},
+  doi           = {10.1109/tkde.2019.2962680},
+  number        = {8},
+  journal       = {IEEE Transactions on Knowledge and Data Engineering},
+  publisher     = {Institute of Electrical and Electronics Engineers (IEEE)},
+  author        = {Martinez-Plumed, Fernando and Contreras-Ochando, Lidia and
+                  Ferri, Cesar and Hernandez-Orallo, Jose and Kull, Meelis
+                  and Lachiche, Nicolas and Ramirez-Quintana, Maria Jose and
+                  Flach, Peter},
+  year          = {2021},
+  month         = aug,
+  pages         = {3048–3061}
+}
+```
+
+# @se4ai @data sambasivan2021everyone
+
+```bibtex
+@InProceedings{   sambasivan2021everyone,
+  series        = {CHI ’21},
+  title         = {“Everyone wants to do the model work, not the data
+                  work”: Data Cascades in High-Stakes AI},
+  url           = {http://dx.doi.org/10.1145/3411764.3445518},
+  doi           = {10.1145/3411764.3445518},
+  booktitle     = {Proceedings of the 2021 CHI Conference on Human Factors in
+                  Computing Systems},
+  publisher     = {ACM},
+  author        = {Sambasivan, Nithya and Kapania, Shivani and Highfill,
+                  Hannah and Akrong, Diana and Paritosh, Praveen and Aroyo,
+                  Lora M},
+  year          = {2021},
+  month         = may,
+  collection    = {CHI ’21}
+}
+```
+
+# @se4ai breck2017ml
+
+```bibtex
+@InProceedings{   breck2017ml,
+  title         = {The ML test score: A rubric for ML production readiness
+                  and technical debt reduction},
+  url           = {http://dx.doi.org/10.1109/BigData.2017.8258038},
+  doi           = {10.1109/bigdata.2017.8258038},
+  booktitle     = {2017 IEEE International Conference on Big Data (Big
+                  Data)},
+  publisher     = {IEEE},
+  author        = {Breck, Eric and Cai, Shanqing and Nielsen, Eric and Salib,
+                  Michael and Sculley, D.},
+  year          = {2017},
+  month         = dec
+}
+```
 
 # @visualisation @data liu2019understanding
 
