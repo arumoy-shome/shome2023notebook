@@ -480,7 +480,7 @@ Furthermore, distribution checks are often performed immediately after feature c
 
 Linear machine learning models achieve optimal performance when the target variable can be expressed as a linear combination of the input features. However, features within a dataset that exhibit a linear relationship are considered redundant as they convey the same information to the model during training. Consequently, the feature engineering stage often involves removing such features to create a more efficient training dataset~\ref{shome2022data}. Figure~\ref{fig:linear-relation-check} illustrates two methods for identifying these linear relationships. In Figure~\ref{fig:linear-relation-check-lineplot}, the practitioner assesses the linearity between the features \texttt{Cash} and \texttt{SIZE}. Figure~\ref{fig:linear-relation-check-regplot} depicts the visualization of the feature \texttt{X4} alongside the target variable \texttt{Y}, accompanied by a fitted linear regression model.
 
-\subsubsection{Resource check ($N = 7$)}
+\subsubsection{Resource check ($N = 7$)}\label{sec:implicit-resource-check}
 % (P71, P86, O64, O66, P68, P82, P107)
 
 \begin{table}
@@ -765,32 +765,123 @@ Each of these outputs underscores different facets of the model training phase, 
 
 % TODO: bring in the notion of pre and post condition checks (the wikipedia page on assertions is very interesting: https://en.wikipedia.org/wiki/Assertion_(software_development)); specifically the part on run-time assertions
 
-\todo{TODO: find out more about batch training}
-\subsubsection{Batch size check (A21, A28, A70)}
+\subsubsection{Batch size check ($N = 3$)}
+% (A21, A28, A70)
 
-Neural Networks are trained using smaller batches that makes it more efficient use of hardware GPU cores. During batch training the weights are not updated with every example but with the average of the entire batch, this ensures a more optimal and smoother learning curve and generally leads to better generalizability.
+\begin{table}
+\centering
+\begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
+\toprule
+\emph{\textbf{Key}}&
+\emph{\textbf{Code}}\\
+\midrule
 
-When trained using batches, we need to take this into account when calculating the performance of the model. We need to calculate the accuracy over multiple batches and then average the results.
+A21 &
+\begin{lstlisting}
+assert x.size(0) % batch_size == 0, f'the first dimension of input tensor ({x.size(0)}) should be divisible by batch_size ({batch_size})'
+\end{lstlisting}\\
 
-We encounter assertions that check the size of the batch prior to training. This is to ensure that the batch size matches the hardware specifications? We should not have a batch size that does not fit in the memory of GPU/CPU.
+A28 &
+\begin{lstlisting}
+assert image_size % patch_size_small == 0, 'Image dimensions must be divisible by the patch size.'
+\end{lstlisting}\\
 
+A70 &
+\begin{lstlisting}
+assert n_img > batch_size
+\end{lstlisting}\\
+\end{tabular}
+\caption{Assertions used to validate the batch size of input data.}
+\label{tab:batch-size}
+\end{table}
 
-\subsubsection{Data leakage check (A33)}
+In the context of neural network training, the practice of using batch processing is a key strategy to enhance computational efficiency and hardware utilization, particularly GPU cores. Batching allows for a more stable and smoother learning curve as the model's weights are updated not for each individual example, but rather based on the average gradient of a batch. This technique not only optimizes learning but also enhances the model's generalizability due to more robust gradient estimations. Given these benefits, it becomes crucial to ensure that the batch size is appropriately set to match the hardware's capacity, avoiding memory overflow issues that can halt training.
 
-It is a best practise to ensure that the ML model is not tested using examples that it has already encountered during training. This is to ensure that the model is not overfitting on the training data and is able to generalise to examples similar to the distribution of the training set, but not exactly the same. In A33 we see that the assert ensures that the training and validation sets do not share any examples.
+Table~\ref{tab:batch-size} shows the assertions found in this study that validate the batch size. \emph{A21} ensure that the batch size divides evenly into the training dataset size, thereby confirming that every training epoch processes full batches without leftover data. Similarly, \emph{A28} checks that image dimensions are suitably divisible by the patch size, which is essential for certain types of convolutional networks. \emph{A70} is another critical check which confirms that the number of images is greater than the batch size, which is necessary to commence batch processing.
 
-\subsubsection{Dependency check (A18, A67)}
-\todo{TODO: what is the motivation of this assertion? Find prior work on python dependency management?}
+These assertions are strategically placed to prevent common errors that could undermine training efficiency and model performance, thereby safeguarding the training process from potential disruptions due to misconfigured batch sizes.
 
-This is a unique type of test which occurs due to the unique workflow of notebooks. Typically dependencies are managed through external means such as dedicated dependency management solutions or the builtin Python method using a requirements.txt file. We notice assertions that check that the major version of an external dependency is equal to the specified value.
+\subsubsection{Data leakage check ($N = 1$)}
+% (A33)
 
-\todo{NOTE: missing-value-check and existence-check}
+Ensuring the absence of data leakage between training and validation datasets is a fundamental best practice in machine learning to prevent models from overfitting. Overfitting occurs when a model is excessively complex, learning not only the underlying patterns but also the noise in the training data, which can degrade its performance on unseen data. To guarantee that the model can generalize effectively to new examples, it's crucial to verify that the training and validation sets are completely distinct with no shared examples.
 
-\subsubsection{Existence check (A86)}
+This is exemplified in assertion \emph{A33}, where the code \texttt{assert len(set( tr\_df.PetID.unique()).intersection(valid\_df.PetID.unique())) == 0} checks for this exact condition. This assertion ensures that there are no overlapping \texttt{PetID} values between the training set (\texttt{tr\_df}) and the validation set (\texttt{valid\_df}), thereby preventing any possibility of data leakage.
 
-Existence checks are carried out in various contexts. Most are for checking that columns in a dataset do not contain missing values. Others ensure that certain columns (such as the column containing the labels of the data) exists in the dataset prior to splitting the data into training and testing sets. Existence checks are frequently performed after data pro-processing  steps are performed to ensure that missing values were not added to the dataset.
+By strictly separating these datasets, the validation phase serves its purpose of providing an unbiased evaluation of the model's ability to generalize---to data similar to, but not identical to that which it was trained on---thus maintaining the integrity and validity of the evaluation metrics derived during model testing.
 
-\todo{TODO: we need to elaborate this one with examples}
+\subsubsection{Resource check ($N = 2$)}
+% (A18, A67)
+
+\todo{NOTE: connect this to~\ref{sec:implicit-resource-check}}
+
+In the dynamic and sometimes unstructured environment of Jupyter notebooks, managing dependencies directly within the notebook becomes crucial due to the workflow peculiarities associated with interactive sessions. Unlike traditional software development environments where dependencies are managed through dedicated solutions like dependency management tools or by specifying requirements in a \emph{requirements.txt} file, notebooks often require on-the-fly checks to ensure the correct library versions are loaded to avoid compatibility issues.
+
+This practice is illustrated by assertions such as those seen in \emph{A18} and \emph{A67}, where the code explicitly verifies the versions of critical libraries. For instance, \texttt{assert pd.\_\_version\_\_.rpartition(`.`)[0] == `1.0`} checks that the major version of pandas is precisely what is expected for the notebook’s tasks, ensuring compatibility and preventing errors that could arise from API changes in newer or older versions.
+
+These assertions safeguard the notebook against potential disruptions caused by version mismatches, thereby maintaining the integrity of the codebase and ensuring reproducibility across different execution environments.
+
+\subsubsection{Existence check ($N = 8$)}
+% NOTE: this is a combination of missing-value-check and existence-check
+% (A23, A42, A43, A50, A51, A63, A79, A86)
+
+\begin{table}
+\centering
+\begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
+\toprule
+\emph{\textbf{Key}}&
+\emph{\textbf{Code}}\\
+\midrule
+
+A23 &
+\begin{lstlisting}
+assert np.all(orders.groupby('user_id') .days_since_prior_order.tail(1).notnull())
+\end{lstlisting}\\
+
+A42 &
+\begin{lstlisting}
+assert not lab_s.isnull().values.any()
+\end{lstlisting}\\
+
+A43 &
+\begin{lstlisting}
+assert len(data) != 0, 'cannot divide by zero'
+\end{lstlisting}\\
+
+A50 &
+\begin{lstlisting}
+assert not np.any(np.isnan(X))
+\end{lstlisting}\\
+
+A51 &
+\begin{lstlisting}
+assert data.target.notnull().all()
+\end{lstlisting}\\
+
+A63 &
+\begin{lstlisting}
+assert X.isnull().sum().sum() == 0
+\end{lstlisting}\\
+
+A79 &
+\begin{lstlisting}
+assert not processed_data_df.isna().any().any()
+\end{lstlisting}\\
+
+A86 &
+\begin{lstlisting}
+assert p0 in poi_info.index
+\end{lstlisting}\\
+\end{tabular}
+\caption{Assertions used to perform existence checks.}
+\label{tab:existence-check}
+\end{table}
+
+Existence checks are a fundamental component of data preprocessing in machine learning, serving multiple critical purposes to ensure data integrity before analysis and modeling. These checks primarily focus on verifying the presence of necessary columns and the absence of missing values within those columns. Such validations are especially crucial after data preprocessing steps, where transformations might inadvertently introduce null values.
+
+For instance, assertions like \emph{A23} and \emph{A42} in Table~\ref{tab:existence-check} ensure that specific data columns do not contain any missing entries, which could compromise the reliability of subsequent analyses. Another common check, as seen with \emph{A43}, guards against operations on empty datasets, which are a potential risk after filtering or merging data processes. Similarly, checks such as \emph{A50}, \emph{A51} and \emph{A63} rigorously confirm that the datasets are entirely free from \texttt{NaN} values, thus preserving the integrity of the dataset for reliable model training. Additionally, assertions like \emph{A79} and \emph{A86} ensure that no unexpected missing values are introduced and that all expected indices are present in the dataset respectively.
+
+These checks are crucial for maintaining the accuracy and efficiency of data handling processes, ensuring that the datasets are ready for robust machine learning applications.
 
 \subsubsection{Mathematical property checks (A3, A25, A56, A64)}
 
