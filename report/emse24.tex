@@ -650,33 +650,72 @@ print(MyNetwork)
 
 Listing~\ref{lst:network-architecture} shows a print statement to show the architecture of a neural network. Printing the structure of a neural network serves crucial purposes such as verifying the correct implementation of the architecture, aiding in debugging by ensuring layer compatibility, and providing a clear, human-readable format for documentation and educational insights. It helps in verifying configurations like layer dimensions and operations before initiating computationally intensive training, ensuring the model is set up efficiently for the intended tasks. This practice is fundamental for maintaining accuracy, facilitating collaboration, and enhancing the reproducibility of the model.
 
-\subsubsection{Shape check (P4, P32, P117)}
+\subsubsection{Shape check ($N = 3$}
+% (P4, P32, P117)
 
-\todo{TODO: why is shape check important?}
-Checking the shape of the data is important for several reasons. If we perform some data pre-processing or transformation, we want to ensure that the shape of the data is the same as expected.
+Ensuring that data dimensions align with expectations is important particularly following data pre-processing or transformation steps.
 
-Number of features in the training and testing data must match. When using statistical ML models, the model "fits" the training data and thus expects the same shape in the testing data to make inference. When developing neural networks, architectural decisions such as the number of input neurons is made based on the shape of the data.
+Primarily, the number of features in the training set must match those in the testing set. This alignment is crucial because statistical machine learning models are trained on specific data dimensions and expect the same dimensional structure during inference to perform accurately. Similarly, in neural network architectures, the configuration of input layers depends directly on the shape of the training data, dictating the number of input neurons needed. Furthermore, the correspondence between the number of test examples and their respective labels is essential for accurately computing performance metrics, such as accuracy.
 
-During the testing shape, the number of examples in the test input must be the same as the number of labels so that the performance metrics such as accuracy, can be correctly calculated.
+\begin{table}
+\centering
+\begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
+\toprule
+\emph{\textbf{Key}} & \emph{\textbf{Code}}\\
+\midrule
+P4 &
+\begin{lstlisting}
+print('no.of examples in test data : ', len(test_data))
+\end{lstlisting}\\
+P32 &
+\begin{lstlisting}
+print('Training set shape : ', x_train.shape) 
+\end{lstlisting}\\
+\end{tabular}
+\caption{Example of outputs used to check the shape of the data.}
+\label{tab:shape-check}
+\end{table}
 
-\subsubsection{Type check (O71, P43)}
+Table~\ref{tab:shape-check} shows two print statements discovered in this study which demonstrate routine checks performed by developers to ensure the integrity and applicability of their models. Such checks are indicative of the meticulous attention to detail necessary in the model training and validation process, underscoring the importance of shape validation in achieving reliable machine learning outcomes.
 
-All ML models expect the input data to be entirely numerical, so that mathematical operations such as matrix multiplications may be carried out without errors.
+\subsubsection{Type check ($N = 2$)}
+% (O71, P43)
 
-Checking the data type in the EDA phase may be done to understand the optimal data pre-processing or transformation techniques necessary, to make the data ready for model. For instance, numerical features may need to be normalised while categorical features need to one-hot encoded.
+Ensuring data types align with model requirements is a fundamental step in the exploratory data analysis (EDA) phase of developing machine learning models. Since all machine learning algorithms perform mathematical operations, such as matrix multiplications, they require the input data to be entirely numerical to avoid computational errors. The process of checking data types helps in identifying the necessary pre-processing or transformation steps to convert the data into a form that is compatible with these models. For example, while numerical features often require normalisation to bring them within a specific scale, categorical features must be converted into a numerical format through methods like one-hot encoding to ensure they can be effectively integrated into the model.
 
-\subsubsection{Value check/ Spot checks (O56, O60, P64, P67, P114)}
-% NOTE: perhaps these are spot-checks?
+This is illustrated in our analysis, where checks such as \texttt{print('data type:', images.dtype)} and \texttt{type(Y)} are employed to verify the data types of variables. These type checks are crucial not only for confirming the current state of the data but also for determining the specific transformations required to make the data suitable for subsequent modelling steps.
 
-O56: check the prediction of the model on a single input image
+This proactive approach in the EDA phase facilitates smoother transitions into model training and can significantly impact the performance and effectiveness of the final machine learning models.
 
-O60: check the number of features in the data is equal to the expected number after performing PCA, the author checks the head of the dataframe and manually verifies the number of features
+\subsubsection{Value check/ Spot checks ($N = 5$)}
+% (O56, O60, P64, P67, P114)
 
-P64: find the max in the second channel of a 3D numpy array (highlight this case study; this is done for image processing!)
+\begin{table}
+\centering
+\begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
+\toprule
+\emph{\textbf{Key}}&
+\emph{\textbf{Code}}\\
+\midrule
 
-P67: manually verify the output of an activation function in a neural network against expected value.
+O60 &
+\begin{lstlisting}
+X_pca.head()
+\end{lstlisting}\\
+\end{tabular}
+\caption{Example of outputs used to perform spot checks.}
+\label{tab:shape-check}
+\end{table}
 
-P114: check that one-hot encoding worked
+Table~\ref{tab:spot-check} presents outputs which were used to spot check at various stages of the ML development cycle. Performing value or spot checks can be an essential practice for ensuring data integrity and model accuracy at various stages of development. These checks are crucial for verifying that operations such as data transformations, model predictions, and feature engineering are functioning as expected.
+
+In \emph{O60}, the analyst verifies that the number of features in the data matches expectations after apply Principal Component Analysis (PCA). This is a critical step for maintaining dimensional consistency in feature-reduced datasets.
+
+% In another case, P64, which is particularly relevant in image processing contexts, the maximum value in the second channel of a 3D numpy array is extracted and verified using np.max(cur[:, :, 1]), ensuring that the data manipulation retains its expected properties.
+
+% The check in P67 involves a manual verification of the output of an activation function in a neural network, which is essential for confirming the functional efficacy of neural components in model training. 
+
+% Lastly, P114 assesses the correctness of one-hot encoding, a fundamental preprocessing step for categorical data, ensuring that the transformation has been executed correctly as seen with print(onehot_encoded). Each of these checks not only validates individual transformations or predictions but also reinforces the overall reliability and robustness of the machine learning models being developed.
 
 \subsubsection{Model training (O8, O31, O42, P77)}
 
