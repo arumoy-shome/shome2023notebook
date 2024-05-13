@@ -25,9 +25,9 @@ grestore
 %
 \RequirePackage{fix-cm}
 %
-\documentclass{svjour3}                     % onecolumn (standard format)
+% \documentclass{svjour3}                     % onecolumn (standard format)
 %\documentclass[smallcondensed]{svjour3}     % onecolumn (ditto)
-% \documentclass[smallextended]{svjour3}       % onecolumn (second format)
+\documentclass[smallextended]{svjour3}       % onecolumn (second format)
 %\documentclass[twocolumn]{svjour3}          % twocolumn
 %
 \smartqed  % flush right qed marks, e.g. at end of proof
@@ -36,15 +36,45 @@ grestore
 \usepackage[most]{tcolorbox}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage{subcaption}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+\usepackage{wrapfig}
 
-\lstset{
-    language=Python,
-    basicstyle=\ttfamily,
-    keywordstyle=\color{blue},
-    stringstyle=\color{red},
-    commentstyle=\color{green},
-    morecomment=[l][\color{magenta}]{\#}
+\definecolor{backcolor}{rgb}{0.95,0.95,0.92}
+\colorlet{punct}{red!60!black}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+
+\lstdefinestyle{mystyle}{
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{delim},
+  stringstyle=\color{punct},
+  commentstyle=\color{numb},
+  breakatwhitespace=true,
+  breaklines=true,
+  keepspaces=true,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=2,
+  stepnumber=1,
+  numbersep=3pt,
+  captionpos=b,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  backgroundcolor=\color{backcolor},
+  aboveskip=0pt,
+  belowskip=0pt
 }
+\lstset{style=mystyle}
+
+\lstset{emph={%  
+    assert%
+    },emphstyle={\color{delim}}%
+}%
 
 %
 % \usepackage{mathptmx}      % use Times fonts if available on your TeX system
@@ -98,8 +128,7 @@ grestore
 
 \begin{abstract}
 
-  % TODO update the numbers here
-  % TODO: update
+  \todo{update the numbers here}
 Testing ML systems is a highly interactive process which demands a human-in-the-loop approach. In addition to writing tests for the code base, practitioners are required to analyse and interpret several visualisations using their domain expertise to validate if an ML system satisfies the required set of functional and non-functional properties. Visualisations are frequently used to qualitatively assess various parts of an ML pipeline. However, implicit knowledge gained from visualisations must be translated to explicit analytical tests that fail when there is change in any component of the ML pipeline. We conduct an empirical analysis of Jupyter notebooks to catalogue the state-of-the-art mappings between ML visualisations and assertions. We mine Github to collect 54K Jupyter Notebooks that contain assertions written in Python. We develop a novel methodology to identify 1764 notebooks which contain an assertion below a visualisation. We manually analyse the 1.7K notebooks and identify 269 visualisation-assertion pairs that are semantically related to one another. We further investigate the 269 visualisation-assertion pairs and identify three frequently occurring testing patterns. We perform an in-depth analysis of 34 visualisation-assertion pairs and find that the assertions often fail to capture all the information present in their visual counter-part. Empirical evidence obtained in this study indicates that current software testing methods fail to address the unique challenges of ML. And emphasises the need for automated tools that bridge the gap between visual assessments and analytical assertions.
 
 \keywords{ML Testing \and SE4AI \and Visualisations \and Assertions \and Computational Notebooks}
@@ -336,7 +365,7 @@ information gained from it.
 
 \section{Study Design}
 
-% TODO: introduce the motivation of the study along with the RQs here
+\todo{TODO: introduce the motivation of the study along with the RQs here}
 
 % role of feedback in writing ML code? (any recommendation for papers I can refer to here?)
 % implicit vs. explicit feedback (how do we establish this concept?)
@@ -344,10 +373,10 @@ information gained from it.
 \subsection{Data Collection}\label{sec:data-collect}
 
 \begin{figure}
-  \centering
-  \includegraphics[width=\linewidth]{data-collection.pdf}
-  \label{fig:data-collection}
-  \caption{Overview of data collection methodology used in this study}
+\centering
+\includegraphics[width=\linewidth]{data-collection.pdf}
+\label{fig:data-collection}
+\caption{Overview of data collection methodology used in this study}
 \end{figure}
 
 Figure~\ref{fig:data-collection} summarises the data collection procedure used in this study. We collected Jupyter notebooks written in Python, from Kaggle and Github. 
@@ -362,17 +391,18 @@ We check the validity of the underlying JSON structure in each notebook using th
 
 For explicit feedback using assertions, we programmatically analyse the JSON structure of the notebooks to isolate code cells. We collect Python assert statements from the code cells by constructing and subsequently parsing the Abstract Syntax Tree (AST) of the source code present in each cell.
 
+\todo{TODO: justify why we didn't collect failures (strerr); that is more debugging? not the focus of this paper?}
 Similarly, for implicit feedback, we first isolate code cells that produce an output. The output of a cell may either be from a ``print'' statement or the last statement of the cell. We collect both of them using the AST of the cell.
 
 Finally, we remove duplicate data points (asserts, prints and last statements) resulting in a final data set of $22548$ assertions, $25319$ print statements and $28522$ last statements.
 
 \subsection{Case Studies}
 
-% TODO: might need a visual aid here
+\todo{TODO: might need a visual aid here}
 
 We allocated a fixed time resource of 100 hours to conduct the case study analysis of all candidates (assertions and cell outputs). To surface interesting candidates for the case studies, we apply NLP techniques as described below.
 
-% TODO: point out the poor quality of notebooks out there (we have citations for this); and the resulting noise in the assertions/outputs. Thats why we need to apply these tecniques to surface unique and interesting candidates!
+\todo{TODO: point out the poor quality of notebooks out there (we have citations for this); and the resulting noise in the assertions/outputs. Thats why we need to apply these tecniques to surface unique and interesting candidates!}
 
 The assertions and cell outputs are first tokenised---special characters and alpha-numeric words shorter than two characters are removed. Two stop words namely ``assert'' and ``print'' are removed since they appear in all assertions and print statements respectively. The term frequency (TF) for all tokens is calculated and then normalised using their inter-document frequency (IDF) such that tokens thay appear less frequently are assigned a higher value.
 
@@ -382,100 +412,247 @@ During each case study, we analyse the code of the candidate to understand its p
 
 \section{Results}
 
-% TODO: for each of the feedback types; start with the descriptive and lexical analysis we performed
-% TODO: then move into the case studies, and link them to existing literature; use the fault and failure taxonomies; perhaps also link the feedbacks to ML lifecylce proposed by Amershi 2019?
-
 \subsection{Implicit feedback from the output of code cells}
 
 \subsubsection{Data distribution check ($N = 7$)}
 % (O2, O4, O9, O14, O20, O25, O48)
 
-% we need to know the distribution of the data to make informed decisions regarding the data transformation steps required (for instance, do we need to scale and normalise? do we have outliers?); visualisations are a cheap and quick means of doing this
+\begin{table}
+\centering
+\caption{Examples of cell outputs used to verify distribution of data.}
+\begin{tabular}{@{}m{0.05\textwidth} m{0.4\textwidth} m{0.3\textwidth}@{}}
+\toprule
+\emph{\textbf{Key}}&
+\emph{\textbf{Code}}&
+\emph{\textbf{Description}}\\
+\midrule
 
-% distribution check is also required since models such as linear regression, perform well when the data is normally distributed; if our data is not normal then we need to perform additional transformation steps to make the data ready for training
+O14&
+\begin{lstlisting}
+pd.pivot_table(train, index='Survived', values=['Age', 'SibSp', 'Parch', 'Fare'])
+\end{lstlisting}&
+Check the mean value of the specified features for each label in the target feature.\\
 
-% a mix of visualisations and pandas dataframes that show the distribution of a column in the data
-% we primarily observe these checks being used to determine the relationship of a feature with the target feature
-% typically in the EDA/data exploration/understanding phase
-% several examples where the distribution of a newly created feature is checked (binning a continuous feature into categorical one)
-% one uses descriptive statistics to verify that data normalisation worked (again, a check after data transformation step)
+O48&
+\begin{lstlisting}
+x_train.describe()
+\end{lstlisting}&
+Check the descriptive statistics of the training data. The above statement is written immediately after normalising the features in the training data.\\
 
-We observe the use of visualisations and dataframes to check the distribution of a feature. Often, the analysis is performed in the context of a multivariate analysis, where the distribution of a feature is checked against all possible outcomes of the target feature.
+\bottomrule
+\end{tabular}
+\label{tab:distribution-check}
+\end{table}
 
-Typically, this check is performed in the EDA phase where the author is trying to understand the relationship of a feature with the target feature. This done to identify features that can be used to train the ML model.
+\begin{figure*}
+\centering
+\subcaptionbox{Check the distribution of the feature \texttt{Age} with-respect-to the labels in the target feature \texttt{Survived}.\label{fig:distribution-check-kdeplot}}{\includegraphics[width=0.45\linewidth]{distribution-check-kdeplot.png}}
+\subcaptionbox{Check the distribution of the feature \texttt{likes} across all values of feature \texttt{category\_id}.\label{fig:distribution-check-catplot}}{\includegraphics[width=0.45\linewidth]{distribution-check-catplot.png}}
+\caption{Examples of visualisations used to check linear relationship in data.}
+\label{fig:distribution-check}
+\end{figure*}
 
-We also observe that the distribution of a feature is checked directly after creating it. For example, we observe this check after converting a continuous feature into a categorical feature using binning. Another example is the use of descriptive statistics provided by pandas to check that the prior data normalisation step worked (the author manually verified the mean and standard deviation of the feature from the output).
+Understanding the distribution of data is crucial for making informed decisions regarding necessary data transformation steps in data analysis processes. For instance, identifying whether scaling, normalizing, or handling outliers is required can be efficiently and effectively determined through visualizations.
 
-\subsubsection{Data relationship check (O6, O10)}
+% This is particularly important for models like linear regression, which perform optimally when data is normally distributed. If the data deviates from normality, additional transformation steps may be necessary to prepare it for training.
 
-Linear regression models assume a linear relationship between the features in the training data, with the target feature. We see this being verified using lineplots to check the presence of a linear trend between a given feature and the target feature.
 
-A special case is O10 which uses a regplot. This is a visualisation provided by the seaborn library that plots the data along with a linear regression model fit.
+During the exploratory data analysis (EDA) or data understanding phase, a combination of visualizations and pandas dataframes is often employed to assess the distribution of specific columns within the data. This step helps identify features that may have a relationship with the target variable, ultimately informing which features to include in the machine learning model training process. This is seen in Figure~\ref{fig:distribution-check-kdeplot} where the distribution of a feature \texttt{Age} is checked against the labels of the target feature. Figure~\ref{fig:distribution-check-catplot} presents another example where the distribution of a continuous feature \texttt{likes} is checked with-respect-to all the values of another categorical feature \texttt{category\_id}.
 
-\subsubsection{Dependency check (P71, P86)}
+For example, the distribution of a newly created feature, such as one where a continuous feature is binned into categories, is frequently examined. 
 
-We find evidence of lack of software engineering best practise. Dependencies should be manage with external programs built for this task. Python has a built-in functionality for this, where dependencies along with version can be specified in a requirements.txt file. There are also several external programs such as the use of lockfiles by pipenv and poetry which lock a specific version of a dependency such that all files are reproducible on all systems.
+Descriptive statistics are also used post-transformation to verify that steps like data normalization have been effectively applied, ensuring that the data conforms to the expected format for further analysis.
 
-P71 prints the version of an external library which the author is expected to verify manually. P86 prints a confirmation message if the Cuda library is available on the system where the notebook is being executed.
 
-\subsubsection{Execution time check (P66)}
+Furthermore, distribution checks are often performed immediately after feature creation. For instance, this may occur after discretizing a continuous feature using binning. Additionally, descriptive statistics (e.g., mean and standard deviation) obtained from libraries like pandas can be used to verify the effectiveness of data normalization steps.
 
-Often several ML models are trained and for a single task. The selection is based on requirements that not only consider the performance of the model, but also the total time required to train the model. Since this is an iterative task, a model that can be more efficiently retrained, helps reduce costs in the long run, and has been proven to be more sustainable.
+\subsubsection{Data relationship check ($N = 2$)}
+% (O6, O10)
+\todo{TODO: I think correlation checks should also be present in this group}
 
-P66 is from a notebook where several models are trained for the same task, and their performance along with the time taken to train is printed. The cells of a notebook are also executed several times, for a long running cell (such as the ones that train the model), an indication of the total execution time helps (after the first run, the author has a baseline for the time it will take).
+\begin{figure*}
+\centering
+\subcaptionbox{Using a lineplot to check linear relationship between two features in a dataset.\label{fig:linear-relation-check-lineplot}}{\includegraphics[width=0.45\linewidth]{linear-relation-check-lineplot.png}}
+\subcaptionbox{Visualisation that shows the datapoints as a scatterplot along with a linear model fit.\label{fig:linear-relation-check-regplot}}{\includegraphics[width=0.45\linewidth]{linear-relation-check-regplot.png}}
+\caption{Examples of visualisations used to check linear relationship in data.}
+\label{fig:linear-relation-check}
+\end{figure*}
 
-\subsubsection{Missing value check (O12, O36, P74)}
+Linear machine learning models achieve optimal performance when the target variable can be expressed as a linear combination of the input features. However, features within a dataset that exhibit a linear relationship are considered redundant as they convey the same information to the model during training. Consequently, the feature engineering stage often involves removing such features to create a more efficient training dataset~\ref{shome2022data}. Figure~\ref{fig:linear-relation-check} illustrates two methods for identifying these linear relationships. In Figure~\ref{fig:linear-relation-check-lineplot}, the practitioner assesses the linearity between the features \texttt{Cash} and \texttt{SIZE}. Figure~\ref{fig:linear-relation-check-regplot} depicts the visualization of the feature \texttt{X4} alongside the target variable \texttt{Y}, accompanied by a fitted linear regression model.
 
-Check if missing values are present in any features of the data. After loading the dataset and in the EDA phase of analysis.
+\subsubsection{Resource check ($N = 7$)}
+% (P71, P86, O64, O66, P68, P82, P107)
 
-From our data smells paper: descriptive statistics functions typically ignore missing values; leading to biased and incorrect results and conclusions
+\begin{table}
+\centering
+\caption{Examples of cell outputs used to verify if different types of resources are available on the system where the notebook is being executed.}
+\begin{tabular}{@{}m{0.1\textwidth} m{0.05\textwidth} m{0.4\textwidth} m{0.3\textwidth}@{}}
+\toprule
+\emph{\textbf{Type of resource}}&
+\emph{\textbf{Key}}&
+\emph{\textbf{Code}}&
+\emph{\textbf{Description}}\\
+\midrule
 
-ML models also except numerical values, a null type value raises an exception (since computations cannot be performed)
+External library&
+P71&
+\begin{lstlisting}
+print('Hub version: ', hub.__version__)
+\end{lstlisting}&
+Check the version of an external Python library installed on the current system.\\
 
-P74 and O36 is an aggregated check over the entire dataset.
+Compute resources&
+P68&
+\begin{lstlisting}
+print('GPU is available')
+\end{lstlisting}&
+Check if a GPU is available on the current system.\\
 
-% TODO: highlight the use of visualisations to check for missing values; what is the benefit of using a visualisation instead of code?
-More interesting is O12 which uses a heatmap to show the distribution of the missing values across all features of the dataset.
+Data or pre-trained models&
+O66&
+\begin{lstlisting}
+prostate_cancer_df.shape
+\end{lstlisting}&
+Check that the dataset has been loaded into memory.\\
+\bottomrule
+\end{tabular}
+\label{tab:resource-check}
+\end{table}
 
-\subsubsection{Model performance check (O3, O50, O52, O57, O74, P3, P6, P8--12, P16--19, P23, P24, P28, P30, P34, P42, P47, P48, P50, P51, P54, P55, P57, P58, P61, P78, P93)}
+\todo{perhaps also add the keys of the case-studies here?}
+Table~\ref{tab:resource-check} presents case studies where the output is used to verify that certain resources are available on the system in which the notebook is being executed. We find checks for the availability of compute resources (such as a GPU or a TPU), checking that the dataset or a pre-trained model has been loaded correctly and checks to ensure that a certain version of an external library is present on the system.
+
+P71 highlights the lack of proper software engineering best practices within Jupyter notebooks. This shortcoming in computational notebooks has been identified by prior studies~\cite{quaranta2021kgtorrent, pimentel2019large-scale}. In this case study, managing dependencies through external tools is recommended. Python's built-in \emph{requirements.txt}~\footnote{https://pip.pypa.io/en/stable/reference/requirements-file-format/} file allows specifying dependencies and versions. Alternatively, external programs like \emph{pipenv}~\footnote{https://pipenv.pypa.io/en/latest/} and \emph{poetry}~\footnote{https://python-poetry.org/} use lockfiles to ensure specific version control, guaranteeing reproducibility across different systems. 
+
+\subsubsection{Execution time check ($N = 1$)}
+% (P66)
+
+\begin{lstlisting}
+print('Total Run Time:')
+\end{lstlisting}
+
+While training multiple machine learning models for a single task is common, choosing the best model considers not only its performance but also its training speed. Faster training times are more cost-effective for iterative tasks and promote sustainability in the long run. The provided code snippet (Listing~\ref{lst:exec-time-check}) exemplifies this concept by showcasing a case study (P66) that tracks training times for various models using a grid search. This approach allows practitioners to compare model performance alongside training efficiency. 
+
+\subsubsection{Missing value check ($N = 3$)}
+% (O12, O36, P74)
+
+Checking for missing values is a critical step in the preprocessing phase of a machine learning project because it significantly influences the quality and performance of the model. Missing data can lead to biased or incorrect conclusions if not handled properly, potentially skewing the model's performance by training on incomplete or non-representative samples~\cite{shome2022data}. Many machine learning algorithms, including those that involve matrix multiplication operations such as linear regression and neural networks, demand complete numerical datasets to perform calculations. Missing values interrupt these calculations, leading to errors or the inability to execute algorithms entirely.
+
+\begin{table}
+\centering
+\caption{Examples of cell outputs used to check for missing data.}
+\begin{tabular}{@{}m{0.05\textwidth} m{0.6\textwidth}@{}}
+\toprule
+\emph{\textbf{Key}}&
+\emph{\textbf{Code}}\\
+\midrule
+
+P74&
+\begin{lstlisting}
+print(train_df.isnull().sum())
+\end{lstlisting}\\
+
+O12&
+\begin{lstlisting}
+sns.heatmap(test_df.isnull(), yticklabels=False, cbar=False, cmap='viridis')
+\end{lstlisting}\\
+
+O36&
+\begin{lstlisting}
+test.isna().sum().unique()
+\end{lstlisting}\\
+\end{tabular}
+\label{tab:missing-value}
+\end{table}
+
+Table~\ref{tab:missing-value} presents all case studies where cell outputs were used to check for missing data. While \emph{P74} and \emph{O36} perform this check in code, \emph{O12} presents a visual representation of missing data using a heatmap.
+
+\subsubsection{Model performance check ($N = 33$)}
+% (O3, O50, O52, O57, O74, P3, P6, P8--12, P16--19, P23, P24, P28, P30, P34, P42, P47, P48, P50, P51, P54, P55, P57, P58, P61, P78, P93)
+
+\begin{table}
+\centering
+\caption{Various cell outputs used to check the performance of an ML model after training.}
+\begin{tabular}{@{}m{0.05\textwidth} m{0.6\textwidth}@{}}
+\toprule
+\emph{\textbf{Key}}&
+\emph{\textbf{Code}}\\
+\midrule
+
+P3&
+\begin{lstlisting}
+print('The mean accuracy with 10 fold cross validation is: %s ' % round(scores * 100, 2), '%')
+\end{lstlisting}\\
+    
+P6&
+\begin{lstlisting}
+print('RMSE:', np.sqrt(metrics.mean_squared_error(y_test, pred)))
+\end{lstlisting}\\
+
+P18&
+\begin{lstlisting}
+print('The Accuracy is:', accuracy_score(y_test, y_pred))
+\end{lstlisting}\\
+
+P18&
+\begin{lstlisting}
+print('Classification Report: SVM (validation data)')
+\end{lstlisting}\\
+
+P54&
+\begin{lstlisting}
+print('Intercept value:', lm.intercept_)
+\end{lstlisting}\\
+\end{tabular}
+\label{tab:model-perf}
+\end{table}
 
 The performance is printed to compare against other models/variations in the experimental model development phase; during the continuous experimentation phase, the author might change parameters of the model or change the data (engineer features, etc) and then re-run the model to check if the performance improved
 
-Mean accuracy over K-fold validation
+Table~\ref{tab:model-perf} presents a few examples of cell outputs used to check the performance of a trained ML model. Besides \emph{accuracy}, we also see checks for the \emph{Root Mean Square Error (RMSE)} and the use of the classification report provided by scikit-learn~\footnote{https://scikit-learn.org/stable/modules/generated/sklearn.metrics.classification\_report.html}. In addition to the accuracy, the classification report also reports the \emph{precision}, \emph{recall} and \emph{f1 score} for all labels present in the target feature.
 
-Other performance metrics such as recall, precision and F1 also printed
+\emph{P54} prints the intercepts of a linear regression model. Checking the intercept of a linear regression model is essential for understanding the baseline prediction when all predictors are zero, interpreting the model, identifying potential data biases or missing variables, assessing model validity, and comparing baseline predictions across different models. This insight is critical for accurate model interpretation and effective decision-making in practical applications.
 
-Error in predictions (RMSE, MSE)
+\begin{wrapfigure}{l}{0.45\linewidth}
+\includegraphics[width=\linewidth]{model-perf-confusion-matrix.png}
+\caption{Confusion matrix}
+\label{fig:model-perf-confusion-matrix}
+\end{wrapfigure}
 
-P48: prints the loss
+Figure~\ref{fig:model-perf-confusion-matrix} shows a heatmap used to visualise the confusion matrix of a multi-label classification task. The values are normalised using the actual number of examples of each class which makes the comparisons of the values across the classes possible.
 
-% TODO: whats the point of this?
-P54: print the intercept of linear regression model
+% TODO: this looks horrible if we are wrapping text around the figure above
+% \begin{lstlisting}[caption={Spot-check the performance of an image classification model for a random sample of input images.}, label={lst:model-perf-custom}]
+% def spot_check_recs(classifier, seed):
+%     random_images = []
+%     random_labels = []
+%     random_loc = np.random.randint(3000)
+%     distance, loc = classifier.kneighbors( embedding_model.predict( visualize[random_loc].reshape(-1,28,28)), 100)
+    
+%     random_images.append(visualize[random_loc])
+%     ...
+%     for rec_loc, dist in zip(loc.reshape(-1,1), distance.reshape(-1,1)):
+%         ...
+        
+%     ImageUtil.grid_display(random_images, random_labels, no_of_columns=1, figsize=(2,2), fig_title = "recs")
 
-Classification report is used to produce a summary of popular performance metrics such as accuracy, recall, precision and F1.
+% spot_check_recs(classifier, 910)
+% \end{lstlisting}
 
-Precision and recall is checked using the confusion matrix.
+% Listing~\ref{model-perf-custom} shows a function implemented by a practitioners to manually evaluate an image classification model on a random sample of input images. The function prints the input image along with the prediction of the model which the practitioner uses to spot-check the performance of the model.
 
-% TODO: highlight the need for normalising vs. comparing absolute values; the data might be imbalanced so does not make sense to compare the absolute values
-O3: use heatmap to visualise the confusion matrix of a multi-label classification task. The values are normalised using the actual number of examples of each class which makes the comparisons of the values across the classes possible.
+\subsubsection{Neural network architecture ($N = 1$)}
+% (P92)
 
-O52: author wrote a custom function which gets the predictions of an image classifier (developed in the NB) on a random sample of images. The predictions along with the input image is printed. The author is manually spot-checking the accuracy of the predictions. Or perhaps trying to find examples that produce the wrong prediction?
+\begin{lstlisting}[caption={Print the architecture of a neural network.}, label={lst:network-architecture}]
+print(MyNetwork)
+\end{lstlisting}
 
-\subsubsection{Model architecture (P92)}
-
-Several neural network architectures are available as part of the ML library (for instance keras, pytorch and tensorflow come pre-loaded with several NNs).
-
-Print the architecture of the neural network. The layers of the model, neurons in each layer and the activation functions are printed in a text diagram.
-
-\subsubsection{Resource check (O64, O66, P68, P82, P107)}
-
-Check is GPU or TPU resources are available. We suspect these checks are coming from Google Colab notebooks where computation can be off-loaded to remote hardware.
-
-In P107, check that the pre-trained model was successfully loaded from the file system.
+Listing~\ref{lst:network-architecture} shows a print statement to show the architecture of a neural network. Printing the structure of a neural network serves crucial purposes such as verifying the correct implementation of the architecture, aiding in debugging by ensuring layer compatibility, and providing a clear, human-readable format for documentation and educational insights. It helps in verifying configurations like layer dimensions and operations before initiating computationally intensive training, ensuring the model is set up efficiently for the intended tasks. This practice is fundamental for maintaining accuracy, facilitating collaboration, and enhancing the reproducibility of the model.
 
 \subsubsection{Shape check (P4, P32, P117)}
 
-% TODO: why is shape check important?
+\todo{TODO: why is shape check important?}
 Checking the shape of the data is important for several reasons. If we perform some data pre-processing or transformation, we want to ensure that the shape of the data is the same as expected.
 
 Number of features in the training and testing data must match. When using statistical ML models, the model "fits" the training data and thus expects the same shape in the testing data to make inference. When developing neural networks, architectural decisions such as the number of input neurons is made based on the shape of the data.
@@ -509,7 +686,9 @@ O31: check the model fits the data without any errors; this is done in the model
 
 \subsection{Explicit feedback using \texttt{assert} statements}
 
-% TODO: find out more about batch training
+% TODO: bring in the notion of pre and post condition checks (the wikipedia page on assertions is very interesting: https://en.wikipedia.org/wiki/Assertion_(software_development)); specifically the part on run-time assertions
+
+\todo{TODO: find out more about batch training}
 \subsubsection{Batch size check (A21, A28, A70)}
 
 Neural Networks are trained using smaller batches that makes it more efficient use of hardware GPU cores. During batch training the weights are not updated with every example but with the average of the entire batch, this ensures a more optimal and smoother learning curve and generally leads to better generalizability.
@@ -524,17 +703,17 @@ We encounter assertions that check the size of the batch prior to training. This
 It is a best practise to ensure that the ML model is not tested using examples that it has already encountered during training. This is to ensure that the model is not overfitting on the training data and is able to generalise to examples similar to the distribution of the training set, but not exactly the same. In A33 we see that the assert ensures that the training and validation sets do not share any examples.
 
 \subsubsection{Dependency check (A18, A67)}
-% TODO: what is the motivation of this assertion? Find prior work on python dependency management?
+\todo{TODO: what is the motivation of this assertion? Find prior work on python dependency management?}
 
 This is a unique type of test which occurs due to the unique workflow of notebooks. Typically dependencies are managed through external means such as dedicated dependency management solutions or the builtin Python method using a requirements.txt file. We notice assertions that check that the major version of an external dependency is equal to the specified value.
 
-% NOTE: missing-value-check and existence-check
+\todo{NOTE: missing-value-check and existence-check}
 
 \subsubsection{Existence check (A86)}
 
 Existence checks are carried out in various contexts. Most are for checking that columns in a dataset do not contain missing values. Others ensure that certain columns (such as the column containing the labels of the data) exists in the dataset prior to splitting the data into training and testing sets. Existence checks are frequently performed after data pro-processing  steps are performed to ensure that missing values were not added to the dataset.
 
-% TODO: we need to elaborate this one with examples 
+\todo{TODO: we need to elaborate this one with examples}
 
 \subsubsection{Mathematical property checks (A3, A25, A56, A64)}
 
@@ -544,7 +723,7 @@ Machine learning models are often rooted in statistical models. Implementing neu
 
 We see several assertions that test for the performance of the trained ML model against a validation or test test. The assertions often compare a performance metric (such as accuracy, precision, recall, F1, etc) against a predefined threshold.
 
-% TODO: this needs more work and investigation
+\todo{TODO: this needs more work and investigation}
 \subsubsection{Network architecture check (A11)}
 
 We only have one example here.
@@ -592,6 +771,7 @@ These feel like unit tests, performed in lieu of writing full test suites in the
 %\bibliographystyle{spphys}       % APS-like style for physics
 \bibliography{bibliography}   % name your BibTeX data base
 
+\subsection{Assertions derived from visualisations}
 \end{document}
 % end of file template.tex
 
