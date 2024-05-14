@@ -970,9 +970,10 @@ For example, \emph{A7} in Table~\ref{tab:model-perf-explicit} checks for the exp
 
 Each assertion acts as a crucial checkpoint that verifies the model's ability to generalize and perform effectively, ensuring that the outcomes are both robust and trustworthy.
 
-\subsubsection{Network architecture check ($N = 1$)}
-% (A11)
+\subsubsection{Network architecture check ($N = 3$)}
+% (A11, A62, A75)
 
+% TODO: revisit this section; we have new assertions
 When integrating pre-trained models or leveraging transfer learning techniques, it is crucial to ensure the compatibility of the custom neural network architecture with the pre-trained components. This is particularly important when combining convolutional layers from different sources, as the spatial dimensions and channel configurations must align correctly.
 
 We encountered an \texttt{assert} statement that addresses this architectural compatibility check: \lstinline{assert self.encoder_conv_01[0].weight.size() == self.vgg16.features[2].weight.size()}. This assertion verifies that the weight dimensions of the first convolutional layer in the \lstinline{encoder_conv_01} module match the weight dimensions of the third layer in the \lstinline{vgg16.features} module. The \lstinline{vgg16} model is a widely-used pre-trained convolutional neural network often employed as a feature extractor or backbone for transfer learning tasks. By ensuring that the weight dimensions are consistent, the code guarantees that the input data to the \lstinline{encoder_conv_01} module has the expected spatial dimensions and number of channels, enabling seamless integration with the pre-trained \lstinline{vgg16} model.
@@ -1061,29 +1062,21 @@ Furthermore, type checks are performed on NumPy arrays, as demonstrated by the a
 
 Type check assertions are essential for maintaining data integrity, ensuring compatibility between different components of the machine learning pipeline, and preventing errors and unexpected behavior. By verifying the types of input features, models, data structures, and other objects, these assertions contribute to the overall reliability and robustness of the machine learning workflow.
 
-\subsubsection{Value check (A30, A41, A44--46, A52, A65, A68, A69, A73, A92)}
+\subsubsection{Data validation check ($N = 11$)}
+% formerly value-check (A20, A30, A41, A44--46, A52, A65, A68, A69, A73, A83, A92)
 
-Check that the values in a column are in the specified values (categorical) or in a specified range (normalised continuous variable) or binary (such as the label column).
+% TODO: revisit, we have new assertions here; update the count
+we encountered a range of assert statements that perform various validation checks on data structures, such as NumPy arrays and pandas DataFrames. These checks help ensure the data meets specific criteria or constraints, preventing potential errors or inconsistencies in downstream operations.
 
-% NOTE: blanks and unit-tests
-\subsubsection{Miscellaneous checks (A6, A20, A32, A34, A36, A53, A62, A75, A83, A87, A97)}
+One type of validation check involves verifying the presence of specific values or ranges within arrays or columns. For example, the assertion \emph{A41}:~\lstinline{assert np.all(np.unique(X['smoke'].values) == np.array([0, 1]))} checks if the unique values in the \texttt{smoke} column of the DataFrame \texttt{X} are limited to 0 and 1. Similarly, \emph{A65}~\lstinline{assert np.all(y <= nb_classes)} ensures that all values in the array \texttt{y} are less than or equal to a certain number of classes.
 
-These feel like unit tests, performed in lieu of writing full test suites in the notebook.
+Another common validation check is verifying the equality or closeness of values or arrays. The assertion \emph{A44}:~\lstinline{assert abs(min(entity_embedding[low:high]) - max(entity_embedding[low:high])) <= 1} checks if the difference between the minimum and maximum values in a specific range of the \texttt{entity\_embedding} array is less than or equal to 1. Similarly, \emph{A46}:~\lstinline{assert np.isclose(stdev_norm, 1.0, atol=1e-16)} verifies that the \texttt{stdev\_norm} value is close to 1.0 within a specified absolute tolerance.
 
-%\begin{acknowledgements}
-%If you'd like to thank anyone, place your comments here
-%and remove the percent signs.
-%\end{acknowledgements}
+Some assertions focus on validating the uniqueness or cardinality of values in arrays or DataFrames. For instance, \emph{A52}:~\lstinline{assert grouped_users['user_id'].nunique() == user_engagement['user_id'].nunique()} checks if the number of unique user IDs in the \texttt{grouped\_users} DataFrame is equal to the number of unique user IDs in the \texttt{user\_engagement} DataFrame.
 
+Other assertions validate the presence of specific values or conditions within DataFrames or other data structures. The assertion \emph{A73}:~\lstinline{assert df['clf'].value_counts()[1] == len(df[df['quality'] >= 7])} checks if the count of a specific value (1) in the ``clf'' column of the DataFrame \texttt{df} is equal to the number of rows where the ``quality'' column is greater than or equal to 7.
 
-% Authors must disclose all relationships or interests that 
-% could have direct or potential influence or impart bias on 
-% the work: 
-%
-% \section*{Conflict of interest}
-%
-% The authors declare that they have no conflict of interest.
-
+By verifying specific conditions, value ranges, uniqueness, and equality constraints, these assertions help catch potential errors or inconsistencies early in the pipeline, preventing downstream issues and ensuring reliable and accurate results.
 
 % BibTeX users please use one of
 % \bibliographystyle{spbasic}      % basic style, author-year citations
