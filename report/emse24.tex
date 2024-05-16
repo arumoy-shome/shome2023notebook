@@ -136,72 +136,43 @@ Testing ML systems is a highly interactive process which demands a human-in-the-
 
 \section{Introduction}
 
-% amershi2019software: start with ML development life cycle and how everything is done in a very iterative way; things are dependant on one another; etc.
+Machine Learning Development Lifecycle (MLDL) encompasses multifaceted series of entangled stages. Significant effort is invested in gathering and assembling the required data from diverse sources. The data then undergoes cleaning and preprocessing to ensure high quality and usability, in the subsequent stages. MLDL is dominated by the model development phase which is highly experimental and iterative. This stage involves Exploratory Data Analysis (EDA) to uncover underlying patterns, fitting the data to various models, and rigorously analyzing the results. Often, this stage may lead to additional rounds of feature engineering, where new attributes are created based on insights gained from initial models to enhance model performance. Practitioners may also engage in comparing and contrasting different models to identify the most effective approach, followed by fine-tuning selected models to optimize performance. The final model is then deployed into production where it is continuously monitored, and periodically retrained to adapt to new data or changing conditions~\cite{haakman2021ai,amershi2019software,sculley2015hidden}.
 
-% martinez-plumed2021crisp-dm: not only does ML include the crip-dm framework, but this same form of iteration is seen in the model development and experimentation phase;
+% The feedback-driven style of development in MLDL resembles principles of Agile software development and the Cross-Industry Standard Process for Data Mining (CRISP-DM). Agile methodologies emphasize continuous iteration of development and testing throughout the software lifecycle. In Agile, software is developed in incremental, rapid cycles resulting in small, incremental releases with each release building on previous functionality. Each iteration is reviewed and critiqued by the project team, which includes representatives of the project's various stakeholders. 
 
-% this is why we see the use of computational notebooks being widely adopted by the ML community
 
-% writing ML code is more iterative and requires a constant feedback; we identify this feedback can be provided in two ways: implicitly from the output of a cell and explicitly from a failed assertion
+The MLDL is fundamentally iterative, closely resembling Agile software engineering principles which emphasize incorporating early feedback and working in small, manageable iterations.
+Similarly, CRISP-DM---the dominant process model in data mining---outlines a cyclical process that evolves from understanding the business objectives and data, through data preparation, modeling, and evaluation, to deployment and monitoring. Both systems advocate for a dynamic, iterative approach that enhances adaptability and effectiveness in dealing with complex, changing systems like those encountered in ML projects.
 
-Code, data and ML model in ML-enalbed systems are highly tangled with each other. For instance, the decision to use a particular type of ML model, requires a deep understanding of the data which will be used to train the model. Data quantity and quality directly influence the complexity of the ML model. 
+Jupyter notebooks provide an interactive computing environment that allow users to break complex code into smaller, more manageable chunks. Each notebook is composed of a series of code cells, which can be executed independently in a Read-Eval-Print Loop (REPL) style of development. This REPL approach allows users to write a piece of code, run it, and immediately see the results thus facilitating an incremental and iterative style of software development. This modular structure of notebooks provides users the flexibility to experiment with different approaches and algorithms. Users can test hypotheses, debug issues, and make incremental changes with immediate feedback. The ability to visualize data and results inline and document the process in a narrative form further enhances their utility.
 
-Conversely, the choice of the ML model also influences the data pre-processing and transformation steps that are required to get the data ready for training. For instance, using a classic statistical model requires several data transformation steps such as scaling and normalization, and converting categorical features to numerical ones using one-hot encoding.
+% It aligns perfectly with the feedback-driven nature of machine learning development, as it supports rapid prototyping and iterative refinement of models.
 
-Visualisations are used throughout the ml development lifecycle to test various properties of the ml system. in the early stages of the ml development lifecycle, visualisations are extensively used to make sense of the data and verify its statistical properties. during the model development phase, visualisations are used to summarise metrics, contrast different learning algorithms and iteratively fine-tune ml models. once the model is deployed in production, visualisations are used to continually monitor their performance and trigger a new training cycle once their performance drops below a certain threshold~\cite{yuan2021survey,hohman2019visual,amershi2015modeltracker,wexler2020if}.
+% TODO: back the TDD angle not only from scientific literature but also general methodologies used and adopted by the software engineering community (Xtreme programming, Kent Beck)
 
-building ml systems is highly iterative and experimental. information gained from ml visualisations is used to make design and implementation decisions for the following steps of the ml pipeline. for instance, we may visualise the distribution of our training data and find that it is normally distributed. based on this information, we may opt for a linear regression model which assumes normality in the underlying data. however, such expectations regarding the data may be violated once the ml system is deployed in production, where the data constantly changes as a reflect of the real world~\cite{amershi2019software,sambasivan2021everyone,breck2019data,baylor2017tfx}.
+The predominant form of obtaining feedback in Jupyter notebooks is through the output of code cells. These outputs can come from three main sources in the source code--print statements, the last statement in code cells, and statements that create visualizations. Building on the principles from software engineering, we also recognize assert statements as a valuable form of feedback for writing ML code. This idea draws from prior literature in software engineering that connects test-driven development (TDD) as a form of developing software using feedback.
 
-implicit expectations obtained from visualisations must therefore be
-translated to analytical tests that fail once our expectations
-regarding the ml system are no longer satisfied.
+% TODO cite scully and breck and the data validation papers here...
+% TODO: why are we doing this? how is the prior work lacking? why is this important?
+% we use feedback in notebooks to make important decisions: what data pre-processing techniques to use, create new features to boost performance of a model, pick particular hyper-parameters. but these decisions only reflect the conditions when the model was created; things inevitably change: data, people, system; if we don't document these decisions then it can lead to technical debt; longer time to debug issues; which can cost companies resource (time & cost) but also imagine if the model is being used in safety critical systems: can lead to loss of human lives as well
 
-in contrast to prior work, we approach ml testing from a new
-perspective. we conduct an empirical analysis of computational
-notebooks obtained from github, to understand the process of testing
-ml systems in practice. in particular, we focus on the combination of
-a qualitative form of testing (using visualisations) and a
-quantitative form of testing (using analytical assertions). the
-research questions along with the contributions of this paper are as
-follows.
+% in software engineering, tests are used to document expectations of how the code should function. Failing tests indicate that our expectations no longer satisfied. This is why we also look for assertions written in notebooks and analyse their use.
 
-\begin{description}
-  \item[rq1.] \textbf{how frequently are analytical tests formulated
-    from visualisations created to test ml systems?}
+% and then to tie the two things together: are assertions derived from the output of a cell? we still need to find a way to justify why we only look at assertions derived from visualisations specifically
 
-    we mine 54k jupyter notebooks from github that contain an assertion
-    written in python. we develop an automated technique to identify 1764
-    notebooks with an assertion below a visualisation. we manually analyse
-    the 1.7k notebooks and identify 269 visualisation-assertion (va) pairs
-    that are semantically related to each other. we plan to release this
-    catalogue of va pairs publicly.
+% By analyzing the outputs and assertions in Jupyter notebooks, we aim to provide insights into the feedback mechanisms used in machine learning development, ultimately proposing strategies to improve the efficiency and robustness of this iterative process.
 
-\item[rq2.] \textbf{what patterns are frequently observed in va pairs
-  used to test ml systems?}
+% Visualisations are used throughout the ml development lifecycle to test various properties of the ml system. in the early stages of the ml development lifecycle, visualisations are extensively used to make sense of the data and verify its statistical properties. during the model development phase, visualisations are used to summarise metrics, contrast different learning algorithms and iteratively fine-tune ml models. once the model is deployed in production, visualisations are used to continually monitor their performance and trigger a new training cycle once their performance drops below a certain threshold~\cite{yuan2021survey,hohman2019visual,amershi2015modeltracker,wexler2020if}.
 
-  we analyse the 269 va pairs from rq1, and observe three testing
-  patterns that frequently occur in the va pairs.
+% building ml systems is highly iterative and experimental. information gained from ml visualisations is used to make design and implementation decisions for the following steps of the ml pipeline. for instance, we may visualise the distribution of our training data and find that it is normally distributed. based on this information, we may opt for a linear regression model which assumes normality in the underlying data. however, such expectations regarding the data may be violated once the ml system is deployed in production, where the data constantly changes as a reflect of the real world~\cite{amershi2019software,sambasivan2021everyone,breck2019data,baylor2017tfx}.
 
-\item[rq3.] \textbf{do the assertions capture all the information
-  obtained from the corresponding visualisation?}
+% implicit expectations obtained from visualisations must therefore be translated to analytical tests that fail once our expectations regarding the ml system are no longer satisfied.
 
-  we further perform an in-depth analyse of 34 va pairs (and their
-  corresponding notebooks). we observe that assertions often cannot
-  capture all the information obtained from the visualisation.
+% in contrast to prior work, we approach ml testing from a new perspective. we conduct an empirical analysis of computational notebooks obtained from github, to understand the process of testing ml systems in practice. in particular, we focus on the combination of a qualitative form of testing (using visualisations) and a quantitative form of testing (using analytical assertions). the research questions along with the contributions of this paper are as follows.
 
-\end{description}
+% our observations indicate that formulating analytical assertions from visualisations is an emerging testing technique. however, the assertions found in this study often do not reflect the information obtained from their visual counter-part. this study finds the need for automated tools that can reduce the manual effort necessary to validate visualisations in ml systems. and help ml practitioners to formulate better analytical assertions from visualisations.
 
-our observations indicate that formulating analytical assertions from
-visualisations is an emerging testing technique. however, the
-assertions found in this study often do not reflect the information
-obtained from their visual counter-part. this study finds the need for
-automated tools that can reduce the manual effort necessary to
-validate visualisations in ml systems. and help ml practitioners to
-formulate better analytical assertions from visualisations.
-
-the replication package for this study is made public on
-figshare\footnote{the replication package can be found at this url:
-https://figshare.com/s/9347228011999cba29f5}.
+% the replication package for this study is made public on figshare\footnote{the replication package can be found at this url: https://figshare.com/s/9347228011999cba29f5}.
 
 \section{Preliminaries}\label{sec:prelim}
 
@@ -365,12 +336,35 @@ information gained from it.
 
 \section{Study Design}
 
-\todo{TODO: introduce the motivation of the study along with the RQs here}
+\subsubsection{Motivating Example}
+
+Imagine a data scientist named Sara who is developing a machine learning model to predict customer churn. Sara begins her project in a Jupyter notebook, which supports iterative development and immediate feedback through the execution of code cells. Her workflow is dynamic and exploratory, typical of modern machine learning practices.
+
+Initially, Sara loads a dataset and uses basic descriptive statistics to understand its distribution. As she executes a cell that calculates and displays the mean and standard deviation of each feature, she notices unusually high variance in one of the features. This insight, derived directly from the output of the notebook cell, prompts her to apply normalization to ensure better model performance.
+
+With data preprocessing complete, Sara proceeds to build her initial model. After setting up a logistic regression classifier, she runs a training cell that outputs the model's accuracy and loss after the first epoch. The results are disappointing, prompting her to adjust the learning rate and batch size directly in subsequent cells. Each modification is immediately followed by feedback on its impact, allowing Sara to quickly converge on the optimal settings.
+
+Throughout this process, Sara heavily relies on the outputs of various code cells, not just for error correction but also for making strategic decisions about model architecture, such as adding layers or changing activation functions. At one point, after noticing overfitting from a cell outputting validation loss, she decides to incorporate dropout layers, which she can quickly evaluate by rerunning the training process.
+
+Finally, Sara fine-tunes her model based on the outputs from a confusion matrix and ROC curve, identifying thresholds for classification that balance precision and recall effectively. Each decision in Sara's workflow—from preprocessing adjustments to hyperparameter tuning and model validation—is guided by the iterative feedback she receives from the outputs of her notebook's code cells.
+
+% TODO: the jump to assertions is very drastic; motivate it using scenario that there is a bug in the system (use the data validation papers from google) and Sara needs to fix them and how assertions would have helped here to debug the issue faster! (notebook keeps running!)
+Once all experimentation and model tuning are complete, and Sara is ready to deploy the model into a production environment, she adds assertions as a final step. In the dynamic, interactive environment of Jupyter notebooks, where code cells can be executed in any order, there is a risk of arriving at inconsistent states that may affect the model's performance unpredictably. Assertions act as a safeguard against these inconsistencies by verifying that the data fed into the model adheres to expected formats and distributions and that the model's performance metrics meet predetermined standards. For instance, assertions are used to ensure that no data columns have null values, that the range of input data features remains within expected bounds, and that model accuracy thresholds are consistently met regardless of the execution order of the notebook cells. This practice not only reinforces the stability and reliability of the deployed model but also provides clear, executable documentation of the critical decisions made throughout the model's development. When new team members are onboarded, these assertions allow them to quickly grasp the underlying assumptions and operational parameters of the model, ensuring ongoing robustness and performance integrity. This is crucial in maintaining the quality and reliability of the model as it transitions from a development setting to a production environment.
+
+\subsubsection{Research Questions}
+
+\begin{description}
+  \item[RQ1.] \textbf{How is feedback from the output of code cells used when writing ML code in Jupyter notebooks?}
+  \item[RQ2.] \textbf{How are assertions used to validate ML code written in Jupyter notebooks?}
+  \item[RQ3.] \textbf{How are assertions used to validate visual outputs in Jupyter notebooks?}
+\end{description}
 
 % role of feedback in writing ML code? (any recommendation for papers I can refer to here?)
 % implicit vs. explicit feedback (how do we establish this concept?)
 
 \subsection{Data Collection}\label{sec:data-collect}
+
+% TODO we need to explain why we only focus on the last statement of code cells (when visualisation code written anywhere produces an output); this is much harder to parse: we need to construct an exhaustive list of python visualisation libraries; people can use any naming convension to...
 
 \begin{figure}
 \centering
@@ -1078,13 +1072,261 @@ Other assertions validate the presence of specific values or conditions within D
 
 By verifying specific conditions, value ranges, uniqueness, and equality constraints, these assertions help catch potential errors or inconsistencies early in the pipeline, preventing downstream issues and ensuring reliable and accurate results.
 
+\subsection{Assertions derived from visualisations}
+% NOTE: following text is from the ICST paper; still need to think about how to integrate it here...
+
+
+\subsubsection{What patterns are frequently observed in VA pairs used to test ML systems?}
+
+We further analysed the 269 VA pairs obtained from RQ1, and identified three testing patterns which are presented in Table~\ref{tab:testing-patterns} and discussed further below.
+
+\begin{table}
+  \centering
+  \caption{Testing patterns observed in the visualisation-assertion pairs.}
+  \begin{tabularx}{0.45\textwidth}{@{}l X r r@{}}
+    \toprule
+    \textbf{ID} &
+    \textbf{Description} &
+    \multicolumn{2}{c}{\textbf{Count}}\\
+    & & Yes & No\\
+    \midrule
+    \textbf{P1} &
+    Does the assertion use a comparison operator (such as \emph{eq, lt, gt})? &
+    202 & 67\\
+    \textbf{P2} &
+    Does the assertion use magic thresholds? &
+    101 & 168\\
+    \textbf{P3} &
+    Does the assertion use an external testing library (such as \texttt{numpy.testing})? &
+    42 & 227\\
+    \bottomrule
+  \end{tabularx}
+  \label{tab:testing-patterns}
+\end{table}
+
+\begin{table}
+  \centering
+  \caption{Most frequently occurring assertions that use a comparison operator.}
+  \begin{tabular}{@{}m{0.9\linewidth}@{}}
+    \toprule
+    \begin{lstlisting}[language=Python,belowskip=0pt,aboveskip=0pt]
+assert accuracy_score(y_test, pred) > 0.95\end{lstlisting}\\
+    \begin{lstlisting}[language=Python,belowskip=0pt,aboveskip=0pt]
+assert HISTORY['test_accuracy'][-1] > 0.92\end{lstlisting}\\
+    \begin{lstlisting}[language=Python,belowskip=0pt,aboveskip=0pt]
+assert np.mean(mean_rw_history[-10:]) > 10.
+print("That's good enough for tutorial.")\end{lstlisting}\\
+    \begin{lstlisting}[language=Python,belowskip=0pt,aboveskip=0pt]
+assert np.mean(metrics['dev_bleu'][-10:], axis=0)[1] > 35, "We kind of need a higher bleu BLEU from you. Kind of right now."\end{lstlisting}\\
+    \begin{lstlisting}[language=python,belowskip=0pt,aboveskip=0pt]
+assert np.mean(dev_recall_history[-10:]) > 0.85, "Please train for at least 85% recall on test set. You may need to change vectorizer model for that."
+    \end{lstlisting}\\
+    \bottomrule
+  \end{tabular}
+  \label{tab:compare-op-asserts}
+\end{table}
+
+In a total of 269 VA pairs, 202 assertions (75\%) contain a comparison operator such as \emph{equal to}, \emph{lesser than} or \emph{greater than}. Table~\ref{tab:compare-op-asserts} presents the most frequently observed assertions that conform to this pattern.
+
+101 of 269 assertions (37\%) compare the value of a performance metric---typically the accuracy or recall---against a ``magic threshold'' defined by the notebook author. This covers 46\% of the assertions with a comparison operator. It is unclear however, how the specified thresholds were obtained since the authors do not provide additional explanation in the notebook. The threshold could have been derived based on domain expertise. Another alternative could be to define them during the Requirements Engineering phase, through discussions with all involved stakeholders\cite{vogelsang2019requirements,rahimi2019toward}.
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{../catalogue/select-16.png}
+  \caption{Visualisation of the training loss of an ML model.}\label{fig:loss}
+\end{figure}
+
+\begin{lstlisting}[language=Python, caption={Assertion to check that the mean of the first 10 observations of the loss is higher than the mean of the last 10 observations. In other words, the assertion checks if the loss function is converging to an optimal minima.}, label={lst:loss}]
+assert np.mean(train_history[:10], axis=0)[1] > np.mean(train_history[-10:], axis=0)[1], "The model didn't converge."
+\end{lstlisting}
+
+In contrast to the assertions presented in Table~\ref{tab:compare-op-asserts}, Listing~\ref{lst:loss} presents an assertion that ensures that the model performs well, without using a magic threshold. The assertion checks if the mean of the first 10 observations of the loss is higher compared to the mean of the last 10 observations. In other words, the assertion ensures that the loss of the model decreased after training, and that the model was able to ``learn'' from the training set. The assertion is derived from the visualisation presented in Figure~\ref{fig:loss}, which shows the loss of the model over the training epochs.
+
+\begin{figure}
+  \subcaptionbox{Histogram showing the distribution of a feature before and after scaling.\label{fig:scale}}{\includegraphics[width=\linewidth]{../catalogue/select-65a.png}}
+  \subcaptionbox{Histogram showing the distribution of a feature before and after normalisation.\label{fig:normal}}{\includegraphics[width=\linewidth]{../catalogue/select-65b.png}}
+  \caption{Visualisation of data before and after various data pre-processing techniques.}
+  \label{fig:data-pre-process}
+\end{figure}
+
+\begin{lstlisting}[language=Python, caption={Assertion to check that the mix and max of a feature fall within specified threshold derived from the visualisation presented in Figure~\ref{fig:scale}.}, label={lst:scale}]
+assert scaled_data[scaled_data.argmax()] <= 1
+assert scaled_data[scaled_data.argmix()] >= 0
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption={Similar premise as Listing~\ref{lst:scale}, however this assertion is based on Figure~\ref{fig:normal}.}, label={lst:normal}]
+assert normalized_data[normalized_data.argmax()] < 10
+assert normalized_data[normalized_data.argmin()] > -7
+\end{lstlisting}
+
+Visualisations in Figure~\ref{fig:data-pre-process} were obtained from a notebook that presents a tutorial on scaling and normalization---two common data pre-processing techniques in ML. The visualisations show a comparison of the data before and after each pre-processing technique is applied to a feature from the dataset. The author performs a visual check, by comparing the distribution of the data before and after applying the pre-processing technique, using a histogram.
+
+Listing~\ref{lst:scale} and~\ref{lst:normal} show the assertions that were defined below Figure~\ref{fig:scale} and~\ref{fig:normal} respectively. Both assertions check that the min and max of the feature is within the expected bounds after applying the respective pre-processing technique. In contrast to assertions presented in Table~\ref{tab:compare-op-asserts}, it is clear that the thresholds are derived from the corresponding visualisations.
+
+\begin{lstlisting}[language=Python, caption={Assertion to check that an augmented image is different from the original.}, label={lst:no-comp-magic}]
+assert not np.allclose(x_aug, x_original)
+\end{lstlisting}
+
+22\% of the assertions did not use a comparison operator, nor a magic threshold. Listing~\ref{lst:no-comp-magic} highlights such an assertion which is obtained from a notebook that performs image augmentation using Weighted K-Nearest Neighbours. The assertion compares the matrix representation of two images, and checks that the augmented image is different from the original.
+
+Most notebooks examined in this study do not use any external testing libraries. 227 or 84\% of the VA pairs use the low-level Python \texttt{assert} statement to define the test directly. This aligns with our observations that majority of the assertions compare the value of a performance metric against a user defined threshold, and do not require the use of a specialised testing library. 
+
+This study found 42 VA pairs where an external testing library was used. Listing~\ref{lst:np-almost-equal} shows an assertion that uses the \texttt{assert\_almost\_equal} method from the \texttt{numpy.testing} module. The assertion checks if the loss of the model is similar to the specified value, up to a desired precision. Due to the stochastic nature of ML, results obtained from two separate development cycles will slightly differ. The assertion presented in Listing~\ref{lst:np-almost-equal} is found to be robust towards such perturbations and will only fail if there is a significant change in the performance of the model.
+
+\begin{lstlisting}[language=Python, caption={Assertion to check that the loss of the model is similar to the specified value.}, label={lst:np-almost-equal}]
+ans4 = compute_loss(X_expanded, y, w)
+np.testing.assert_almost_equal(ans4, 0.3042764) 
+\end{lstlisting}
+
+\subsubsection{Do the assertions capture all the information obtained from the corresponding visualisation?}
+We performed an in-depth analysis of 34 unique VA pairs. This was conducted by reading and understanding the entire contents of the notebooks in a top-down order. During the analysis, several data points such as the primary objective of the notebook, the type of ML problem, the type of ML model and the type of data were captured. We find several instances of VA pairs where the assertion is unable to capture all the information obtained from the visualisation.
+
+\begin{figure}
+  \subcaptionbox{Visualisation of the decision boundary of a SVM with a linear kernel.\label{fig:svm-linear}}{\includegraphics[width=0.49\linewidth]{../catalogue/select-04-linear.png}}
+  \hfill
+  \subcaptionbox{Visualisation of the decision boundary of a SVM with a RBF kernel.\label{fig:svm-rbf}}{\includegraphics[width=0.49\linewidth]{../catalogue/select-04-rbf.png}}
+  \caption{Visualisation of the decision boundary of a SVM trained using different kernels.}\label{fig:svm}
+\end{figure}
+
+\begin{lstlisting}[language=Python, caption={Assertion on the accuracy of the ML model.}, label={lst:svm}]
+assert accuracy_score(y_test, pred) > 0.95
+\end{lstlisting}
+
+Figure~\ref{fig:svm} and Listing~\ref{lst:svm} present one such pair. Visualisations~\ref{fig:svm-linear} and~\ref{fig:svm-rbf} are obtained from a notebook that performs binary classification using Support Vector Machines (SVM). The visualisations show the two classes present in the training set, and the decision boundary of the model when trained first using a linear kernel and later with a RBF kernel.
+
+The visualisations contain several useful information that can be used to test and debug ML models. For instance, using Visualisation~\ref{fig:svm}, ML practitioners can get a visual understanding of how well the model is able to classify the two classes in the dataset. Additionally, observing the complexity of the decision boundary is a quick way to determine if the model is under or overfitting the data. The visualisation also allows comparison of different ML models or variants, to iteratively find a model and hyper-parameters that best fits the underlying training data. In this case for instance, the author of the notebook first trained the SVM with a linear kernel. And upon realising that the data is not linearly separable, chose the RBF kernel.
+
+Listing~\ref{lst:svm} shows the corresponding assertion that was defined below the visualisations. The assertion checks if the model accuracy is above a threshold specified by the author. The assertion however, is only able to capture the information pertaining to the performance of the model. While the rest of the information that is gained from the qualitative assessment using visualisation is lost.
+
+\begin{lstlisting}[language=Python, caption={Assertion to check that the Coefficient of Determination ($R^2$) is higher than the specified threshold.}, label={lst:r2}]
+r2_gru = r2_score(y_test, y_pred)
+assert r2_gru > 0.6
+\end{lstlisting}
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{../catalogue/select-332a.png}
+  \caption{Scatter plot of the actual and predicted labels of a dataset. The visualisation shows that there is a linear relationship between the true and predicted labels.}\label{fig:r2}
+\end{figure}
+
+Figure~\ref{fig:r2} shows a visualisation obtained from a notebook that trains a RNN to predict the levels of Nitrogen Dioxide ($NO_2$) in the next 24 hour window. The visualisation shows a scatter plot of the real and predicted values of $NO_2$ from the test set. A linear relationship between the ground truth and predictions is observed, indicating that the model was able to learn certain patterns from the training data. The spread of $y_{pred}$ at any given $y_{true}$ is wide. For example, at $y_{true} = 80$, the prediction can range anywhere between 30 and 120. This indicates that the model was not able to fit the training data that well, and can be fine-tuned.
+
+Listing~\ref{lst:r2} presents the corresponding analytical test which was defined below Figure~\ref{fig:r2}. The \texttt{r2\_score} method fits a linear regression model on the true and predicted labels and computes the Coefficient of Determination ($R^2$) based on the residuals of the linear regression model. The assertion checks that the $R^2$ score of the model is always higher than $0.6$. Since the best score possible is $1.0$, the specified threshold indicates that the author wants to ensure that $y_{pred}$ and $y_{true}$ are always linearly related to each other.
+
+Similar to Figure~\ref{fig:svm}, the visualisation in Figure~\ref{fig:r2} allows ML practitioners to visually assess if the model is under or overfitting the training data. If the spread of $y_{pred}$ is wide, it indicates that the model is under-fitting. In contrast, if the spread is very close to the diagonal line, it indicates that the model is most likely overfitting. The visualisation can also be used to verify if there are any outliers in the predictions, for a given input. The assertion in Listing~\ref{lst:r2} however, does not capture such information. It can only check if the performance of the model is better than a specific threshold.
+
+\begin{lstlisting}[language=Python, caption={Assertion to check that each feature in a dataset is normal using the Kolmogorov-Smirnov test for goodness of fit from the scipy library.}, label={lst:kstest}]
+for feature in range(data_transformed.shape[1]):
+  assert kstest(data_transformed[:, feature], 'norm').statistic < 1e-2
+\end{lstlisting}
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{../catalogue/select-152a.png}
+  \caption{Visualisation of the distribution of a feature from the dataset.}\label{fig:kstest}
+\end{figure}
+
+In contrast to Listing~\ref{lst:svm} and Listing~\ref{lst:r2}, Figure~\ref{fig:kstest} and Listing~\ref{lst:kstest} present a VA pair where the assertion captures all the information obtained from the visualisation.
+
+The notebook author normalises the training data and performs a visual check using the visualisation presented in Figure~\ref{fig:kstest}. The visualisation shows a bell-shaped curve thus indicating that the data is normal and that the transformation was successful. The assertion in Listing~\ref{lst:kstest} formally verifies that all features in the dataset have a normal distribution. The assertion iterates through each column in the dataset and performs the Kolmogorov-Smirnov test to check that the distribution of the feature is similar to that of a normal distribution.
+
+Checking the distribution of the training data is a very common task performed during the data understanding or exploratory data analysis phase of the ML development lifecycle. Several ML models assume normality in the underlying training data. However, in a production environment where ML models are continually trained using new batches of data, this assumption of normality may not always hold. The formal assertion presented in Listing~\ref{lst:kstest} makes this assumption explicit. And causes the automated ML pipeline to fail if our expectations regarding the data are no longer satisfied.
+
+\section{Implications}\label{sec:discuss}
+% NOTE: from ICST paper, need to integrate...
+
+% NOTE: breck2017ml proposes feature and data testing; we can say that the assertions in the notebook bring the system closer to migrating them into dedicated data validation systems 
+
+% NOTE: think about the actors: educators, researchers, developers...
+The results from RQ1 provide empirical evidence to support the use of
+visualisations to test various properties of ML systems.
+Visualisations are an efficient and effective medium to present
+complex information, that is easier to interpret by humans with the
+aid of visual cues. Visualisations used to test ML system properties
+however, demand manual verification effort. Information gained from
+visualisations and subsequent decisions made based on this
+information, must be manually verified in every iteration of the ML
+development cycle.
+
+% NOTE link to accumulation of technical debt due to highly
+% experimental nature, and constant change in the system
+
+Assertions or analytical tests extracted from ML visualisations can
+reduce this manual verification effort. Assertions encapsulate the
+knowledge gained from the visualisation with regards to the property
+of the ML system which is currently under test. Formal assertions
+document the observations made by the AI practitioner regarding the
+model or the data, at a specific point in time. These observations
+should not be violated by the future model development cycles unless
+the requirements of the ML system are changed. Assertions scale across
+organisational or personnel changes as future AI practitioners can
+refer to the assertions to understand how the visualisations were
+previously interpreted.
+
+The results for RQ1 indicate that the combination of ML visualisations
+with analytical assertions is an emerging testing practice within the
+machine learning community. We found only $54,070$ notebooks that
+contain the keyword ``assert'', while there are more than a million
+Jupyter notebooks available on GitHub. This suggests that writing
+assertions in computational notebooks is still relatively uncommon. We
+believe that this is due to a lack of knowledge among practitioners
+regarding testing approaches and the absence of adequate tooling to
+support the assertion of model properties. We argue that guidelines on
+ML coding practices require improvement. And advocate the need to
+steer education and research of Software Engineering practices towards
+the specific challenges faced when contributing to ML software
+systems.
+
+In the 1764 notebooks analysed in this study, several visualisations
+lack assertions. However, implicit expectations still exist within
+each visualisation which cannot be readily validated by other project
+collaborators. ML testing demands proficiency in Machine Learning,
+Software Testing, and the underlying Mathematical concepts. This
+further highlights the need for refining the education for these
+professionals and crafting tools to compensate for gaps in their
+knowledge.
+
+Results from RQ2 reveal two challenges in the current landscape of ML
+testing. The assertions in the VA pairs identified in this study lack
+dedicated testing libraries. This indicates that the current culture
+of testing ML code is still in its infancy and ML practitioners are
+not yet exploring software testing libraries. Second, the existing
+testing libraries are not tuned to the specifics of ML code and
+practitioners have to fall back to basic built-in approaches.
+
+The widespread use of ``magic'' thresholds---often rooted in domain
+expertise or experience obtained over time---poses risks to
+maintainability of ML projects. We advocate that such thresholds are
+documented for future reference. And find a clear need for automated
+tools that highlight undocumented choices or suggest standardized
+documentation in Markdown or code annotations.
+
+In the results from RQ3, we see several examples of assertions that
+fail to capture all the information gained from its visual
+counter-part. This can lead to a mismatch of expectations in future
+versions of the ML software. For instance, another project
+collaborator might run the code with a new version of the dataset or a
+different learning technique and assume that if the assertions run
+successfully, the expected patterns from the visualisation are also
+satisfied. The examples presented in Section~\ref{sec:result-rq3} show
+that deriving assertions from visualisations is not trivial. Basic
+visualisation patterns require complex mathematical techniques which
+may be beyond the expertise of an ML developer.
+
+For example, a linear correlation between the true and predicted
+labels is evident in Figure~\ref{fig:r2}. Yet, its formal assertion in
+Listing~\ref{lst:r2} necessitates defining an appropriate threshold
+for the coefficient of determination metric. Our results show that
+current software testing practices fail to capture the idiosyncrasies
+of ML code. There is a pressing need for automated tools, that bridge
+the disparity between the qualitative evaluation of ML systems using
+visualisations and the extraction of analytical assertions from these
+visuals.
+
+
 % BibTeX users please use one of
 % \bibliographystyle{spbasic}      % basic style, author-year citations
 \bibliographystyle{spmpsci}      % mathematics and physical sciences
 %\bibliographystyle{spphys}       % APS-like style for physics
 \bibliography{bibliography}   % name your BibTeX data base
 
-\subsection{Assertions derived from visualisations}
 \end{document}
 % end of file template.tex
 
