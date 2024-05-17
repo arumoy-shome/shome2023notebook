@@ -154,9 +154,12 @@ The predominant form of obtaining feedback in Jupyter notebooks is through the o
 
 % TODO cite scully and breck and the data validation papers here...
 % TODO: why are we doing this? how is the prior work lacking? why is this important?
-% we use feedback in notebooks to make important decisions: what data pre-processing techniques to use, create new features to boost performance of a model, pick particular hyper-parameters. but these decisions only reflect the conditions when the model was created; things inevitably change: data, people, system; if we don't document these decisions then it can lead to technical debt; longer time to debug issues; which can cost companies resource (time & cost) but also imagine if the model is being used in safety critical systems: can lead to loss of human lives as well
 
-% in software engineering, tests are used to document expectations of how the code should function. Failing tests indicate that our expectations no longer satisfied. This is why we also look for assertions written in notebooks and analyse their use.
+In Jupyter notebooks, feedback is crucial for making important decisions throughout the machine learning development lifecycle. Practitioners rely on the output of cells to determine the appropriate data preprocessing techniques, create new features to boost model performance, and select specific hyperparameters. However, these decisions are often based on the conditions present when the model was initially created. As data, personnel, and system environments inevitably change, undocumented decisions can lead to significant technical debt. This not only prolongs debugging and troubleshooting times but also incurs additional costs and resource expenditures.
+
+In software engineering, tests are employed to document the expected behavior of code. Failing tests indicate when these expectations are no longer met. Similarly, assertions in Jupyter notebooks can serve as documentation for the decisions made during model development. By embedding assertions, developers ensure that any deviations from expected data conditions or model performance are promptly detected, thus maintaining the integrity of the ML pipeline.
+
+% TODO introduce our results and key findings...
 
 % and then to tie the two things together: are assertions derived from the output of a cell? we still need to find a way to justify why we only look at assertions derived from visualisations specifically
 
@@ -338,7 +341,7 @@ information gained from it.
 
 \subsubsection{Motivating Example}
 
-Imagine a data scientist named Sara who is developing a machine learning model to predict customer churn. Sara begins her project in a Jupyter notebook, which supports iterative development and immediate feedback through the execution of code cells. Her workflow is dynamic and exploratory, typical of modern machine learning practices.
+Sara is a data scientist who is developing a machine learning model to predict customer churn. Sara begins her project in a Jupyter notebook, which supports iterative development and immediate feedback through the execution of code cells. Her workflow is dynamic and exploratory, typical of modern machine learning practices.
 
 Initially, Sara loads a dataset and uses basic descriptive statistics to understand its distribution. As she executes a cell that calculates and displays the mean and standard deviation of each feature, she notices unusually high variance in one of the features. This insight, derived directly from the output of the notebook cell, prompts her to apply normalization to ensure better model performance.
 
@@ -358,9 +361,6 @@ Once all experimentation and model tuning are complete, and Sara is ready to dep
   \item[RQ2.] \textbf{How are assertions used to validate ML code written in Jupyter notebooks?}
   \item[RQ3.] \textbf{How are assertions used to validate visual outputs in Jupyter notebooks?}
 \end{description}
-
-% role of feedback in writing ML code? (any recommendation for papers I can refer to here?)
-% implicit vs. explicit feedback (how do we establish this concept?)
 
 \subsection{Data Collection}\label{sec:data-collect}
 
@@ -406,73 +406,80 @@ During each case study, we analyse the code of the candidate to understand its p
 
 \section{Results}
 
-\subsection{Implicit feedback from the output of code cells}
+\subsection{(RQ1) How is feedback from the output of code cells used when writing ML code in Jupyter notebooks?}
 
 \subsubsection{Data distribution check ($N = 7$)}
 % (O2, O4, O9, O14, O20, O25, O48)
 
+% TODO: we refer to these as outputs but they are actually the python statements that produce the outputs...do we need better terminology here? To me this is especially confusing because in the figure below we are actually showing the output, not the python statement (which makes sense, its more interesting to show the actual visualisation in these cases rather than the code).
 \begin{table}
 \centering
 \caption{Examples of cell outputs used to verify distribution of data.}
-\begin{tabular}{@{}m{0.05\textwidth} m{0.4\textwidth} m{0.3\textwidth}@{}}
+\begin{tabular}{@{}m{0.05\textwidth} m{0.4\textwidth} m{0.4\textwidth}@{}}
 \toprule
 \emph{\textbf{Key}}&
 \emph{\textbf{Code}}&
-\emph{\textbf{Description}}\\
+\emph{\textbf{Visual Output}}\\
 \midrule
 
+O2&
+\lstinline[]$_ = sns.catplot(x='category_id', y='likes', data=train, height=5, aspect=1.5)$&
+\includegraphics[width=\linewidth]{distribution-check-catplot.png}\\
+
+O9&
+\lstinline[]$sns.kdeplot(data=data.loc[ data['Survived'] == 0].Age, label='Died', shade=True)$&
+\includegraphics[width=\linewidth]{distribution-check-kdeplot.png}\\
+
 O14&
-\begin{lstlisting}
-pd.pivot_table(train, index='Survived', values=['Age', 'SibSp', 'Parch', 'Fare'])
-\end{lstlisting}&
-Check the mean value of the specified features for each label in the target feature.\\
+\lstinline[]$pd.pivot_table(train, index='Survived', values=['Age', 'SibSp', 'Parch', 'Fare'])$&
+\\
+
+O25&
+\lstinline[]$sns.countplot(house_pred['OverallQual'])$&
+\\
 
 O48&
-\begin{lstlisting}
-x_train.describe()
-\end{lstlisting}&
-Check the descriptive statistics of the training data. The above statement is written immediately after normalising the features in the training data.\\
+\lstinline[]$x_train.describe()$&
+\\
 
 \bottomrule
 \end{tabular}
 \label{tab:distribution-check}
 \end{table}
 
-\begin{figure*}
-\centering
-\subcaptionbox{Check the distribution of the feature \texttt{Age} with-respect-to the labels in the target feature \texttt{Survived}.\label{fig:distribution-check-kdeplot}}{\includegraphics[width=0.45\linewidth]{distribution-check-kdeplot.png}}
-\subcaptionbox{Check the distribution of the feature \texttt{likes} across all values of feature \texttt{category\_id}.\label{fig:distribution-check-catplot}}{\includegraphics[width=0.45\linewidth]{distribution-check-catplot.png}}
-\caption{Examples of visualisations used to check linear relationship in data.}
-\label{fig:distribution-check}
-\end{figure*}
+Table~\ref{tab:distribution-check} shows examples of outputs used to check the distribution of the data. In output \emph{O2} the distribution of feature \texttt{Age} is checked against the two labels (\texttt{Survived} and \texttt{Died}) of the target feature. Output \emph{O9} presents another example where the distribution of a continuous feature \texttt{likes} is checked with-respect-to all the values of another categorical feature \texttt{category\_id}. Output \emph{O14} produces a pandas dataframe which is used to check the mean value of the features \texttt{Age}, \texttt{SibSp}, \texttt{Parch} and \texttt{Fare} against each label in the target feature \texttt{Survived}. Output \emph{O48} produces a pandas dataframe with the descriptive statistics of all features in the training data. The statement is written immediately after normalising the features in the training data. Hence, the user manually verifies if the normalisation was successful by looking at the mean and standard deviation of the features in the output. Similarly, \emph{O25} is written after discretizing a continuous feature \texttt{OverallQual} using binning. 
 
-Understanding the distribution of data is crucial for making informed decisions regarding necessary data transformation steps in data analysis processes. For instance, identifying whether scaling, normalizing, or handling outliers is required can be efficiently and effectively determined through visualizations.
-
-% This is particularly important for models like linear regression, which perform optimally when data is normally distributed. If the data deviates from normality, additional transformation steps may be necessary to prepare it for training.
-
-
-During the exploratory data analysis (EDA) or data understanding phase, a combination of visualizations and pandas dataframes is often employed to assess the distribution of specific columns within the data. This step helps identify features that may have a relationship with the target variable, ultimately informing which features to include in the machine learning model training process. This is seen in Figure~\ref{fig:distribution-check-kdeplot} where the distribution of a feature \texttt{Age} is checked against the labels of the target feature. Figure~\ref{fig:distribution-check-catplot} presents another example where the distribution of a continuous feature \texttt{likes} is checked with-respect-to all the values of another categorical feature \texttt{category\_id}.
-
-For example, the distribution of a newly created feature, such as one where a continuous feature is binned into categories, is frequently examined. 
-
-Descriptive statistics are also used post-transformation to verify that steps like data normalization have been effectively applied, ensuring that the data conforms to the expected format for further analysis.
-
-
-Furthermore, distribution checks are often performed immediately after feature creation. For instance, this may occur after discretizing a continuous feature using binning. Additionally, descriptive statistics (e.g., mean and standard deviation) obtained from libraries like pandas can be used to verify the effectiveness of data normalization steps.
+% TODO: this is probably implications/discussions material?
+Understanding the distribution of data is crucial for making informed decisions about necessary transformation steps in data analysis. For instance, visualizations can efficiently determine if scaling, normalizing, or handling outliers is needed. During the exploratory data analysis (EDA) phase, visualizations and pandas dataframes are commonly used to assess specific columns' distribution, helping identify features related to the target variable and informing feature inclusion in model training. Additionally, descriptive statistics are used post-transformation to verify the effectiveness of steps like data normalization, ensuring data conforms to the expected format for further analysis.
 
 \subsubsection{Data relationship check ($N = 2$)}
 % (O6, O10)
-\todo{TODO: I think correlation checks should also be present in this group}
 
-\begin{figure*}
-\centering
-\subcaptionbox{Using a lineplot to check linear relationship between two features in a dataset.\label{fig:linear-relation-check-lineplot}}{\includegraphics[width=0.45\linewidth]{linear-relation-check-lineplot.png}}
-\subcaptionbox{Visualisation that shows the datapoints as a scatterplot along with a linear model fit.\label{fig:linear-relation-check-regplot}}{\includegraphics[width=0.45\linewidth]{linear-relation-check-regplot.png}}
-\caption{Examples of visualisations used to check linear relationship in data.}
-\label{fig:linear-relation-check}
-\end{figure*}
+\begin{table}
+  \centering
+  \caption{Cell outputs used to verify linear relationship between features in the data.}
+  \begin{tabular}{@{}m{0.05\textwidth} m{0.4\textwidth} m{0.4\textwidth}@{}}
+    \toprule
+    \emph{\textbf{Key}}&
+    \emph{\textbf{Code}}&
+    \emph{\textbf{Visual Output}}\\
+    \midrule
 
-Linear machine learning models achieve optimal performance when the target variable can be expressed as a linear combination of the input features. However, features within a dataset that exhibit a linear relationship are considered redundant as they convey the same information to the model during training. Consequently, the feature engineering stage often involves removing such features to create a more efficient training dataset~\ref{shome2022data}. Figure~\ref{fig:linear-relation-check} illustrates two methods for identifying these linear relationships. In Figure~\ref{fig:linear-relation-check-lineplot}, the practitioner assesses the linearity between the features \texttt{Cash} and \texttt{SIZE}. Figure~\ref{fig:linear-relation-check-regplot} depicts the visualization of the feature \texttt{X4} alongside the target variable \texttt{Y}, accompanied by a fitted linear regression model.
+    O6&
+    \lstinline[]$b = sns.relplot(x='SIZE', y='Cash', hue='CLARITY', alpha=0.9, palette='muted', height=8, data=raw_data)$&
+    \includegraphics[width=\linewidth]{linear-relation-check-lineplot.png}\\
+
+    O10&
+    \lstinline[]$sns.regplot(x='X4 number of convenience stores', y='Y house price of unit area', data=data)$&
+    \includegraphics[width=\linewidth]{linear-relation-check-regplot.png}\\
+    \bottomrule
+  \end{tabular}
+\label{tab:linear-relation-check}
+\end{table}
+
+Table~\ref{tab:linear-relation-check} illustrates two outputs found in this study for identifying linear relationships amongst features in the data. In output \emph{O6}, the practitioner assesses the linearity between the features \texttt{Cash} and \texttt{SIZE}. Output \emph{O10} depicts the visualization of the feature \texttt{X4} alongside the target variable \texttt{Y}, accompanied by a fitted linear regression model.
+
+Linear machine learning models achieve optimal performance when the target variable can be expressed as a linear combination of the input features. However, features within a dataset that exhibit a linear relationship are considered redundant as they convey the same information to the model during training. Consequently, the feature engineering stage often involves removing such features to create a more efficient training dataset~\ref{shome2022data}.
 
 \subsubsection{Resource check ($N = 7$)}\label{sec:implicit-resource-check}
 % (P71, P86, O64, O66, P68, P82, P107)
@@ -480,41 +487,39 @@ Linear machine learning models achieve optimal performance when the target varia
 \begin{table}
 \centering
 \caption{Examples of cell outputs used to verify if different types of resources are available on the system where the notebook is being executed.}
-\begin{tabular}{@{}m{0.1\textwidth} m{0.05\textwidth} m{0.4\textwidth} m{0.3\textwidth}@{}}
+\begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
 \toprule
-\emph{\textbf{Type of resource}}&
 \emph{\textbf{Key}}&
-\emph{\textbf{Code}}&
-\emph{\textbf{Description}}\\
+\emph{\textbf{Code}}\\
 \midrule
 
-External library&
-P71&
-\begin{lstlisting}
-print('Hub version: ', hub.__version__)
-\end{lstlisting}&
-Check the version of an external Python library installed on the current system.\\
-
-Compute resources&
 P68&
-\begin{lstlisting}
-print('GPU is available')
-\end{lstlisting}&
-Check if a GPU is available on the current system.\\
+\lstinline[]$print('GPU is available')$\\
 
-Data or pre-trained models&
+P71&
+\lstinline[]$print('Hub version: ', hub.__version__)$\\
+
+P82&
+\lstinline[]$print('Running on TPU ', tpu.master())$\\
+
+P86&
+\lstinline[]$print('Cuda is available')$\\
+
+P107&
+\lstinline[]$print('Model loaded')$\\
+
+O64&
+\lstinline[]$full_table.head(-5)$\\
+
 O66&
-\begin{lstlisting}
-prostate_cancer_df.shape
-\end{lstlisting}&
-Check that the dataset has been loaded into memory.\\
+\lstinline[]$prostate_cancer_df.shape$\\
 \bottomrule
 \end{tabular}
 \label{tab:resource-check}
 \end{table}
 
-\todo{perhaps also add the keys of the case-studies here?}
-Table~\ref{tab:resource-check} presents case studies where the output is used to verify that certain resources are available on the system in which the notebook is being executed. We find checks for the availability of compute resources (such as a GPU or a TPU), checking that the dataset or a pre-trained model has been loaded correctly and checks to ensure that a certain version of an external library is present on the system.
+% NOTE: O107 is a print statement which is execute even if the prior statement that loads the model fails...
+Table~\ref{tab:resource-check} presents case studies where the output is used to verify availability of resources on the system in which the notebook is being executed. Outputs \emph{P68}, \emph{P82} and \emph{P86} check for the availability of compute resources, such as a GPU or a TPU. This study also finds outputs used to verify that a dataset or a pre-trained model has been successfully loaded into memory. For example, Output \emph{P107} is written after loading a pre-trained model is loaded into memory. Output \emph{O64} generates a pandas dataframe with the last five rows of the data while \emph{O66} shows the shape of the data. These statements are written directly after loading the data from the file system to manually verify that the data was loaded without errors. Additionally, output \emph{P71} is used to ensure that a certain version of an external library is present on the system.
 
 The print statement P71 highlights the lack of proper software engineering best practices within Jupyter notebooks. This shortcoming in computational notebooks has been identified by prior studies~\cite{quaranta2021kgtorrent, pimentel2019large-scale}. In this case study, managing dependencies through external tools is recommended. Python's built-in \emph{requirements.txt}~\footnote{https://pip.pypa.io/en/stable/reference/requirements-file-format/} file allows specifying dependencies and versions. Alternatively, external programs like \emph{pipenv}~\footnote{https://pipenv.pypa.io/en/latest/} and \emph{poetry}~\footnote{https://python-poetry.org/} use lockfiles to ensure specific version control, guaranteeing reproducibility across different systems. 
 
