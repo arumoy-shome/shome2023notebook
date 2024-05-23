@@ -385,7 +385,6 @@ We check the validity of the underlying JSON structure in each notebook using th
 
 For explicit feedback using assertions, we programmatically analyse the JSON structure of the notebooks to isolate code cells. We collect Python assert statements from the code cells by constructing and subsequently parsing the Abstract Syntax Tree (AST) of the source code present in each cell.
 
-\todo{TODO: justify why we didn't collect failures (strerr); that is more debugging? not the focus of this paper?}
 Similarly, for implicit feedback, we first isolate code cells that produce an output. The output of a cell may either be from a ``print'' statement or the last statement of the cell. We collect both of them using the AST of the cell.
 
 Finally, we remove duplicate data points (asserts, prints and last statements) resulting in a final data set of $22548$ assertions, $25319$ print statements and $28522$ last statements.
@@ -906,11 +905,12 @@ Assertion \emph{A3} in Table~\ref{tab:maths-check} checks that the dimension dif
 
 When working with neural networks and other statistical models, it is imperative to ensure that mathematical properties are preserved throughout operations involving arrays and matrices. This rigor is captured through the assertions in Table~\ref{tab:maths-check} tha validate these properties after matrix manipulations. These assertions are not just precautionary but are vital for confirming that the underpinnings of ML algorithms align with expected mathematical principles, thereby ensuring the robustness and reliability of model computations and outcomes.
 
-\subsubsection{Model performance check ($N = 11$)}
+\subsubsection{Model performance check ($N = 11$)}\label{sec:assert-model-perf}
 % (A7, A15, A19, A22, A24, A26, A38, A54, A58, A59, A72)
 
 \begin{table}
   \centering
+  \caption{Assertions used to check performance of ML models.}
   \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
     \toprule
     \emph{\textbf{Key}}&
@@ -918,49 +918,63 @@ When working with neural networks and other statistical models, it is imperative
     \midrule
 
     A7 &
-    \begin{lstlisting}
-assert len(neighbours_1) == 20, "Neighbors don't match!"
-    \end{lstlisting}\\
+    \lstinline[]$assert len(neighbours_1) == 20, "Neighbors don't match!"$\\
 
     A15 &
-    \begin{lstlisting}
-assert np.allclose(verify('images/camera_1.jpg', 'bertrand', database, FRmodel), (0.54364836, True))
-    \end{lstlisting}\\
+    \lstinline[]$assert np.allclose(verify('images/camera_1.jpg', 'bertrand', database, FRmodel), (0.54364836, True))$\\
 
     A19 &
-    \begin{lstlisting}
-assert np.allclose(linear_model.coef_, [[1.57104472, 0.92521608]]), 'The model parameters you learned seem incorrect!'
-    \end{lstlisting}\\
+    \lstinline[]$assert np.allclose(linear_model.coef_, [[1.57104472, 0.92521608]]), 'The model parameters you learned seem incorrect!'$\\
 
     A38 &
-    \begin{lstlisting}
-assert 0.75 < auc(fpr, tpr) < 0.85
-    \end{lstlisting}\\
+    \lstinline[]$assert 0.75 < auc(fpr, tpr) < 0.85$\\
 
     A58 &
-    \begin{lstlisting}
-assert np.isclose(accuracy, 0.9666666666666667)
-    \end{lstlisting}\\
+    \lstinline[]$assert np.isclose(accuracy, 0.9666666666666667)$\\
+    \bottomrule
   \end{tabular}
-  \caption{Assertions used to check performance of ML models.}
   \label{tab:model-perf-explicit}
 \end{table}
 
 This study finds several assertions used to test model performance against predefined thresholds for key metrics such as accuracy, precision, recall, F1 score, and others.
 
-For example, \emph{A7} in Table~\ref{tab:model-perf-explicit} checks for the expected number of neighbors, an indirect measure of model performance in specific scenarios like recommendation systems or clustering. Meanwhile, direct comparisons of model outputs with expected results, as seen in \emph{A15} validate the model's predictive accuracy and reliability under operational conditions. Other assertions, such as \emph{A19}, ensure that the learned parameters align closely with theoretically or empirically derived values, further cementing the model’s statistical validity. Additionally, range checks like \emph{A38} confirm that the performance metrics such as AUC and Gini coefficient fall within acceptable boundaries, indicating good predictive performance without overfitting. Additionally, the use of \texttt{np.isclose} in \emph{A58} is particularly noteworthy. This method accounts for the stochastic nature of many ML models, where slight variations in performance metrics can occur due to differences in initial conditions, random seed settings, or inherent randomness in algorithms. By allowing a small tolerance in the comparison, np.isclose ensures that the model's performance is consistently close to the expected benchmark, thereby affirming its reliability despite the stochastic elements.
+% TODO: verify if this applies to recommender systems as well?
+For example, \emph{A7} in Table~\ref{tab:model-perf-explicit} checks for the expected number of neighbors as an indirect measure of model performance in specific scenarios like recommendation systems or clustering. Meanwhile, direct comparisons of model outputs with expected results, as seen in \emph{A15} validate the model's predictive accuracy and reliability under operational conditions. Other assertions, such as \emph{A19}, ensure that the learned parameters align closely with theoretically or empirically derived values, further cementing the model’s statistical validity. Range checks like \emph{A38} confirm that the performance metrics such as \emph{AUC} and \emph{Gini coefficient} fall within acceptable boundaries, indicating good predictive performance without overfitting.
 
-Each assertion acts as a crucial checkpoint that verifies the model's ability to generalize and perform effectively, ensuring that the outcomes are both robust and trustworthy.
+The use of \texttt{np.isclose} in \emph{A58} is particularly noteworthy. This method accounts for the stochastic nature of many ML models, where slight variations in performance metrics can occur due to differences in initial conditions, random seed settings, or inherent randomness in algorithms. By allowing a small tolerance in the comparison, np.isclose ensures that the model's performance is consistently close to the expected benchmark, thereby affirming its reliability despite the stochastic elements.
 
 \subsubsection{Network architecture check ($N = 3$)}
 % (A11, A62, A75)
 
-% TODO: revisit this section; we have new assertions
-When integrating pre-trained models or leveraging transfer learning techniques, it is crucial to ensure the compatibility of the custom neural network architecture with the pre-trained components. This is particularly important when combining convolutional layers from different sources, as the spatial dimensions and channel configurations must align correctly.
+\begin{table}
+  \centering
+  \caption{Assertions used to check the architecture of neural networks.}
+  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
+    \toprule
+    \emph{\textbf{Key}}&
+    \emph{\textbf{Code}}\\
+    \midrule
 
-We encountered an \texttt{assert} statement that addresses this architectural compatibility check: \lstinline{assert self.encoder_conv_01[0].weight.size() == self.vgg16.features[2].weight.size()}. This assertion verifies that the weight dimensions of the first convolutional layer in the \lstinline{encoder_conv_01} module match the weight dimensions of the third layer in the \lstinline{vgg16.features} module. The \lstinline{vgg16} model is a widely-used pre-trained convolutional neural network often employed as a feature extractor or backbone for transfer learning tasks. By ensuring that the weight dimensions are consistent, the code guarantees that the input data to the \lstinline{encoder_conv_01} module has the expected spatial dimensions and number of channels, enabling seamless integration with the pre-trained \lstinline{vgg16} model.
+    A11 &
+    \lstinline[]$assert self.encoder_conv_01[0].weight.size() == self.vgg16.features[2].weight.size()$\\
 
-This architectural check is crucial for preventing potential issues during the forward pass of the neural network and ensuring that the custom and pre-trained components are compatible, ultimately leading to reliable and accurate model performance.
+    A62 &
+    \lstinline[]$assert activations[i + 1].shape[1] == self.encoder_layer_sizes[-1] * 2$\\
+    
+    A75 &
+    \lstinline[]$assert reg in ['none', 'l2']$\\
+    \bottomrule
+  \end{tabular}
+  \label{tab:assert-network-architecture}
+\end{table}
+
+Assertion \emph{A11} verifies that the weight dimensions of the first convolutional layer in the \lstinline{encoder_conv_01} module match the weight dimensions of the third layer in the \lstinline{vgg16.features} module. The \lstinline{vgg16} model is a widely-used pre-trained convolutional neural network often employed as a feature extractor or backbone for transfer learning tasks. By ensuring that the weight dimensions are consistent, the code guarantees that the input data to the \lstinline{encoder_conv_01} module has the expected spatial dimensions and number of channels, enabling seamless integration with the pre-trained \lstinline{vgg16} model.
+
+Assertion \emph{A62} checks that the shape of the activations at index \lstinline{i + 1} has the correct number of channels, which should be twice the size of the last encoder layer. This ensures that the intermediate activations maintain the expected structure necessary for the proper functioning of the subsequent layers in the network. Ensuring that the shape of activations is consistent throughout the network is crucial for maintaining the integrity of the data flow and preventing errors during the forward pass.
+
+Assertion \emph{A75} ensures that the regularization parameter \lstinline{reg} is either 'none' or 'l2'. This check is important for validating that the specified regularization method is among the acceptable options, thereby preventing potential misconfigurations that could lead to unexpected behavior or suboptimal model performance.
+
+When integrating pre-trained models or leveraging transfer learning techniques, it is crucial to ensure the compatibility of the custom neural network architecture with the pre-trained components. This is particularly important when combining convolutional layers from different sources, as the spatial dimensions and channel configurations must align correctly. Such architectural checks are crucial for preventing potential issues during the forward pass of the neural network and ensuring that the custom and pre-trained components are compatible, ultimately leading to reliable and accurate model performance.
 
 \subsubsection{Resource check ($N = 7$)}
 % (A10, A14, A18, A37, A60, A67 A74)
@@ -1019,48 +1033,145 @@ Resource check assertions play a vital role in maintaining the reliability and r
 \subsubsection{Data shape check ($N = 26$)}
 % (A5, A9, A13, A16, A17, A29, A31, A61, A71, A76--78, A82, A84, A85, A89, A90, A91, A93--96, A98--101)
 
-Data shape checks can be considered the ``Swiss army knife''' of assertions, as they are ubiquitous and serve multiple purposes throughout the machine learning workflow. We encountered a vast array of assert statements that verify the dimensions of various data structures, including input features, labels, predictions, images, sequences, and embeddings. These assertions ensure that the data adheres to the expected format and dimensions required by different components of the machine learning pipeline.
+% TODO: revisit the assertions in this section; we may have misclassified assertions or need to create a new group
 
-For instance, assertions like \emph{A17}:~\lstinline{assert X.shape[1] == 13, 'Did you drop/lose some columns in X? Did you properly load and split the data?'} and \emph{A90}:~\lstinline{assert len(X_train) == 2000} verify that the input features have the correct number of columns and examples, respectively. Such checks are essential for preventing downstream errors and ensuring the compatibility of the data with the chosen model architecture and preprocessing steps.
+\begin{table}
+  \centering
+  \caption{Assertions used to check the shape of the data.}
+  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
+    \toprule
+    \emph{\textbf{Key}}&
+    \emph{\textbf{Code}}\\
+    \midrule
 
-Similarly, assertions like \emph{A5}:~\lstinline{assert y_valid.shape == (1132,)} and \emph{A29}~\lstinline{assert len(test_y_preds) == len(test_y), 'Unexpected number of predictions.'} ensure that the labels or predictions have the expected length or shape, which is crucial for accurate performance evaluation and model training.
+    A5 &
+    \lstinline[]$assert y_valid.shape == (1132,)$\\
 
-In the context of computer vision tasks, assertions like \emph{A31}:~\lstinline{assert img.shape == (112, 92)} and \emph{A84}~\lstinline{assert red.get_shape().as_list()[1:] == [224, 224, 1]} verify that the input images have the correct dimensions, which is essential for compatibility with convolutional neural network architectures and image preprocessing techniques.
+    A17 &
+    \lstinline[]$assert X.shape[1] == 13, 'Did you drop/lose some columns in X? Did you properly load and split the data?'$\\
 
-Furthermore, assertions like \emph{A76}:~\lstinline{assert len(encoding['token_type_ids']) == max_seq_length} and \emph{A93}:~\lstinline{assert temp_embed.shape[0] == stride} check the dimensions of sequences, embeddings, and other data structures used in natural language processing tasks, ensuring their compatibility with various models and algorithms.
+    A29 &
+    \lstinline[]$assert len(test_y_preds) == len(test_y), 'Unexpected number of predictions.'$\\
+
+    A31 &
+    \lstinline[]$assert img.shape == (112, 92)$\\
+
+    A76 &
+    \lstinline[]$assert len(encoding['token_type_ids']) == max_seq_length$\\
+
+    A84 &
+    \lstinline[]$assert red.get_shape().as_list()[1:] == [224, 224, 1]$\\
+
+    A90 &
+    \lstinline[]$assert len(X_train) == 2000$\\
+
+    A93 &
+    \lstinline[]$assert temp_embed.shape[0] == stride$\\
+    \bottomrule
+  \end{tabular}
+  \label{tab:assert-shape-check}
+\end{table}
+
+
+Assertions \emph{A17} and \emph{A90} verify that the input features have the correct number of columns and examples, respectively. Such checks are essential for preventing downstream errors and ensuring the compatibility of the data with the chosen model architecture and preprocessing steps. 
+
+Assertions \emph{A5} and \emph{A29} ensure that the labels or predictions have the expected length or shape, which is crucial for accurate performance evaluation and model training.
+
+In the context of computer vision tasks, assertions \emph{A31} and \emph{A84} verify that the input images have the correct dimensions, which is essential for compatibility with convolutional neural network architectures and image preprocessing techniques.
+
+Furthermore, assertions \emph{A76} and \emph{A93} check the dimensions of sequences, embeddings, and other data structures used in natural language processing tasks, ensuring their compatibility with various models and algorithms.
+
+Data shape checks can be considered the ``Swiss army knife'' of assertions, as they are ubiquitous and serve multiple purposes throughout the machine learning workflow. We encountered a vast array of assert statements that verify the dimensions of various data structures, including input features, labels, predictions, images, sequences, and embeddings. These assertions ensure that the data adheres to the expected format and dimensions required by different components of the machine learning pipeline.
 
 Data shape check assertions serve as a crucial safeguard against data inconsistencies, ensuring the integrity and compatibility of the data throughout the machine learning workflow. By verifying the expected dimensions and shapes of various data structures, these assertions help prevent runtime errors, ensure accurate model training and evaluation, and maintain the reliability of the entire machine learning pipeline.
 
 \subsubsection{Type check ($N = 5$)}
 % (A2, A35, A40, A81, A88)
 
-Type checking assertions play a crucial role in maintaining the integrity and consistency of data types throughout the machine learning workflow. In the examined notebooks, we encountered several assert statements that verify the types of input features, models, data structures, and other objects.
+\begin{table}
+  \centering
+  \caption{Assertions used to check the data type of features in the dataset.}
+  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
+    \toprule
+    \emph{\textbf{Key}}&
+    \emph{\textbf{Code}}\\
+    \midrule
 
-One common type check is performed on the input features, as demonstrated by the assertion \emph{A2}:~\lstinline{assert isinstance(X_trn, torch.FloatTensor), 'Features should be float32!'}. This assertion ensures that the input features are represented as PyTorch float tensors, which is a requirement for many deep learning models and operations.
+    A2 &
+    \lstinline[]$assert isinstance(X_trn, torch.FloatTensor), 'Features should be float32!'$\\
 
-Another type check is applied to verify the type of the machine learning models themselves. For instance, the \emph{A40}:~\lstinline{assert isinstance(model_3, sklearn.ensemble.RandomForestClassifier)} checks if the \lstinline{model_3} object is an instance of the \lstinline{RandomForestClassifier} class from the scikit-learn library. This type of assertion is essential when working with different types of models, as it helps prevent errors arising from using incompatible methods or attributes.
+    A35 &
+    \lstinline[]$assert isinstance(column_transformer, ColumnTransformer), "Input isn't a ColumnTransformer"$\\
 
-In addition to input features and models, type checks are also performed on data structures and intermediate objects. The assertion \emph{A35}:~\lstinline{assert isinstance(column_transformer, ColumnTransformer), "Input isn't a ColumnTransformer"} verifies that the \lstinline{column_transformer} object is an instance of the \lstinline{ColumnTransformer} class, which is commonly used for preprocessing and feature engineering tasks in scikit-learn.
+    A40 &
+    \lstinline[]$assert isinstance(model_3, sklearn.ensemble.RandomForestClassifier)$\\
 
-Type checking is not limited to objects and data structures--it can also be applied to individual columns or elements within a dataset. The assertion \emph{A81}:~\lstinline{assert is_all_ints(filled_df[r]) is True} checks if all the elements in a specific column (\lstinline{filled_df[r]}) of a DataFrame are integers.
+    A81 &
+    \lstinline[]$assert is_all_ints(filled_df[r]) is True$\\
 
-Furthermore, type checks are performed on NumPy arrays, as demonstrated by the assertion \emph{A88}:~\lstinline{assert isinstance(betas, np.ndarray)}. This assertion ensures that the \texttt{betas} object is a NumPy array, which is a fundamental data structure used in many numerical and scientific computing operations.
+    A88 &
+    \lstinline[]$assert isinstance(betas, np.ndarray)$\\
+    \bottomrule
+  \end{tabular}
+  \label{tab:assert-type-check}
+\end{table}
+
+Assertion \emph{A2} in Table~\ref{tab:assert-type-check} demonstrates a very common type check performed on the input features. This assertion ensures that the input features are represented as PyTorch float tensors, which is a requirement for many deep learning models and operations.
+
+Another type check is applied to verify the type of the machine learning models themselves. For instance, the \emph{A40} checks if the \lstinline{model_3} object is an instance of the \lstinline{RandomForestClassifier} class from the scikit-learn library. This type of assertion is essential when working with different types of models, as it helps prevent errors arising from using incompatible methods or attributes.
+
+In addition to input features and models, type checks are also performed on data structures and intermediate objects. The assertion \emph{A35} verifies that the \lstinline{column_transformer} object is an instance of the \lstinline{ColumnTransformer} class, which is commonly used for preprocessing and feature engineering tasks in scikit-learn.
+
+Type checking is not limited to objects and data structures--it can also be applied to individual columns or elements within a dataset. The assertion \emph{A81} checks if all the elements in a specific column (\lstinline[]$filled_df[r]$) of a DataFrame are integers.
+
+Furthermore, type checks are performed on NumPy arrays, as demonstrated by the assertion \emph{A88}. This assertion ensures that the \lstinline{betas} object is a NumPy array, which is a fundamental data structure used in many numerical and scientific computing operations.
 
 Type check assertions are essential for maintaining data integrity, ensuring compatibility between different components of the machine learning pipeline, and preventing errors and unexpected behavior. By verifying the types of input features, models, data structures, and other objects, these assertions contribute to the overall reliability and robustness of the machine learning workflow.
 
-\subsubsection{Data validation check ($N = 11$)}
-% formerly value-check (A20, A30, A41, A44--46, A52, A65, A68, A69, A73, A83, A92)
+\subsubsection{Data validation check ($N = 14$)}
+% formerly value-check (A20, A30, A41, A44--46, A52, A65, A68, A69, A73, A83, A87, A92)
+
+\begin{table}
+  \centering
+  \caption{Assertions used to perform data validation checks.}
+  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
+    \toprule
+    \emph{\textbf{Key}}&
+    \emph{\textbf{Code}}\\
+    \midrule
+
+    A41 &
+    \lstinline[]$assert np.all(np.unique(X['smoke'].values) == np.array([0, 1]))$\\
+
+    A44 &
+    \lstinline[]$assert abs(min(entity_embedding[low:high]) - max(entity_embedding[low:high])) <= 1$\\
+
+    A46 &
+    \lstinline[]$assert np.isclose(stdev_norm, 1.0, atol=1e-16)$\\
+
+    A52 &
+    \lstinline[]$assert grouped_users['user_id'].nunique() == user_engagement['user_id'].nunique()$\\
+
+    A65 &
+    \lstinline[]$assert np.all(y <= nb_classes)$\\
+
+    A73 &
+    \lstinline[]$assert df['clf'].value_counts()[1] == len(df[df['quality'] >= 7])$\\
+    \bottomrule
+  \end{tabular}
+  \label{tab:data-validation}
+\end{table}
 
 % TODO: revisit, we have new assertions here; update the count
-we encountered a range of assert statements that perform various validation checks on data structures, such as NumPy arrays and pandas DataFrames. These checks help ensure the data meets specific criteria or constraints, preventing potential errors or inconsistencies in downstream operations.
+Table~\ref{tab:data-validation} presents a range of assert statements that perform various validation checks on data structures, such as NumPy arrays and pandas DataFrames. These checks help ensure the data meets specific criteria or constraints, preventing potential errors or inconsistencies in downstream operations.
 
-One type of validation check involves verifying the presence of specific values or ranges within arrays or columns. For example, the assertion \emph{A41}:~\lstinline{assert np.all(np.unique(X['smoke'].values) == np.array([0, 1]))} checks if the unique values in the \texttt{smoke} column of the DataFrame \texttt{X} are limited to 0 and 1. Similarly, \emph{A65}~\lstinline{assert np.all(y <= nb_classes)} ensures that all values in the array \texttt{y} are less than or equal to a certain number of classes.
+One type of validation check involves verifying the presence of specific values or ranges within arrays or columns. For example, assertion \emph{A41} checks if the unique values in the \lstinline{smoke} column of the DataFrame \lstinline{X} are limited to 0 and 1. Similarly, \emph{A65} ensures that all values in the array \lstinline{y} are less than or equal to a certain number of classes.
 
-Another common validation check is verifying the equality or closeness of values or arrays. The assertion \emph{A44}:~\lstinline{assert abs(min(entity_embedding[low:high]) - max(entity_embedding[low:high])) <= 1} checks if the difference between the minimum and maximum values in a specific range of the \texttt{entity\_embedding} array is less than or equal to 1. Similarly, \emph{A46}:~\lstinline{assert np.isclose(stdev_norm, 1.0, atol=1e-16)} verifies that the \texttt{stdev\_norm} value is close to 1.0 within a specified absolute tolerance.
+Another common validation check is verifying the equality or closeness of values or arrays. Assertion \emph{A44} checks if the difference between the minimum and maximum values in a specific range of the \lstinline{entity_embedding} array is less than or equal to 1. Assertion \emph{A46} verifies that the \lstinline{stdev_norm} value is close to 1.0 within a specified absolute tolerance.
 
-Some assertions focus on validating the uniqueness or cardinality of values in arrays or DataFrames. For instance, \emph{A52}:~\lstinline{assert grouped_users['user_id'].nunique() == user_engagement['user_id'].nunique()} checks if the number of unique user IDs in the \texttt{grouped\_users} DataFrame is equal to the number of unique user IDs in the \texttt{user\_engagement} DataFrame.
+Some assertions focus on validating the uniqueness or cardinality of values in arrays or DataFrames. For instance, \emph{A52} checks if the number of unique user IDs in the \lstinline{grouped_users} DataFrame is equal to the number of unique user IDs in the \lstinline{user_engagement} DataFrame.
 
-Other assertions validate the presence of specific values or conditions within DataFrames or other data structures. The assertion \emph{A73}:~\lstinline{assert df['clf'].value_counts()[1] == len(df[df['quality'] >= 7])} checks if the count of a specific value (1) in the ``clf'' column of the DataFrame \texttt{df} is equal to the number of rows where the ``quality'' column is greater than or equal to 7.
+Other assertions validate the presence of specific values or conditions within DataFrames or other data structures. The assertion \emph{A73} checks if the count of a specific value (1) in the ``clf'' column of the DataFrame \lstinline{df} is equal to the number of rows where the ``quality'' column is greater than or equal to 7.
 
 By verifying specific conditions, value ranges, uniqueness, and equality constraints, these assertions help catch potential errors or inconsistencies early in the pipeline, preventing downstream issues and ensuring reliable and accurate results.
 
@@ -1225,6 +1336,8 @@ Checking the distribution of the training data is a very common task performed d
 % NOTE: from ICST paper, need to integrate...
 
 % NOTE: breck2017ml proposes feature and data testing; we can say that the assertions in the notebook bring the system closer to migrating them into dedicated data validation systems 
+
+% NOTE: refer back to sec:assert-model-perf; the use of np.isclose and robustness to stochastic nature
 
 % NOTE: perhaps also argue the other side, the demographic using notebooks do not have SE training; they are perhaps directly sharing the notebook and the data directly...
 P71 highlights the lack of proper software engineering best practices within Jupyter notebooks. This shortcoming in computational notebooks has been identified by prior studies~\cite{quaranta2021kgtorrent, pimentel2019large-scale}. In this case study, managing dependencies through external tools is recommended. Python's built-in \emph{requirements.txt}~\footnote{https://pip.pypa.io/en/stable/reference/requirements-file-format/} file allows specifying dependencies and versions. Alternatively, external programs like \emph{pipenv}~\footnote{https://pipenv.pypa.io/en/latest/} and \emph{poetry}~\footnote{https://python-poetry.org/} use lockfiles to ensure specific version control, guaranteeing reproducibility across different systems. 
