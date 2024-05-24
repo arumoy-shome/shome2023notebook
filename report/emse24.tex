@@ -38,6 +38,7 @@ grestore
 \usepackage{xcolor}
 \usepackage{subcaption}
 \usepackage{tabularx}
+\usepackage{longtable}
 \usepackage{booktabs}
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 \usepackage{wrapfig}
@@ -1175,162 +1176,155 @@ Other assertions validate the presence of specific values or conditions within D
 
 By verifying specific conditions, value ranges, uniqueness, and equality constraints, these assertions help catch potential errors or inconsistencies early in the pipeline, preventing downstream issues and ensuring reliable and accurate results.
 
-\subsection{Assertions derived from visualisations}
-% NOTE: following text is from the ICST paper; still need to think about how to integrate it here...
+\subsection{(RQ3) How are assertions used to validate visual outputs in Jupyter notebooks?}
+
+\subsubsection{Model Performance}
 
 
-\subsubsection{What patterns are frequently observed in VA pairs used to test ML systems?}
+\begin{longtable}{@{} m{0.05\textwidth} m{0.4\textwidth} m{0.4\textwidth} @{}}
+  \caption{VA pairs used to validate the performance of a model.} \\
+  \toprule
+  \emph{\textbf{Key}} &
+  \emph{\textbf{Visual Output}} &
+  \emph{\textbf{Assertion}}\\
+  \midrule
+  \endfirsthead
 
-We further analysed the 269 VA pairs obtained from RQ1, and identified three testing patterns which are presented in Table~\ref{tab:testing-patterns} and discussed further below.
+  \caption[]{VA pairs used to validate the performance of a model (continued).} \\
+  \toprule
+  \emph{\textbf{Key}} &
+  \emph{\textbf{Visual Output}} &
+  \emph{\textbf{Assertion}}\\
+  \midrule
+  \endhead
+
+  \midrule
+  \endfoot
+
+  \bottomrule
+  \endlastfoot
+
+  VA2 &
+  \includegraphics[width=\linewidth]{va2.png} &
+  \lstinline[]$assert final_score > 300, 'not good enough for DQN'$\\
+
+  VA3 &
+  \includegraphics[width=\linewidth]{va3.png} &
+  \lstinline[]$assert accuracy_score(y_test, pred) > 0.95$\\
+
+  VA9 &
+  \includegraphics[width=\linewidth]{va9.png} &
+  \lstinline[]$assert np.mean(mean_rw_history[-10:]) > 10.$\\
+
+  VA11 &
+  \includegraphics[width=\linewidth]{va11.png} &
+  \lstinline[]$assert np.mean(metrics['dev_bleu'][-10:], axis=0)[1] > 35, "We kind of need a higher bleu BLEU from you. Kind of right now."$\\
+
+  VA15 &
+  \includegraphics[width=\linewidth]{va15.png} &
+  \lstinline[]$assert np.mean(train_history[:10], axis=0)[1] > np.mean(train_history[-10:], axis=0)[1], "The model didn't converge."$\\
+
+  VA28 &
+  \includegraphics[width=\linewidth]{va28.png} &
+  \lstinline[]$assert np.mean(dev_recall_history[-10:]) > 0.85, "Please train for at least 85% recall on test set. You may need to change vectorizer model for that."$\\
+
+  VA68 &
+  \includegraphics[width=\linewidth]{va68.png} &
+  \lstinline[]$np.testing.assert_almost_equal(ans4, 0.3042764)$\\
+
+  VA107 &
+  \includegraphics[width=\linewidth]{va107.png} &
+  \lstinline[]$assert r2_gru > 0.6$\\
+
+\end{longtable}\label{tab:va-model-perf}
+
+The visualizations in VA2, VA9, and VA15 provide a comprehensive view of key metrics for evaluating the performance of various machine learning models. VA2 includes mean reward per episode, TD loss history, initial state value (V), and gradient norm history for a Deep Q-Network (DQN) model. These metrics collectively indicate the model's learning progress and stability during training. The visualization in VA9 shows the mean reward per game for a DQN applied to the Breakout Atari game, tracking the model's performance over 200 games. The general upward trend indicates learning and improvement in gameplay over time. VA15 presents the training and development loss over time for a character-level language model, showing a gradual decrease in loss and suggesting effective learning.
+
+The visualization in VA3 presents a two-dimensional scatter plot showing the decision boundary of a Support Vector Machine (SVM) model, with red and yellow points representing two different classes and a background color gradient indicating the decision function of the SVM. This visualization aids in understanding the model's ability to distinguish between classes and the distance of the samples from the decision boundary. The visualizations in VA28 display the training loss and development recall, respectively. The left graph shows a decrease in training loss over time, indicating learning progress, while the right graph shows development recall over time, highlighting improvements in the model's ability to correctly identify positive instances. The visualizations in VA11 depict key metrics for evaluating the performance of a machine learning model in text generation or machine translation. The left plot shows a steady increase in the development BLEU score over the training iterations, indicating improving quality of the model's output, while the right plot displays a steady decrease in training loss, suggesting effective learning and error minimization. In VA107, the scatter plot displays the predicted versus true values of Nitrogen Dioxide (NO2) levels, used to assess the model's performance in predicting continuous variables.
+
+The corresponding assertions for these visualizations ensure that the models meet specific performance standards. For VA2, the assertion ensures that the final score exceeds 300, validating the model's performance for deployment. In VA9, the assertion checks whether the mean of the last ten rewards exceeds 10, ensuring stable and satisfactory learning progress. For VA15, the assertion checks if the mean of the first ten training observations is greater than the mean of the last ten, ensuring loss convergence and validating the model's learning without overfitting. The assertion in VA3 ensures the accuracy score on the test set exceeds 0.95, confirming the model's reliability and generalization capability. For VA28, the assertion checks whether the average development recall in the last ten evaluations exceeds 0.85, ensuring high recall rate critical for tasks like medical diagnostics. In VA11, the assertion ensures the average development BLEU score in the last ten evaluations exceeds 35, confirming the model produces high-quality translations. Lastly, in VA107, the assertion checks whether the R2 score exceeds 0.6, validating the model's fit and reliability for making accurate predictions in real-world scenarios. These validations confirm that iterative training processes lead to meaningful improvements and ensure the models' readiness for deployment and practical applications.
+
+\subsubsection{Distribution Check}
 
 \begin{table}
   \centering
-  \caption{Testing patterns observed in the visualisation-assertion pairs.}
-  \begin{tabularx}{0.45\textwidth}{@{}l X r r@{}}
+  \caption{VA pairs used to check data distribution.}
+  \begin{tabular}{@{} m{0.05\textwidth} m{0.4\textwidth} m{0.4\textwidth} @{}}
     \toprule
-    \textbf{ID} &
-    \textbf{Description} &
-    \multicolumn{2}{c}{\textbf{Count}}\\
-    & & Yes & No\\
+    \emph{\textbf{Key}}&
+    \emph{\textbf{Visual Output}}&
+    \emph{\textbf{Assertion}}\\
     \midrule
-    \textbf{P1} &
-    Does the assertion use a comparison operator (such as \emph{eq, lt, gt})? &
-    202 & 67\\
-    \textbf{P2} &
-    Does the assertion use magic thresholds? &
-    101 & 168\\
-    \textbf{P3} &
-    Does the assertion use an external testing library (such as \texttt{numpy.testing})? &
-    42 & 227\\
-    \bottomrule
-  \end{tabularx}
-  \label{tab:testing-patterns}
-\end{table}
 
-\begin{table}
-  \centering
-  \caption{Most frequently occurring assertions that use a comparison operator.}
-  \begin{tabular}{@{}m{0.9\linewidth}@{}}
-    \toprule
-    \begin{lstlisting}[language=Python,belowskip=0pt,aboveskip=0pt]
-assert accuracy_score(y_test, pred) > 0.95\end{lstlisting}\\
-    \begin{lstlisting}[language=Python,belowskip=0pt,aboveskip=0pt]
-assert HISTORY['test_accuracy'][-1] > 0.92\end{lstlisting}\\
-    \begin{lstlisting}[language=Python,belowskip=0pt,aboveskip=0pt]
-assert np.mean(mean_rw_history[-10:]) > 10.
-print("That's good enough for tutorial.")\end{lstlisting}\\
-    \begin{lstlisting}[language=Python,belowskip=0pt,aboveskip=0pt]
-assert np.mean(metrics['dev_bleu'][-10:], axis=0)[1] > 35, "We kind of need a higher bleu BLEU from you. Kind of right now."\end{lstlisting}\\
-    \begin{lstlisting}[language=python,belowskip=0pt,aboveskip=0pt]
-assert np.mean(dev_recall_history[-10:]) > 0.85, "Please train for at least 85% recall on test set. You may need to change vectorizer model for that."
-    \end{lstlisting}\\
+    VA13 &
+    \includegraphics[width=\linewidth]{va13.png} &
+    \lstinline[]$assert 80 < boot_mean_mean < 81$\\
     \bottomrule
   \end{tabular}
-  \label{tab:compare-op-asserts}
+  \label{tab:va-dist-check}
 \end{table}
 
-In a total of 269 VA pairs, 202 assertions (75\%) contain a comparison operator such as \emph{equal to}, \emph{lesser than} or \emph{greater than}. Table~\ref{tab:compare-op-asserts} presents the most frequently observed assertions that conform to this pattern.
+The visualization in VA13 displays the distribution of bootstrapped sample means as a histogram with a superimposed kernel density estimate (KDE) curve, illustrating the central tendency and variability of the bootstrapped means.
 
-101 of 269 assertions (37\%) compare the value of a performance metric---typically the accuracy or recall---against a ``magic threshold'' defined by the notebook author. This covers 46\% of the assertions with a comparison operator. It is unclear however, how the specified thresholds were obtained since the authors do not provide additional explanation in the notebook. The threshold could have been derived based on domain expertise. Another alternative could be to define them during the Requirements Engineering phase, through discussions with all involved stakeholders\cite{vogelsang2019requirements,rahimi2019toward}.
+Bootstrapped sample means are calculated by repeatedly resampling the original dataset with replacement and computing the mean for each resampled dataset. This process generates a distribution of the mean, known as the bootstrap distribution, which helps in estimating the variability and central tendency of the original dataset's mean.
 
-\begin{figure}
-  \includegraphics[width=\linewidth]{../catalogue/select-16.png}
-  \caption{Visualisation of the training loss of an ML model.}\label{fig:loss}
-\end{figure}
+The corresponding assertion checks whether the bootstrapped mean lies between 80 and 81, ensuring that the statistical estimation is consistent with expected values. This validation is crucial for confirming the reliability of the bootstrapped estimates and the accuracy of statistical conclusions.
 
-\begin{lstlisting}[language=Python, caption={Assertion to check that the mean of the first 10 observations of the loss is higher than the mean of the last 10 observations. In other words, the assertion checks if the loss function is converging to an optimal minima.}, label={lst:loss}]
-assert np.mean(train_history[:10], axis=0)[1] > np.mean(train_history[-10:], axis=0)[1], "The model didn't converge."
-\end{lstlisting}
+\subsubsection{Data Validation}
 
-In contrast to the assertions presented in Table~\ref{tab:compare-op-asserts}, Listing~\ref{lst:loss} presents an assertion that ensures that the model performs well, without using a magic threshold. The assertion checks if the mean of the first 10 observations of the loss is higher compared to the mean of the last 10 observations. In other words, the assertion ensures that the loss of the model decreased after training, and that the model was able to ``learn'' from the training set. The assertion is derived from the visualisation presented in Figure~\ref{fig:loss}, which shows the loss of the model over the training epochs.
 
-\begin{figure}
-  \subcaptionbox{Histogram showing the distribution of a feature before and after scaling.\label{fig:scale}}{\includegraphics[width=\linewidth]{../catalogue/select-65a.png}}
-  \subcaptionbox{Histogram showing the distribution of a feature before and after normalisation.\label{fig:normal}}{\includegraphics[width=\linewidth]{../catalogue/select-65b.png}}
-  \caption{Visualisation of data before and after various data pre-processing techniques.}
-  \label{fig:data-pre-process}
-\end{figure}
+\begin{longtable}{@{} m{0.05\textwidth} m{0.4\textwidth} m{0.4\textwidth} @{}}
+  \caption{VA pairs used for data validation.} \\
+  \toprule
+  \emph{\textbf{Key}} &
+  \emph{\textbf{Visual Output}} &
+  \emph{\textbf{Assertion}}\\
+  \midrule
+  \endfirsthead
 
-\begin{lstlisting}[language=Python, caption={Assertion to check that the mix and max of a feature fall within specified threshold derived from the visualisation presented in Figure~\ref{fig:scale}.}, label={lst:scale}]
-assert scaled_data[scaled_data.argmax()] <= 1
-assert scaled_data[scaled_data.argmix()] >= 0
-\end{lstlisting}
+  \caption[]{VA pairs used for data validation (continued).} \\
+  \toprule
+  \emph{\textbf{Key}} &
+  \emph{\textbf{Visual Output}} &
+  \emph{\textbf{Assertion}}\\
+  \midrule
+  \endhead
 
-\begin{lstlisting}[language=Python, caption={Similar premise as Listing~\ref{lst:scale}, however this assertion is based on Figure~\ref{fig:normal}.}, label={lst:normal}]
-assert normalized_data[normalized_data.argmax()] < 10
-assert normalized_data[normalized_data.argmin()] > -7
-\end{lstlisting}
+  \midrule
+  \endfoot
 
-Visualisations in Figure~\ref{fig:data-pre-process} were obtained from a notebook that presents a tutorial on scaling and normalization---two common data pre-processing techniques in ML. The visualisations show a comparison of the data before and after each pre-processing technique is applied to a feature from the dataset. The author performs a visual check, by comparing the distribution of the data before and after applying the pre-processing technique, using a histogram.
+  \bottomrule
+  \endlastfoot
 
-Listing~\ref{lst:scale} and~\ref{lst:normal} show the assertions that were defined below Figure~\ref{fig:scale} and~\ref{fig:normal} respectively. Both assertions check that the min and max of the feature is within the expected bounds after applying the respective pre-processing technique. In contrast to assertions presented in Table~\ref{tab:compare-op-asserts}, it is clear that the thresholds are derived from the corresponding visualisations.
+  VA30 &
+  \includegraphics[width=\linewidth]{va30.png} &
+  \lstinline[]$assert scaled_data[scaled_data.argmax()] <= 1$\\
 
-\begin{lstlisting}[language=Python, caption={Assertion to check that an augmented image is different from the original.}, label={lst:no-comp-magic}]
-assert not np.allclose(x_aug, x_original)
-\end{lstlisting}
+  V35 &
+  \includegraphics[width=\linewidth]{va35.png} &
+  \lstinline[]$assert(all(df_lower['inspection_score'] > 75))$\\
 
-22\% of the assertions did not use a comparison operator, nor a magic threshold. Listing~\ref{lst:no-comp-magic} highlights such an assertion which is obtained from a notebook that performs image augmentation using Weighted K-Nearest Neighbours. The assertion compares the matrix representation of two images, and checks that the augmented image is different from the original.
+  V57 &
+  \includegraphics[width=\linewidth]{va57.png} &
+  \lstinline[]$assert kstest(data_transformed[:, feature], 'norm').statistic < 1e-2$\\
 
-Most notebooks examined in this study do not use any external testing libraries. 227 or 84\% of the VA pairs use the low-level Python \texttt{assert} statement to define the test directly. This aligns with our observations that majority of the assertions compare the value of a performance metric against a user defined threshold, and do not require the use of a specialised testing library. 
+  VA62 &
+  \includegraphics[width=\linewidth]{va62.png} &
+  \lstinline[]$assert not np.allclose(x_aug, x_original)$\\
 
-This study found 42 VA pairs where an external testing library was used. Listing~\ref{lst:np-almost-equal} shows an assertion that uses the \texttt{assert\_almost\_equal} method from the \texttt{numpy.testing} module. The assertion checks if the loss of the model is similar to the specified value, up to a desired precision. Due to the stochastic nature of ML, results obtained from two separate development cycles will slightly differ. The assertion presented in Listing~\ref{lst:np-almost-equal} is found to be robust towards such perturbations and will only fail if there is a significant change in the performance of the model.
+\end{longtable}\label{tab:va-data-validatio}
 
-\begin{lstlisting}[language=Python, caption={Assertion to check that the loss of the model is similar to the specified value.}, label={lst:np-almost-equal}]
-ans4 = compute_loss(X_expanded, y, w)
-np.testing.assert_almost_equal(ans4, 0.3042764) 
-\end{lstlisting}
+The VA pairs in Table~\ref{tab:va-data-validatio} collectively illustrate various data validation techniques essential for ensuring the integrity and quality of data used in ML models. 
 
-\subsubsection{Do the assertions capture all the information obtained from the corresponding visualisation?}
-We performed an in-depth analysis of 34 unique VA pairs. This was conducted by reading and understanding the entire contents of the notebooks in a top-down order. During the analysis, several data points such as the primary objective of the notebook, the type of ML problem, the type of ML model and the type of data were captured. We find several instances of VA pairs where the assertion is unable to capture all the information obtained from the visualisation.
+The visualization in VA30 consists of two histograms comparing the original and scaled distributions of an exponential dataset. The left plot shows the distribution of the original data, while the right plot displays the distribution after scaling. The scaling process adjusts the data to fall within a specified range of 0 and 1. The corresponding assertion checks whether the maximum value in the scaled data is less than or equal to 1, ensuring that the scaling procedure was applied correctly.
 
-\begin{figure}
-  \subcaptionbox{Visualisation of the decision boundary of a SVM with a linear kernel.\label{fig:svm-linear}}{\includegraphics[width=0.49\linewidth]{../catalogue/select-04-linear.png}}
-  \hfill
-  \subcaptionbox{Visualisation of the decision boundary of a SVM with a RBF kernel.\label{fig:svm-rbf}}{\includegraphics[width=0.49\linewidth]{../catalogue/select-04-rbf.png}}
-  \caption{Visualisation of the decision boundary of a SVM trained using different kernels.}\label{fig:svm}
-\end{figure}
+The visualization in VA35 shows the distribution of health inspection scores in areas with the bottom 25\% and top 25\% of median household income. The blue bars represent areas with the top 25\% median household income, while the orange bars represent areas with the bottom 25\%. This comparison helps identify any disparities in health inspection scores based on income levels. The corresponding assertion checks that all inspection scores in the lower-income areas are above 75, ensuring that the data reflects a minimum standard of health inspection scores in these areas.
 
-\begin{lstlisting}[language=Python, caption={Assertion on the accuracy of the ML model.}, label={lst:svm}]
-assert accuracy_score(y_test, pred) > 0.95
-\end{lstlisting}
+The visualization in VA57 shows a histogram of transformed data after it has been normalised. The corresponding assertion checks that the Kolmogorov-Smirnov (KS) test statistic for the transformed data is less than $1 \times 10^{-2}$, ensuring that the data closely follows a normal distribution.
 
-Figure~\ref{fig:svm} and Listing~\ref{lst:svm} present one such pair. Visualisations~\ref{fig:svm-linear} and~\ref{fig:svm-rbf} are obtained from a notebook that performs binary classification using Support Vector Machines (SVM). The visualisations show the two classes present in the training set, and the decision boundary of the model when trained first using a linear kernel and later with a RBF kernel.
+The visualization in VA62 displays a heatmap of an augmented dataset generated using a weighted k-nearest-neighbors (k-NN) method. This heatmap helps in visualizing the differences and similarities between the original and augmented data. The corresponding assertion checks that the augmented data \lstinline{x_aug} is not nearly identical to the original data \lstinline{x_original}, ensuring that the data augmentation process has introduced sufficient variability.
 
-The visualisations contain several useful information that can be used to test and debug ML models. For instance, using Visualisation~\ref{fig:svm}, ML practitioners can get a visual understanding of how well the model is able to classify the two classes in the dataset. Additionally, observing the complexity of the decision boundary is a quick way to determine if the model is under or overfitting the data. The visualisation also allows comparison of different ML models or variants, to iteratively find a model and hyper-parameters that best fits the underlying training data. In this case for instance, the author of the notebook first trained the SVM with a linear kernel. And upon realising that the data is not linearly separable, chose the RBF kernel.
-
-Listing~\ref{lst:svm} shows the corresponding assertion that was defined below the visualisations. The assertion checks if the model accuracy is above a threshold specified by the author. The assertion however, is only able to capture the information pertaining to the performance of the model. While the rest of the information that is gained from the qualitative assessment using visualisation is lost.
-
-\begin{lstlisting}[language=Python, caption={Assertion to check that the Coefficient of Determination ($R^2$) is higher than the specified threshold.}, label={lst:r2}]
-r2_gru = r2_score(y_test, y_pred)
-assert r2_gru > 0.6
-\end{lstlisting}
-
-\begin{figure}
-  \includegraphics[width=\linewidth]{../catalogue/select-332a.png}
-  \caption{Scatter plot of the actual and predicted labels of a dataset. The visualisation shows that there is a linear relationship between the true and predicted labels.}\label{fig:r2}
-\end{figure}
-
-Figure~\ref{fig:r2} shows a visualisation obtained from a notebook that trains a RNN to predict the levels of Nitrogen Dioxide ($NO_2$) in the next 24 hour window. The visualisation shows a scatter plot of the real and predicted values of $NO_2$ from the test set. A linear relationship between the ground truth and predictions is observed, indicating that the model was able to learn certain patterns from the training data. The spread of $y_{pred}$ at any given $y_{true}$ is wide. For example, at $y_{true} = 80$, the prediction can range anywhere between 30 and 120. This indicates that the model was not able to fit the training data that well, and can be fine-tuned.
-
-Listing~\ref{lst:r2} presents the corresponding analytical test which was defined below Figure~\ref{fig:r2}. The \texttt{r2\_score} method fits a linear regression model on the true and predicted labels and computes the Coefficient of Determination ($R^2$) based on the residuals of the linear regression model. The assertion checks that the $R^2$ score of the model is always higher than $0.6$. Since the best score possible is $1.0$, the specified threshold indicates that the author wants to ensure that $y_{pred}$ and $y_{true}$ are always linearly related to each other.
-
-Similar to Figure~\ref{fig:svm}, the visualisation in Figure~\ref{fig:r2} allows ML practitioners to visually assess if the model is under or overfitting the training data. If the spread of $y_{pred}$ is wide, it indicates that the model is under-fitting. In contrast, if the spread is very close to the diagonal line, it indicates that the model is most likely overfitting. The visualisation can also be used to verify if there are any outliers in the predictions, for a given input. The assertion in Listing~\ref{lst:r2} however, does not capture such information. It can only check if the performance of the model is better than a specific threshold.
-
-\begin{lstlisting}[language=Python, caption={Assertion to check that each feature in a dataset is normal using the Kolmogorov-Smirnov test for goodness of fit from the scipy library.}, label={lst:kstest}]
-for feature in range(data_transformed.shape[1]):
-  assert kstest(data_transformed[:, feature], 'norm').statistic < 1e-2
-\end{lstlisting}
-
-\begin{figure}
-  \includegraphics[width=\linewidth]{../catalogue/select-152a.png}
-  \caption{Visualisation of the distribution of a feature from the dataset.}\label{fig:kstest}
-\end{figure}
-
-In contrast to Listing~\ref{lst:svm} and Listing~\ref{lst:r2}, Figure~\ref{fig:kstest} and Listing~\ref{lst:kstest} present a VA pair where the assertion captures all the information obtained from the visualisation.
-
-The notebook author normalises the training data and performs a visual check using the visualisation presented in Figure~\ref{fig:kstest}. The visualisation shows a bell-shaped curve thus indicating that the data is normal and that the transformation was successful. The assertion in Listing~\ref{lst:kstest} formally verifies that all features in the dataset have a normal distribution. The assertion iterates through each column in the dataset and performs the Kolmogorov-Smirnov test to check that the distribution of the feature is similar to that of a normal distribution.
-
-Checking the distribution of the training data is a very common task performed during the data understanding or exploratory data analysis phase of the ML development lifecycle. Several ML models assume normality in the underlying training data. However, in a production environment where ML models are continually trained using new batches of data, this assumption of normality may not always hold. The formal assertion presented in Listing~\ref{lst:kstest} makes this assumption explicit. And causes the automated ML pipeline to fail if our expectations regarding the data are no longer satisfied.
+These validations are crucial for confirming that data preprocessing techniques such as scaling, transformation, and augmentation have been correctly applied. Ensuring the integrity and quality of the data is essential for the subsequent steps in the machine learning pipeline, as it directly impacts the robustness, reliability, and generalization of the models developed. By validating these steps, we can maintain high standards of data quality and model performance, which are fundamental for accurate and meaningful analyses.
 
 \section{Implications}\label{sec:discuss}
 % NOTE: from ICST paper, need to integrate...
