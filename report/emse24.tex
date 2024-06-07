@@ -145,201 +145,38 @@ Machine Learning Development Lifecycle (MLDL) encompasses multifaceted series of
 
 % The feedback-driven style of development in MLDL resembles principles of Agile software development and the Cross-Industry Standard Process for Data Mining (CRISP-DM). Agile methodologies emphasize continuous iteration of development and testing throughout the software lifecycle. In Agile, software is developed in incremental, rapid cycles resulting in small, incremental releases with each release building on previous functionality. Each iteration is reviewed and critiqued by the project team, which includes representatives of the project's various stakeholders. 
 
+The MLDL is fundamentally iterative, closely resembling Agile software engineering principles which emphasize incorporating early feedback and working in small, manageable iterations. Similarly, CRISP-DM---the dominant process model in data mining---outlines a cyclical process that evolves from understanding the business objectives and data, through data preparation, modeling, and evaluation, to deployment and monitoring. Both systems advocate for a dynamic, iterative approach that enhances adaptability and effectiveness in dealing with complex, changing systems like those encountered in ML projects~\cite{betz2018managing,martinez-plumed2021crisp-dm}.
 
-The MLDL is fundamentally iterative, closely resembling Agile software engineering principles which emphasize incorporating early feedback and working in small, manageable iterations. Similarly, CRISP-DM---the dominant process model in data mining---outlines a cyclical process that evolves from understanding the business objectives and data, through data preparation, modeling, and evaluation, to deployment and monitoring. Both systems advocate for a dynamic, iterative approach that enhances adaptability and effectiveness in dealing with complex, changing systems like those encountered in ML projects.
+Computational notebooks---specifically Jupyter notebooks~\footnote{https://jupyter.org/}---have been ubiquitously adopted by the ML community for developing ML enabled systems~\cite{pimentel2019large-scale,quaranta2021kgtorrent,psallidas2019data,perkel2018why}. Jupyter notebooks provide an interactive computing environment that allow users to break complex code into smaller, more manageable chunks. Each notebook is composed of a series of code cells, which can be executed independently in a Read-Eval-Print Loop (REPL) style of development. This REPL approach allows users to write a piece of code, run it, and immediately see the results thus facilitating an incremental and iterative style of software development. This modular structure of notebooks provides users the flexibility to experiment with different approaches and algorithms. Users can test hypotheses, debug issues, and make incremental changes with immediate feedback. The ability to visualize data and results inline and document the process in a narrative form further enhances their utility~\cite{kery2018story,head2019managing,rule2018exploration,chattopadhyay2020whats}.
 
-Jupyter notebooks provide an interactive computing environment that allow users to break complex code into smaller, more manageable chunks. Each notebook is composed of a series of code cells, which can be executed independently in a Read-Eval-Print Loop (REPL) style of development. This REPL approach allows users to write a piece of code, run it, and immediately see the results thus facilitating an incremental and iterative style of software development. This modular structure of notebooks provides users the flexibility to experiment with different approaches and algorithms. Users can test hypotheses, debug issues, and make incremental changes with immediate feedback. The ability to visualize data and results inline and document the process in a narrative form further enhances their utility.
+Feedback is crucial for making important decisions throughout the MLDL. Practitioners rely on the output of cells to determine the appropriate data preprocessing techniques, create new features to boost model performance, and select specific hyperparameters. However, these decisions are often based on the conditions present when the model was initially created. Visual outputs in particular, are open to interpretation~\cite{heer2010tour}. The viewer's background and expertise significantly influence how they understand and draw conclusions from visual data. 
+For instance, interpreting a histogram requires knowledge of various distribution types, which someone without statistical training might not possess. Additionally, physical limitations such as color blindness can impede accurate interpretation if visualizations are not designed with accessibility in mind. As data, personnel, and system environments inevitably change, undocumented decisions can lead to accumulation of technical debt. This not only prolongs time required for debugging and troubleshooting, but also incurs additional costs and resource expenditures~\cite{sculley2015hidden,amershi2019software,sambasivan2021everyone}.
 
-% It aligns perfectly with the feedback-driven nature of machine learning development, as it supports rapid prototyping and iterative refinement of models.
+In software engineering, tests are employed to document the expected behavior of code. Failing tests indicate when these expectations are no longer met. Similarly, assertions in Jupyter notebooks can serve as documentation for the decisions made during model development. Embedding assertions in the notebook can ensure that any deviations from expected data conditions or model performance are promptly detected, thus maintaining the integrity of the ML pipeline.
 
-% TODO: back the TDD angle not only from scientific literature but also general methodologies used and adopted by the software engineering community (Xtreme programming, Kent Beck)
+To understand the role of feedback when developing ML pipelines in Jupyter notebooks, we conduct an empirical study of the outputs of code cells in Jupyter notebooks. Next, we conduct an empirical study of Python assertions written in Jupyter notebooks to understand how they are used when developing ML pipelines in notebooks. Finally, we investigate the intersection of outputs and assertions by conducting an empirical analysis of assertions that document decisions made from the outputs of code cells. In particular, we focus on assertions derived from visualisations since they pose a higher risk of technical debt.
 
-The predominant form of obtaining feedback in Jupyter notebooks is through the output of code cells. These outputs can come from three main sources in the source code--print statements, the last statement in code cells, and statements that create visualizations. Building on the principles from software engineering, we also recognize assert statements as a valuable form of feedback for writing ML code. This idea draws from prior literature in software engineering that connects test-driven development (TDD) as a form of developing software using feedback.
-
-% TODO cite scully and breck and the data validation papers here...
-% TODO: why are we doing this? how is the prior work lacking? why is this important?
-
-In Jupyter notebooks, feedback is crucial for making important decisions throughout the machine learning development lifecycle. Practitioners rely on the output of cells to determine the appropriate data preprocessing techniques, create new features to boost model performance, and select specific hyperparameters. However, these decisions are often based on the conditions present when the model was initially created. As data, personnel, and system environments inevitably change, undocumented decisions can lead to significant technical debt. This not only prolongs debugging and troubleshooting times but also incurs additional costs and resource expenditures.
-
-In software engineering, tests are employed to document the expected behavior of code. Failing tests indicate when these expectations are no longer met. Similarly, assertions in Jupyter notebooks can serve as documentation for the decisions made during model development. By embedding assertions, developers ensure that any deviations from expected data conditions or model performance are promptly detected, thus maintaining the integrity of the ML pipeline.
-
-% TODO introduce our results and key findings...
-
-% and then to tie the two things together: are assertions derived from the output of a cell? we still need to find a way to justify why we only look at assertions derived from visualisations specifically
-
-% By analyzing the outputs and assertions in Jupyter notebooks, we aim to provide insights into the feedback mechanisms used in machine learning development, ultimately proposing strategies to improve the efficiency and robustness of this iterative process.
+% TODO: contributions?
+% TODO: key observations?
 
 % Visualisations are used throughout the ml development lifecycle to test various properties of the ml system. in the early stages of the ml development lifecycle, visualisations are extensively used to make sense of the data and verify its statistical properties. during the model development phase, visualisations are used to summarise metrics, contrast different learning algorithms and iteratively fine-tune ml models. once the model is deployed in production, visualisations are used to continually monitor their performance and trigger a new training cycle once their performance drops below a certain threshold~\cite{yuan2021survey,hohman2019visual,amershi2015modeltracker,wexler2020if}.
-
-% building ml systems is highly iterative and experimental. information gained from ml visualisations is used to make design and implementation decisions for the following steps of the ml pipeline. for instance, we may visualise the distribution of our training data and find that it is normally distributed. based on this information, we may opt for a linear regression model which assumes normality in the underlying data. however, such expectations regarding the data may be violated once the ml system is deployed in production, where the data constantly changes as a reflect of the real world~\cite{amershi2019software,sambasivan2021everyone,breck2019data,baylor2017tfx}.
-
-% implicit expectations obtained from visualisations must therefore be translated to analytical tests that fail once our expectations regarding the ml system are no longer satisfied.
-
-% in contrast to prior work, we approach ml testing from a new perspective. we conduct an empirical analysis of computational notebooks obtained from github, to understand the process of testing ml systems in practice. in particular, we focus on the combination of a qualitative form of testing (using visualisations) and a quantitative form of testing (using analytical assertions). the research questions along with the contributions of this paper are as follows.
 
 % our observations indicate that formulating analytical assertions from visualisations is an emerging testing technique. however, the assertions found in this study often do not reflect the information obtained from their visual counter-part. this study finds the need for automated tools that can reduce the manual effort necessary to validate visualisations in ml systems. and help ml practitioners to formulate better analytical assertions from visualisations.
 
 % the replication package for this study is made public on figshare\footnote{the replication package can be found at this url: https://figshare.com/s/9347228011999cba29f5}.
 
-\section{Preliminaries}\label{sec:prelim}
+\section{Background}\label{sec:background}
 
-This section summarises prior scientific work that has been done in ML
-Testing, computational notebooks and visual analytics. The section
-concludes with an overview of technical knowledge required for this
-paper.
+\subsection{Jupyter Notebooks}
 
-\subsection{ML Testing}\label{sec:ml-testing}
+% NOTE use background section from pimentel2019large-scale
 
-Testing ML enabled software systems poses more challenges compared to
-their traditional counter part. While traditional software systems
-mature through change in their codebase, ML enabled systems
-additionally experience change in the training data and the machine
-learning
-model~\cite{sculley2015hidden,amershi2019software,sambasivan2021everyone}.
-With ML being adopted into safety-critical domains that can affect
-human lives, ensuring that ML systems are correct, robust to data
-perturbations and not biased by race, colour or gender is of paramount
-importance. Existing scientific literature on ML testing broadly
-focuses on two aspects. First, on functional properties such as
-correctness and robustness of the model towards unseen data. And
-second, on non-functional properties such as fairness,
-interpretability and
-privacy~\cite{zhang2020machine,mehrabi2021survey,chen2022fairness}.
+% describe the structure of jupyter notebooks (anatomy: cells, outputs); no need to go into too much technical detail regarding the internal JSON structure, just mention that the data is represented in a standardised structure internally
 
-To test the correctness of ML models, several improvements over
-existing test adequacy metrics have been proposed. Tools such as
-\textit{DeepExplore} and \textit{DeepGauge} propose new test adequacy
-metrics such as neuron coverage adapted for ML enabled software
-systems~\cite{pei2017deepexplore, ma2018deepgauge,
-  gerasimou2020importance}. Formal verification methods have also been
-proposed that try to provide formal guarantee of robustness against
-adversarial examples. Such methods however are only feasible for
-statistical ML models and become computationally expensive for more
-complex models such as deep neural networks~\cite{zhu2021deepmemory,
-  baluta2021scalable}. Several works have been conducted on generating
-and detecting adversarial inputs for ML models. Data augmentation
-techniques based on fuzzing, search based software testing and
-mutation testing have been proposed to generate adversarial examples
-that can be used during model training to improve its
-robustness~\cite{braiek2019deepevolution, gao2020fuzz, wang2021robot,
-  zhang2020white}. It is however not possible to include all
-variations of adversarial examples into the training data. Thus,
-methods have been proposed to detect adversarial inputs during
-runtime~\cite{xiao2021self, wang2020dissector, wang2019adversarial,
-  berend2020cats}.
+\subsection{Python Abstract Syntax Tree}
 
-In contrast to existing scientific contributions, we conduct a
-large-scale empirical analysis of Jupyter Notebooks to understand the
-process of testing ML systems. Specifically, we focus on how
-visualisations are used to test specific properties of ML systems. We
-further investigate how frequently analytical tests are formulated
-based on the information gained from the visualisations.
-
-\subsection{Computational Notebooks and Software Engineering}\label{sec:notebooks}
-
-Computational notebooks have been ubiquitously adopted by the machine
-learning community for developing ML enabled systems. Although
-originally intended to promote reproducible software, computational
-notebooks are far from being reproducible due to lack of software
-engineering best practices such as separation of concern, testing and
-versioning~\cite{pimentel2019large,wang2020better,chattopadhyay2020wrong}.
-
-\emph{Psallidas et al} provide an overview of the evolving landscape
-of computational notebooks by analysing six million Python notebooks,
-two million enterprise Data Science (DS) pipelines, source code and
-metadata from over 900 releases of 12 important DS libraries. Their
-findings can be used by system builders for improving DS tools and
-also by DS practitioners to understand the current trends in
-technologies they should focus on. \emph{Pimentel et al} mined 1.4
-million notebooks from Github to conduct an empirical study on the
-coding practices in computational notebooks. Based on their analysis,
-the authors propose guidelines on improving reproducibility of
-computational notebooks. To enable future research on computational
-notebooks, \emph{Quaranta et al} mine Kaggle and present
-\textit{KGTorrent}, a public dataset consisting of approximately 2.5
-million Jupyter notebooks written in Python. The dataset also contains
-a relational database dump of metadata regarding publicly available
-notebooks on Kaggle.
-
-Studies with human subjects have been conducted to gain a deeper
-understanding of the challenges faced by ML practitioners when
-developing ML models inside notebooks. The results indicate that ML
-practitioners work in a highly iterative fashion, often experimenting
-with multiple strategies to analyse the data or produce meaningful
-visualisations~\cite{kandel2012enterprise, kery2018story,
-  liu2019understanding, chattopadhyay2020wrong}. Studies have also
-been conducted to understand how practitioners generate, evaluate and
-manage alternative hypothesis, visual designs, methods, tools,
-algorithms and data sources to arrive at the final
-implementation~\cite{liu2019understanding,kandel2012enterprise}. The
-findings from these studies can be used as guidelines for improving
-existing notebook technologies or designing new ones.
-
-To manage and prune multiple versions of code that accumulate over
-time when developing in notebooks, \emph{Head et al} propose a code
-gathering tool that allows practitioners to review and only keep the
-relevant version of code. Other tools such as \textit{WrangleDoc} and
-\textit{VizSmith} have also been proposed to aid ML practitioners when
-working within computational notebooks~\cite{yang2021subtle,
-  bavishi2021vizsmith}.
-
-Jupyter notebooks have been widely adopted by the DS and ML
-communities to develop ML
-pipelines~\cite{wang2020assessing,pimentel2019large,quaranta2021kgtorrent}.
-Computational notebooks provide a rich source of data in the form of
-natural text, code and visualisations. Computational notebooks also
-allow ML practitioners to present the knowledge gained from the
-analysis in a narrative that can be shared with
-others~\cite{rule2018exploration}. This study leverages the
-computational narrative present within notebooks to identify
-visualisations and assertions that are semantically linked to each
-other.
-
-\subsection{Visualisations and Machine Learning}\label{sec:visualisations}
-
-As ML augment software systems in safety-critical domains, emphasis
-has been put into explainability of ML models. ML models and the
-underlying data is complex and multi-dimensional. To combat the
-``curse of dimensionality'', visual analytics has been widely adopted
-by the ML community to understand the data and the internal workings
-of ML models~\cite{yuan2021survey,hohman2019visual,wexler2020if}.
-
-Prior studies have been conducted to understand how visual analytics
-techniques are currently being used in ML. \emph{Yuan et al} conduct a
-systematic review of 259 papers and propose a taxonomy of visual
-analytics techniques for ML. \emph{Hohman et al} conduct a survey of
-visual analytics techniques for Deep Learning Models. The findings of
-the study indicate that visual analytics has been widely adopted in ML
-for model explanation, interpretation, debugging and improvement.
-
-Several tools have been proposed by the visual analytics research
-community to aid practitioners in understanding how their ML models
-operate. \emph{Wexler et al} propose \textit{What-If}, a visual
-analytics tool to explore alternative hypotheses, generate
-counterfactual reasoning, investigate decision boundaries of the model
-and how change in data affects the model predictions. To reduce the
-cognitive load of ML practitioners during model building phase,
-\emph{Amershi et al} propose \textit{ModelTracker}. Given a trained
-model and a sample dataset, ModelTracker presents all the information
-in traditional summary statistics along with the performance of the
-model.
-
-\textit{ESCAPE}, \textit{GAM Coach}, \textit{Angler} and
-\textit{Drava} are a few other tools that have been proposed to handle
-specialised use-cases such as identifying systematic errors in ML
-models, generating counterfactual explanations for Generalised
-Additive Models, prioritising machine translation model improvements
-and relating human concepts with semantic dimensions extracted by ML
-models during disentangled representation learning\cite{ahn2023escape,
-  wang2023gam, robertson2023angler, wang2023drava}.
-
-In contrast to prior work which propose dedicated visual analytics
-tools, this study focuses on visualisations within computational
-notebooks. We focus on visualisations produced by AI practitioners
-using Python libraries (such as Matplotlib or Seaborn). Additional
-context provided by surrounding code and markdown cells are used to
-understand the motivation for creating the visualisation and the
-information gained from it.
+% explain the high-level way in which ast module in python works
+% explain the anatomy of assert statements and the more complicated way in which asts for print statements are represented in an AST
 
 \section{Study Design}
 
@@ -373,6 +210,8 @@ We undertook an exploratory analysis of the collected data to formulate our rese
 \subsection{Data Collection}\label{sec:data-collect}
 
 % TODO we need to explain why we only focus on the last statement of code cells (when visualisation code written anywhere produces an output); this is much harder to parse: we need to construct an exhaustive list of python visualisation libraries; people can use any naming convension to...
+
+% The predominant form of obtaining feedback, while developing ML pipelines in Jupyter notebooks, is through the output of code cells. These outputs can come from three main sources in the source code--print statements, the last statement in code cells, and statements that create visualizations. Building on the principles from software engineering, we also recognize assert statements as a valuable form of feedback for writing ML code. This idea draws from prior literature in software engineering that connects test-driven development (TDD) as a form of developing software using feedback.
 
 \begin{figure}
 \centering
@@ -1419,7 +1258,141 @@ Our results show a clear need for developing ML-specific testing tools. Such too
 
 \paragraph{\textbf{For General Notebook Users}} Awareness of software engineering best practices, including the use of assertions, is crucial for all users of Jupyter notebooks. Assertions serve as an executable form of documentation, capturing the critical assumptions and decisions made during the development process. By adopting assertions, users can ensure that their notebooks are more robust, maintainable, and reproducible. This practice helps in maintaining consistency and reliability, especially in collaborative projects where multiple users might work on the same notebook, ensuring that the assumptions and validations are transparent and consistently applied.
 
+\section{Threats to Validity}\label{sec:threats}
+TODO
+
+\section{Related Work}\label{sec:related}
+
+This section summarises prior scientific work that has been done in ML
+Testing, computational notebooks and visual analytics. The section
+concludes with an overview of technical knowledge required for this
+paper.
+
+\subsection{Feedback in Software Engineering and Machine Learning}
+
+% the role of early adoption of feedback when developing software, agile
+% similar concept exists in ML: crisp-dm, mldl, sculley, amershi, sambasivan
+% feedback from one part of the pipeline feeds into another, 
+
+\subsection{Computational Notebooks and Software Engineering}\label{sec:notebooks}
+
+% start with a very quick review of the workflow: REPL style of development; break code into smaller chunks; faster feedack; iterative style of development
+% link to the existing work on notebooks from chi: design, benefits and challenges
+% then go into the SE side of software written in notebooks: code quality
+% adoption of notebooks by ML community
+
+% start with a quick introduction to the anatomy of a computational notebook: code is broken down into smaller chunks represented as cells, cells can contain code (which are executable and immediately display the result of the execution), or markdown cells used for the purpose of documenting or creating a narrative for collaborative work.
+
+% the move on to the benefits of this style of coding: the ML pipeline contains several components, which can be broken down into smaller, more manageable chunks. These can be individually developed incorporating the rapid feedback provided from the REPL style of coding.
+
+% then summarise the pain-points of working in notebooks: use chattopadhyay2020whats
+Computational notebooks have been ubiquitously adopted by the ML community for developing ML enabled systems. Although originally intended to promote reproducible software, computational notebooks are far from being reproducible due to lack of software engineering best practices such as separation of concern, testing, dependenvcy management and versioning~\cite{pimentel2019large-scale,wang2020better,chattopadhyay2020whats}.
+
+\emph{Psallidas et al}~\cite{psallidas2019data} provide an overview of the evolving landscape of computational notebooks by analysing six million Python notebooks, two million enterprise Data Science (DS) pipelines, source code and metadata from over 900 releases of 12 important DS libraries. Their findings can be used by system builders for improving DS tools and also by DS practitioners to understand the current trends in technologies they should focus on. \emph{Pimentel et al}~\cite{pimentel2019large-scale} mined 1.4 million notebooks from Github to conduct an empirical study on the coding practices in computational notebooks. Based on their analysis, the authors propose guidelines on improving reproducibility of computational notebooks. To enable future research on computational notebooks, \emph{Quaranta et al}~\cite{quaranta2021kgtorrent} mine Kaggle and present \textit{KGTorrent}, a public dataset consisting of approximately 2.5 million Jupyter notebooks written in Python. The dataset also contains a relational database dump of metadata regarding publicly available notebooks on Kaggle.
+
+Studies with human subjects have been conducted to gain a deeper understanding of the challenges faced by ML practitioners when developing ML models inside notebooks. The results indicate that ML practitioners work in a highly iterative fashion, often experimenting with multiple strategies to analyse the data or produce meaningful visualisations~\cite{kandel2012enterprise, kery2018story, liu2019understanding, chattopadhyay2020whats}. Studies have also been conducted to understand how practitioners generate, evaluate and manage alternative hypothesis, visual designs, methods, tools, algorithms and data sources to arrive at the final implementation~\cite{liu2019understanding,kandel2012enterprise}. The findings from these studies can be used as guidelines for improving existing notebook technologies or designing new ones.
+
+To manage and prune multiple versions of code that accumulate over time when developing in notebooks, \emph{Head et al} propose a code gathering tool that allows practitioners to review and only keep the relevant version of code. Other tools such as \textit{WrangleDoc} and \textit{VizSmith} have also been proposed to aid ML practitioners when working within computational notebooks~\cite{yang2021subtle, bavishi2021vizsmith}.
+
+Jupyter notebooks have been widely adopted by the DS and ML communities to develop ML pipelines~\cite{wang2020assessing,pimentel2019large,quaranta2021kgtorrent}. Computational notebooks provide a rich source of data in the form of natural text, code and visualisations. Computational notebooks also allow ML practitioners to present the knowledge gained from the analysis in a narrative that can be shared with others~\cite{rule2018exploration}. This study leverages the computational narrative present within notebooks to identify visualisations and assertions that are semantically linked to each other.
+
+\subsection{ML Testing}\label{sec:ml-testing}
+
+Testing ML enabled software systems poses more challenges compared to
+their traditional counter part. While traditional software systems
+mature through change in their codebase, ML enabled systems
+additionally experience change in the training data and the machine
+learning
+model~\cite{sculley2015hidden,amershi2019software,sambasivan2021everyone}.
+With ML being adopted into safety-critical domains that can affect
+human lives, ensuring that ML systems are correct, robust to data
+perturbations and not biased by race, colour or gender is of paramount
+importance. Existing scientific literature on ML testing broadly
+focuses on two aspects. First, on functional properties such as
+correctness and robustness of the model towards unseen data. And
+second, on non-functional properties such as fairness,
+interpretability and
+privacy~\cite{zhang2020machine,mehrabi2021survey,chen2022fairness}.
+
+To test the correctness of ML models, several improvements over
+existing test adequacy metrics have been proposed. Tools such as
+\textit{DeepExplore} and \textit{DeepGauge} propose new test adequacy
+metrics such as neuron coverage adapted for ML enabled software
+systems~\cite{pei2017deepexplore, ma2018deepgauge,
+  gerasimou2020importance}. Formal verification methods have also been
+proposed that try to provide formal guarantee of robustness against
+adversarial examples. Such methods however are only feasible for
+statistical ML models and become computationally expensive for more
+complex models such as deep neural networks~\cite{zhu2021deepmemory,
+  baluta2021scalable}. Several works have been conducted on generating
+and detecting adversarial inputs for ML models. Data augmentation
+techniques based on fuzzing, search based software testing and
+mutation testing have been proposed to generate adversarial examples
+that can be used during model training to improve its
+robustness~\cite{braiek2019deepevolution, gao2020fuzz, wang2021robot,
+  zhang2020white}. It is however not possible to include all
+variations of adversarial examples into the training data. Thus,
+methods have been proposed to detect adversarial inputs during
+runtime~\cite{xiao2021self, wang2020dissector, wang2019adversarial,
+  berend2020cats}.
+
+In contrast to existing scientific contributions, we conduct a
+large-scale empirical analysis of Jupyter Notebooks to understand the
+process of testing ML systems. Specifically, we focus on how
+visualisations are used to test specific properties of ML systems. We
+further investigate how frequently analytical tests are formulated
+based on the information gained from the visualisations.
+
+\subsection{Visualisations and Machine Learning}\label{sec:visualisations}
+
+As ML augment software systems in safety-critical domains, emphasis
+has been put into explainability of ML models. ML models and the
+underlying data is complex and multi-dimensional. To combat the
+``curse of dimensionality'', visual analytics has been widely adopted
+by the ML community to understand the data and the internal workings
+of ML models~\cite{yuan2021survey,hohman2019visual,wexler2020if}.
+
+Prior studies have been conducted to understand how visual analytics
+techniques are currently being used in ML. \emph{Yuan et al} conduct a
+systematic review of 259 papers and propose a taxonomy of visual
+analytics techniques for ML. \emph{Hohman et al} conduct a survey of
+visual analytics techniques for Deep Learning Models. The findings of
+the study indicate that visual analytics has been widely adopted in ML
+for model explanation, interpretation, debugging and improvement.
+
+Several tools have been proposed by the visual analytics research
+community to aid practitioners in understanding how their ML models
+operate. \emph{Wexler et al} propose \textit{What-If}, a visual
+analytics tool to explore alternative hypotheses, generate
+counterfactual reasoning, investigate decision boundaries of the model
+and how change in data affects the model predictions. To reduce the
+cognitive load of ML practitioners during model building phase,
+\emph{Amershi et al} propose \textit{ModelTracker}. Given a trained
+model and a sample dataset, ModelTracker presents all the information
+in traditional summary statistics along with the performance of the
+model.
+
+\textit{ESCAPE}, \textit{GAM Coach}, \textit{Angler} and
+\textit{Drava} are a few other tools that have been proposed to handle
+specialised use-cases such as identifying systematic errors in ML
+models, generating counterfactual explanations for Generalised
+Additive Models, prioritising machine translation model improvements
+and relating human concepts with semantic dimensions extracted by ML
+models during disentangled representation learning\cite{ahn2023escape,
+  wang2023gam, robertson2023angler, wang2023drava}.
+
+In contrast to prior work which propose dedicated visual analytics
+tools, this study focuses on visualisations within computational
+notebooks. We focus on visualisations produced by AI practitioners
+using Python libraries (such as Matplotlib or Seaborn). Additional
+context provided by surrounding code and markdown cells are used to
+understand the motivation for creating the visualisation and the
+information gained from it.
+
 \section{Future Work}
+
+% NOTE: taxonomy of assertions mapping to V&V tasks in ML
+% NOTE: automated tool that adds assertions once the contents of the NB is finalised?
 
 \section{Conclusion}
 
