@@ -7,9 +7,13 @@ import os
 
 
 def ipynb_to_dataframe() -> pd.DataFrame:
-    with open(args.notebook) as f:
-        cells = json.load(f)["cells"]
-        df = pd.read_json(StringIO(json.dumps(cells)), orient="records")
+
+    try:
+        with open(args.notebook) as f:
+            cells = json.load(f)["cells"]
+            df = pd.read_json(StringIO(json.dumps(cells)), orient="records")
+    except:
+        df = pd.DataFrame()
 
     (df.empty or df.loc[df["cell_type"] == "code"].empty) and exit()
 
@@ -40,7 +44,7 @@ def get_outputs():
                 "source": cell.source,
                 "output_type": output["output_type"],
                 "text": None,
-                "image": None,
+                "has_image": None,
                 "has_html": None,
             }
 
@@ -49,7 +53,7 @@ def get_outputs():
 
             if output["output_type"] in ["display_data", "execute_result"]:
                 try:
-                    frame["image"] = output["data"]["image/png"]
+                    frame["has_image"] = len(output["data"]["image/png"]) != 0
                 except KeyError:
                     pass
 
@@ -68,7 +72,7 @@ def get_outputs():
     if rows:
         _indices = [v for row in rows for k, v in row.items() if k == "index"]
         rows = pd.DataFrame(data=rows, index=_indices).drop(columns="index")
-        rows = rows.loc[rows["image"].notna() | rows["text"].notna()]
+        rows = rows.loc[rows["text"].notna()]
         rows.loc[:, "text"] = rows.loc[:, "text"].apply(lambda x: "".join(x))
     else:
         rows = pd.DataFrame()

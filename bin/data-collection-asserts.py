@@ -11,9 +11,12 @@ import os
 
 def ipynb_to_dataframe() -> pd.DataFrame:
 
-    with open(args.notebook) as f:
-        cells = json.load(f)["cells"]
-        df = pd.read_json(StringIO(json.dumps(cells)), orient="records")
+    try:
+        with open(args.notebook) as f:
+            cells = json.load(f)["cells"]
+            df = pd.read_json(StringIO(json.dumps(cells)), orient="records")
+    except:
+        df = pd.DataFrame()
 
     # NOTE: early exit if empty notebook or no code cells
     (df.empty or df.loc[df["cell_type"] == "code"].empty) and exit()
@@ -63,31 +66,33 @@ if __name__ == "__main__":
     assert_cells.empty and exit()
 
     # populate assert_content & assert_context
-    assert_content = []
-    assert_context = []
+    asserts = []
     for idx, cell in assert_cells.iterrows():
         cell["notebook"] = args.notebook
-        assert_content.append(cell)
-        # populate assert_context
+
         try:
             above = all_cells.loc[idx - 1]
         except KeyError:
             pass
         else:
-            above["notebook"] = args.notebook
-            above["location"] = "above"
-            above["assert_cell_index"] = idx
-            assert_context.append(above)
+            # above["notebook"] = args.notebook
+            # above["location"] = "above"
+            # above["assert_cell_index"] = idx
+            # assert_context.append(above)
+            cell["above"] = above["source"]
 
         try:
             below = all_cells.loc[idx + 1]
         except KeyError:
             pass
         else:
-            below["notebook"] = args.notebook
-            below["location"] = "below"
-            below["assert_cell_index"] = idx
-            assert_context.append(below)
+            # below["notebook"] = args.notebook
+            # below["location"] = "below"
+            # below["assert_cell_index"] = idx
+            # assert_context.append(below)
+            cell["below"] = below["source"]
+
+        asserts.append(cell)
 
     # NOTE: make sure that the term `ipynb` only occurs at the end of filename
     # I did this using the following command and checking that it *does not* print anything:
@@ -108,10 +113,10 @@ if __name__ == "__main__":
     pd.DataFrame(data=[stats]).to_csv(name + "-stats.csv", index=False, header=False)
     print(f"OUTPUT:{name}" + "-stats.csv")
 
-    # NOTE: order of headers ["index", "cell_type", "source", "notebook"]
-    pd.DataFrame(data=assert_content).to_csv(name + "-assert-content.csv", header=False)
-    print(f"OUTPUT:{name}" + "-assert-content.csv")
+    # NOTE: order of headers ["index", "cell_type", "source", "notebook", "above", "below"]
+    pd.DataFrame(data=asserts).to_csv(name + "-asserts.csv", header=False)
+    print(f"OUTPUT:{name}" + "-asserts.csv")
 
     # NOTE: order of headers ["index", "cell_type", "source", "notebook", "location", "assert_cell_index"]
-    pd.DataFrame(data=assert_context).to_csv(name + "-assert-context.csv", header=False)
-    print(f"OUTPUT:{name}" + "-assert-context.csv")
+    # pd.DataFrame(data=assert_context).to_csv(name + "-assert-context.csv", header=False)
+    # print(f"OUTPUT:{name}" + "-assert-context.csv")
