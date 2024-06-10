@@ -1,6 +1,10 @@
----
-title: shome2023llm logbook
----
+
+# role of feedback and agile development
+
+Following recommendations from Diomidis regarding the role of feedback in agile development:
+
++ https://pubs.opengroup.org/opengrouppress/managing-digital/systems-thinking.html
++ https://pubs.opengroup.org/opengrouppress/managing-digital/chapter-app-deliv.html (figure 43)
 
 # big numbers from the analysis
 
@@ -12,57 +16,34 @@ title: shome2023llm logbook
 
 # 2024-03-29 story for ESEM '24 paper (revised)
 
-We had another meeting with Diomidis and Luis and the discussion there
-helped finalise the story much more. Here it goes:
+We had another meeting with Diomidis and Luis and the discussion there helped finalise the story much more. Here it goes:
 
-We begin with a high-level overview of the ML lifecycle--here we
-highlight how there are several components that we need to think about
-when developing ML pipelines. ML pipelines are seldom developed in
-isolation, inside source code files. Instead, they require a more
-interactive and iterative approach.
+We begin with a high-level overview of the ML lifecycle--here we highlight how there are several components that we need to think about when developing ML pipelines. ML pipelines are seldom developed in isolation, inside source code files. Instead, they require a more interactive and iterative approach.
 
-Computational Notebooks have been widely adopted for developing ML
-pipelines which they support such an iterative development process.
-Within the Python ML community, Jupyter has been widely popular (this is
-why we mine Jupyter Notebooks in particular).
+Computational Notebooks have been widely adopted for developing ML pipelines which they support such an iterative development process. Within the Python ML community, Jupyter has been widely popular (this is why we mine Jupyter Notebooks in particular).
 
-However, traditional practices of writing test suites to ensure the
-correctness of ML pipelines fail to adapt to this new paradigm of
-development. Often, checks are performed manually by the developer by
-simply observing the output of a code cell. Alternatively, assert
-statements are far more suited for testing within computational
-notebooks (**TODO** this requires a bit more thought and fine-tuning;
-how we want to integrate the implicit vs explicit testing).
+However, traditional practices of writing test suites to ensure the correctness of ML pipelines fail to adapt to this new paradigm of development. Often, checks are performed manually by the developer by simply observing the output of a code cell. Alternatively, assert statements are far more suited for testing within computational notebooks (**TODO** this requires a bit more thought and fine-tuning; how we want to integrate the implicit vs explicit testing).
 
 RQ1: How are the outputs of code cells used for testing ML pipelines?
 
-    Here we have present the descriptive and lexical analysis of the
-    outputs of code cells.
+    Here we have present the descriptive and lexical analysis of the outputs of code cells.
 
-    RQ1.1: We have to distinguish here between explicit outputs produced
-    with `print` statements and
+    RQ1.1: We have to distinguish here between explicit outputs produced with `print` statements and
     RQ1.2: Implicit outputs from the last statement of a code cell.
 
 RQ2: How are assertions used for testing ML pipelines?
 
-    Here we present the descriptive and lexical analysis of code cells
-    with assertions.
+    Here we present the descriptive and lexical analysis of code cells with assertions.
 
-    RQ2.1: Compare and contrast between outputs vs assertions. What are
-    the similarities? Differences?
+    RQ2.1: Compare and contrast between outputs vs assertions. What are the similarities? Differences?
 
 RQ3: How are visualisations used to test ML pipelines?
 
-    Decisions are not only made using text output in ML pipelines; we
-    use visualisations to understand complexity of the dataset and ML
-    models. Visualisations are a special form of manual test using
-    outputs.
+    Decisions are not only made using text output in ML pipelines; we use visualisations to understand complexity of the dataset and ML models. Visualisations are a special form of manual test using outputs.
 
-    Extend the descriptive and lexical analysis performed earlier, to
-    code cells that produce a visualisation.
+    Extend the descriptive and lexical analysis performed earlier, to code cells that produce a visualisation.
 
-    RQ3.1: Are assertions written to test visual insights gained from
-    visualisations?
+    RQ3.1: Are assertions written to test visual insights gained from visualisations?
 
     Here we dump all the content from the ICST paper.
 

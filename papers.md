@@ -1,3 +1,293 @@
+# @visualisation heer2010tour
+
+```bibtex
+@Article{         heer2010tour,
+  title         = {A tour through the visualization zoo},
+  volume        = {53},
+  issn          = {1557-7317},
+  url           = {http://dx.doi.org/10.1145/1743546.1743567},
+  doi           = {10.1145/1743546.1743567},
+  number        = {6},
+  journal       = {Communications of the ACM},
+  publisher     = {Association for Computing Machinery (ACM)},
+  author        = {Heer, Jeffrey and Bostock, Michael and Ogievetsky, Vadim},
+  year          = {2010},
+  month         = jun,
+  pages         = {59–67}
+}
+```
+# @visualisation wexler2019what-if
+
+```bibtex
+@Article{         wexler2019what-if,
+  title         = {The What-If Tool: Interactive Probing of Machine Learning
+                  Models},
+  issn          = {2160-9306},
+  url           = {http://dx.doi.org/10.1109/TVCG.2019.2934619},
+  doi           = {10.1109/tvcg.2019.2934619},
+  journal       = {IEEE Transactions on Visualization and Computer Graphics},
+  publisher     = {Institute of Electrical and Electronics Engineers (IEEE)},
+  author        = {Wexler, James and Pushkarna, Mahima and Bolukbasi, Tolga
+                  and Wattenberg, Martin and Viegas, Fernanda and Wilson,
+                  Jimbo},
+  year          = {2019},
+  pages         = {1–1}
+}
+```
+
+# STAR @se4ai sculley2015hidden
+
+```bibtex
+@InProceedings{   sculley2015hidden,
+  author        = {Sculley, D. and Holt, Gary and Golovin, Daniel and
+                  Davydov, Eugene and Phillips, Todd and Ebner, Dietmar and
+                  Chaudhary, Vinay and Young, Michael and Crespo,
+                  Jean-Fran\c{c}ois and Dennison, Dan},
+  booktitle     = {Advances in Neural Information Processing Systems},
+  editor        = {C. Cortes and N. Lawrence and D. Lee and M. Sugiyama and
+                  R. Garnett},
+  pages         = {},
+  publisher     = {Curran Associates, Inc.},
+  title         = {Hidden Technical Debt in Machine Learning Systems},
+  url           = {https://proceedings.neurips.cc/paper_files/paper/2015/file/86df7dcfd896fcaf2674f757a2463eba-Paper.pdf},
+  volume        = {28},
+  year          = {2015}
+}
+```
+
+# @visualisation @inbox @survey shakeel2022comprehensive
+
+Survey on tools for data visualisation, I think the introduction should help for a compelling story on the pros and cons of using visualisation.
+
+```bibtex
+@Article{         shakeel2022comprehensive,
+  title         = {A Comprehensive State-of-the-Art Survey on Data
+                  Visualization Tools: Research Developments, Challenges and
+                  Future Domain Specific Visualization Framework},
+  volume        = {10},
+  issn          = {2169-3536},
+  url           = {http://dx.doi.org/10.1109/ACCESS.2022.3205115},
+  doi           = {10.1109/access.2022.3205115},
+  journal       = {IEEE Access},
+  publisher     = {Institute of Electrical and Electronics Engineers (IEEE)},
+  author        = {Shakeel, Hafiz Muhammad and Iram, Shamaila and Al-Aqrabi,
+                  Hussain and Alsboui, Tariq and Hill, Richard},
+  year          = {2022},
+  pages         = {96581–96601}
+}
+```
+
+# @inbox yang2021subtle
+
+```bibtex
+@InProceedings{   yang2021subtle,
+  title         = {Subtle Bugs Everywhere: Generating Documentation for Data
+                  Wrangling Code},
+  url           = {http://dx.doi.org/10.1109/ASE51524.2021.9678520},
+  doi           = {10.1109/ase51524.2021.9678520},
+  booktitle     = {2021 36th IEEE/ACM International Conference on Automated
+                  Software Engineering (ASE)},
+  publisher     = {IEEE},
+  author        = {Yang, Chenyang and Zhou, Shurui and Guo, Jin L.C. and
+                  Kastner, Christian},
+  year          = {2021},
+  month         = nov
+}
+```
+
+# @notebook @reproducibility wang2020assessing
+
+```bibtex
+@InProceedings{   wang2020assessing,
+  series        = {ASE ’20},
+  title         = {Assessing and restoring reproducibility of Jupyter
+                  notebooks},
+  url           = {http://dx.doi.org/10.1145/3324884.3416585},
+  doi           = {10.1145/3324884.3416585},
+  booktitle     = {Proceedings of the 35th IEEE/ACM International Conference
+                  on Automated Software Engineering},
+  publisher     = {ACM},
+  author        = {Wang, Jiawei and Kuo, Tzu-yang and Li, Li and Zeller,
+                  Andreas},
+  year          = {2020},
+  month         = dec,
+  collection    = {ASE ’20}
+}
+```
+
+# @notebook rule2018exploration
+
+```bibtex
+@InProceedings{   rule2018exploration,
+  series        = {CHI ’18},
+  title         = {Exploration and Explanation in Computational Notebooks},
+  url           = {http://dx.doi.org/10.1145/3173574.3173606},
+  doi           = {10.1145/3173574.3173606},
+  booktitle     = {Proceedings of the 2018 CHI Conference on Human Factors in
+                  Computing Systems},
+  publisher     = {ACM},
+  author        = {Rule, Adam and Tabard, Aurélien and Hollan, James D.},
+  year          = {2018},
+  month         = apr,
+  collection    = {CHI ’18}
+}
+```
+
+# @notebook head2019managing
+
+```bibtex
+@InProceedings{   head2019managing,
+  series        = {CHI ’19},
+  title         = {Managing Messes in Computational Notebooks},
+  url           = {http://dx.doi.org/10.1145/3290605.3300500},
+  doi           = {10.1145/3290605.3300500},
+  booktitle     = {Proceedings of the 2019 CHI Conference on Human Factors in
+                  Computing Systems},
+  publisher     = {ACM},
+  author        = {Head, Andrew and Hohman, Fred and Barik, Titus and
+                  Drucker, Steven M. and DeLine, Robert},
+  year          = {2019},
+  month         = may,
+  collection    = {CHI ’19}
+}
+```
+
+# @notebook @msr @visualisation bavishi2021vizsmith
+
+```bibtex
+@InProceedings{   bavishi2021vizsmith,
+  title         = {VizSmith: Automated Visualization Synthesis by Mining
+                  Data-Science Notebooks},
+  url           = {http://dx.doi.org/10.1109/ASE51524.2021.9678696},
+  doi           = {10.1109/ase51524.2021.9678696},
+  booktitle     = {2021 36th IEEE/ACM International Conference on Automated
+                  Software Engineering (ASE)},
+  publisher     = {IEEE},
+  author        = {Bavishi, Rohan and Laddad, Shadaj and Yoshida, Hiroaki and
+                  Prasad, Mukul R. and Sen, Koushik},
+  year          = {2021},
+  month         = nov
+}
+```
+
+# STAR @notebook @msr pimentel2019large-scale
+
+```bibtex
+@InProceedings{   pimentel2019large-scale,
+  title         = {A Large-Scale Study About Quality and Reproducibility of
+                  Jupyter Notebooks},
+  url           = {http://dx.doi.org/10.1109/MSR.2019.00077},
+  doi           = {10.1109/msr.2019.00077},
+  booktitle     = {2019 IEEE/ACM 16th International Conference on Mining
+                  Software Repositories (MSR)},
+  publisher     = {IEEE},
+  author        = {Pimentel, Joao Felipe and Murta, Leonardo and Braganholo,
+                  Vanessa and Freire, Juliana},
+  year          = {2019},
+  month         = may
+}
+```
+
+# STAR @notebook @msr psallidas2019data
+
+```bibtex
+@Misc{            psallidas2019data,
+  title         = {Data Science through the looking glass and what we found
+                  there},
+  author        = {Fotis Psallidas and Yiwen Zhu and Bojan Karlas and Matteo
+                  Interlandi and Avrilia Floratou and Konstantinos Karanasos
+                  and Wentao Wu and Ce Zhang and Subru Krishnan and Carlo
+                  Curino and Markus Weimer},
+  year          = {2019},
+  eprint        = {1912.09536},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.LG}
+}
+```
+
+# #STAR @notebook @msr quaranta2021kgtorrent
+
+```bibtex
+@InProceedings{   quaranta2021kgtorrent,
+  title         = {KGTorrent: A Dataset of Python Jupyter Notebooks from
+                  Kaggle},
+  url           = {http://dx.doi.org/10.1109/MSR52588.2021.00072},
+  doi           = {10.1109/msr52588.2021.00072},
+  booktitle     = {2021 IEEE/ACM 18th International Conference on Mining
+                  Software Repositories (MSR)},
+  publisher     = {IEEE},
+  author        = {Quaranta, Luigi and Calefato, Fabio and Lanubile,
+                  Filippo},
+  year          = {2021},
+  month         = may
+}
+```
+# @ml @testing riccio2020testing
+
+``` bibtex
+@Article{         riccio2020testing,
+  title         = {Testing machine learning based systems: a systematic
+                  mapping},
+  volume        = {25},
+  issn          = {1573-7616},
+  url           = {http://dx.doi.org/10.1007/s10664-020-09881-0},
+  doi           = {10.1007/s10664-020-09881-0},
+  number        = {6},
+  journal       = {Empirical Software Engineering},
+  publisher     = {Springer Science and Business Media LLC},
+  author        = {Riccio, Vincenzo and Jahangirova, Gunel and Stocco, Andrea
+                  and Humbatova, Nargiz and Weiss, Michael and Tonella,
+                  Paolo},
+  year          = {2020},
+  month         = sep,
+  pages         = {5193–5254}
+}
+```
+
+# TODO @se4ai @survey giray2021software
+
+Discovered from Kastner's seaibib repo.
+
+I briefly skimmed the paper, its well written and can help with the high-level overview of my topic.
+
+Table 1 is also interesting, it has links to papers on testing ML systems.
+
+```bibtex
+@Misc{            giray2021software,
+  title         = {A Software Engineering Perspective on Engineering Machine
+                  Learning Systems: State of the Art and Challenges},
+  author        = {Görkem Giray},
+  year          = {2021},
+  eprint        = {2012.07919},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.SE}
+}
+```
+
+# @feedback @se @thesis beller2018empirical
+
+Moritz Beller's phd thesis (former SERG alumni). I looked at the introduction to find relevant references that link TDD to feedback driven software development (so that I can justify why we look at tests written in jupyter notebooks as a source of feedback).
+
+# @ml @nlp STAR vaswani2017attention
+
+The paper that introduced seq2seq that has taken over the world...
+
+```bibtool
+@InProceedings{   vaswani2017attention,
+  author        = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and
+                  Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and
+                  Kaiser, \L ukasz and Polosukhin, Illia},
+  booktitle     = {Advances in Neural Information Processing Systems},
+  editor        = {I. Guyon and U. Von Luxburg and S. Bengio and H. Wallach
+                  and R. Fergus and S. Vishwanathan and R. Garnett},
+  pages         = {},
+  publisher     = {Curran Associates, Inc.},
+  title         = {Attention is All you Need},
+  url           = {https://proceedings.neurips.cc/paper_files/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf},
+  volume        = {30},
+  year          = {2017}
+}
+```
 
 # @ml @bugs thung2012empirical
 
@@ -119,6 +409,8 @@ This is an interesting angle for me as well, because testing is done to reduce t
 ```
 
 # @notebook kery2018story
+
+Wide availability of data leads to adoption of notebooks by users who do not necessarily posses technical knowledge or software engineering background.
 
 ```bibtex
 @InProceedings{   kery2018story,
@@ -565,7 +857,7 @@ projects.
 }
 ```
 
-# STAR @inbox @testing morovati2023bugs
+# STAR @inbox @ml @testing morovati2023bugs
 
 Dataset of defects in ML. Which bugs can our tool catch?
 
@@ -697,7 +989,7 @@ collected from open-source AI projects on Github.
 }
 ```
 
-# STAR @inbox @msr @ml widyasari2023niche
+# @inbox @msr @ml widyasari2023niche
 
 Authors present a dataset of mature ML projects from Github. We can
 use this to mine Jupyter Notebooks for our paper.
@@ -1093,7 +1385,7 @@ be useful for introduction & discussion.
 }
 ```
 
-# chen2022towards
+# @ml @reproducibility chen2022towards
 
 Could be interesting for discussion on how our tool can help make AI
 systems reproducible?
@@ -1391,7 +1683,7 @@ Regardless, good to mention Dutta's papers in the related work section.
 
 # STAR TODO kochhar2017revisiting
 
-Recommendation from Luis. Authors analyse the use assertions in a large number
+Recommendation from Luis. Authors analyse the use of assertions in a large number
 of Java projects.
 
 The paper presents the same benefits of asserts as we are trying to
@@ -1650,6 +1942,7 @@ Here is [the accompanying website](https://microsoft.github.io/CodeXGLUE).
 
 # @msr @notebook mojtaba2023distilkaggle
 
+However, this is not a rull research paper (data mining challenge).
 
 [New dataset of notebooks](https://zenodo.org/records/10317389) from Kaggle (300GB original). The authors extracted the contents of the code cells (which we did as well). However, they did not extract the outputs. Published in MSR '24 so its super fresh, DOI info is not available yet.
 
