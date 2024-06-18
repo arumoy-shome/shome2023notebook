@@ -145,7 +145,7 @@ The machine learning development lifecycle (MLDL) encompasses a multifaceted ser
 
 % The feedback-driven style of development in MLDL resembles principles of Agile software development and the Cross-Industry Standard Process for Data Mining (CRISP-DM). Agile methodologies emphasize continuous iteration of development and testing throughout the software lifecycle. In Agile, software is developed in incremental, rapid cycles resulting in small, incremental releases with each release building on previous functionality. Each iteration is reviewed and critiqued by the project team, which includes representatives of the project's various stakeholders. 
 
-The MLDL is fundamentally iterative, closely resembling Agile software engineering principles, which emphasize incorporating early feedback and working in small, manageable iterations~\cite{betz2018managing}. Similarly, CRISP-DM---the dominant process model in data mining---outlines a cyclical process that evolves from understanding the business objectives and data, through data preparation, modeling, and evaluation, to deployment and monitoring~\cite{martinez-plumed2021crisp-dm}. Both systems advocate for a dynamic, iterative approach that enhances adaptability and effectiveness in dealing with complex, changing systems like those encountered in ML projects.
+The MLDL is fundamentally iterative, closely resembling Agile software engineering principles, which emphasize incorporating early feedback and working in small, manageable iterations~\cite{betz2018managing}. Similarly, CRISP-DM---the dominant process model in data mining---outlines a cyclical process that evolves from understanding the business objectives and data, data preparation, modeling, evaluation and finally deployment and monitoring~\cite{martinez-plumed2021crisp-dm}. Both systems advocate for a dynamic, iterative approach that enhances adaptability and effectiveness in dealing with complex, changing systems like those encountered in ML projects.
 
 Computational notebooks---specifically Jupyter notebooks\footnote{https://jupyter.org/}---have been ubiquitously adopted by the ML community for developing ML enabled systems~\cite{pimentel2019large-scale,quaranta2021kgtorrent,psallidas2019data,perkel2018why}. Jupyter notebooks provide an interactive computing environment that allow users to break the development of complex workflows into smaller, more manageable code chunks. Each notebook is composed of a series of code cells, which can be executed independently in a read-eval-print loop (REPL) style of interactive software development. This REPL approach allows users to write a piece of code, run it, and immediately see the results thus facilitating an incremental and iterative style of software development. This modular structure of notebooks provides users the flexibility to experiment with different approaches and algorithms. Users can test hypotheses, debug issues, and make incremental changes with immediate feedback. The ability to visualize data and results inline and document the process in a narrative form further enhances their utility~\cite{kery2018story,head2019managing,rule2018exploration,chattopadhyay2020whats}.
 
@@ -154,18 +154,41 @@ For instance, interpreting a histogram requires knowledge of various distributio
 
 In software engineering, tests are employed to document the expected behavior of code. Failing tests indicate when these expectations are no longer met. Similarly, assertions in Jupyter notebooks can serve as documentation for the decisions made during model development. Embedding assertions in the notebook can ensure that any deviations from expected data conditions or model performance are promptly detected, thus maintaining the integrity of the ML pipeline.
 
-To understand the role of feedback when developing ML pipelines in Jupyter notebooks, we conduct a series of  empirical studies. First, we examine the outputs of code cells in Jupyter notebooks. Next, we study Python assertions written in Jupyter notebooks to understand how they are used when developing ML pipelines in notebooks. Finally, we investigate the intersection of outputs and assertions by analysing  assertions that document decisions made from the outputs of code cells. In particular, we focus on assertions derived from visualisations since they pose a higher risk of technical debt.
+To understand the role of feedback when developing ML pipelines in Jupyter notebooks, we conduct a series of  empirical studies. First, we examine the outputs of code cells in Jupyter notebooks. Next, we study Python assertions written in Jupyter notebooks to understand how they are used when developing ML pipelines in notebooks. Finally, we investigate the intersection of outputs and assertions by analysing  assertions that document decisions made from the outputs of code cells. In particular, we focus on assertions derived from visualisations since they pose a higher risk of technical debt. To the best of our knowledge, we are the first to investigate how feedback derived from the output of code cells is used by ML practitioners when developing ML pipelines inside of Jupyter notebooks. We are also the first to investigate assertions written inside of notebooks and their intersection with the outputs of code cells.
 
-% TODO: contributions?
-% TODO: key observations?
+The research questions along with the contributions of this study are presented below.
 
-% Visualisations are used throughout the ml development lifecycle to test various properties of the ml system. in the early stages of the ml development lifecycle, visualisations are extensively used to make sense of the data and verify its statistical properties. during the model development phase, visualisations are used to summarise metrics, contrast different learning algorithms and iteratively fine-tune ml models. once the model is deployed in production, visualisations are used to continually monitor their performance and trigger a new training cycle once their performance drops below a certain threshold~\cite{yuan2021survey,hohman2019visual,amershi2015modeltracker,wexler2020if}.
+\begin{description}
+  \item[RQ1.] \textbf{What are the characteristics of feebback mechanisms in ML Jupyter notebooks?}
 
-% our observations indicate that formulating analytical assertions from visualisations is an emerging testing technique. however, the assertions found in this study often do not reflect the information obtained from their visual counter-part. this study finds the need for automated tools that can reduce the manual effort necessary to validate visualisations in ml systems. and help ml practitioners to formulate better analytical assertions from visualisations.
+  % TODO: the problem is that readers don't yet know that outputs are generated from last statement and print statements
+  We mine 300K Jupyter notebooks written in Python from Github and Kaggle. We analyse 2.3M code cells and create a dataset of 22.5K assertions, 25K print statements and 28K last statements. We further perform a descriptive and lexical analysis of the dataset and report the key characteristics of feedback mechanisms used in ML Jupyter notebooks.
+  
+  % TODO: The dataset is available publicly on ...
+
+  \item[RQ2.] \textbf{How is implicit feedback from the output of code cells used when writing ML code in Jupyter notebooks?}
+
+  We conduct individual case-studies with XXX code cell outputs. During each case-study, we analyse the raw output along with the corresponding code that produced the output to understand its purpose. Additionally, we anayse the entire code cell, the previous and next cells along with the purpose of the notebook to bring in rich context.
+
+  \item[RQ3.] \textbf{How are assertions used to validate ML code written in Jupyter notebooks?}
+
+  Similarly, we conduct case-studies with XXX assert statements. We analyse the assertion along with the surrounding code to understand its purpose.
+
+  \item[RQ4.] \textbf{How are assertions used to validate visual outputs in Jupyter notebooks?}
+
+  Finally, we conduct case-studies with XXX visualisation and assertion (VA) pairs.
+\end{description}
+
+% TODO revisit this paragraph
+Our findings indicate that outputs from code cells are extensively utilised for making critical design and implementation decisions during the MLDL. While manual validation of these outputs is common, it is also prone to inconsistencies thus highlighting the need for automated validation mechanisms. Assertions are identified as a potential solution, capable of verifying data distributions and ensuring model performance metrics meet predefined thresholds, thereby reducing reliance on manual checks and enhancing the robustness of ML pipelines. However, the study also notes the limited use of assertions, with only 9.7\% of the 3 million notebooks analyzed incorporating them, suggesting a significant gap in current testing practices within the ML community. The findings underscore the necessity for developing ML-specific testing tools and integrating assertions more deeply into the ML development workflow to ensure consistent and reliable validation processes.
+
+% TODO update replication package
 
 % the replication package for this study is made public on figshare\footnote{the replication package can be found at this url: https://figshare.com/s/9347228011999cba29f5}.
 
 \section{Background}\label{sec:background}
+
+This section introduces relevant prior concepts for this study.
 
 \subsection{Literate Programming, Computational Notebooks and Project Jupyter}
 
@@ -173,65 +196,37 @@ To understand the role of feedback when developing ML pipelines in Jupyter noteb
 % NOTE kery2018story
 % NOTE rule2018exploration
 
-% describe the structure of jupyter notebooks (anatomy: cells, outputs); no need to go into too much technical detail regarding the internal JSON structure, just mention that the data is represented in a standardised structure internally
-
 \begin{figure}
   \centering
-  \includegraphics[width=0.75\linewidth]{nb.pdf}
+  \includegraphics[width=\linewidth]{nb.pdf}
   \label{fig:nb}
   \caption{Example Jupyter notebook with code and markdown cells, adapted from~\cite[Figure~1]{pimentel2019large-scale}.}
 \end{figure}
 
-Literate programming is a paradigm introduced by Donald Knuth that emphasizes writing code that is understandable by humans. In his seminal work, Knuth adovocates combining source code with documentation in a single, cohesive narrative~\cite{knuth1984literate}. Computational notebooks are inspired by this paradigm, allowing for the integration of executable code, scientific equations, visualizations, and explanatory text within a single document. This format supports a literate approach to programming, making it easier to share and understand complex analyses and workflows. Project Jupyter is a prominent example of this approach, offering a suite of open-source tools for interactive computing. Jupyter Notebooks, in particular, have become a popular tool in the ML community since they facilitate open and reproducible science, education, and data analysis.
+Literate programming is a paradigm introduced by Donald Knuth that emphasizes writing code that is understandable by humans. In his seminal work, Knuth advocates combining source code with documentation in a single, cohesive narrative~\cite{knuth1984literate}. Computational notebooks are inspired by this paradigm, allowing for the integration of executable code, scientific equations, visualisations, and explanatory text within a single document. This format supports a literate approach to programming, making it easier to share and understand complex analyses and workflows. Project Jupyter is a prominent example of this approach, offering a suite of open-source tools for interactive computing. Jupyter Notebooks, in particular, have become a popular tool in the ML community since they facilitate open and reproducible science, education, and data analysis.
 
-% front-end which parses the JSON
-% there is also the kernel which is a process running in the background, the frontend communicates with the kernel; send input (code cell) and get output (result of execution)
+Figure~\ref{fig:nb} shows an example Jupyter notebook with markdown and code cells. The data comprised within Jupyter notebooks is stored using the JSON schema specified by \emph{nbformat}~\footnote{https://nbformat.readthedocs.io/en/latest/index.html}, and thus can be parsed programmatically. A notebook consists of \emph{cells} which can be of three types---``markdown'', ``code'' and ``raw''. All cells of a notebook are stored as a list under the top-level \lstinline[language={}]$cells$ key in the JSON representation. Within this list, each cell is represented as a JSON object. The contents of the cell are stored as a list of strings inside the \lstinline[language={}]$source$ key.
 
-Figure~\ref{fig:nb} shows an Jupyter notebook with markdown and code cells. The data comprised within Jupyter Notebooks is stored using the JSON schema specified by \emph{nbformat}~\footnote{https://nbformat.readthedocs.io/en/latest/index.html}, and thus can be parsed programmatically. A notebook consists of \emph{cells} which can be of three types---``markdown'', ``code'' and ``raw''. All cells of a notebook are stored as a list under the top-level \lstinline[language={}]$cells$ key in the JSON representation. Within this list, each cell is represented as a JSON object. The contents of the cell are stored as a list of strings inside the \lstinline[language={}]$source$ key.
+\subsection{Outputs in Jupyter Notebooks}
+
+Only code cells in Jupyter notebooks can generate outputs. As shown in Figure~\ref{fig:nb}, outputs can come from three main sources in the source code---print statements, the last statement in the code cell, and statements that create a visualisation. The outputs produced by code cells are stored as JSON objects under the \lstinline[language={}]$outputs$ key in the corresponding JSON representation of the notebook. Text outputs (such as those produced by the last statement of a cell or print statements) are stored under the \lstinline[language={}]$text$ key. Visual outputs have a sightly different JSON schema and are stored under the \lstinline[language={}]$data$ key. The image itself is represented as a base64 encoded string which is stored inside the \lstinline[language={}]$data$ object, under the \lstinline[language={}]$image/png$ key.
 
 \subsection{Python Abstract Syntax Tree}
 
 % explain the high-level way in which ast module in python works
 % explain the anatomy of assert statements and the more complicated way in which asts for print statements are represented in an AST
 
-An Abstract Syntax Tree (AST) is a tree representation of the abstract syntactic structure of source code. Each node in the tree represents a construct occurring in the source code. ASTs are widely used in compilers and code analysis tools to understand and manipulate code programmatically~\cite{wikipedia2024abstract}. The Python \emph{ast} module enables the parsing, manipulation, and analysis of Python source code by converting it into an AST. This module allows for the examination and modification of code structure, making it valuable for tasks such as code analysis, optimization, and transformation. The ast module can parse source code strings into AST objects, traverse and modify the tree, and compile it back into executable code, providing a powerful tool for dynamic code manipulation~\cite{pythonast}.
+An Abstract Syntax Tree (AST) is a tree representation of the abstract syntactic structure of source code. Each node in the tree represents a construct occurring in the source code. ASTs are widely used in compilers and code analysis tools to understand and manipulate code programmatically~\cite{wikipedia2024abstract}. The Python \emph{ast} module enables the parsing, manipulation, and analysis of Python source code by converting it into an AST. This module allows for the examination and modification of code structure, making it valuable for tasks such as code analysis, optimisation, and transformation. The ast module can parse source code strings into AST objects, traverse and modify the tree, and compile it back into executable code, providing a powerful tool for dynamic code manipulation~\cite{pythonast}.
 
-In Python, \lstinline{assert} statements are represented in the AST by the \lstinline{Assert} class. The \lstinline{Assert} node includes the \lstinline{test} attribute---which contains the condition being asserted---and the \lstinline{msg} attribute---which holds an optional message displayed if the assertion fails. \lstinline{print} statements are treated as a call to the built-in \lstinline{print} function. Function calls are represented in the AST by the \lstinline{Call} class. The \lstinline{Call} node includes \lstinline{func}, representing the \lstinline{print} function, and \lstinline{args} which lists the arguments passed.
+In Python, \lstinline{assert} statements are represented in the AST by the \lstinline{Assert} class. The \lstinline{Assert} node includes the \lstinline{test} attribute---which contains the condition being asserted---and the \lstinline{msg} attribute---which holds an optional message displayed if the assertion fails. Print statements are treated as a call to the built-in \lstinline{print} function. Function calls are represented in the AST by the \lstinline{Call} class. The \lstinline{Call} node includes the \lstinline{func} attribute representing the \lstinline{print} function, and \lstinline{args} which lists the arguments passed.
 
-\section{Study Design}
-
-\subsection{Motivating Example}
-
-Sara is a data scientist who is developing a machine learning model to predict customer churn. Sara begins her project in a Jupyter notebook, which supports iterative development and immediate feedback through the execution of code cells. Her workflow is dynamic and exploratory, typical of modern machine learning practices.
-
-Initially, Sara loads a dataset and runs basic descriptive statistics to understand its distribution. As she executes a cell that calculates and displays the mean and standard deviation of each feature, she notices unusually high variance in one of the features. This insight, derived directly from the output of the notebook cell, prompts her to apply normalization to ensure better model performance.
-
-With data preprocessing complete, Sara proceeds to build her initial model. After setting up a logistic regression classifier, she runs a training cell that outputs the model's accuracy and loss after the first epoch. The results are disappointing, prompting her to adjust the learning rate and batch size directly in subsequent cells. Each modification is immediately followed by feedback on its impact, allowing Sara to quickly converge on the optimal settings.
-
-Throughout this process, Sara heavily relies on the outputs of various code cells, not just for detecting and fixing erroneous assumptions and code, but also for making strategic decisions about the model's architecture, such as adding layers or changing activation functions. At one point, after noticing overfitting from a cell outputting validation loss, she decides to incorporate dropout layers, which she can quickly evaluate by rerunning the training process.
-
-Finally, Sara fine-tunes her model based on the outputs from a confusion matrix and ROC curve, identifying thresholds for classification that balance precision and recall effectively. Each decision in Sara's workflow—from preprocessing adjustments to hyperparameter tuning and model validation—is guided by the iterative feedback she receives from the outputs of her notebook's code cells.
-
-% TODO: the jump to assertions is very drastic; motivate it using scenario that there is a bug in the system (use the data validation papers from google) and Sara needs to fix them and how assertions would have helped here to debug the issue faster! (notebook keeps running!)
-Once all experimentation and model tuning are complete, and Sara is ready to deploy the model into a production environment, she adds assertions as a final step. In the dynamic, interactive environment of Jupyter notebooks, where code cells can be executed in any order, there is a risk of arriving at inconsistent states that may affect the model's performance unpredictably. Assertions act as a safeguard against these inconsistencies by verifying that the data fed into the model adheres to expected formats and distributions and that the model's performance metrics meet predetermined standards. For instance, assertions are used to ensure that no data columns have null values, that the range of input data features remains within expected bounds, and that model accuracy thresholds are consistently met regardless of the execution order of the notebook cells. This practice not only reinforces the stability and reliability of the deployed model but also provides clear, executable documentation of the critical decisions made throughout the model's development. When new team members are onboarded, these assertions allow them to quickly grasp the underlying assumptions and operational parameters of the model, ensuring ongoing robustness and performance integrity. This is crucial in maintaining the quality and reliability of the model as it transitions from a development setting to a production environment.
-
-\subsection{Exploratory Analysis}
-
-We undertook an exploratory analysis of the collected data to formulate our research questions.
-
-\subsection{Research Questions}
-
-\begin{description}
-  \item[RQ1.] \textbf{How is feedback from the output of code cells used when writing ML code in Jupyter notebooks?}
-  \item[RQ2.] \textbf{How are assertions used to validate ML code written in Jupyter notebooks?}
-  \item[RQ3.] \textbf{How are assertions used to validate visual outputs in Jupyter notebooks?}
-\end{description}
+\section{Methodology}
 
 \subsection{Data Collection}\label{sec:data-collect}
 
 % TODO we need to explain why we only focus on the last statement of code cells (when visualisation code written anywhere produces an output); this is much harder to parse: we need to construct an exhaustive list of python visualisation libraries; people can use any naming convension to...
 
-% The predominant form of obtaining feedback, while developing ML pipelines in Jupyter notebooks, is through the output of code cells. These outputs can come from three main sources in the source code--print statements, the last statement in code cells, and statements that create visualizations. Building on the principles from software engineering, we also recognize assert statements as a valuable form of feedback for writing ML code. This idea draws from prior literature in software engineering that connects test-driven development (TDD) as a form of developing software using feedback.
+% The predominant form of obtaining feedback, while developing ML pipelines in Jupyter notebooks, is through the output of code cells. These outputs can come from three main sources in the source code--print statements, the last statement in code cells, and statements that create visualisations. Building on the principles from software engineering, we also recognize assert statements as a valuable form of feedback for writing ML code. This idea draws from prior literature in software engineering that connects test-driven development (TDD) as a form of developing software using feedback.
 
 \begin{figure}
   \centering
@@ -274,7 +269,89 @@ During each case study, we analyse the code of the candidate to understand its p
 
 % TODO: some sort of introduction to the following sub-sections here; we need to explain that for code cell outputs we try to show the python statement that produces the output along with the actual output. Somethimes actual output is not possible (eg. P68) because the statement may be inside an if statement.
 
-\subsection{(RQ1) How is feedback from the output of code cells used when writing ML code in Jupyter notebooks?}~\label{sec:result-rq1}
+\subsection{(RQ1) What are the characteristics of feedback mechanisms in ML Jupyter notebooks?}
+
+Of the total 298K notebooks collected in this study, 25K (8.5\%) contained at least one assertion. From the 8.5\% notebooks, we collected 89.6K assertions. 4.8K assertions (5\%) used methods from external testing libraries. Majority of the assertions however (85K or 95\%) were written using the \lstinline{assert} statement provided by the built-in Python standard library. We removed duplicate assertions for the remainder of the analysis, thus resulting in 27.1K assertions.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{other-test-methods.pdf}
+  \caption{10 most common methods used in assertions written using external testing libraries.}
+  \label{fig:other-test-methods}
+\end{figure}
+
+Figure~\ref{fig:other-test-methods} presents the 10 most common methods used in the 5\% assertions written using external testing libraries. We manually tracked the source of the methods to the numpy, pandas, torch and unittest libraries. The most frequently used methods include \lstinline{assert_almost_equal} and \lstinline{assert_equal}, each with over 250 instances. Methods such as \lstinline{assert_almost_equal}, \lstinline{assert_array_almost_equal} and \lstinline{AssertAlmostEqual} accommodate the stochastic nature of ML, where results can vary slightly due to inherent randomness in data processing and model training. We also find methods such as \lstinline{assert_array_equal} and \lstinline{assert_frame_equal} that are specifically tailored for comparing high-dimensional data structures such as numpy arrays and pandas data frames.
+
+\begin{figure}
+  \centering
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{common-assert-test.pdf}
+    \caption{10 most common tests used in \lstinline{assert} statements.}
+    \label{fig:common-assert-test}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{common-compare-op.pdf}
+    \caption{10 most common operators used in \lstinline{assert} statements that perform a comparison check.}
+    \label{fig:common-compare-op}
+  \end{minipage}
+\end{figure}
+
+% TODO: some form of background on AST representation of assert statements is missing
+
+\begin{table}
+  \centering
+  \caption{Examples of the most common tests performed in assert statements.}
+  \begin{tabular}{@{}m{0.3\textwidth} m{0.3\textwidth}@{}}
+    \toprule
+    \emph{\textbf{Comparison Check}}&
+    \emph{\textbf{Function Call}}\\
+    \midrule
+
+    \lstinline[]$type(train_dataset[0]) == tuple$&
+    \lstinline[]$(np.unique(y_test) == [-1, 1]).all()$\\
+
+    \lstinline[]$torch.__version__ > '1.10.0'$&
+    \lstinline[]$isinstance(transmat, pd.DataFrame)$\\
+
+    \lstinline[]$len(x_dev) == len(y_dev)$&
+    \lstinline[]$np.allclose(np.linalg.norm(wio, axis=0), 1)$\\
+    \bottomrule
+  \end{tabular}
+  \label{tab:common-assert-test}
+\end{table}
+
+We focus the remainder of the analysis on the 95\% of the assertions written using the \lstinline{assert} statement. The most common test performed in the \lstinline{assert} statements include a comparison check and a function call as shown in Figure~\ref{fig:common-assert-test}. Table~\ref{tab:common-assert-test} provides a few examples of assertions for each of the tests above. In Figure~\ref{fig:common-compare-op} we see the most common operators used in assert statements that perform a comparison check. We observe that overwhelming majority of the asserts ensure that two values are equal to each other. The shape and size of data structures are frequently compared as observed in Figure~\ref{fig:common-compare-lhs} and Figure~\ref{fig:common-compare-rhs} which show the most common bi-grams that appear in the LHS and RHS of the comparison statements respectively.
+
+\begin{figure}
+  \centering
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{common-compare-lhs.pdf}
+    \caption{Most common bi-grams that appear in the LHS of comparison statements.}
+    \label{fig:common-compare-lhs}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{common-compare-rhs.pdf}
+    \caption{Most common bi-grams that appear in the RHS of comparison statements.}
+    \label{fig:common-compare-rhs}
+  \end{minipage}
+\end{figure}
+
+Of the 95\% assert statements, 28.4K (31.7\%) have a failure message. Figure~\ref{fig:common-assert-msgs} shows the most frequent bi-grams that appear in these failure messages. Similar to the analysis presented above, we removed the duplicate messages prior to analysing the bi-grams resulting in 5.9K unique messages. The bi-grams indicate that the shape and data type of data structures are frequently verified.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{common-assert-msgs.pdf}
+  \caption{Most common bi-grams in the failure messages of assert statements.}
+  \label{fig:common-assert-msgs}
+\end{figure}
+
+\subsection{(RQ2) How is feedback from the output of code cells used when writing ML code in Jupyter notebooks?}~\label{sec:result-rq1}
 
 \subsubsection{Data distribution check ($N = 7$)}~\label{sec:data-distribution-output}
 % (O2, O4, O9, O14, O20, O25, O48)
@@ -316,9 +393,9 @@ During each case study, we analyse the code of the candidate to understand its p
 
 Table~\ref{tab:distribution-check} shows examples of outputs used to check the distribution of the data. In output \emph{O2} the distribution of feature \texttt{Age} is checked against the two labels (\texttt{Survived} and \texttt{Died}) of the target feature. Output \emph{O9} presents another example where the distribution of a continuous feature \texttt{likes} is checked with-respect-to all the values of another categorical feature \texttt{category\_id}. Output \emph{O14} produces a pandas dataframe which is used to check the mean value of the features \texttt{Age}, \texttt{SibSp}, \texttt{Parch} and \texttt{Fare} against each label in the target feature \texttt{Survived}. Output \emph{O48} produces a pandas dataframe with the descriptive statistics of all features in the training data. The statement is written immediately after normalising the features in the training data. Hence, the user manually verifies if the normalisation was successful by looking at the mean and standard deviation of the features in the output. Similarly, \emph{O25} is written after discretizing a continuous feature \texttt{OverallQual} using binning. 
 
-Understanding the distribution of data is crucial for making informed decisions about necessary transformation steps in data analysis. For instance, visualizations can efficiently determine if scaling, normalizing, or handling outliers is needed. During the exploratory data analysis (EDA) phase, visualizations and pandas dataframes are commonly used to assess specific columns' distribution, helping identify features related to the target variable and informing feature inclusion in model training. Additionally, descriptive statistics are used post-transformation to verify the effectiveness of steps like data normalization, ensuring data conforms to the expected format for further analysis.
+Understanding the distribution of data is crucial for making informed decisions about necessary transformation steps in data analysis. For instance, visualisations can efficiently determine if scaling, normalizing, or handling outliers is needed. During the exploratory data analysis (EDA) phase, visualisations and pandas dataframes are commonly used to assess specific columns' distribution, helping identify features related to the target variable and informing feature inclusion in model training. Additionally, descriptive statistics are used post-transformation to verify the effectiveness of steps like data normalization, ensuring data conforms to the expected format for further analysis.
 
-\highlight{\textbf{Finding 1.1} The study identifies seven outputs used to check data distribution, including visualizations like categorical plots, KDE plots, and count plots (O2, O9 and O25), and statistical summaries from pandas dataframes (O14 and O48). These checks are used for making informed decisions about data transformations such as scaling, normalizing and handling outliers, ensuring data integrity and improving model training reliability during the EDA phase.}
+\highlight{\textbf{Finding 1.1} The study identifies seven outputs used to check data distribution, including visualisations like categorical plots, KDE plots, and count plots (O2, O9 and O25), and statistical summaries from pandas dataframes (O14 and O48). These checks are used for making informed decisions about data transformations such as scaling, normalizing and handling outliers, ensuring data integrity and improving model training reliability during the EDA phase.}
 
 \subsubsection{Data relationship check ($N = 2$)}~\label{sec:linear-relation-output}
 % (O6, O10)
@@ -345,11 +422,11 @@ Understanding the distribution of data is crucial for making informed decisions 
 \label{tab:linear-relation-check}
 \end{table}
 
-Table~\ref{tab:linear-relation-check} illustrates two outputs found in this study for identifying linear relationships amongst features in the data. In output \emph{O6}, the practitioner assesses the linearity between the features \texttt{Cash} and \texttt{SIZE}. Output \emph{O10} depicts the visualization of the feature \texttt{X4} alongside the target variable \texttt{Y}, accompanied by a fitted linear regression model.
+Table~\ref{tab:linear-relation-check} illustrates two outputs found in this study for identifying linear relationships amongst features in the data. In output \emph{O6}, the practitioner assesses the linearity between the features \texttt{Cash} and \texttt{SIZE}. Output \emph{O10} depicts the visualisation of the feature \texttt{X4} alongside the target variable \texttt{Y}, accompanied by a fitted linear regression model.
 
-Linear machine learning models achieve optimal performance when the target variable can be expressed as a linear combination of the input features. However, features within a dataset that exhibit a linear relationship are considered redundant as they convey the same information to the model during training. Consequently, the feature engineering stage often involves removing such features to create a more efficient training dataset~\ref{shome2022data}.
+Linear machine learning models achieve optimal performance when the target variable can be expressed as a linear combination of the input features. However, features within a dataset that exhibit a linear relationship are considered redundant as they convey the same information to the model during training. Consequently, the feature engineering stage often involves removing such features to create a more efficient training dataset~\cite{shome2022data}.
 
-\highlight{\textbf{Finding 1.2} The study identifies two outputs used to verify linear relationships between features in the data. Visualizations such as a scatter plot with a regression line (O10) and a line plot (O6) are employed to assess the linearity between features. These checks are used for identifying and potentially removing redundant features or performing feature selection to ensure that the training dataset is optimized for linear ML models.}
+\highlight{\textbf{Finding 1.2} The study identifies two outputs used to verify linear relationships between features in the data. visualisations such as a scatter plot with a regression line (O10) and a line plot (O6) are employed to assess the linearity between features. These checks are used for identifying and potentially removing redundant features or performing feature selection to ensure that the training dataset is optimized for linear ML models.}
 
 \subsubsection{Resource check ($N = 7$)}\label{sec:implicit-resource-check}
 % (P71, P86, O64, O66, P68, P82, P107)
@@ -416,7 +493,7 @@ Additionally, print statement \emph{P71} is used to ensure that a certain versio
 
 Table~\ref{tab:exec-time} presents print statement \emph{P66} that prints the total execution time of a code cell which trains an ML model with various hyper-parameter configurations using a grid-search. \emph{P66} is also used in other code cells in the notebook that train other ML models.
 
-While training multiple machine learning models for a single task is common, choosing the best model considers not only its performance but also its training speed. Faster training times are more cost-effective for iterative tasks and promote sustainability in the long run~\cite{CITEME}.
+While training multiple machine learning models for a single task is common, choosing the best model considers not only its performance but also its training speed. Faster training times are more cost-effective for iterative tasks and promote sustainability in the long run~\cite{shome2022data}.
 
 \highlight{\textbf{Finding 1.4} The study identifies one output (P66) used to check the total execution time of training and cross-validating an ML model. The print statement is used for evaluating the efficiency of model training processes, especially when multiple models are trained iteratively.} 
 
@@ -658,7 +735,7 @@ Each of these outputs underscores different facets of the model training phase, 
 
 \highlight{\textbf{Finding 1.11} The study identifies four outputs used to monitor model training progress. These outputs provide real-time feedback on training loss and accuracy (O8), validate model adherence to expected data patterns (O31), and identify optimal parameters through tuning methods (O42). These checks facilitate timely adjustments during the training process to prevent overfitting and ensure model performance optimization.}
 
-\subsection{(RQ2) How are assertions used to validate ML code written in Jupyter notebooks?}~\label{sec:result-rq2}
+\subsection{(RQ3) How are assertions used to validate ML code written in Jupyter notebooks?}~\label{sec:result-rq2}
 
 % TODO: bring in the notion of pre and post condition checks (the wikipedia page on assertions is very interesting: https://en.wikipedia.org/wiki/Assertion_(software_development)); specifically the part on run-time assertions
 
@@ -911,17 +988,17 @@ When integrating pre-trained models or leveraging transfer learning techniques, 
   \label{tab:assert-resource-check}
 \end{table}
 
-Table~\ref{tab:assert-resource-check} persents the assertions encountered in this study, that perform resource checks encompassing pre-trained models, data paths, visualizations, and model training status. These checks help prevent runtime errors and ensure the proper execution of code.
+Table~\ref{tab:assert-resource-check} persents the assertions encountered in this study, that perform resource checks encompassing pre-trained models, data paths, visualisations, and model training status. These checks help prevent runtime errors and ensure the proper execution of code.
 
 One set of assertions verify the existence of files on the file system, such as pre-trained models (\emph{A10}) or data files (\emph{A74}). These checks ensure that the required resources are present before proceeding with subsequent operations, preventing potential issues caused by missing resources.
 
 Additionally, assertions are employed to validate the successful loading of models (\emph{A14}) and the completion of model training processes (\emph{A37}). A unique aspect of working with notebooks is the ability to re-run cells while experimenting, which can lead to unintended consequences. The assertion \emph{A37} addresses this scenario by checking if the SVM model has been properly trained before proceeding with further operations. This check prevents inconsistent model states from executing cells out of order or multiple times.
 
-Assertion \emph{A60} is used to verify the presence of data in visualizations generated using the Matplotlib~\footnote{https://matplotlib.org/} library. These checks are crucial for ensuring that the visualizations accurately represent the underlying data and do not contain empty or incomplete plots, which could lead to misleading interpretations.
+Assertion \emph{A60} is used to verify the presence of data in visualisations generated using the Matplotlib~\footnote{https://matplotlib.org/} library. These checks are crucial for ensuring that the visualisations accurately represent the underlying data and do not contain empty or incomplete plots, which could lead to misleading interpretations.
 
 Assertions \emph{A18} and \emph{A67} explicitly verify the versions of critical libraries. For instance, \emph{A18} checks that the major version of pandas is precisely what is expected for the notebook’s tasks, ensuring compatibility and preventing errors that could arise from API changes in newer or older versions.
 
-Resource check assertions play a vital role in maintaining the reliability and robustness of the machine learning workflows by ensuring the availability and validity of essential resources, preventing runtime errors, and maintaining the integrity of the data, models, and visualizations.
+Resource check assertions play a vital role in maintaining the reliability and robustness of the machine learning workflows by ensuring the availability and validity of essential resources, preventing runtime errors, and maintaining the integrity of the data, models, and visualisations.
 
 % NOTE: left over loads, move to implications if required
 % In the dynamic and sometimes unstructured environment of Jupyter notebooks, managing dependencies directly within the notebook becomes crucial due to the workflow peculiarities associated with interactive sessions. Unlike traditional software development environments where dependencies are managed through dedicated solutions like dependency management tools or by specifying requirements in a \emph{requirements.txt} file, notebooks often require on-the-fly checks to ensure the correct library versions are loaded to avoid compatibility issues.
@@ -1081,7 +1158,7 @@ By verifying specific conditions, value ranges, uniqueness, and equality constra
 
 \highlight{\textbf{Finding 2.10} Fourteen assertions perform validation checks on data structures, ensuring the presence of specific values, verifying value ranges, and confirming uniqueness or cardinality of values. These checks catch potential errors or inconsistencies early, ensuring data meets specific criteria or constraints for robust ML applications.}
 
-\subsection{(RQ3) How are assertions used to validate visual outputs in Jupyter notebooks?}~\label{sec:result-rq3}
+\subsection{(RQ4) How are assertions used to validate visual outputs in Jupyter notebooks?}~\label{sec:result-rq3}
 
 \subsubsection{Model Performance ($N = 15$)}
 
@@ -1142,13 +1219,13 @@ By verifying specific conditions, value ranges, uniqueness, and equality constra
 
 \end{longtable}\label{tab:va-model-perf}
 
-The visualizations in VA2, VA9, and VA15 provide a comprehensive view of key metrics for evaluating the performance of various machine learning models. VA2 includes mean reward per episode, TD loss history, initial state value (V), and gradient norm history for a Deep Q-Network (DQN) model. These metrics collectively indicate the model's learning progress and stability during training. The visualization in VA9 shows the mean reward per game for a DQN applied to the Breakout Atari game, tracking the model's performance over 200 games. The general upward trend indicates learning and improvement in gameplay over time. VA15 presents the training and development loss over time for a character-level language model, showing a gradual decrease in loss and suggesting effective learning.
+The visualisations in VA2, VA9, and VA15 provide a comprehensive view of key metrics for evaluating the performance of various machine learning models. VA2 includes mean reward per episode, TD loss history, initial state value (V), and gradient norm history for a Deep Q-Network (DQN) model. These metrics collectively indicate the model's learning progress and stability during training. The visualisation in VA9 shows the mean reward per game for a DQN applied to the Breakout Atari game, tracking the model's performance over 200 games. The general upward trend indicates learning and improvement in gameplay over time. VA15 presents the training and development loss over time for a character-level language model, showing a gradual decrease in loss and suggesting effective learning.
 
-The visualization in VA3 presents a two-dimensional scatter plot showing the decision boundary of a Support Vector Machine (SVM) model, with red and yellow points representing two different classes and a background color gradient indicating the decision function of the SVM. This visualization aids in understanding the model's ability to distinguish between classes and the distance of the samples from the decision boundary. The visualizations in VA28 display the training loss and development recall, respectively. The left graph shows a decrease in training loss over time, indicating learning progress, while the right graph shows development recall over time, highlighting improvements in the model's ability to correctly identify positive instances. The visualizations in VA11 depict key metrics for evaluating the performance of a machine learning model in text generation or machine translation. The left plot shows a steady increase in the development BLEU score over the training iterations, indicating improving quality of the model's output, while the right plot displays a steady decrease in training loss, suggesting effective learning and error minimization. In VA107, the scatter plot displays the predicted versus true values of Nitrogen Dioxide (NO2) levels, used to assess the model's performance in predicting continuous variables.
+The visualisation in VA3 presents a two-dimensional scatter plot showing the decision boundary of a Support Vector Machine (SVM) model, with red and yellow points representing two different classes and a background color gradient indicating the decision function of the SVM. This visualisation aids in understanding the model's ability to distinguish between classes and the distance of the samples from the decision boundary. The visualisations in VA28 display the training loss and development recall, respectively. The left graph shows a decrease in training loss over time, indicating learning progress, while the right graph shows development recall over time, highlighting improvements in the model's ability to correctly identify positive instances. The visualisations in VA11 depict key metrics for evaluating the performance of a machine learning model in text generation or machine translation. The left plot shows a steady increase in the development BLEU score over the training iterations, indicating improving quality of the model's output, while the right plot displays a steady decrease in training loss, suggesting effective learning and error minimization. In VA107, the scatter plot displays the predicted versus true values of Nitrogen Dioxide (NO2) levels, used to assess the model's performance in predicting continuous variables.
 
-The corresponding assertions for these visualizations ensure that the models meet specific performance standards. For VA2, the assertion ensures that the final score exceeds 300, validating the model's performance for deployment. In VA9, the assertion checks whether the mean of the last ten rewards exceeds 10, ensuring stable and satisfactory learning progress. For VA15, the assertion checks if the mean of the first ten training observations is greater than the mean of the last ten, ensuring loss convergence and validating the model's learning without overfitting. The assertion in VA3 ensures the accuracy score on the test set exceeds 0.95, confirming the model's reliability and generalization capability. For VA28, the assertion checks whether the average development recall in the last ten evaluations exceeds 0.85, ensuring high recall rate critical for tasks like medical diagnostics. In VA11, the assertion ensures the average development BLEU score in the last ten evaluations exceeds 35, confirming the model produces high-quality translations. Lastly, in VA107, the assertion checks whether the R2 score exceeds 0.6, validating the model's fit and reliability for making accurate predictions in real-world scenarios. These validations confirm that iterative training processes lead to meaningful improvements and ensure the models' readiness for deployment and practical applications.
+The corresponding assertions for these visualisations ensure that the models meet specific performance standards. For VA2, the assertion ensures that the final score exceeds 300, validating the model's performance for deployment. In VA9, the assertion checks whether the mean of the last ten rewards exceeds 10, ensuring stable and satisfactory learning progress. For VA15, the assertion checks if the mean of the first ten training observations is greater than the mean of the last ten, ensuring loss convergence and validating the model's learning without overfitting. The assertion in VA3 ensures the accuracy score on the test set exceeds 0.95, confirming the model's reliability and generalization capability. For VA28, the assertion checks whether the average development recall in the last ten evaluations exceeds 0.85, ensuring high recall rate critical for tasks like medical diagnostics. In VA11, the assertion ensures the average development BLEU score in the last ten evaluations exceeds 35, confirming the model produces high-quality translations. Lastly, in VA107, the assertion checks whether the R2 score exceeds 0.6, validating the model's fit and reliability for making accurate predictions in real-world scenarios. These validations confirm that iterative training processes lead to meaningful improvements and ensure the models' readiness for deployment and practical applications.
 
-\highlight{\textbf{Finding 3.1} 15 VA pairs are used to evaluate the performance of ML models. The visualizations include metrics such as mean reward, training loss, accuracy, BLEU scores, and R2 scores. Assertions associated with these visualizations ensure models meet a specific performance criteria.}
+\highlight{\textbf{Finding 3.1} 15 VA pairs are used to evaluate the performance of ML models. The visualisations include metrics such as mean reward, training loss, accuracy, BLEU scores, and R2 scores. Assertions associated with these visualisations ensure models meet a specific performance criteria.}
 
 \subsubsection{Distribution Check ($N = 1$)}
 
@@ -1170,13 +1247,13 @@ The corresponding assertions for these visualizations ensure that the models mee
   \label{tab:va-dist-check}
 \end{table}
 
-The visualization in VA13 displays the distribution of bootstrapped sample means as a histogram with a superimposed kernel density estimate (KDE) curve, illustrating the central tendency and variability of the bootstrapped means.
+The visualisation in VA13 displays the distribution of bootstrapped sample means as a histogram with a superimposed kernel density estimate (KDE) curve, illustrating the central tendency and variability of the bootstrapped means.
 
 Bootstrapped sample means are calculated by repeatedly resampling the original dataset with replacement and computing the mean for each resampled dataset. This process generates a distribution of the mean, known as the bootstrap distribution, which helps in estimating the variability and central tendency of the original dataset's mean.
 
 The corresponding assertion checks whether the bootstrapped mean lies between 80 and 81, ensuring that the statistical estimation is consistent with expected values. This validation is crucial for confirming the reliability of the bootstrapped estimates and the accuracy of statistical conclusions.
 
-\highlight{\textbf{Finding 3.1} One visualization is used to display the distribution of bootstrapped sample means. The corresponding assertion checks if the bootstrapped mean lies between a specific range, ensuring a consistent statistical estimation.}
+\highlight{\textbf{Finding 3.1} One visualisation is used to display the distribution of bootstrapped sample means. The corresponding assertion checks if the bootstrapped mean lies between a specific range, ensuring a consistent statistical estimation.}
 
 \subsubsection{Data Validation ($N = 9$)}
 
@@ -1223,13 +1300,13 @@ The corresponding assertion checks whether the bootstrapped mean lies between 80
 
 The VA pairs in Table~\ref{tab:va-data-validatio} collectively illustrate various data validation techniques essential for ensuring the integrity and quality of data used in ML models. 
 
-The visualization in VA30 consists of two histograms comparing the original and scaled distributions of an exponential dataset. The left plot shows the distribution of the original data, while the right plot displays the distribution after scaling. The scaling process adjusts the data to fall within a specified range of 0 and 1. The corresponding assertion checks whether the maximum value in the scaled data is less than or equal to 1, ensuring that the scaling procedure was applied correctly.
+The visualisation in VA30 consists of two histograms comparing the original and scaled distributions of an exponential dataset. The left plot shows the distribution of the original data, while the right plot displays the distribution after scaling. The scaling process adjusts the data to fall within a specified range of 0 and 1. The corresponding assertion checks whether the maximum value in the scaled data is less than or equal to 1, ensuring that the scaling procedure was applied correctly.
 
-The visualization in VA35 shows the distribution of health inspection scores in areas with the bottom 25\% and top 25\% of median household income. The blue bars represent areas with the top 25\% median household income, while the orange bars represent areas with the bottom 25\%. This comparison helps identify any disparities in health inspection scores based on income levels. The corresponding assertion checks that all inspection scores in the lower-income areas are above 75, ensuring that the data reflects a minimum standard of health inspection scores in these areas.
+The visualisation in VA35 shows the distribution of health inspection scores in areas with the bottom 25\% and top 25\% of median household income. The blue bars represent areas with the top 25\% median household income, while the orange bars represent areas with the bottom 25\%. This comparison helps identify any disparities in health inspection scores based on income levels. The corresponding assertion checks that all inspection scores in the lower-income areas are above 75, ensuring that the data reflects a minimum standard of health inspection scores in these areas.
 
-The visualization in VA57 shows a histogram of transformed data after it has been normalised. The corresponding assertion checks that the Kolmogorov-Smirnov (KS) test statistic for the transformed data is less than $1 \times 10^{-2}$, ensuring that the data closely follows a normal distribution.
+The visualisation in VA57 shows a histogram of transformed data after it has been normalised. The corresponding assertion checks that the Kolmogorov-Smirnov (KS) test statistic for the transformed data is less than $1 \times 10^{-2}$, ensuring that the data closely follows a normal distribution.
 
-The visualization in VA62 displays a heatmap of an augmented dataset generated using a weighted k-nearest-neighbors (k-NN) method. This heatmap helps in visualizing the differences and similarities between the original and augmented data. The corresponding assertion checks that the augmented data \lstinline{x_aug} is not nearly identical to the original data \lstinline{x_original}, ensuring that the data augmentation process has introduced sufficient variability.
+The visualisation in VA62 displays a heatmap of an augmented dataset generated using a weighted k-nearest-neighbors (k-NN) method. This heatmap helps in visualizing the differences and similarities between the original and augmented data. The corresponding assertion checks that the augmented data \lstinline{x_aug} is not nearly identical to the original data \lstinline{x_original}, ensuring that the data augmentation process has introduced sufficient variability.
 
 These validations are crucial for confirming that data preprocessing techniques such as scaling, transformation, and augmentation have been correctly applied. Ensuring the integrity and quality of the data is essential for the subsequent steps in the machine learning pipeline, as it directly impacts the robustness, reliability, and generalization of the models developed. By validating these steps, we can maintain high standards of data quality and model performance, which are fundamental for accurate and meaningful analyses.
 
@@ -1291,6 +1368,9 @@ Testing, computational notebooks and visual analytics. The section
 concludes with an overview of technical knowledge required for this
 paper.
 
+\subsection{Assertions and Software Bugs}
+ TODO
+
 \subsection{Computational Notebooks and Software Engineering}\label{sec:notebooks}
 
 \emph{Psallidas et al}~\cite{psallidas2019data} provide an overview of the evolving landscape of computational notebooks by analysing six million Python notebooks, two million enterprise Data Science (DS) pipelines, source code and metadata from over 900 releases of 12 important DS libraries. Their findings can be used by system builders for improving DS tools and also by DS practitioners to understand the current trends in technologies they should focus on. \emph{Pimentel et al}~\cite{pimentel2019large-scale} mined 1.4 million notebooks from Github to conduct an empirical study on the coding practices in computational notebooks. Based on their analysis, the authors propose guidelines on improving reproducibility of computational notebooks. To enable future research on computational notebooks, \emph{Quaranta et al}~\cite{quaranta2021kgtorrent} mine Kaggle and present \textit{KGTorrent}, a public dataset consisting of approximately 2.5 million Jupyter notebooks written in Python. The dataset also contains a relational database dump of metadata regarding publicly available notebooks on Kaggle.
@@ -1299,7 +1379,7 @@ Studies with human subjects have been conducted to gain a deeper understanding o
 
 To manage and prune multiple versions of code that accumulate over time when developing in notebooks, \emph{Head et al} propose a code gathering tool that allows practitioners to review and only keep the relevant version of code. Other tools such as \textit{WrangleDoc} and \textit{VizSmith} have also been proposed to aid ML practitioners when working within computational notebooks~\cite{yang2021subtle, bavishi2021vizsmith}.
 
-Jupyter notebooks have been widely adopted by the DS and ML communities to develop ML pipelines~\cite{wang2020assessing,pimentel2019large,quaranta2021kgtorrent}. Computational notebooks provide a rich source of data in the form of natural text, code and visualisations. Computational notebooks also allow ML practitioners to present the knowledge gained from the analysis in a narrative that can be shared with others~\cite{rule2018exploration}. This study leverages the computational narrative present within notebooks to identify visualisations and assertions that are semantically linked to each other.
+Jupyter notebooks have been widely adopted by the DS and ML communities to develop ML pipelines~\cite{wang2020assessing,pimentel2019large-scale,quaranta2021kgtorrent}. Computational notebooks provide a rich source of data in the form of natural text, code and visualisations. Computational notebooks also allow ML practitioners to present the knowledge gained from the analysis in a narrative that can be shared with others~\cite{rule2018exploration}. This study leverages the computational narrative present within notebooks to identify visualisations and assertions that are semantically linked to each other.
 
 \subsection{ML Testing}\label{sec:ml-testing}
 
