@@ -1,0 +1,22 @@
+
+\subsection{Motivating Example}
+
+Sara is a data scientist who is developing an ML model to predict customer churn. Sara begins her project in a Jupyter notebook, which supports iterative development and immediate feedback through the execution of code cells. Her workflow is dynamic and exploratory, typical of modern ML practices. Sara loads the dataset and performs Exploratory Data Analysis (EDA) to develop a high-level understanding of the data she is working with. Since most ML models expect the data to have a normal distribution, Sara generates histograms to validate this assumption. Based on the histograms, Sara confirms that the data has a normal distribution and therefore does not apply any normalisation techniques. With data preprocessing complete, Sara proceeds to build her initial model. After setting up a logistic regression classifier, she runs a training cell that outputs the model's accuracy. The results are disappointing, prompting her to adjust the hyper-parameters of the model in subsequent cells. Each modification is immediately followed by feedback on its impact, allowing Sara to quickly converge on the optimal settings. After all experimentation and model tuning are complete Sara deploys the model into a production environment where the model is periodically retrained using new training data.
+
+% Initially, Sara loads a dataset and uses basic descriptive statistics to understand its distribution. As she executes a cell that calculates and displays the mean and standard deviation of each feature, she notices unusually high variance in one of the features. This insight, derived directly from the output of the notebook cell, prompts her to apply normalisation to ensure better model performance.
+
+A few weeks later, Sara notices a drop in the performance of her model. To investigate, Sara revisits the notebook in which she developed the model. However all the cells in the notebook execute without any errors thus Sara needs to execute each cell individually and manually analyse the outputs which takes considerable amount of time and effort. Sara soon realises that the distribution of the new slice of training data is no longer normal. To fix the issue, Sara applies normalisation techniques. Additionally, she also adds an assertion that performs a K-test 
+
+% sara returns to the notebook since the performance of the model has suddenly dropped. However all cells in the notebook execute without any errors so sara has to execute each cell and analyse the output of the cells manually which takes a long time. Sara finally identifies the source of the problem, the training data is missing 3 features that contributed to the performance of the model. However, sara was unable to identify this since the training data is automatically pulled from a database and another team in sara's organisation changed the db schema without notifying other users
+
+% to ensure that such issues a caught faster in the future, sara adds an assertion that fails if the number of features in the training data changes. This assertion also documents
+
+A few weeks later, Bob is tasked with improving the performance of the model since Sara is on vacation. Bob obtains the notebook in which Sara originally developed the model however is unable to
+
+% Throughout this process, Sara heavily relies on the outputs of various code cells, not just for error correction but also for making strategic decisions about model architecture, such as adding layers or changing activation functions. At one point, after noticing overfitting from a cell outputting validation loss, she decides to incorporate dropout layers, which she can quickly evaluate by rerunning the training process.
+
+% Finally, Sara fine-tunes her model based on the outputs from a confusion matrix and ROC curve, identifying thresholds for classification that balance precision and recall effectively. Each decision in Sara's workflow—--from preprocessing adjustments to hyperparameter tuning and model validation—--is guided by the iterative feedback she receives from the outputs of her notebook's code cells.
+
+% TODO: the jump to assertions is very drastic; motivate it using scenario that there is a bug in the system (use the data validation papers from google) and Sara needs to fix them and how assertions would have helped here to debug the issue faster! (notebook keeps running!)
+
+

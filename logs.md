@@ -1,4 +1,12 @@
 
+# experiments with outputs of notebooks
+
++ a cell can have multiple outputs if they are of different types, for example: a `print` and last statement can co-exist since they are of different output types
++ any number of visualisation statements appearing prior to the last statement can co-exist
+   + however, the inverse is not true ie. if there are multiple `df.head()` statements prior to a visualisation statement, only the visualisation output is kept (I suspect because they are both of the same output type?)
+
+The bottom line is that we need to isolate cells that only have a single output
+
 # role of feedback and agile development
 
 Following recommendations from Diomidis regarding the role of feedback in agile development:
