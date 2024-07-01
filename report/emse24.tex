@@ -133,13 +133,23 @@ grestore
 
 \begin{abstract}
 
-  \todo{update the numbers here}
-Developing and testing ML systems is a highly interactive process which demands a human-in-the-loop approach. In addition to writing tests for the code base, practitioners are required to analyse and interpret several visualisations using their domain expertise to validate if an ML system satisfies the required set of functional and non-functional properties. Visualisations are frequently used to qualitatively assess various parts of an ML pipeline. However, implicit knowledge gained from visualisations must be translated to explicit analytical tests that fail when there is change in any component of the ML pipeline. We conduct an empirical analysis of Jupyter notebooks to catalogue the state-of-the-art mappings between ML visualisations and assertions. We mine Github to collect 54K Jupyter Notebooks that contain assertions written in Python. We develop a novel methodology to identify 1764 notebooks which contain an assertion below a visualisation. We manually analyse the 1.7K notebooks and identify 269 visualisation-assertion pairs that are semantically related to one another. We further investigate the 269 visualisation-assertion pairs and identify three frequently occurring testing patterns. We perform an in-depth analysis of 34 visualisation-assertion pairs and find that the assertions often fail to capture all the information present in their visual counter-part. Empirical evidence obtained in this study indicates that current software testing methods fail to address the unique challenges of ML. And emphasises the need for automated tools that bridge the gap between visual assessments and analytical assertions.
+  % TODO: update the abstract
+  Developing and testing ML systems is a highly interactive process which demands a human-in-the-loop approach. In addition to writing tests for the code base, practitioners are required to analyse and interpret several visualisations using their domain expertise to validate if an ML system satisfies the required set of functional and non-functional properties. Visualisations are frequently used to qualitatively assess various parts of an ML pipeline. However, implicit knowledge gained from visualisations must be translated to explicit analytical tests that fail when there is change in any component of the ML pipeline. We conduct an empirical analysis of Jupyter notebooks to catalogue the state-of-the-art mappings between ML visualisations and assertions. We mine Github to collect 54K Jupyter Notebooks that contain assertions written in Python. We develop a novel methodology to identify 1764 notebooks which contain an assertion below a visualisation. We manually analyse the 1.7K notebooks and identify 269 visualisation-assertion pairs that are semantically related to one another. We further investigate the 269 visualisation-assertion pairs and identify three frequently occurring testing patterns. We perform an in-depth analysis of 34 visualisation-assertion pairs and find that the assertions often fail to capture all the information present in their visual counter-part. Empirical evidence obtained in this study indicates that current software testing methods fail to address the unique challenges of ML. And emphasises the need for automated tools that bridge the gap between visual assessments and analytical assertions.
 
-\keywords{ML Testing \and SE4AI \and Visualisations \and Assertions \and Computational Notebooks}
 \end{abstract}
 
+\keywords{ML Testing \and SE4AI \and Visualisations \and Assertions \and Computational Notebooks}
+
 \section{Introduction}
+
+% TODO: feedback from Diomidis
+% - In the introduction clarify (and perhaps illustrate) the life cycle and the role of notebooks.  Are these used to develop code that is then integrated into scripts, or is the notebook the execution vehicle, or is it informal throw-away code and rough notes on how to repeat a process in the future?  This will also inform the discussion and the implications.  Consider describing
+%  a) the current development model, with the role of assertions, implicit checks, and visualization,
+%  b) its limitations (which provide motivation for the study),
+%  c) a sketch for an improved development model, and
+%  d) the knowledge gaps associated with the improved model and how this study fills them.
+%
+% - The part starting "However, these decisions are often based on the conditions present when the model was initially created", which provides the motivation must be argued more convincingly.  I think that the motivation is not so much what is described in that paragraph, as the fact that, in the absence of detailed, up-to-date, and accurate requirements, rationale, and design documentation as well as tests, many of these can be derived from notebook interactions.
 
 The machine learning development lifecycle (MLDL) encompasses a multifaceted series of entangled stages. Significant effort is invested in gathering and assembling the required data from diverse sources. The data then undergo cleaning and preprocessing to ensure high quality and usability, in the subsequent stages. MLDL is dominated by the model development phase which is highly experimental and iterative. This stage involves exploratory data analysis (EDA) to uncover underlying patterns, fitting the data to various models, and rigorously analyzing the results. Often, this stage may lead to additional rounds of feature engineering, where new attributes are created based on insights gained from initial models to enhance model performance. Practitioners may also engage in comparing and contrasting different models to identify the most effective approach, followed by fine-tuning selected models to optimize performance. The final model is then deployed into production where it is continuously monitored, and periodically retrained to adapt to new data or changing conditions~\cite{haakman2021ai,amershi2019software,sculley2015hidden}.
 
@@ -189,6 +199,10 @@ Our findings indicate that outputs from code cells are extensively utilised for 
 \section{Background}\label{sec:background}
 
 This section introduces relevant prior concepts for this study.
+
+% TODO: feedback from Diomidis
+% - In Section 2, rather than jumping to literate programming, it would be more appropriate to discuss the CLI interaction style, which also encompasses Jupyter.
+% - Section 2.2 (Python AST) can be shortened, shortened and moved to methods, or removed. Consider also describing the format of Jupyter notebooks.
 
 \subsection{Literate Programming, Computational Notebooks and Project Jupyter}
 
@@ -267,11 +281,15 @@ During each case study, we analyse the code of the candidate to understand its p
 
 \section{Results}
 
+% TODO: feedback from Diomidis
+% - Sections 4.1 and 4.2 are very interesting but overly detailed. I suggest to move most of the content to an appendix or an online appendix, and only present the uses in a table or a taxonomy tree.  In addition, consider moving the more general observations into a discussion section.
+% - Consider starting with RQ2 (making it RQ1), because assertions are a concrete feature of Python code.  Then move to RQ1, which deals with implicit assertions.
+% - I am afraid I cannot understand RQ3; consider revising it.  I would think that visualizations are verified visually, rather than through assertions.  You may have encountered some parts, but I would assume that the assertions mostly deal with things that can be more accurately and effectively be expressed as a predicate rather than viewed in a chart.
 % TODO: some sort of introduction to the following sub-sections here; we need to explain that for code cell outputs we try to show the python statement that produces the output along with the actual output. Somethimes actual output is not possible (eg. P68) because the statement may be inside an if statement.
 
 \subsection{(RQ1) What are the characteristics of feedback mechanisms in ML Jupyter notebooks?}
 
-25K (8.5\%) notebooks contained at least one assertion. From the 8.5\% notebooks, we collected 89.6K assertions. 4.8K assertions (5\%) used methods from external testing libraries. Majority of the assertions however (85K or 95\%) were written using the \lstinline{assert} statement provided by the built-in Python standard library. We removed duplicate assertions for the remainder of the analysis, thus resulting in 27.1K assertions.
+25 thousand (8.5\%) notebooks contained at least one assertion. From the 8.5\% notebooks, we collected 89.6 thousand assertions. 4.8 thousand assertions (5\%) used methods from external testing libraries. 85 thousand assertions (95\%) however were written using the \lstinline{assert} statement provided by the built-in Python standard library. We removed duplicate assertions for the remainder of the analysis, thus resulting in 27.1 thousand assertions.
 
 \begin{figure}
   \centering
@@ -304,7 +322,7 @@ Figure~\ref{fig:other-test-methods} presents the 10 most common methods used in 
 \begin{table}
   \centering
   \caption{Examples of the most common tests performed in assert statements.}
-  \begin{tabular}{@{}m{0.3\textwidth} m{0.3\textwidth}@{}}
+  \begin{tabular}{@{}m{0.5\textwidth} m{0.5\textwidth}@{}}
     \toprule
     \emph{\textbf{Comparison Check}}&
     \emph{\textbf{Function Call}}\\
@@ -342,7 +360,7 @@ We focus the remainder of the analysis on the 95\% of the assertions written usi
   \end{minipage}
 \end{figure}
 
-Of the 95\% assert statements, 28.4K (31.7\%) have a failure message. Figure~\ref{fig:common-assert-msgs} shows the most frequent bi-grams that appear in these failure messages. Similar to the analysis presented above, we removed the duplicate messages prior to analysing the bi-grams resulting in 5.9K unique messages. The bi-grams indicate that the shape and data type of data structures are frequently verified.
+Of the 95\% assert statements, 28.4 thousand (31.7\%) have a failure message. Figure~\ref{fig:common-assert-msgs} shows the most frequent bi-grams that appear in these failure messages. Similar to the analysis presented above, we removed the duplicate messages prior to analysing the bi-grams resulting in 5.9 thousand unique messages. The bi-grams indicate that the shape and data type of data structures are frequently verified.
 
 \begin{figure}
   \centering
@@ -368,8 +386,7 @@ Of the 95\% assert statements, 28.4K (31.7\%) have a failure message. Figure~\re
   \end{minipage}
 \end{figure}
 
-We collected 1.4M print statements from 180K notebooks (60\% of the total notebooks analysed in this study). Unlike assert statements, print statements do not have a fixed lexical semantic since the Python ast module interprets them as regular function calls. Additionally, print statements can be written in several forms---the \lstinline{print} function may have multiple arguments, any form of string interpolation supported by Python and output from function calls. Figure~\ref{fig:common-print-nodes} shows that the most common nodes appear inside of print statements are constants followed by function calls. Figure~\ref{fig:common-print-constant-types} further validates that the constants are almost entirely of type string. Based on these observations, we disect the print statements into two components---text written in natural language (from the \emph{Constant} nodes) and code (from all other nodes). Figure~\ref{fig:common-print-constants} and Figure~\ref{fig:common-print-not-constants} present the most common bi-grams that appear in the natural text and code of print statements respectively. Both figures collectively indicate that print statements are frequently used to print various performance metrics of ML models.
-
+We collected 1.4 million print statements from 180 thousand notebooks (60\% of the total notebooks analysed in this study). Unlike assert statements, print statements do not have a fixed lexical semantic since the Python ast module interprets them as regular function calls. Additionally, print statements can be written in several forms---the \lstinline{print} function may have multiple arguments, any form of string interpolation supported by Python or output from function calls. Figure~\ref{fig:common-print-nodes} shows that the most common nodes inside of print statements are constants followed by function calls. Figure~\ref{fig:common-print-constant-types} further validates that the constants are almost entirely of type string. Based on these observations, we disect the print statements into two components---text written in natural language (from the \emph{Constant} nodes) and code (from all other nodes). Figure~\ref{fig:common-print-constants} and Figure~\ref{fig:common-print-not-constants} present the most common bi-grams that appear in the natural text and code of print statements respectively. Both figures collectively indicate that print statements are frequently used to print various performance metrics of ML models.
 
 \begin{figure}
   \centering
@@ -388,6 +405,7 @@ We collected 1.4M print statements from 180K notebooks (60\% of the total notebo
   \end{minipage}
 \end{figure}
 
+We collected 1 million last statements from 119 thousand notebooks (40\% of the total notebooks analysed in this study). Figure~\ref{fig:common-last-nodes} shows that the most frequent type of code written as the final statement in a code cell is a function call. We further analyse the functions calls in more detail. Figure~\ref{fig:common-last-modules} and Figure~\ref{fig:common-last-functions} show the most modules and functions used inside the function calls respectively. The figures highlight the prominence of data visualisation libraries seaborn (\lstinline{sns}) and matplotlib (\lstinline{plt}) and visualisation functions such as \lstinline{plot} and \lstinline{countplot} in the notebooks. The data analysis tool pandas (represented by \lstinline{df} and \lstinline{pd}) also features prominently with many data exploration and preprocessing functions such as \lstinline{head}, \lstinline{value_counts} and \lstinline{describe} being used frequently. The presence of \lstinline{train} and \lstinline{model} modules along with the \lstinline{fit} function indicates the use of ML libraries.
 
 \begin{figure}
   \centering
@@ -396,9 +414,44 @@ We collected 1.4M print statements from 180K notebooks (60\% of the total notebo
   \label{fig:common-last-nodes}
 \end{figure}
 
-We collected 1M last statements from 119K notebooks. Figure~\ref{fig:common-last-nodes} shows that the most frequent type of code written as the final statement in a code cell is a function call. We further analyse the functions calls. Figure~\ref{fig:common-last-modules}
+% TODO: we need better terminology here
+\begin{figure}
+  \centering
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{common-last-modules.pdf}
+    \caption{Most common modules used in the function calls of last statements.}
+    \label{fig:common-last-modules}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{common-last-functions.pdf}
+    \caption{Most common functions used in the function calls of last statements.}
+    \label{fig:common-last-functions}
+  \end{minipage}
+\end{figure}
 
-% most common functions?
+\begin{figure}
+  \centering
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{common-last-df-functions.pdf}
+    \caption{Most common functions called on pandas data frames.}
+    \label{fig:common-last-df-functions}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{common-last-visualisation-functions.pdf}
+    \caption{Most common visualisation functions used in last statements.}
+    \label{fig:common-last-visualisation-functions}
+  \end{minipage}
+\end{figure}
+
+We further analysed the most common functions called on pandas data frames by isolating the last statements where the module is \lstinline{data} or \lstinline{df}. This is shown in Figure~\ref{fig:common-last-df-functions} which reveals a focus on exploratory data analysis and statistical operations. The frequent use of functions such as \lstinline{value_counts}, \lstinline{head}, and \lstinline{unique}, indicate an emphasis on understanding the structure and content of the data. Visualisation functions like \lstinline{plot} and \lstinline{hist} suggest that practitioners often create quick visualisations directly from data frames. Descriptive statistics are also prominent, with functions like \lstinline{describe}, \lstinline{mean}, and \lstinline{sum} being commonly used.
+
+Similarly, we also analysed the most common visualisation functions used in notebooks by isolating the last statements where the module is \lstinline{sns} or \lstinline{plt}. This is shown in Figure~\ref{fig:common-last-visualisation-functions} which indicates that categorical data visualisation appears to be a primary focus, with \lstinline{countplot} and \lstinline{barplot} ranking high among the most frequently used functions. The prominence of \lstinline{heatmap} and \lstinline{boxplot} functions indicates a regular need for visualising correlations and statistical distributions. For continuous data, functions like \lstinline{distplot}, \lstinline{scatterplot}, and \lstinline{scatter} are commonly used. The presence of \lstinline{imshow} suggests that image-related visualisations are also significant in many notebooks.
 
 \subsection{(RQ2) How is feedback from the output of code cells used when writing ML code in Jupyter notebooks?}~\label{sec:result-rq1}
 
@@ -1372,6 +1425,9 @@ Assertions can play a crucial role in automatically validating critical assumpti
 % NOTE: here we need to bring in prior literature on ML testing; and how majority of the research is working on testing using a test dataset; however we also have data and models
 % NOTE: 3 pillars of of ML (sato2019continuous)
 
+% TODO: feedback from Diomidis
+% - "it represents an emerging testing practice within the ML community": I have commented before that assertions are different from tests. Assertions are a mechanism to increase the code's robustness, similar to type checks, array bounds checks, and thrown API exceptions.
+
 From the 3 million Jupyter notebooks collected in this study, only 30 thousand (9.7\%) were found to utilize assertions. This indicates that while the use of assertions in Jupyter notebooks is still uncommon, it represents an emerging testing practice within the ML community. The relatively low adoption rate suggests that there is significant room for growth and improvement in the integration of assertions into ML development workflows.
 
 We believe this limited use of assertions is due to a lack of knowledge among practitioners regarding testing approaches and the absence of adequate tooling to support the assertion of data and model properties. Current guidelines on ML coding practices require enhancement to emphasize the importance of testing. There is a pressing need to steer education and research in Software Engineering towards addressing the specific challenges faced when developing ML-enabled software systems. Fostering a deeper understanding of testing practices and providing tools tailored to ML development can help promote more rigorous and reliable testing methodologies within the community.
@@ -1394,6 +1450,9 @@ Our results show a clear need for developing ML-specific testing tools. Such too
 
 \section{Implications}
 
+% TODO: feedback from Diomidis
+% - The implications section focuses implicitly on assertions, at the expense of the other elements discussed earlier.  Also, it puts excessive emphasis on testing, which IIUC is not the paper's topic.
+
 \paragraph{\textbf{For ML developers}} ML developers are strongly encouraged to incorporate assertions into their Jupyter notebooks. Assertions play a crucial role in validating critical assumptions automatically, reducing the reliance on manual checks, and enhancing the robustness and maintainability of ML pipelines. By embedding assertions, developers can document the decisions made during model development, ensuring that these decisions are consistently applied and preserved throughout the ML lifecycle. This practice not only facilitates smoother transitions and handovers in collaborative environments but also improves the reproducibility of ML experiments by ensuring consistent validation checks.
 
 \paragraph{\textbf{For Researchers}} The use of assertions in Jupyter notebooks, though currently uncommon, is an emerging testing practice within the ML community. This study highlights the potential for assertions to enhance the reliability and robustness of ML models by automating the validation of critical assumptions. Researchers are encouraged to explore the development and evaluation of ML-specific testing methodologies that leverage assertions. This could involve creating new testing frameworks and tools tailored to the unique challenges of ML systems, thus contributing to the advancement of software engineering practices in the ML domain.
@@ -1411,6 +1470,9 @@ The empirical analysis presented in this study uses Jupyter notebooks mined from
 In Section~\ref{sec:data-collect}, we intentionally keep the search criteria on Github broad by only checking for the appropriate file type and the presence of the ``assert'' keyword. Besides being used to define tests in the Python programming language, ``assert'' also appears in several external python testing libraries (for instance nose~\footnote{http://readthedocs.org/docs/nose/}, unittest~\footnote{https://docs.python.org/3/library/unittest.html} and numpy~\footnote{https://numpy.org/doc/stable/reference/routines.testing.html}). Our approach captures a rich variety of assertion statements while preventing the need to craft a custom search query based on an exhaustive list of keywords that appear in python testing libraries.
 
 \section{Related Work}\label{sec:related}
+
+% TODO: feedback from Diomidis
+% - In Section 8 consider adding material regarind interactive ML development.
 
 This section summarises prior scientific work that has been done in ML
 Testing, computational notebooks and visual analytics. The section
