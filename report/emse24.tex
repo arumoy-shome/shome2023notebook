@@ -162,6 +162,10 @@ Computational notebooks---specifically Jupyter notebooks\footnote{https://jupyte
 Feedback is crucial for making important decisions throughout the MLDL. Practitioners rely on the output of cells to determine the appropriate data preprocessing techniques, detect erroneous assumptions, create new features to boost model performance, and select specific hyperparameters. However, these decisions are often based on the conditions present when the model was initially created. Visual outputs in particular, are open to interpretation~\cite{heer2010tour}. The viewer's background and expertise significantly influence how they understand and draw conclusions from visual data. 
 For instance, interpreting a histogram requires knowledge of various distribution types, which someone without statistical training might not possess. Additionally, physical limitations such as color blindness can impede accurate interpretation if visualizations are not designed with accessibility in mind. As data, personnel, and system environments inevitably change, undocumented decisions can lead to accumulation of technical debt. This not only prolongs time required for debugging and troubleshooting, but also incurs additional costs and resource expenditures~\cite{sculley2015hidden,amershi2019software,sambasivan2021everyone}.
 
+% TODO: feedback from Luis
+% - not flowing with previous paragraph
+% - The previous paragraph could mention something like ad-hoc manual tests. And then in this paragraph we could say that software engineering proposes practices on automated testing that can be useful in this context
+% - in theory, the main goal of tests is to verify the requirements of the software. Documentation is a by product. (I like the idea in this paragraph but we dont want to touch a raw nerve from reviewers)
 In software engineering, tests are employed to document the expected behaviour of code. Failing tests indicate when these expectations are no longer met. Similarly, assertions in Jupyter notebooks can serve as documentation for the decisions made during model development. Embedding assertions in the notebook can ensure that any deviations from expected data conditions or model performance are promptly detected, thus maintaining the integrity of the ML pipeline.
 
 To understand the role of feedback when developing ML pipelines in Jupyter notebooks, we conduct a series of  empirical studies. First, we examine the outputs of code cells in Jupyter notebooks. Next, we study Python assertions written in Jupyter notebooks to understand how they are used when developing ML pipelines in notebooks. Finally, we investigate the intersection of outputs and assertions by analysing  assertions that document decisions made from the outputs of code cells. In particular, we focus on assertions derived from visualisations since they pose a higher risk of technical debt. To the best of our knowledge, we are the first to investigate how feedback derived from the output of code cells is used by ML practitioners when developing ML pipelines inside of Jupyter notebooks. We are also the first to investigate assertions written inside of notebooks and their intersection with the outputs of code cells.
@@ -206,15 +210,15 @@ This section introduces relevant prior concepts for this study.
 
 \subsection{Literate Programming, Computational Notebooks and Project Jupyter}
 
-% NOTE pimentel2019large-scale:
+% NOTE pimentel2019large-scale
 % NOTE kery2018story
 % NOTE rule2018exploration
 
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{nb.pdf}
+  \caption{Example Jupyter notebook with code and markdown cells, adapted ~\cite[Figure~1]{pimentel2019large-scale}.}
   \label{fig:nb}
-  \caption{Example Jupyter notebook with code and markdown cells, adapted from~\cite[Figure~1]{pimentel2019large-scale}.}
 \end{figure}
 
 Literate programming is a paradigm introduced by Donald Knuth that emphasizes writing code that is understandable by humans. In his seminal work, Knuth advocates combining source code with documentation in a single, cohesive narrative~\cite{knuth1984literate}. Computational notebooks are inspired by this paradigm, allowing for the integration of executable code, scientific equations, visualisations, and explanatory text within a single document. This format supports a literate approach to programming, making it easier to share and understand complex analyses and workflows. Project Jupyter is a prominent example of this approach, offering a suite of open-source tools for interactive computing. Jupyter Notebooks, in particular, have become a popular tool in the ML community since they facilitate open and reproducible science, education, and data analysis.
@@ -245,8 +249,8 @@ In Python, \lstinline{assert} statements are represented in the AST by the \lsti
 \begin{figure}
   \centering
   \includegraphics[width=0.75\linewidth]{data-collection.pdf}
-  \label{fig:data-collection}
   \caption{Overview of data collection methodology used in this study}
+  \label{fig:data-collection}
 \end{figure}
 
 Figure~\ref{fig:data-collection} summarises the data collection procedure used in this study. We collected Jupyter notebooks written in Python, from Kaggle and Github. 
@@ -257,10 +261,15 @@ For Kaggle, we used a pre-existing dataset KGTorrent~\cite{quaranta2021kgtorrent
 
 Therefore, we start with 283GB of data comprising of $298686$ Python Jupyter notebooks.
 
-We check the validity of the underlying JSON structure in each notebook using the nbformat tool\footnote{https://nbformat.readthedocs.io/en/latest/}. Since the focus of this study is on the analysis of Python code, we only include notebooks that contain at least one code cell. Finally, to focus on Python code written specifically for ML projects, we only include notebooks that import popular ML libraries~\footnote{These libraries are derived from white literature---https://www.coursera.org/articles/python-machine-learning-library, https://www.geeksforgeeks.org/best-python-libraries-for-machine-learning, https://www.datacamp.com/blog/top-python-libraries-for-data-science, https://www.kdnuggets.com/2020/11/top-python-libraries-data-science-data-visualization-machine-learning.html, https://lp.jetbrains.com/python-developers-survey-2022}.
+% TODO: feedback from Luis
+% - explain why we check the validity
+% - we cannot guarantee that the white literature will be online in the next months/years and make it difficult to collect an important detail for reproducibility. I would add to the text at least how many libraries we added, give a few examples and point to our replication package,
+We check the validity of the underlying JSON structure in each notebook using the nbformat tool~\footnote{https://nbformat.readthedocs.io/en/latest/}. Since the focus of this study is on the analysis of Python code, we only include notebooks that contain at least one code cell. Finally, to focus on Python code written specifically for ML projects, we only include notebooks that import popular ML libraries~\footnote{These libraries are derived from grey literature---https://www.coursera.org/articles/python-machine-learning-library, https://www.geeksforgeeks.org/best-python-libraries-for-machine-learning, https://www.datacamp.com/blog/top-python-libraries-for-data-science, https://www.kdnuggets.com/2020/11/top-python-libraries-data-science-data-visualization-machine-learning.html, https://lp.jetbrains.com/python-developers-survey-2022}.
 
 For explicit feedback using assertions, we programmatically analyse the JSON structure of the notebooks to isolate code cells. We collect Python assert statements from the code cells by constructing and subsequently parsing the Abstract Syntax Tree (AST) of the source code present in each cell.
 
+% TODO: feedback from Luis
+% - only here, a reader start understanding that we want to collect assert, prints, and lasts. Perhaps we want to make that clear in the beginning of this subsection or in the one above it
 Similarly, for implicit feedback, we first isolate code cells that produce an output. The output of a cell may either be from a ``print'' statement or the last statement of the cell. We collect both of them using the AST of the cell.
 
 Finally, we remove duplicate data points (asserts, prints and last statements) resulting in a final data set of $22548$ assertions, $25319$ print statements and $28522$ last statements.
@@ -268,7 +277,9 @@ Finally, we remove duplicate data points (asserts, prints and last statements) r
 \subsection{Case Studies}
 
 % TODO: might need a visual aid here
-
+% TODO: feedback from Luis
+% - motivate this approach
+% - not sure we want to say NLP here. I would call it text processing. NLP kinda implies that we are automatically interpreting the text
 We allocated a fixed time resource of 100 hours to conduct the case study analysis of all candidates (assertions and cell outputs). To surface interesting candidates for the case studies, we apply NLP techniques as described below.
 
 % TODO: point out the poor quality of notebooks out there (we have citations for this); and the resulting noise in the assertions/outputs. Thats why we need to apply these techniques to surface unique and interesting candidates!
@@ -286,7 +297,6 @@ During each case study, we analyse the code of the candidate to understand its p
 % - Consider starting with RQ2 (making it RQ1), because assertions are a concrete feature of Python code.  Then move to RQ1, which deals with implicit assertions.
 % - I am afraid I cannot understand RQ3; consider revising it.  I would think that visualizations are verified visually, rather than through assertions.  You may have encountered some parts, but I would assume that the assertions mostly deal with things that can be more accurately and effectively be expressed as a predicate rather than viewed in a chart.
 % TODO: some sort of introduction to the following sub-sections here; we need to explain that for code cell outputs we try to show the python statement that produces the output along with the actual output. Somethimes actual output is not possible (eg. P68) because the statement may be inside an if statement.
-
 \subsection{(RQ1) What are the characteristics of feedback mechanisms in ML Jupyter notebooks?}
 
 25 thousand (8.5\%) notebooks contained at least one assertion. From the 8.5\% notebooks, we collected 89.6 thousand assertions. 4.8 thousand assertions (5\%) used methods from external testing libraries. 85 thousand assertions (95\%) however were written using the \lstinline{assert} statement provided by the built-in Python standard library. We removed duplicate assertions for the remainder of the analysis, thus resulting in 27.1 thousand assertions.
@@ -454,6 +464,8 @@ We further analysed the most common functions called on pandas data frames by is
 Similarly, we also analysed the most common visualisation functions used in notebooks by isolating the last statements where the module is \lstinline{sns} or \lstinline{plt}. This is shown in Figure~\ref{fig:common-last-visualisation-functions} which indicates that categorical data visualisation appears to be a primary focus, with \lstinline{countplot} and \lstinline{barplot} ranking high among the most frequently used functions. The prominence of \lstinline{heatmap} and \lstinline{boxplot} functions indicates a regular need for visualising correlations and statistical distributions. For continuous data, functions like \lstinline{distplot}, \lstinline{scatterplot}, and \lstinline{scatter} are commonly used. The presence of \lstinline{imshow} suggests that image-related visualisations are also significant in many notebooks.
 
 \subsection{(RQ2) How is feedback from the output of code cells used when writing ML code in Jupyter notebooks?}~\label{sec:result-rq1}
+% TODO: feedback from Luis
+% -  up to this point I miss how exactly we plan to answer this question. Reading the results I get that we are answering by clustering outputs together based on their respective ML/DS task and then by analysing how that task is accomplished. We need to explain this either in the beginning of section 4.1 or in section 3
 
 \subsubsection{Data distribution check ($N = 7$)}~\label{sec:data-distribution-output}
 % (O2, O4, O9, O14, O20, O25, O48)
@@ -493,11 +505,21 @@ Similarly, we also analysed the most common visualisation functions used in note
   \label{tab:distribution-check}
 \end{table}
 
+% TODO: feedback from Luis
+% - I miss a bit the link between the RQ and the different subsections 4.1.1
+% -  I also miss an explanation of the table. what is O2? We should have a sentence explaining that each of the examples in the table are identified by a key,  the respective code and visual output, if any.
+% - Explain also how the figure is extracted. This is important because it is the first one. For the next ones we can just say that we follow the same structure.
+% - Another alternative would be to explain this generally in the intro of section 4.1 and then follow it consistently.
+% - I also miss how the examples are extracted or what they mean here.
+% - I mean, are these all the examples we found for distribution check? If so, make it clear.
+% - add: "with key" to be closer to the table structure
 Table~\ref{tab:distribution-check} shows examples of outputs used to check the distribution of the data. In output \emph{O2} the distribution of feature \texttt{Age} is checked against the two labels (\texttt{Survived} and \texttt{Died}) of the target feature. Output \emph{O9} presents another example where the distribution of a continuous feature \texttt{likes} is checked with-respect-to all the values of another categorical feature \texttt{category\_id}. Output \emph{O14} produces a pandas dataframe which is used to check the mean value of the features \texttt{Age}, \texttt{SibSp}, \texttt{Parch} and \texttt{Fare} against each label in the target feature \texttt{Survived}. Output \emph{O48} produces a pandas dataframe with the descriptive statistics of all features in the training data. The statement is written immediately after normalising the features in the training data. Hence, the user manually verifies if the normalisation was successful by looking at the mean and standard deviation of the features in the output. Similarly, \emph{O25} is written after discretizing a continuous feature \texttt{OverallQual} using binning. 
 
 Understanding the distribution of data is crucial for making informed decisions about necessary transformation steps in data analysis. For instance, visualisations can efficiently determine if scaling, normalizing, or handling outliers is needed. During the exploratory data analysis (EDA) phase, visualisations and pandas dataframes are commonly used to assess specific columns' distribution, helping identify features related to the target variable and informing feature inclusion in model training. Additionally, descriptive statistics are used post-transformation to verify the effectiveness of steps like data normalization, ensuring data conforms to the expected format for further analysis.
 
-\highlight{\textbf{Finding 1.1} The study identifies seven outputs used to check data distribution, including visualisations like categorical plots, KDE plots, and count plots (O2, O9 and O25), and statistical summaries from pandas dataframes (O14 and O48). These checks are used for making informed decisions about data transformations such as scaling, normalizing and handling outliers, ensuring data integrity and improving model training reliability during the EDA phase.}
+% TODO: Feedback from Luis
+% - I think you should mention the fact that there are both prints and visualisations for this task, the fact that the approach can be different not only depending on the type of data,  but also depending on the preferences of the developers (maybe we cannot really claim this last part but at least mention that there are multiple visualisations for the same scenario and developers simply need to opt for one.
+\highlight{\textbf{Finding 1.1} The study identifies seven outputs used to check data distribution, including visualisations like categorical plots, kernel density estimate plots and count plots (\emph{O2}, \emph{O9} and \emph{O25}), and statistical summaries from pandas dataframes (\emph{O14} and \emph{O48}). These checks are used for making informed decisions about data transformations such as scaling, normalising and handling outliers, ensuring data integrity and improving model training reliability during the exploratory data analysis phase.}
 
 \subsubsection{Data relationship check ($N = 2$)}~\label{sec:linear-relation-output}
 % (O6, O10)
@@ -526,9 +548,11 @@ Understanding the distribution of data is crucial for making informed decisions 
 
 Table~\ref{tab:linear-relation-check} illustrates two outputs found in this study for identifying linear relationships amongst features in the data. In output \emph{O6}, the practitioner assesses the linearity between the features \texttt{Cash} and \texttt{SIZE}. Output \emph{O10} depicts the visualisation of the feature \texttt{X4} alongside the target variable \texttt{Y}, accompanied by a fitted linear regression model.
 
+% TODO: feedback from Luis
+% - this explains what the code does but it does not pinpoint observations on how the output of code cells are used. E.g., here it is mostly visualisations - that's an observation.  They are both scatterplots, one had to change the height of the plot (not sure that's relevant. We do not observe prints or asserts that help with this task.
 Linear machine learning models achieve optimal performance when the target variable can be expressed as a linear combination of the input features. However, features within a dataset that exhibit a linear relationship are considered redundant as they convey the same information to the model during training. Consequently, the feature engineering stage often involves removing such features to create a more efficient training dataset~\cite{shome2022data}.
 
-\highlight{\textbf{Finding 1.2} The study identifies two outputs used to verify linear relationships between features in the data. visualisations such as a scatter plot with a regression line (O10) and a line plot (O6) are employed to assess the linearity between features. These checks are used for identifying and potentially removing redundant features or performing feature selection to ensure that the training dataset is optimized for linear ML models.}
+\highlight{\textbf{Finding 1.2} The study identifies two outputs used to verify linear relationships between features in the data. visualisations such as a scatter plot with a regression line (\emph{O10}) and a line plot (\emph{O6}) are employed to assess the linearity between features. These checks are used for identifying and potentially removing redundant features or performing feature selection to ensure that the training dataset is optimized for linear ML models.}
 
 \subsubsection{Resource check ($N = 7$)}\label{sec:implicit-resource-check}
 % (P71, P86, O64, O66, P68, P82, P107)
@@ -568,9 +592,11 @@ Linear machine learning models achieve optimal performance when the target varia
 \end{table}
 
 % NOTE: O107 is a print statement which is execute even if the prior statement that loads the model fails...
+% TODO: feedback from luis
+% - I probably missed it but it should be clear why we have P and O in the key, given that they are all outputs.
 Table~\ref{tab:resource-check} presents outputs used to verify availability of resources on the system in which the notebook is being executed. Outputs \emph{P68}, \emph{P82} and \emph{P86} check for the availability of compute resources, such as a GPU or a TPU. This study also finds outputs used to verify that a dataset or a pre-trained model has been successfully loaded into memory. For example, Output \emph{P107} is written after loading a pre-trained model is loaded into memory. Output \emph{O64} generates a pandas dataframe with the last five rows of the data while \emph{O66} shows the shape of the data. These statements are written directly after loading the data from the file system to manually verify that the data was loaded without errors.
 
-Additionally, print statement \emph{P71} is used to ensure that a certain version of an external library is present on the system. This is interesting since external dependencies in Python projects are typically managed using dependency management solutions such as a \emph{requirements.txt}\footnote{https://pip.pypa.io/en/stable/reference/requirements-file-format/} file or external tools such as \emph{pipenv}\footnote{https://pipenv.pypa.io/en/latest/} and \emph{poetry}~\footnote{https://python-poetry.org/}.
+Additionally, print statement \emph{P71} is used to ensure that a certain version of an external library is present on the system. This is interesting since external dependencies in Python projects are typically managed using dependency management solutions such as a \emph{requirements.txt}~\footnote{https://pip.pypa.io/en/stable/reference/requirements-file-format/} file or external tools such as \emph{pipenv}~\footnote{https://pipenv.pypa.io/en/latest/} and \emph{poetry}~\footnote{https://python-poetry.org/}.
 
 \highlight{\textbf{Finding 1.3} The study identifies seven outputs used to verify resource availability on the systems where the Jupyter notebooks are being executed. These checks include confirming the availability of compute resources like GPUs and TPUs (P68, P82 and P86), ensuring datasets or pre-trained models are successfully loaded (P107, O64 and O66), and verifying the presence of specific library versions (P71). These checks are used for ensuring that the computational environment is correctly set up, preventing execution errors, and facilitating smooth workflow execution.}
 
@@ -634,7 +660,8 @@ Checking for missing values is a critical step in the preprocessing phase of a m
 
 \subsubsection{Model performance check ($N = 33$)}
 % (O3, O50, O52, O57, O74, P3, P6, P8--12, P16--19, P23, P24, P28, P30, P34, P42, P47, P48, P50, P51, P54, P55, P57, P58, P61, P78, P93)
-
+% TODO: feedback from Luis
+% - if needed, we can merge Excution time check here. (both execution time and model correctness can be presented as a KPI)
 \begin{table}
   \centering
   \caption{Various cell outputs used to check the performance of an ML model after training.}
@@ -809,6 +836,8 @@ Performing value or spot checks can be an essential practice for ensuring data i
 \subsubsection{Model training ($N = 4$)}
 % (O8, O31, O42, P77)
 
+% TODO: feedback from luis
+% - this cluster makes me wonder: should we make a point that some of these outputs may happen by chance and were not explicitly defined by users/developers?
 \begin{table}
   \centering
   \caption{Example of outputs used to monitor model training.}
@@ -1486,9 +1515,9 @@ paper.
 
 \emph{Psallidas et al}~\cite{psallidas2019data} provide an overview of the evolving landscape of computational notebooks by analysing six million Python notebooks, two million enterprise Data Science (DS) pipelines, source code and metadata from over 900 releases of 12 important DS libraries. Their findings can be used by system builders for improving DS tools and also by DS practitioners to understand the current trends in technologies they should focus on. \emph{Pimentel et al}~\cite{pimentel2019large-scale} mined 1.4 million notebooks from Github to conduct an empirical study on the coding practices in computational notebooks. Based on their analysis, the authors propose guidelines on improving reproducibility of computational notebooks. To enable future research on computational notebooks, \emph{Quaranta et al}~\cite{quaranta2021kgtorrent} mine Kaggle and present \textit{KGTorrent}, a public dataset consisting of approximately 2.5 million Jupyter notebooks written in Python. The dataset also contains a relational database dump of metadata regarding publicly available notebooks on Kaggle.
 
-Studies with human subjects have been conducted to gain a deeper understanding of the challenges faced by ML practitioners when developing ML models inside notebooks. The results indicate that ML practitioners work in a highly iterative fashion, often experimenting with multiple strategies to analyse the data or produce meaningful visualisations~\cite{kandel2012enterprise, kery2018story, liu2019understanding, chattopadhyay2020whats}. Studies have also been conducted to understand how practitioners generate, evaluate and manage alternative hypothesis, visual designs, methods, tools, algorithms and data sources to arrive at the final implementation~\cite{liu2019understanding,kandel2012enterprise}. The findings from these studies can be used as guidelines for improving existing notebook technologies or designing new ones.
+Studies with human subjects have been conducted to gain a deeper understanding of the challenges faced by ML practitioners when developing ML models inside notebooks. The results indicate that ML practitioners work in a highly iterative fashion, often experimenting with multiple strategies to analyse the data or produce meaningful visualisations~\cite{kandel2012enterprise,kery2018story,liu2019understanding,chattopadhyay2020whats}. Studies have also been conducted to understand how practitioners generate, evaluate and manage alternative hypothesis, visual designs, methods, tools, algorithms and data sources to arrive at the final implementation~\cite{liu2019understanding,kandel2012enterprise}. The findings from these studies can be used as guidelines for improving existing notebook technologies or designing new ones.
 
-To manage and prune multiple versions of code that accumulate over time when developing in notebooks, \emph{Head et al} propose a code gathering tool that allows practitioners to review and only keep the relevant version of code. Other tools such as \textit{WrangleDoc} and \textit{VizSmith} have also been proposed to aid ML practitioners when working within computational notebooks~\cite{yang2021subtle, bavishi2021vizsmith}.
+To manage and prune multiple versions of code that accumulate over time when developing in notebooks, \emph{Head et al} propose a code gathering tool that allows practitioners to review and only keep the relevant version of code. Other tools such as \textit{WrangleDoc} and \textit{VizSmith} have also been proposed to aid ML practitioners when working within computational notebooks~\cite{yang2021subtle,bavishi2021vizsmith}.
 
 Jupyter notebooks have been widely adopted by the DS and ML communities to develop ML pipelines~\cite{wang2020assessing,pimentel2019large-scale,quaranta2021kgtorrent}. Computational notebooks provide a rich source of data in the form of natural text, code and visualisations. Computational notebooks also allow ML practitioners to present the knowledge gained from the analysis in a narrative that can be shared with others~\cite{rule2018exploration}. This study leverages the computational narrative present within notebooks to identify visualisations and assertions that are semantically linked to each other.
 
@@ -1498,7 +1527,7 @@ Jupyter notebooks have been widely adopted by the DS and ML communities to devel
 
 Existing scientific literature on ML testing broadly focuses on two aspects. First, on functional properties such as correctness and robustness of the model towards unseen data. And second, on non-functional properties such as fairness, interpretability and privacy~\cite{zhang2020machine,mehrabi2021survey,chen2022fairness}.
 
-To test the correctness of ML models, several improvements over existing test adequacy metrics have been proposed. Tools such as \textit{DeepXplore} and \textit{DeepGauge} propose new test adequacy metrics such as neuron coverage adapted for ML enabled software systems~\cite{pei2017deepxplore, ma2018deepgauge, gerasimou2020importance-driven}. Formal verification methods have also been proposed that try to provide formal guarantee of robustness against adversarial examples. Such methods however are only feasible for statistical ML models and become computationally expensive for more complex models such as deep neural networks~\cite{zhu2021deepmemory, baluta2021scalable}. Several works have been conducted on generating and detecting adversarial inputs for ML models. Data augmentation techniques based on fuzzing, search based software testing and mutation testing have been proposed to generate adversarial examples that can be used during model training to improve its robustness~\cite{braiek2019deepevolution, gao2020fuzz, wang2021robot, zhang2020white-box}. It is however not possible to include all variations of adversarial examples into the training data. Thus, methods have been proposed to detect adversarial inputs during runtime~\cite{xiao2021self-checking, wang2020dissector, wang2019adversarial, berend2020cats}.
+To test the correctness of ML models, several improvements over existing test adequacy metrics have been proposed. Tools such as \textit{DeepXplore} and \textit{DeepGauge} propose new test adequacy metrics such as neuron coverage adapted for ML enabled software systems~\cite{pei2017deepxplore,ma2018deepgauge,gerasimou2020importance-driven}. Formal verification methods have also been proposed that try to provide formal guarantee of robustness against adversarial examples. Such methods however are only feasible for statistical ML models and become computationally expensive for more complex models such as deep neural networks~\cite{zhu2021deepmemory,baluta2021scalable}. Several works have been conducted on generating and detecting adversarial inputs for ML models. Data augmentation techniques based on fuzzing, search based software testing and mutation testing have been proposed to generate adversarial examples that can be used during model training to improve its robustness~\cite{braiek2019deepevolution,gao2020fuzz,wang2021robot,zhang2020white-box}. It is however not possible to include all variations of adversarial examples into the training data. Thus, methods have been proposed to detect adversarial inputs during runtime~\cite{xiao2021self-checking,wang2020dissector,wang2019adversarial,berend2020cats}.
 
 In contrast to existing scientific contributions, we conduct a large-scale empirical analysis of Jupyter Notebooks to understand the process of testing ML systems. Specifically, we focus on how visualisations are used to test specific properties of ML systems. We further investigate how frequently analytical tests are formulated based on the information gained from the visualisations.
 
@@ -1510,7 +1539,7 @@ Prior studies have been conducted to understand how visual analytics techniques 
 
 Several tools have been proposed by the visual analytics research community to aid practitioners in understanding how their ML models operate. \emph{Wexler et al} propose \textit{What-If}, a visual analytics tool to explore alternative hypotheses, generate counterfactual reasoning, investigate decision boundaries of the model and how change in data affects the model predictions. To reduce the cognitive load of ML practitioners during model building phase, \emph{Amershi et al} propose \textit{ModelTracker}. Given a trained model and a sample dataset, ModelTracker presents all the information in traditional summary statistics along with the performance of the model.
 
-\textit{ESCAPE}, \textit{GAM Coach}, \textit{Angler} and \textit{Drava} are a few other tools that have been proposed to handle specialised use-cases such as identifying systematic errors in ML models, generating counterfactual explanations for Generalised Additive Models, prioritising machine translation model improvements and relating human concepts with semantic dimensions extracted by ML models during disentangled representation learning\cite{ahn2023escape, wang2023gam, robertson2023angler, wang2023drava}.
+\textit{ESCAPE}, \textit{GAM Coach}, \textit{Angler} and \textit{Drava} are a few other tools that have been proposed to handle specialised use-cases such as identifying systematic errors in ML models, generating counterfactual explanations for Generalised Additive Models, prioritising machine translation model improvements and relating human concepts with semantic dimensions extracted by ML models during disentangled representation learning\cite{ahn2023escape,wang2023gam,robertson2023angler,wang2023drava}.
 
 In contrast to prior work which propose dedicated visual analytics tools, this study focuses on visualisations within computational notebooks. We focus on visualisations produced by AI practitioners using Python libraries (such as Matplotlib or Seaborn). Additional context provided by surrounding code and markdown cells are used to understand the motivation for creating the visualisation and the information gained from it.
 
