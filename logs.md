@@ -1,4 +1,8 @@
 
+# @idea do asserts fail and why?
+
+Collect the `stderr` outputs of jupyter cells and analyse them?
+
 # experiments with outputs of notebooks
 
 + a cell can have multiple outputs if they are of different types, for example: a `print` and last statement can co-exist since they are of different output types

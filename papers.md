@@ -1,3 +1,102 @@
+
+# @ml @testing zhang2020machine
+
+```bibtex
+@Article{         zhang2022machine,
+  title         = {Machine Learning Testing: Survey, Landscapes and
+                  Horizons},
+  volume        = {48},
+  issn          = {2326-3881},
+  url           = {http://dx.doi.org/10.1109/TSE.2019.2962027},
+  doi           = {10.1109/tse.2019.2962027},
+  number        = {1},
+  journal       = {IEEE Transactions on Software Engineering},
+  publisher     = {Institute of Electrical and Electronics Engineers (IEEE)},
+  author        = {Zhang, Jie M. and Harman, Mark and Ma, Lei and Liu, Yang},
+  year          = {2022},
+  month         = jan,
+  pages         = {1–36}
+}
+```
+
+# @python @tool chollet2015keras
+
+```bibtex
+@Misc{            chollet2015keras,
+  title         = {Keras},
+  author        = {Chollet, Fran\c{c}ois and others},
+  year          = {2015},
+  howpublished  = {\url{https://keras.io}}
+}
+```
+
+# @python @tool paszke2017automatic
+
+```bibtex
+@Article{         paszke2017automatic,
+  title         = {Automatic differentiation in PyTorch},
+  author        = {Paszke, Adam and Gross, Sam and Chintala, Soumith and
+                  Chanan, Gregory and Yang, Edward and DeVito, Zachary and
+                  Lin, Zeming and Desmaison, Alban and Antiga, Luca and
+                  Lerer, Adam},
+  year          = {2017}
+}
+```
+
+# @python @tool virtanen2020scipy
+
+```bibtex
+@Article{         virtanen2020scipy,
+  author        = {Virtanen, Pauli and Gommers, Ralf and Oliphant, Travis E.
+                  and Haberland, Matt and Reddy, Tyler and Cournapeau, David
+                  and Burovski, Evgeni and Peterson, Pearu and Weckesser,
+                  Warren and Bright, Jonathan and {van der Walt}, St{\'e}fan
+                  J. and Brett, Matthew and Wilson, Joshua and Millman, K.
+                  Jarrod and Mayorov, Nikolay and Nelson, Andrew R. J. and
+                  Jones, Eric and Kern, Robert and Larson, Eric and Carey, C
+                  J and Polat, {\.I}lhan and Feng, Yu and Moore, Eric W. and
+                  {VanderPlas}, Jake and Laxalde, Denis and Perktold, Josef
+                  and Cimrman, Robert and Henriksen, Ian and Quintero, E. A.
+                  and Harris, Charles R. and Archibald, Anne M. and Ribeiro,
+                  Ant{\^o}nio H. and Pedregosa, Fabian and {van Mulbregt},
+                  Paul and {SciPy 1.0 Contributors}},
+  title         = {{{SciPy} 1.0: Fundamental Algorithms for Scientific
+                  Computing in Python}},
+  journal       = {Nature Methods},
+  year          = {2020},
+  volume        = {17},
+  pages         = {261--272},
+  adsurl        = {https://rdcu.be/b08Wh},
+  doi           = {10.1038/s41592-019-0686-2}
+}
+```
+
+# @tool @python abadi2015tensorflow
+
+```bibtex
+@Misc{            abadi2015tensorflow,
+  title         = { {TensorFlow}: Large-Scale Machine Learning on
+                  Heterogeneous Systems},
+  url           = {https://www.tensorflow.org/},
+  note          = {Software available from tensorflow.org},
+  author        = { Mart\'{i}n~Abadi and Ashish~Agarwal and Paul~Barham and
+                  Eugene~Brevdo and Zhifeng~Chen and Craig~Citro and
+                  Greg~S.~Corrado and Andy~Davis and Jeffrey~Dean and
+                  Matthieu~Devin and Sanjay~Ghemawat and Ian~Goodfellow and
+                  Andrew~Harp and Geoffrey~Irving and Michael~Isard and
+                  Yangqing Jia and Rafal~Jozefowicz and Lukasz~Kaiser and
+                  Manjunath~Kudlur and Josh~Levenberg and Dandelion~Man\'{e}
+                  and Rajat~Monga and Sherry~Moore and Derek~Murray and
+                  Chris~Olah and Mike~Schuster and Jonathon~Shlens and
+                  Benoit~Steiner and Ilya~Sutskever and Kunal~Talwar and
+                  Paul~Tucker and Vincent~Vanhoucke and Vijay~Vasudevan and
+                  Fernanda~Vi\'{e}gas and Oriol~Vinyals and Pete~Warden and
+                  Martin~Wattenberg and Martin~Wicke and Yuan~Yu and
+                  Xiaoqiang~Zheng},
+  year          = {2015}
+}
+```
+
 # @visualisation heer2010tour
 
 ```bibtex
