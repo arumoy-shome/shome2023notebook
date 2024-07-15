@@ -70,13 +70,13 @@ grestore
   captionpos=b,
   % numbers=left,
   % numberstyle=\tiny\color{gray},
-  % backgroundcolor=\color{backcolor},
-  aboveskip=0pt,
-  belowskip=0pt
+  backgroundcolor=\color{backcolor},
+  % aboveskip=0pt,
+  % belowskip=0pt
 }
 \lstset{style=mystyle}
 
-\lstset{emph={%  
+\lstset{emph={%
     assert%
     },emphstyle={\color{delim}}%
 }%
@@ -141,59 +141,37 @@ grestore
 \keywords{ML Testing \and SE4AI \and Visualisations \and Assertions \and Computational Notebooks}
 
 \section{Introduction}
+The machine learning development lifecycle (MLDL) encompasses a multifaceted series of entangled stages. Significant effort is invested in gathering and assembling the required data from diverse sources. The data then undergo cleaning and preprocessing to ensure high quality and usability, in the subsequent stages. MLDL is dominated by the model development phase which is highly experimental and iterative. This stage involves exploratory data analysis (EDA) to uncover underlying patterns, fitting the data to various models, and rigorously analysing the results. Often, this stage may lead to additional rounds of feature engineering, where new attributes are created based on insights gained from initial models to enhance model performance. Practitioners may also engage in comparing and contrasting different models to identify the most effective approach, followed by fine-tuning selected models to optimize performance. The final model is then deployed into production where it is continuously monitored, and periodically retrained to adapt to new data or changing conditions~\cite{haakman2021ai,amershi2019software,sculley2015hidden}.
 
-% TODO: feedback from Diomidis
-% - In the introduction clarify (and perhaps illustrate) the life cycle and the role of notebooks.  Are these used to develop code that is then integrated into scripts, or is the notebook the execution vehicle, or is it informal throw-away code and rough notes on how to repeat a process in the future?  This will also inform the discussion and the implications.  Consider describing
-%  a) the current development model, with the role of assertions, implicit checks, and visualization,
-%  b) its limitations (which provide motivation for the study),
-%  c) a sketch for an improved development model, and
-%  d) the knowledge gaps associated with the improved model and how this study fills them.
-%
-% - The part starting "However, these decisions are often based on the conditions present when the model was initially created", which provides the motivation must be argued more convincingly.  I think that the motivation is not so much what is described in that paragraph, as the fact that, in the absence of detailed, up-to-date, and accurate requirements, rationale, and design documentation as well as tests, many of these can be derived from notebook interactions.
-
-The machine learning development lifecycle (MLDL) encompasses a multifaceted series of entangled stages. Significant effort is invested in gathering and assembling the required data from diverse sources. The data then undergo cleaning and preprocessing to ensure high quality and usability, in the subsequent stages. MLDL is dominated by the model development phase which is highly experimental and iterative. This stage involves exploratory data analysis (EDA) to uncover underlying patterns, fitting the data to various models, and rigorously analyzing the results. Often, this stage may lead to additional rounds of feature engineering, where new attributes are created based on insights gained from initial models to enhance model performance. Practitioners may also engage in comparing and contrasting different models to identify the most effective approach, followed by fine-tuning selected models to optimize performance. The final model is then deployed into production where it is continuously monitored, and periodically retrained to adapt to new data or changing conditions~\cite{haakman2021ai,amershi2019software,sculley2015hidden}.
-
-% The feedback-driven style of development in MLDL resembles principles of Agile software development and the Cross-Industry Standard Process for Data Mining (CRISP-DM). Agile methodologies emphasize continuous iteration of development and testing throughout the software lifecycle. In Agile, software is developed in incremental, rapid cycles resulting in small, incremental releases with each release building on previous functionality. Each iteration is reviewed and critiqued by the project team, which includes representatives of the project's various stakeholders. 
-
-The MLDL is fundamentally iterative, closely resembling Agile software engineering principles, which emphasize incorporating early feedback and working in small, manageable iterations~\cite{betz2018managing}. Similarly, CRISP-DM---the dominant process model in data mining---outlines a cyclical process that evolves from understanding the business objectives and data, data preparation, modeling, evaluation and finally deployment and monitoring~\cite{martinez-plumed2021crisp-dm}. Both systems advocate for a dynamic, iterative approach that enhances adaptability and effectiveness in dealing with complex, changing systems like those encountered in ML projects.
+The MLDL is fundamentally iterative, closely resembling Agile software engineering principles, which emphasize incorporating early feedback and working in small, manageable iterations~\cite{betz2018managing}. Similarly, CRISP-DM---the dominant process model in data mining---outlines a cyclical process that evolves from understanding the business objectives and data, data preparation, modelling, evaluation and finally deployment and monitoring~\cite{martinez-plumed2021crisp-dm}. Both systems advocate for a dynamic, iterative approach that enhances adaptability and effectiveness in dealing with complex, changing systems like those encountered in ML projects.
 
 Computational notebooks---specifically Jupyter notebooks\footnote{https://jupyter.org/}---have been ubiquitously adopted by the ML community for developing ML enabled systems~\cite{pimentel2019large-scale,quaranta2021kgtorrent,psallidas2019data,perkel2018why}. Jupyter notebooks provide an interactive computing environment that allow users to break the development of complex workflows into smaller, more manageable code chunks. Each notebook is composed of a series of code cells, which can be executed independently in a read-eval-print loop (REPL) style of interactive software development. This REPL approach allows users to write a piece of code, run it, and immediately see the results thus facilitating an incremental and iterative style of software development. This modular structure of notebooks provides users the flexibility to experiment with different approaches and algorithms. Users can test hypotheses, debug issues, and make incremental changes with immediate feedback. The ability to visualize data and results inline and document the process in a narrative form further enhances their utility~\cite{kery2018story,head2019managing,rule2018exploration,chattopadhyay2020whats}.
 
-Feedback is crucial for making important decisions throughout the MLDL. Practitioners rely on the output of cells to determine the appropriate data preprocessing techniques, detect erroneous assumptions, create new features to boost model performance, and select specific hyperparameters. However, these decisions are often based on the conditions present when the model was initially created. Visual outputs in particular, are open to interpretation~\cite{heer2010tour}. The viewer's background and expertise significantly influence how they understand and draw conclusions from visual data. 
-For instance, interpreting a histogram requires knowledge of various distribution types, which someone without statistical training might not possess. Additionally, physical limitations such as color blindness can impede accurate interpretation if visualizations are not designed with accessibility in mind. As data, personnel, and system environments inevitably change, undocumented decisions can lead to accumulation of technical debt. This not only prolongs time required for debugging and troubleshooting, but also incurs additional costs and resource expenditures~\cite{sculley2015hidden,amershi2019software,sambasivan2021everyone}.
+% NOTE: consider starting with prints and last statements first (most obvious), then move to assertions; its fine if RQs follow different order
+Jupyter notebooks are primarily used to explore different ideas or approaches, often neglecting software development best practices in favor of rapid experimentation~\cite{kery2018story,rule2018exploration,pimentel2019large-scale}. During this process, practitioners can use various feedback mechanisms like assertions, print statements, output of code cells and visualisations to determine the appropriate data preprocessing techniques, detect erroneous assumptions, create new features to boost model performance, and select specific hyperparameters~\cite{head2019managing,chattopadhyay2020whats}. Once the code is finalised, it is typically transferred into a script that is run in a production environment. Alternatively, the notebook may contain significant exploratory work such as developing a model or performing data exploration. To effectively communicate the information present in the notebooks with clients, collaborators or teammates, the practitioners add annotations and structure to the notebook using markdown cells~\cite{kery2018story,rule2018exploration}. In both scenarios, practitioners need to revisit the notebooks to obtain structured information such as up-to-date and accurate requirements, their rationale and design decisions, and tests---artifacts which are usually missing in the original notebooks~\cite{pimentel2019large-scale,psallidas2019data,grotov2022large-scale}. As data, personnel, and system environments inevitably change, undocumented decisions can lead to accumulation of technical debt. This not only prolongs time required for debugging and troubleshooting, but also incurs additional costs and resource expenditures~\cite{sculley2015hidden,amershi2019software,sambasivan2021everyone}.
 
-% TODO: feedback from Luis
-% - not flowing with previous paragraph
-% - The previous paragraph could mention something like ad-hoc manual tests. And then in this paragraph we could say that software engineering proposes practices on automated testing that can be useful in this context
-% - in theory, the main goal of tests is to verify the requirements of the software. Documentation is a by product. (I like the idea in this paragraph but we dont want to touch a raw nerve from reviewers)
-In software engineering, tests are employed to document the expected behaviour of code. Failing tests indicate when these expectations are no longer met. Similarly, assertions in Jupyter notebooks can serve as documentation for the decisions made during model development. Embedding assertions in the notebook can ensure that any deviations from expected data conditions or model performance are promptly detected, thus maintaining the integrity of the ML pipeline.
-
-To understand the role of feedback when developing ML pipelines in Jupyter notebooks, we conduct a series of  empirical studies. First, we examine the outputs of code cells in Jupyter notebooks. Next, we study Python assertions written in Jupyter notebooks to understand how they are used when developing ML pipelines in notebooks. Finally, we investigate the intersection of outputs and assertions by analysing  assertions that document decisions made from the outputs of code cells. In particular, we focus on assertions derived from visualisations since they pose a higher risk of technical debt. To the best of our knowledge, we are the first to investigate how feedback derived from the output of code cells is used by ML practitioners when developing ML pipelines inside of Jupyter notebooks. We are also the first to investigate assertions written inside of notebooks and their intersection with the outputs of code cells.
-
-The research questions along with the contributions of this study are presented below.
+% TODO: feedback from diomidis
+% - "We identify a knowledge gap in the current approach used to obtain such structured information from experimental code within Jupyter notebooks." Rephrase to have the knowledge gap correspond to what the RQs answer.  Currently one may think that we aim to improve the approach, not its understanding.
+We identify a knowledge gap in the current approach used to obtain such structured information from experimental code within Jupyter notebooks. To address this gap, this study conducts a series of empirical studies to understand the role of various feedback mechanisms used to develop ML pipelines within Jupyter notebooks. We focus on implicit form of feedback obtained from print statements and output generated by the last statement in code cells, as well as explicit form of feedback obtained from assertions. To the best of our knowledge, we are the first to investigate how such feedback mechanisms are used by ML practitioners when developing ML pipelines inside Jupyter notebooks. The research questions along with the contributions of this study are presented below.
 
 \begin{description}
-  \item[RQ1.] \textbf{What are the characteristics of feebback mechanisms in ML Jupyter notebooks?}
+  \item[RQ1.] \textbf{What feedback mechanisms are employed in the development of ML Jupyter notebooks?}
 
-  % TODO: the problem is that readers don't yet know that outputs are generated from last statement and print statements
-  We mine 300K Jupyter notebooks written in Python from Github and Kaggle. We analyse 2.3M code cells and create a dataset of 22.5K assertions, 25K print statements and 28K last statements. We further perform a descriptive and lexical analysis of the dataset and report the key characteristics of feedback mechanisms used in ML Jupyter notebooks.
-  
-  % TODO: The dataset is available publicly on ...
+    We mine 297.8 thousand Jupyter notebooks written in Python from Github and Kaggle. We analyse 2.3 million code cells obtained from the notebooks and create a public dataset of 27.1 thousand assertions, 498.3 thousand print statements and 373.6 thousand last statements. We perform a descriptive and lexical analysis of the dataset and report the key characteristics of feedback mechanisms used in ML Jupyter notebooks.
 
-  \item[RQ2.] \textbf{How is implicit feedback from the output of code cells used when writing ML code in Jupyter notebooks?}
+  % TODO: add citation for the dataset (make it public so that DOI is available)
 
-  We conduct individual case-studies with XXX code cell outputs. During each case-study, we analyse the raw output along with the corresponding code that produced the output to understand its purpose. Additionally, we anayse the entire code cell, the previous and next cells along with the purpose of the notebook to bring in rich context.
+  \item[RQ2.] \textbf{How is explicit feedback from assert statements used to validate ML code written in Jupyter notebooks?}
 
-  \item[RQ3.] \textbf{How are assertions used to validate ML code written in Jupyter notebooks?}
+    To gain a deeper understanding of assert statements written in Jupter notebooks, we conduct individual case-studies with 82 assert statements. We analyse the assertion along with the surrounding code to understand its purpose. Additionally, we analyse the entire code cell, the previous and next cells along with the purpose of the notebook to bring in rich context.
 
-  Similarly, we conduct case-studies with XXX assert statements. We analyse the assertion along with the surrounding code to understand its purpose.
+  \item[RQ3.] \textbf{How is implicit feedback from print statements and last statements of code cells used when writing ML code in Jupyter notebooks?}
 
-  \item[RQ4.] \textbf{How are assertions used to validate visual outputs in Jupyter notebooks?}
-
-  Finally, we conduct case-studies with XXX visualisation and assertion (VA) pairs.
+    Similarly, we conduct individual case-studies with 44 print statements and 27 last statements. During each case-study, we analyse the code statement along with the raw output to understand its purpose.
 \end{description}
 
 % TODO revisit this paragraph
+% TODO what should be done to change the things we observe? to increase the use of explicit feedback? do we know if its important or not? maybe we need to explore that?
 Our findings indicate that outputs from code cells are extensively utilised for making critical design and implementation decisions during the MLDL. While manual validation of these outputs is common, it is also prone to inconsistencies thus highlighting the need for automated validation mechanisms. Assertions are identified as a potential solution, capable of verifying data distributions and ensuring model performance metrics meet predefined thresholds, thereby reducing reliance on manual checks and enhancing the robustness of ML pipelines. However, the study also notes the limited use of assertions, with only 9.7\% of the 3 million notebooks analyzed incorporating them, suggesting a significant gap in current testing practices within the ML community. The findings underscore the necessity for developing ML-specific testing tools and integrating assertions more deeply into the ML development workflow to ensure consistent and reliable validation processes.
 
 % TODO update replication package
@@ -204,15 +182,11 @@ Our findings indicate that outputs from code cells are extensively utilised for 
 
 This section introduces relevant prior concepts for this study.
 
-% TODO: feedback from Diomidis
-% - In Section 2, rather than jumping to literate programming, it would be more appropriate to discuss the CLI interaction style, which also encompasses Jupyter.
-% - Section 2.2 (Python AST) can be shortened, shortened and moved to methods, or removed. Consider also describing the format of Jupyter notebooks.
+\subsection{REPLs, Interactive Computing and Project Jupyter}
 
-\subsection{Literate Programming, Computational Notebooks and Project Jupyter}
+A Read-Eval-Print Loop (REPL) is an interactive programming environment that takes single user inputs (Read), executes them (Eval), returns the result to the user (Print) and then waits for the next command (Loop). REPLs offer an immediate feedback loop for quickly testing and debugging code snippets. The Python standard distribution includes a Python REPL with a command line interface to execute Python code in real-time. IPython---a more advanced alternative to the Python REPL---extends the capabilities of the standard Python shell with additional features such as powerful introspection, additional shell syntax, tab completion, and command history. Jupyter notebooks (and its successor Jupyter lab) leverage the IPython kernel to execute Python code and extends its capabilities with a graphical user interface (GUI). Resembling the literate programming paradigm~\cite{knuth1984literate}, Jupyter notebooks offer a web-based interface where users can create and share documents that contain live code, equations, visualisations, and narrative text. This format supports a literate approach to programming, making it easier to share and understand complex analyses and workflows. Jupyter Notebooks in particular, have become a popular tool in the ML community since they facilitate open and reproducible science, education, and data analysis.
 
-% NOTE pimentel2019large-scale
-% NOTE kery2018story
-% NOTE rule2018exploration
+\subsection{Anatomy of Jupyter Notebooks}
 
 \begin{figure}
   \centering
@@ -221,30 +195,17 @@ This section introduces relevant prior concepts for this study.
   \label{fig:nb}
 \end{figure}
 
-Literate programming is a paradigm introduced by Donald Knuth that emphasizes writing code that is understandable by humans. In his seminal work, Knuth advocates combining source code with documentation in a single, cohesive narrative~\cite{knuth1984literate}. Computational notebooks are inspired by this paradigm, allowing for the integration of executable code, scientific equations, visualisations, and explanatory text within a single document. This format supports a literate approach to programming, making it easier to share and understand complex analyses and workflows. Project Jupyter is a prominent example of this approach, offering a suite of open-source tools for interactive computing. Jupyter Notebooks, in particular, have become a popular tool in the ML community since they facilitate open and reproducible science, education, and data analysis.
-
 Figure~\ref{fig:nb} shows an example Jupyter notebook with markdown and code cells. The data comprised within Jupyter notebooks is stored using the JSON schema specified by \emph{nbformat}~\footnote{https://nbformat.readthedocs.io/en/latest/index.html}, and thus can be parsed programmatically. A notebook consists of \emph{cells} which can be of three types---``markdown'', ``code'' and ``raw''. All cells of a notebook are stored as a list under the top-level \lstinline[language={}]$cells$ key in the JSON representation. Within this list, each cell is represented as a JSON object. The contents of the cell are stored as a list of strings inside the \lstinline[language={}]$source$ key.
-
-\subsection{Outputs in Jupyter Notebooks}
 
 Only code cells in Jupyter notebooks can generate outputs. As shown in Figure~\ref{fig:nb}, outputs can come from three main sources in the source code---print statements, the last statement in the code cell, and statements that create a visualisation. The outputs produced by code cells are stored as JSON objects under the \lstinline[language={}]$outputs$ key in the corresponding JSON representation of the notebook. Text outputs (such as those produced by the last statement of a cell or print statements) are stored under the \lstinline[language={}]$text$ key. Visual outputs have a sightly different JSON schema and are stored under the \lstinline[language={}]$data$ key. The image itself is represented as a base64 encoded string which is stored inside the \lstinline[language={}]$data$ object, under the \lstinline[language={}]$image/png$ key.
 
 \subsection{Python Abstract Syntax Tree}
 
-% explain the high-level way in which ast module in python works
-% explain the anatomy of assert statements and the more complicated way in which asts for print statements are represented in an AST
-
-An Abstract Syntax Tree (AST) is a tree representation of the abstract syntactic structure of source code. Each node in the tree represents a construct occurring in the source code. ASTs are widely used in compilers and code analysis tools to understand and manipulate code programmatically~\cite{wikipedia2024abstract}. The Python \emph{ast} module enables the parsing, manipulation, and analysis of Python source code by converting it into an AST. This module allows for the examination and modification of code structure, making it valuable for tasks such as code analysis, optimisation, and transformation. The ast module can parse source code strings into AST objects, traverse and modify the tree, and compile it back into executable code, providing a powerful tool for dynamic code manipulation~\cite{pythonast}.
-
-In Python, \lstinline{assert} statements are represented in the AST by the \lstinline{Assert} class. The \lstinline{Assert} node includes the \lstinline{test} attribute---which contains the condition being asserted---and the \lstinline{msg} attribute---which holds an optional message displayed if the assertion fails. Print statements are treated as a call to the built-in \lstinline{print} function. Function calls are represented in the AST by the \lstinline{Call} class. The \lstinline{Call} node includes the \lstinline{func} attribute representing the \lstinline{print} function, and \lstinline{args} which lists the arguments passed.
+The Python \lstinline{ast} module enables the parsing, manipulation, and analysis of Python source code by converting it into an abstract syntax tree (AST)~\cite{pythonast}. The \lstinline{ast} module can parse source code strings into AST objects, traverse and modify the tree, and compile it back into executable code, providing a powerful tool for dynamic code manipulation. In Python, \lstinline{assert} statements are represented in the AST by the \lstinline{Assert} class. The \lstinline{Assert} node includes the \lstinline{test} attribute---which contains the condition being asserted---and the \lstinline{msg} attribute---which holds an optional message displayed if the assertion fails. Print statements are treated as a call to the built-in \lstinline{print} function. Function calls are represented in the AST by the \lstinline{Call} class. The \lstinline{Call} node includes the \lstinline{func} attribute representing the \lstinline{print} function, and \lstinline{args} which lists the arguments passed.
 
 \section{Methodology}
 
 \subsection{Data Collection}\label{sec:data-collect}
-
-% TODO we need to explain why we only focus on the last statement of code cells (when visualisation code written anywhere produces an output); this is much harder to parse: we need to construct an exhaustive list of python visualisation libraries; people can use any naming convension to...
-
-% The predominant form of obtaining feedback, while developing ML pipelines in Jupyter notebooks, is through the output of code cells. These outputs can come from three main sources in the source code--print statements, the last statement in code cells, and statements that create visualisations. Building on the principles from software engineering, we also recognize assert statements as a valuable form of feedback for writing ML code. This idea draws from prior literature in software engineering that connects test-driven development (TDD) as a form of developing software using feedback.
 
 \begin{figure}
   \centering
@@ -253,51 +214,35 @@ In Python, \lstinline{assert} statements are represented in the AST by the \lsti
   \label{fig:data-collection}
 \end{figure}
 
-Figure~\ref{fig:data-collection} summarises the data collection procedure used in this study. We collected Jupyter notebooks written in Python, from Kaggle and Github. 
+% TODO: I suspect this will raise eyebrows because the notebooks collected from Github were for the ICST paper, where we were also looking for the keyword "assert" (which does not apply to this paper)
 
-We mined public repositories from Github to collect $49923$ Jupyter notebooks. We use the Github advanced search syntax~\footnote{https://docs.github.com/en/search-github/searching-on-github/searching-code} to isolate Jupyter Notebook that contain the keyword ``assert'' in them. The final search query is as follows: \texttt{"assert" language:"Jupyter Notebook"}.\footnote{Collected on June 22, 2023}
+Figure~\ref{fig:data-collection} illustrates the data collection process employed in this study to gather Jupyter notebooks written in Python from GitHub and Kaggle. We used Github's advanced search syntax~\footnote{https://docs.github.com/en/search-github/searching-on-github/searching-code}, with the following search query: \lstinline[language={}]$language:"Jupyter Notebook"$ to mine 49.9 thousand Jupyter notebooks from public repositories on Github~\footnote{Collected on June 22, 2023}. We used the pre-existing dataset KGTorrent~\cite{quaranta2021kgtorrent} for Kaggle since it does not support advanced code-based search like GitHub. To the best of our knowledge, KGTorrent is the largest dataset of Python Jupyter notebooks obtained from Kaggle, consisting of 247.9 thousand notebooks. Consequently, we started with 283GB of data comprising 297.8 thousand Python Jupyter notebooks.
 
-For Kaggle, we used a pre-existing dataset KGTorrent~\cite{quaranta2021kgtorrent} since Kaggle does not support advanced code-based search like Github. To the best of our knowledge, KGTorrent this is the largest dataset of Python Jupyter notebooks obtained from Kaggle consisting of $248763$ notebooks.
-
-Therefore, we start with 283GB of data comprising of $298686$ Python Jupyter notebooks.
-
-% TODO: feedback from Luis
-% - explain why we check the validity
-% - we cannot guarantee that the white literature will be online in the next months/years and make it difficult to collect an important detail for reproducibility. I would add to the text at least how many libraries we added, give a few examples and point to our replication package,
-We check the validity of the underlying JSON structure in each notebook using the nbformat tool~\footnote{https://nbformat.readthedocs.io/en/latest/}. Since the focus of this study is on the analysis of Python code, we only include notebooks that contain at least one code cell. Finally, to focus on Python code written specifically for ML projects, we only include notebooks that import popular ML libraries~\footnote{These libraries are derived from grey literature---https://www.coursera.org/articles/python-machine-learning-library, https://www.geeksforgeeks.org/best-python-libraries-for-machine-learning, https://www.datacamp.com/blog/top-python-libraries-for-data-science, https://www.kdnuggets.com/2020/11/top-python-libraries-data-science-data-visualization-machine-learning.html, https://lp.jetbrains.com/python-developers-survey-2022}.
-
-For explicit feedback using assertions, we programmatically analyse the JSON structure of the notebooks to isolate code cells. We collect Python assert statements from the code cells by constructing and subsequently parsing the Abstract Syntax Tree (AST) of the source code present in each cell.
-
-% TODO: feedback from Luis
-% - only here, a reader start understanding that we want to collect assert, prints, and lasts. Perhaps we want to make that clear in the beginning of this subsection or in the one above it
-Similarly, for implicit feedback, we first isolate code cells that produce an output. The output of a cell may either be from a ``print'' statement or the last statement of the cell. We collect both of them using the AST of the cell.
-
-Finally, we remove duplicate data points (asserts, prints and last statements) resulting in a final data set of $22548$ assertions, $25319$ print statements and $28522$ last statements.
+Since the focus of this study is on the analysis of Python code, we only include notebooks that have a valid underlying JSON structure and contain at least one code cell. Finally, to focus on Python code written specifically for ML projects, we only include notebooks that import at least one of the following popular ML libraries which we identified from grey literature~\cite{datacampml,gfgml,jetbrainsml,kdnuggetml,courseraml}---Scikit Learn~\cite{virtanen2020scipy}, Pytorch~\cite{paszke2017automatic}, Tensorflow~\cite{abadi2015tensorflow} and Keras~\cite{chollet2015keras}. We use the Python \lstinline{ast} module to extract the assert, print and last statements from all code cells. Prior to conducting the analysis for RQ2 and RQ3, we remove duplicate data points resulting in a final data set of 27.1 thousand assertions, 498.3 thousand print statements and 373.6 thousand last statements.
 
 \subsection{Case Studies}
 
-% TODO: might need a visual aid here
-% TODO: feedback from Luis
-% - motivate this approach
-% - not sure we want to say NLP here. I would call it text processing. NLP kinda implies that we are automatically interpreting the text
-We allocated a fixed time resource of 100 hours to conduct the case study analysis of all candidates (assertions and cell outputs). To surface interesting candidates for the case studies, we apply NLP techniques as described below.
+We allocated a fixed time resource of 200 hours to conduct the case study analysis of all candidate assertions, print statements and last statements. To surface interesting candidates for the case studies, we apply text processing techniques as described below.
 
-% TODO: point out the poor quality of notebooks out there (we have citations for this); and the resulting noise in the assertions/outputs. Thats why we need to apply these techniques to surface unique and interesting candidates!
-
-The assertions and cell outputs are first tokenised---special characters and alpha-numeric words shorter than two characters are removed. Two stop words namely ``assert'' and ``print'' are removed since they appear in all assertions and print statements respectively. The term frequency (TF) for all tokens is calculated and then normalised using their inter-document frequency (IDF) such that tokens that appear less frequently are assigned a higher value.
-
-We apply stratified random sampling to identify the candidates for the case study analysis. The sub-groups are created by adding TF-IDF of the tokens in each candidate to produce an aggregate value. The candidates are then divided into quartiles based on the aggregate value. A candidate is randomly drawn from each bin and analysed as an in-depth case study. The analysis is stopped when the time resource is exhausted.
-
-During each case study, we analyse the code of the candidate to understand its purpose. Additionally, we analyse the entire code cell, the previous cell, next cell and the notebook's purpose to bring in rich context.
+The assertions and cell outputs are first tokenised---special characters and alpha-numeric words shorter than two characters are removed. Two stop words namely ``assert'' and ``print'' are removed since they appear in all assertions and print statements respectively. The term frequency (TF) for all tokens is calculated and then normalised using their inter-document frequency (IDF) such that tokens that appear less frequently are assigned a higher value. We apply stratified random sampling to identify the candidates for the case study analysis. The sub-groups are created by adding TF-IDF of the tokens in each candidate to produce an aggregate value. The candidates are then divided into quartiles based on the aggregate value. A candidate is randomly drawn from each bin and analysed as an in-depth case study. The analysis is stopped when the time resource is exhausted. During each case study, we analyse the code of the candidate to understand its purpose. Additionally, we analyse the entire code cell, the previous cell, next cell and the notebook's purpose to bring in rich context.
 
 \section{Results}
 
 % TODO: feedback from Diomidis
-% - Sections 4.1 and 4.2 are very interesting but overly detailed. I suggest to move most of the content to an appendix or an online appendix, and only present the uses in a table or a taxonomy tree.  In addition, consider moving the more general observations into a discussion section.
-% - Consider starting with RQ2 (making it RQ1), because assertions are a concrete feature of Python code.  Then move to RQ1, which deals with implicit assertions.
-% - I am afraid I cannot understand RQ3; consider revising it.  I would think that visualizations are verified visually, rather than through assertions.  You may have encountered some parts, but I would assume that the assertions mostly deal with things that can be more accurately and effectively be expressed as a predicate rather than viewed in a chart.
-% TODO: some sort of introduction to the following sub-sections here; we need to explain that for code cell outputs we try to show the python statement that produces the output along with the actual output. Somethimes actual output is not possible (eg. P68) because the statement may be inside an if statement.
-\subsection{(RQ1) What are the characteristics of feedback mechanisms in ML Jupyter notebooks?}
+% - Sections 4.1 and 4.2 are very interesting but overly detailed. I suggest to move most of the content to an appendix or an online appendix, and only present the uses in a table or a taxonomy tree.
+% TODO: In addition, consider moving the more general observations into a discussion section.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.75\textwidth]{taxonomy.pdf}
+  \caption{Overview of various feedback mechanism groups identified in this study.}
+  \label{fig:taxonomy}
+\end{figure}
+
+% TODO: add citation to online appendix
+The results of the study are presented in this section. For the case-studies conducted for RQ2 and RQ3, we group the candidates based on their similarity to each other. Please note that this is done only to facilitate structuring the paper in a meaningful manner and for easy of reporting the results. Figure~\ref{fig:taxonomy} provides an overview of the various feedback mechanism groups identified in this study. Additional details are provided in Section~\ref{sec:result-explicit} and Section~\ref{sec:result-implicit}. Throughout the text, we reference the candidates (\textbf{(A)}ssertions, \textbf{(P)}rint statements and \textbf{(L)}ast cell statements) using their unique identifiers as examples. These can be viewed on our online appendix.
+
+\subsection{(RQ1) What feedback mechanisms are employed in the development of ML Jupyter notebooks?}~\label{sec:result-analysis}
 
 25 thousand (8.5\%) notebooks contained at least one assertion. From the 8.5\% notebooks, we collected 89.6 thousand assertions. 4.8 thousand assertions (5\%) used methods from external testing libraries. 85 thousand assertions (95\%) however were written using the \lstinline{assert} statement provided by the built-in Python standard library. We removed duplicate assertions for the remainder of the analysis, thus resulting in 27.1 thousand assertions.
 
@@ -327,8 +272,6 @@ Figure~\ref{fig:other-test-methods} presents the 10 most common methods used in 
   \end{minipage}
 \end{figure}
 
-% TODO: some form of background on AST representation of assert statements is missing
-
 \begin{table}
   \centering
   \caption{Examples of the most common tests performed in assert statements.}
@@ -342,7 +285,7 @@ Figure~\ref{fig:other-test-methods} presents the 10 most common methods used in 
     \lstinline[]$(np.unique(y_test) == [-1, 1]).all()$\\
 
     \lstinline[]$torch.__version__ > '1.10.0'$&
-    \lstinline[]$isinstance(transmat, pd.DataFrame)$\\
+    \lstinline[]$isinstance(transmat, pd.dataframe)$\\
 
     \lstinline[]$len(x_dev) == len(y_dev)$&
     \lstinline[]$np.allclose(np.linalg.norm(wio, axis=0), 1)$\\
@@ -396,7 +339,7 @@ Of the 95\% assert statements, 28.4 thousand (31.7\%) have a failure message. Fi
   \end{minipage}
 \end{figure}
 
-We collected 1.4 million print statements from 180 thousand notebooks (60\% of the total notebooks analysed in this study). Unlike assert statements, print statements do not have a fixed lexical semantic since the Python ast module interprets them as regular function calls. Additionally, print statements can be written in several forms---the \lstinline{print} function may have multiple arguments, any form of string interpolation supported by Python or output from function calls. Figure~\ref{fig:common-print-nodes} shows that the most common nodes inside of print statements are constants followed by function calls. Figure~\ref{fig:common-print-constant-types} further validates that the constants are almost entirely of type string. Based on these observations, we disect the print statements into two components---text written in natural language (from the \emph{Constant} nodes) and code (from all other nodes). Figure~\ref{fig:common-print-constants} and Figure~\ref{fig:common-print-not-constants} present the most common bi-grams that appear in the natural text and code of print statements respectively. Both figures collectively indicate that print statements are frequently used to print various performance metrics of ML models.
+We collected 1.4 million print statements from 180 thousand notebooks (60\% of the total notebooks analysed in this study). Unlike assert statements, print statements do not have a fixed lexical semantic since the Python \lstinline{ast} module interprets them as regular function calls. Additionally, print statements can be written in several forms---the \lstinline{print} function may have multiple arguments, any form of string interpolation supported by Python or output from function calls. Figure~\ref{fig:common-print-nodes} shows that the most common AST nodes inside of print statements are constants followed by function calls. Figure~\ref{fig:common-print-constant-types} further validates that the constants are almost entirely of type string. Based on these observations, we disect the print statements into two components---text written in natural language (from the \emph{Constant} nodes) and code (from all other nodes). Figure~\ref{fig:common-print-constants} and Figure~\ref{fig:common-print-not-constants} present the most common bi-grams that appear in the natural text and code of print statements respectively. Both figures collectively indicate that print statements are frequently used to print various performance metrics of ML models.
 
 \begin{figure}
   \centering
@@ -463,63 +406,157 @@ We further analysed the most common functions called on pandas data frames by is
 
 Similarly, we also analysed the most common visualisation functions used in notebooks by isolating the last statements where the module is \lstinline{sns} or \lstinline{plt}. This is shown in Figure~\ref{fig:common-last-visualisation-functions} which indicates that categorical data visualisation appears to be a primary focus, with \lstinline{countplot} and \lstinline{barplot} ranking high among the most frequently used functions. The prominence of \lstinline{heatmap} and \lstinline{boxplot} functions indicates a regular need for visualising correlations and statistical distributions. For continuous data, functions like \lstinline{distplot}, \lstinline{scatterplot}, and \lstinline{scatter} are commonly used. The presence of \lstinline{imshow} suggests that image-related visualisations are also significant in many notebooks.
 
-\subsection{(RQ2) How is feedback from the output of code cells used when writing ML code in Jupyter notebooks?}~\label{sec:result-rq1}
+\subsection{(RQ2) How is explicit feedback from assert statements used to validate ML code written in Jupyter notebooks?}~\label{sec:result-explicit}
+
+\subsubsection{Data shape check ($N = 26$)}
+% (A5, A9, A13, A16, A17, A29, A31, A61, A71, A76--78, A82, A84, A85, A89, A90, A91, A93--96, A98--101)
+
+Data shape checks can be considered the ``Swiss army knife'' of assertions, as they are ubiquitous and serve multiple purposes throughout the MLDL. We encountered a vast array of assert statements that verify the dimensions of various data structures, including input features (\emph{A17, A90}), labels (\emph{A5, A29}), predictions, images (\emph{A76, A93}), sequences, and embeddings (\emph{A76, A93}). These assertions ensure that the data adheres to the expected format and dimensions required by different components of the machine learning pipeline.
+
+Data shape check assertions serve as a crucial safeguard against data inconsistencies, ensuring the integrity and compatibility of the data throughout the machine learning workflow. By verifying the expected dimensions and shapes of various data structures, these assertions help prevent runtime errors, ensure accurate model training and evaluation, and maintain the reliability of the entire machine learning pipeline.
+
+\highlight{\textbf{Finding 2.1} 26 assertions verify the dimensions of various data structures such as input features, labels, predictions, images, sequences, and text embeddings. These checks ensure data consistency and compatibility throughout the ML pipeline, preventing runtime errors and ensuring accurate model training and evaluation.}
+
+\subsubsection{Data validation check ($N = 14$)}
+% formerly value-check (A20, A30, A41, A44--46, A52, A65, A68, A69, A73, A83, A87, A92)
+
+We found assert statements that perform various validation checks on data structures, such as NumPy arrays and Pandas dataframes. These checks help ensure the data meets specific criteria or constraints, preventing potential errors or inconsistencies in downstream operations.
+
+Common data validation checks include verifying the presence of specific values or ranges within arrays or columns(\emph{A41, A65}) and verifying the equality or closeness of arrays to a target value within a specified absolute tolerance (\emph{A44, A46}). Some assertions also focus on validating the uniqueness or cardinality of values (\emph{A52}) while others validate the presence of specific values or conditions within data structures (\emph{A73}).
+
+By verifying specific conditions, value ranges, uniqueness, and equality constraints, these assertions help catch potential errors or inconsistencies early in the pipeline, preventing downstream issues and ensuring reliable and accurate results.
+
+\highlight{\textbf{Finding 2.2} Fourteen assertions perform validation checks on data structures, ensuring the presence of specific values, verifying value ranges, and confirming uniqueness or cardinality of values. These checks catch potential errors or inconsistencies early, ensuring data meets specific criteria or constraints for robust ML applications.}
+
+\subsubsection{Model performance check ($N = 11$)}\label{sec:assert-model-perf}
+% (A7, A15, A19, A22, A24, A26, A38, A54, A58, A59, A72)
+
+\begin{lstlisting}[caption={Assertion \emph{A58} used to check that the accuracy of a model is close to the specified value. The use of \lstinline{np.isclose} allows for small deviations in the accuracy thus accounting for the stocastic nature of ML models.}, label={lst:A58}]
+assert np.isclose(accuracy, 0.9666666666666667)
+\end{lstlisting}
+
+This study finds several assertions used to test model performance against predefined thresholds for key metrics such as accuracy, precision, recall, F1 score, and others. Range checks confirm that the performance metrics fall within acceptable boundaries, indicating good predictive performance without overfitting (\emph{A38}). Direct comparisons of model outputs with expected results, validate the model's predictive accuracy and reliability under operational conditions (\emph{A15}). Other assertions ensure that the learned parameters align closely with theoretically or empirically derived values, further cementing the model’s statistical validity (\emph{A19}). Finally assertions are also used to check for the expected number of neighbours as an indirect measure of model performance in specifc scenarios like clustering (\emph{A7}).
+
+The use of \lstinline{np.isclose} in Listing~\ref{lst:A58} is particularly noteworthy. This method accounts for the stochastic nature of many ML models, where slight variations in performance metrics can occur due to differences in initial conditions, random seed settings, or inherent randomness in algorithms. By allowing a small tolerance in the comparison, \lstinline{np.isclose} ensures that the model's performance is consistently close to the expected benchmark, thereby affirming its reliability despite the stochastic elements.
+
+\highlight{\textbf{Finding 2.3} Eleven assertions evaluate model performance against predefined thresholds for accuracy, precision, recall, F1 score, and other metrics. These checks validate the model's predictive accuracy and reliability, ensuring it meets expected performance standards despite the stochastic nature of ML models.}
+
+\subsubsection{Existence check ($N = 8$)}
+% NOTE: this is a combination of missing-value-check and existence-check
+% (A23, A42, A43, A50, A51, A63, A79, A86)
+
+Existence checks are primarily used during the data preprocessing stage in the MLDL to ensure data integrity before analysis and modelling. These checks primarily focus on verifying the presence of necessary columns and the absence of missing values within those columns (\emph{A23, A42, A79, A86}). Such validations are especially crucial after data preprocessing steps, where transformations might inadvertently introduce \lstinline{NaN} values (\emph{A50, A51, A63}) or result in an empty dataframe (\emph{A43}). These checks are also crucial for maintaining the accuracy and efficiency of data handling processes, ensuring that the datasets are ready for robust ML applications.
+
+\highlight{\textbf{Finding 2.4} Eight assertions ensure the presence of specific columns in the dataset and the absence of missing values. These checks prevent operations on empty datasets and confirm the absence of \texttt{NaN} values, maintaining data integrity and reliability for model training.}
+
+\subsubsection{Resource check ($N = 7$)}~\label{sec:result-rq2-resource-check}
+% (A10, A14, A18, A37, A60, A67 A74)
+
+\begin{lstlisting}[caption={Assertion \emph{A37} used to ensure that an ML model has not reached an inconsistent state due to out-of-order or re-execution of code cells.}, label={lst:A37}]
+assert svm.fit_status_ == 0, 'Forgot to train the SVM!'
+\end{lstlisting}
+
+Resource check assertions are used to ensure the availability and validity of essential resources, preventing runtime errors, and maintaining the integrity of the data, models, and visualisations. One set of assertions verify the existence of files on the file system, such as pre-trained models (\emph{A10}) or data files (\emph{A74}). Subsequently, assertions are employed to validate the successful loading of models (\emph{A14}) and the completion of model training processes (\emph{A37}).
+
+A unique aspect of working with notebooks is the ability to re-run cells while experimenting, which can lead to unintended consequences. Aassertion \emph{A37} presented in Listing~\ref{lst:A37} addresses this scenario by checking if the SVM model has been properly trained before proceeding with further operations. This check prevents inconsistent model states from executing cells out of order or multiple times. Other interesting assertions unique to computational notebooks include verifying the presence of data in visualisations (\emph{A60}) and explicitly verifying the versions of critical libraries (\emph{A18, A67}).
+
+\highlight{\textbf{Finding 2.5} Seven assertions confirm the availability of essential resources like pre-trained models, data files, successful model loading, and completion of training processes. These checks prevent runtime errors and ensure proper code execution, maintaining the reliability and robustness of the ML workflows.}
+
+\subsubsection{Type check ($N = 5$)}
+% (A2, A35, A40, A81, A88)
+
+Type check assertions are used to maintain data integrity, ensure compatibility between different components of the ML pipeline, and preventing errors and unexpected behaviour. Type checks are commonly performed to ensure that the input features are PyTorch float tensors or NumPy arrays, a requirement for many deep learning models and scientific computing operations respectively (\emph{A2, A88}). Type checks are also applied to very the type of the ML models (\emph{A40}), data structures and intermediate objects (\emph{A35}) and individual columns or elements within a dataset (\emph{A81}).
+
+\highlight{\textbf{Finding 2.6} Five assertions validate the data types of input features, models, and intermediate objects. These checks ensure compatibility with ML models and operations, preventing errors from incompatible methods or attributes, thus maintaining the reliability of the ML workflow.}
+
+\subsubsection{Mathematical property check ($N = 4$)}
+% (A3, A25, A56, A64)
+
+When working with neural networks and other statistical models, it is imperative to ensure that mathematical properties are preserved throughout operations involving arrays and matrices. This rigour is captured though assertions that ensure convolution operations are dimensionally consistent (\emph{A3}), checking for the symmetry of matrices (\emph{A64}) and monitoring the standard deviation of outputs to decide the appropriateness of using batch normalisation (\emph{A25}). These assertions are not just precautionary but are vital for confirming that the underpinnings of ML algorithms align with expected mathematical principles.
+
+\highlight{\textbf{Finding 2.7} Four assertions validate key mathematical properties of data and model outputs. These include ensuring dimensional consistency in convolution operations, monitoring standard deviation for batch normalization suitability, verifying uniformity in computations, and checking matrix symmetry. These checks confirm the robustness and reliability of model computations.}
+
+\subsubsection{Batch size check ($N = 3$)}
+% (A21, A28, A70)
+
+In the context of neural networks, the practice of using batch processing is a key strategy to enhance computational efficiency and hardware utilisation. Batching stabilises the learning curve by updating the model weights based on the average gradient of a batch thereby optimising learning and enhancing generalisability of the model. Ensuring the batch size matches the hardware capacity is crucial to avoid memory overflow issues that can halt training. Assertions are used to check that the batch size divides evenly into the training dataset size which ensures that each training epoch is computationally efficient (\emph{A21}). Additionally, assertions are used to ensure that the size of the training data is larger than the batch size (\emph{A70}) and that image dimensions are suitably divisible by the patch size which is essential for certain convolutional networks (\emph{A28}).
+
+\highlight{\textbf{Finding 2.8} This study identifies three assertions validating batch size configurations. These assertions ensure batch sizes are divisible by dataset sizes, image dimensions are appropriately divided by patch sizes, and the number of images exceeds the batch size. These checks are crucial for optimizing computational efficiency and ensuring stable and smooth model training.}
+
+\subsubsection{Network architecture check ($N = 3$)}
+% (A11, A62, A75)
+
+When integrating pre-trained models or leveraging transfer learning techniques, it is crucial to ensure the compatibility of the custom neural network architecture with the pre-trained components. This is particularly important when combining convolutional layers from different sources, as the spatial dimensions and channel configurations must align correctly. Checks include the use of assertions to verify that the output and input dimensions of consecutive convolutional layers match (\emph{A11}), checking that shape of the activations have the right number of channels (\emph{A62}) and that the appropriate regularisation parameter is set (\emph{A75}). Such architectural checks are crucial for preventing potential issues during the forward pass of the neural network and ensuring that the custom and pre-trained components are compatible with each other.
+
+\highlight{\textbf{Finding 2.9} Three assertions verify the consistency of neural network architecture. These include ensuring weight dimensions match across layers and that activation shapes and regularization parameters are as expected. These checks ensure that the neural network is correctly configured and integrated with pre-trained models, maintaining the integrity of data flow during training.}
+
+\subsubsection{Data leakage check ($N = 1$)}
+% (A33)
+
+\begin{lstlisting}[caption={Assertion \emph{A33} used to ensure that the training and validation sets do not contain any overlapping values.}, label={lst:A33}]
+assert len(
+  set(tr_df.PetID.unique()).intersection(valid_df.PetID.unique())
+) == 0
+\end{lstlisting}
+
+Ensuring the absence of data leakage between training and validation datasets is a fundamental best practice in ML to prevent overfitting. To guarantee that the model can generalise effectively to new examples, it is crucial to verify that the training and validation sets are completely distinct with no shared examples. By strictly separating these datasets, the validation phase provides an unbiased evaluation of the model's ability to generalise to data similar to, but not identical to that which it was trained on. This is demonstrated by Assertion \emph{A33} in Listing~\ref{lst:A33} ensures that there are no overlapping \lstinline{PetID} values between the training set and the validation set, thereby preventing any possibility of data leakage.
+
+\highlight{\textbf{Finding 2.10} This study identifies one assertion to ensure there are no overlapping values between training and validation sets to prevent data leakage. Preventing data leakage is essential to avoid overfitting and ensure the model's ability to generalise to new data. This practice maintains the integrity and validity of the model evaluation metrics.}
+
+\subsection{(RQ3) How is implicit feedback from print statements and last statements of code cells used when writing ML code in Jupyter notebooks?}~\label{sec:result-implicit}
 % TODO: feedback from Luis
 % -  up to this point I miss how exactly we plan to answer this question. Reading the results I get that we are answering by clustering outputs together based on their respective ML/DS task and then by analysing how that task is accomplished. We need to explain this either in the beginning of section 4.1 or in section 3
+
+\subsubsection{Model performance check ($N = 33$)}
+% (O3, O50, O52, O57, O74, P3, P6, P8--12, P16--19, P23, P24, P28, P30, P34, P42, P47, P48, P50, P51, P54, P55, P57, P58, P61, P78, P93)
+% TODO: feedback from Luis
+% - if needed, we can merge Excution time check here. (both execution time and model correctness can be presented as a KPI)
+
+During the model development phase, the performance of an ML model is often printed to facilitate comparisons against other models or variations. Throughout this continuous experimentation phase, authors may adjust model parameters or modify the data by engineering new features. The model is then re-trained to check if these changes lead to performance improvements. Besides the \emph{accuracy} of the model (\emph{P3, P18}), we also see checks for the \emph{Root Mean Square Error (RMSE)} (\emph{P6}) and the use of the classification report (\emph{P50}) provided by scikit-learn~\footnote{https://scikit-learn.org/stable/modules/generated/sklearn.metrics.classification\_report.html} which reports the \emph{accuracy}, \emph{precision}, \emph{recall} and \emph{f1 score} for all labels present in the target feature. In addition, we find the use of heatmaps (\emph{L3}) to visualise the confusion matrix of a multi-label classification task and custom functions (\emph{L52}) to manually evaluate an image classification model on a random sample of input images.
+
+\highlight{\textbf{Finding 3.1} The study identifies 33 outputs used to check the performance of trained ML models. These include outputs that print key performance metrics, a normalised heatmap used to visualise the confusion matrix of a model's predictions and a custom function written for manual evaluation of model predictions on random input samples. These checks are used throughout the iterative model development phase, enabling practitioners to compare different models or variations, adjust parameters, and refine features to improve performance.}
 
 \subsubsection{Data distribution check ($N = 7$)}~\label{sec:data-distribution-output}
 % (O2, O4, O9, O14, O20, O25, O48)
 
-\begin{table}
-  \centering
-  \caption{Examples of cell outputs used to verify distribution of data.}
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.4\textwidth} m{0.4\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}}&
-    \emph{\textbf{Code}}&
-    \emph{\textbf{Visual Output}}\\
-    \midrule
+Understanding the distribution of data is crucial for making informed decisions about necessary transformation steps in data analysis. For instance, visualisations can efficiently determine if scaling, normalizing, or handling outliers is needed. During the exploratory data analysis phase, visualisations and pandas dataframes are commonly used to assess the distribution of specific columns (\emph{L9}), helping identify features related to the target variable (\emph{L2, L14})and informing feature inclusion in model training. Additionally, descriptive statistics are used post-transformation to manually verify the effectiveness of data transformation steps and ensuring that the data conforms to the expected format for further analysis (\emph{L48, L25}).
 
-    O2&
-    \lstinline[]$_ = sns.catplot(x='category_id', y='likes', data=train, height=5, aspect=1.5)$&
-    \includegraphics[width=\linewidth]{distribution-check-catplot.png}\\
+\highlight{\textbf{Finding 3.2} The study identifies seven outputs used to check data distribution, including visualisations like categorical plots, kernel density estimate plots and count plots, and statistical summaries from pandas dataframes. These checks are used for making informed decisions about data transformations such as scaling, normalising and handling outliers, ensuring data integrity and improving model training reliability during the exploratory data analysis phase.}
 
-    O9&
-    \lstinline[]$sns.kdeplot(data=data.loc[ data['Survived'] == 0].Age, label='Died', shade=True)$&
-    \includegraphics[width=\linewidth]{distribution-check-kdeplot.png}\\
+\subsubsection{Resource check ($N = 7$)}\label{sec:implicit-resource-check}
+% (P71, P86, O64, O66, P68, P82, P107)
 
-    O14&
-    \lstinline[]$pd.pivot_table(train, index='Survived', values=['Age', 'SibSp', 'Parch', 'Fare'])$&
-    \\
+Similar to the assertions identified in Section~\ref{sec:result-rq2-resource-check}, we also find print and last cell statements that validate the availability of essential resources on the system where the notebooks are being executed. This includes checks for the availability of compute resources such as a GPU or a TPU (\emph{P68, P82, P86}), verifying that a dataset or a pre-trained model has been successfully loaded into memory (\emph{P107, L66}) and ensuring that a certain version of an external library is present on the system (\emph{P71}).
 
-    O25&
-    \lstinline[]$sns.countplot(house_pred['OverallQual'])$&
-    \includegraphics[width=\linewidth]{o25.png}\\
+\highlight{\textbf{Finding 3.3} The study identifies seven outputs used to verify resource availability on the systems where the Jupyter notebooks are being executed. These checks include confirming the availability of compute resources like GPUs and TPUs, ensuring datasets or pre-trained models are successfully loaded, and verifying the presence of specific library versions. These checks are used for ensuring that the computational environment is correctly set up, preventing execution errors, and facilitating smooth workflow execution.}
 
-    O48&
-    \lstinline[]$x_train.describe()$&
-    \\
+\subsubsection{Spot check ($N = 5$)}
+% (O56, O60, P64, P67, P114)
 
-    \bottomrule
-  \end{tabular}
-  \label{tab:distribution-check}
-\end{table}
+Performing value or spot checks can be an essential practice for ensuring data integrity and model accuracy at various stages of development. These checks are crucial for verifying that operations such as data transformations, model predictions, and feature engineering are functioning as expected. Common checks include verifying the number of features in the data matches expectations after applying feature selection or dimensionality reduction techniques (\emph{L60}), assessing the correctness of one-hot encoding (\emph{P114}) and ensuring that data retains its expected properties after manipulation (\emph{P64}).
 
-% TODO: feedback from Luis
-% - I miss a bit the link between the RQ and the different subsections 4.1.1
-% -  I also miss an explanation of the table. what is O2? We should have a sentence explaining that each of the examples in the table are identified by a key,  the respective code and visual output, if any.
-% - Explain also how the figure is extracted. This is important because it is the first one. For the next ones we can just say that we follow the same structure.
-% - Another alternative would be to explain this generally in the intro of section 4.1 and then follow it consistently.
-% - I also miss how the examples are extracted or what they mean here.
-% - I mean, are these all the examples we found for distribution check? If so, make it clear.
-% - add: "with key" to be closer to the table structure
-Table~\ref{tab:distribution-check} shows examples of outputs used to check the distribution of the data. In output \emph{O2} the distribution of feature \texttt{Age} is checked against the two labels (\texttt{Survived} and \texttt{Died}) of the target feature. Output \emph{O9} presents another example where the distribution of a continuous feature \texttt{likes} is checked with-respect-to all the values of another categorical feature \texttt{category\_id}. Output \emph{O14} produces a pandas dataframe which is used to check the mean value of the features \texttt{Age}, \texttt{SibSp}, \texttt{Parch} and \texttt{Fare} against each label in the target feature \texttt{Survived}. Output \emph{O48} produces a pandas dataframe with the descriptive statistics of all features in the training data. The statement is written immediately after normalising the features in the training data. Hence, the user manually verifies if the normalisation was successful by looking at the mean and standard deviation of the features in the output. Similarly, \emph{O25} is written after discretizing a continuous feature \texttt{OverallQual} using binning. 
+\highlight{\textbf{Finding 3.4} This study finds five outputs used to perform spot checks at various stages of the MLDL. Spot checks are used to ensure data integrity by verifying data transformation and feature engineering steps meet expectations.}
 
-Understanding the distribution of data is crucial for making informed decisions about necessary transformation steps in data analysis. For instance, visualisations can efficiently determine if scaling, normalizing, or handling outliers is needed. During the exploratory data analysis (EDA) phase, visualisations and pandas dataframes are commonly used to assess specific columns' distribution, helping identify features related to the target variable and informing feature inclusion in model training. Additionally, descriptive statistics are used post-transformation to verify the effectiveness of steps like data normalization, ensuring data conforms to the expected format for further analysis.
+\subsubsection{Model training check ($N = 4$)}
+% (O8, O31, O42, P77)
 
-% TODO: Feedback from Luis
-% - I think you should mention the fact that there are both prints and visualisations for this task, the fact that the approach can be different not only depending on the type of data,  but also depending on the preferences of the developers (maybe we cannot really claim this last part but at least mention that there are multiple visualisations for the same scenario and developers simply need to opt for one.
-\highlight{\textbf{Finding 1.1} The study identifies seven outputs used to check data distribution, including visualisations like categorical plots, kernel density estimate plots and count plots (\emph{O2}, \emph{O9} and \emph{O25}), and statistical summaries from pandas dataframes (\emph{O14} and \emph{O48}). These checks are used for making informed decisions about data transformations such as scaling, normalising and handling outliers, ensuring data integrity and improving model training reliability during the exploratory data analysis phase.}
+During training it is common practice to monitor the progress periodically and use this feedback to adjustment training parameters or stop training early to prevent overfitting. This can be done by checking the best parameters found through tuning methods (\emph{L42}), fitting the model to the training data (\emph{L31}) or printing the training loss and accuracy to give real-time feedback on the learning efficacy of the model (\emph{L8}).
+
+\highlight{\textbf{Finding 3.5} The study identifies four outputs used to monitor model training progress. These outputs provide real-time feedback on training loss and accuracy, validate model adherence to expected data patterns, and identify optimal parameters through tuning methods. These checks facilitate timely adjustments during the training process to prevent overfitting and ensure model performance optimization.}
+
+\subsubsection{Missing value check ($N = 3$)}
+% (O12, O36, P74)
+
+Checking for missing values is a critical step in the preprocessing phase of an ML project because it significantly influences the quality and performance of the model. Missing data can lead to biased or incorrect conclusions if not handled properly, potentially skewing the model's performance by training on incomplete or non-representative samples~\cite{shome2022data}. Many ML algorithms demand complete numerical datasets to perform calculations such as matrix multiplication. Missing values interrupt these calculations, leading to errors or the inability to execute algorithms entirely. These checks can be performed in code (\emph{P74, L36}) and using visualisations such as a heatmap (\emph{L12}).
+
+\highlight{\textbf{Finding 3.6} The study identifies three outputs used to check for missing data. Missing values can lead to biased or incorrect conclusions as many ML algorithms require complete numerical datasets for accurate calculations. Identifying and addressing missing data during preprocessing is essential to avoid errors and improve model reliability.}
+
+\subsubsection{Shape check ($N = 3$)}
+% (P4, P32, P117)
+
+Ensuring that data dimensions align with expectations is important particularly following data pre-processing or transformation steps. Primarily, the number of features in the training set must match those in the testing set (\emph{P4, P32, P117}). This alignment is crucial because statistical ML models are trained on specific data dimensions and expect the same dimensional structure during inference to perform accurately. Similarly, in neural network architectures, the configuration of input layers depends directly on the shape of the training data, dictating the number of input neurons needed. Furthermore, the correspondence between the number of test examples and their respective labels is essential for accurately computing performance metrics.
+
+\highlight{\textbf{Finding 3.7} The study identifies three outputs used to check the shape of data. These checks are used to ensure data dimensions align with expectations, particularly after preprocessing or transformation steps.}
 
 \subsubsection{Data relationship check ($N = 2$)}~\label{sec:linear-relation-output}
 % (O6, O10)
@@ -534,11 +571,11 @@ Understanding the distribution of data is crucial for making informed decisions 
     \emph{\textbf{Output}}\\
     \midrule
 
-    O6&
+    L6&
     \lstinline[]$b = sns.relplot(x='SIZE', y='Cash', hue='CLARITY', alpha=0.9, palette='muted', height=8, data=raw_data)$&
     \includegraphics[width=\linewidth]{linear-relation-check-lineplot.png}\\
 
-    O10&
+    L10&
     \lstinline[]$sns.regplot(x='X4 number of convenience stores', y='Y house price of unit area', data=data)$&
     \includegraphics[width=\linewidth]{linear-relation-check-regplot.png}\\
     \bottomrule
@@ -546,910 +583,41 @@ Understanding the distribution of data is crucial for making informed decisions 
 \label{tab:linear-relation-check}
 \end{table}
 
-Table~\ref{tab:linear-relation-check} illustrates two outputs found in this study for identifying linear relationships amongst features in the data. In output \emph{O6}, the practitioner assesses the linearity between the features \texttt{Cash} and \texttt{SIZE}. Output \emph{O10} depicts the visualisation of the feature \texttt{X4} alongside the target variable \texttt{Y}, accompanied by a fitted linear regression model.
+Linear ML models achieve optimal performance when the target variable can be expressed as a linear combination of the input features. However, features within a dataset that exhibit a linear relationship are considered redundant as they convey the same information to the model during training. Consequently, the feature engineering stage often involves removing such features to create a more efficient training dataset~\cite{shome2022data}. Table~\ref{tab:linear-relation-check} illustrates two last cell statements found in this study for identifying linear relationships amongst features in the data. In addition to the code, the raw output of the cell is also shown since both case-studies produce a visualisation.  In \emph{L6}, the practitioner assesses the linearity between the features \texttt{Cash} and \texttt{SIZE}. \emph{L10} is a visualisation of the feature \texttt{X4} alongside the target variable \texttt{Y}, accompanied by a fitted linear regression model.
 
-% TODO: feedback from Luis
-% - this explains what the code does but it does not pinpoint observations on how the output of code cells are used. E.g., here it is mostly visualisations - that's an observation.  They are both scatterplots, one had to change the height of the plot (not sure that's relevant. We do not observe prints or asserts that help with this task.
-Linear machine learning models achieve optimal performance when the target variable can be expressed as a linear combination of the input features. However, features within a dataset that exhibit a linear relationship are considered redundant as they convey the same information to the model during training. Consequently, the feature engineering stage often involves removing such features to create a more efficient training dataset~\cite{shome2022data}.
-
-\highlight{\textbf{Finding 1.2} The study identifies two outputs used to verify linear relationships between features in the data. visualisations such as a scatter plot with a regression line (\emph{O10}) and a line plot (\emph{O6}) are employed to assess the linearity between features. These checks are used for identifying and potentially removing redundant features or performing feature selection to ensure that the training dataset is optimized for linear ML models.}
-
-\subsubsection{Resource check ($N = 7$)}\label{sec:implicit-resource-check}
-% (P71, P86, O64, O66, P68, P82, P107)
-
-\begin{table}
-  \centering
-  \caption{Examples of cell outputs used to verify if different types of resources are available on the system where the notebook is being executed.}
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}}&
-    \emph{\textbf{Code}}\\
-    \midrule
-
-    P68&
-    \lstinline[]$print('GPU is available')$\\
-
-    P71&
-    \lstinline[]$print('Hub version: ', hub.__version__)$\\
-
-    P82&
-    \lstinline[]$print('Running on TPU ', tpu.master())$\\
-
-    P86&
-    \lstinline[]$print('Cuda is available')$\\
-
-    P107&
-    \lstinline[]$print('Model loaded')$\\
-
-    O64&
-    \lstinline[]$full_table.head(-5)$\\
-
-    O66&
-    \lstinline[]$prostate_cancer_df.shape$\\
-    \bottomrule
-  \end{tabular}
-  \label{tab:resource-check}
-\end{table}
-
-% NOTE: O107 is a print statement which is execute even if the prior statement that loads the model fails...
-% TODO: feedback from luis
-% - I probably missed it but it should be clear why we have P and O in the key, given that they are all outputs.
-Table~\ref{tab:resource-check} presents outputs used to verify availability of resources on the system in which the notebook is being executed. Outputs \emph{P68}, \emph{P82} and \emph{P86} check for the availability of compute resources, such as a GPU or a TPU. This study also finds outputs used to verify that a dataset or a pre-trained model has been successfully loaded into memory. For example, Output \emph{P107} is written after loading a pre-trained model is loaded into memory. Output \emph{O64} generates a pandas dataframe with the last five rows of the data while \emph{O66} shows the shape of the data. These statements are written directly after loading the data from the file system to manually verify that the data was loaded without errors.
-
-Additionally, print statement \emph{P71} is used to ensure that a certain version of an external library is present on the system. This is interesting since external dependencies in Python projects are typically managed using dependency management solutions such as a \emph{requirements.txt}~\footnote{https://pip.pypa.io/en/stable/reference/requirements-file-format/} file or external tools such as \emph{pipenv}~\footnote{https://pipenv.pypa.io/en/latest/} and \emph{poetry}~\footnote{https://python-poetry.org/}.
-
-\highlight{\textbf{Finding 1.3} The study identifies seven outputs used to verify resource availability on the systems where the Jupyter notebooks are being executed. These checks include confirming the availability of compute resources like GPUs and TPUs (P68, P82 and P86), ensuring datasets or pre-trained models are successfully loaded (P107, O64 and O66), and verifying the presence of specific library versions (P71). These checks are used for ensuring that the computational environment is correctly set up, preventing execution errors, and facilitating smooth workflow execution.}
-
-\subsubsection{Execution time check ($N = 1$)}
-% (P66)
-
-\begin{table}
-  \centering
-  \caption{Print statement used to check the total execution time of training and cross-validating an ML model.}
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}}&
-    \emph{\textbf{Code}}\\
-    \midrule
-
-    P66&
-    \lstinline[]$print('Total Run Time:')$\\
-    \bottomrule
-  \end{tabular}
-  \label{tab:exec-time}
-\end{table}
-
-Table~\ref{tab:exec-time} presents print statement \emph{P66} that prints the total execution time of a code cell which trains an ML model with various hyper-parameter configurations using a grid-search. \emph{P66} is also used in other code cells in the notebook that train other ML models.
-
-While training multiple machine learning models for a single task is common, choosing the best model considers not only its performance but also its training speed. Faster training times are more cost-effective for iterative tasks and promote sustainability in the long run~\cite{shome2022data}.
-
-\highlight{\textbf{Finding 1.4} The study identifies one output (P66) used to check the total execution time of training and cross-validating an ML model. The print statement is used for evaluating the efficiency of model training processes, especially when multiple models are trained iteratively.} 
-
-\subsubsection{Missing value check ($N = 3$)}
-% (O12, O36, P74)
-
-\begin{table}
-  \centering
-  \caption{Examples of cell outputs used to check for missing data.}
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.4\textwidth} m{0.4\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}}&
-    \emph{\textbf{Code}}&
-    \emph{\textbf{Visual Output}}\\
-    \midrule
-
-    P74&
-    \lstinline[]$print(train_df.isnull().sum())$\\
-
-    O12&
-    \lstinline[]$sns.heatmap(test_df.isnull(), yticklabels=False, cbar=False, cmap='viridis')$&
-    \includegraphics[width=\linewidth]{missing-value-check.png}\\
-
-    O36&
-    \lstinline[]$test.isna().sum().unique()$\\
-    \bottomrule
-  \end{tabular}
-  \label{tab:missing-value}
-\end{table}
-
-Table~\ref{tab:missing-value} presents all case studies where cell outputs were used to check for missing data. While \emph{P74} and \emph{O36} perform this check in code, \emph{O12} presents a visual representation of missing data using a heatmap.
-
-Checking for missing values is a critical step in the preprocessing phase of a machine learning project because it significantly influences the quality and performance of the model. Missing data can lead to biased or incorrect conclusions if not handled properly, potentially skewing the model's performance by training on incomplete or non-representative samples~\cite{shome2022data}. Many machine learning algorithms, including those that involve matrix multiplication operations such as linear regression and neural networks, demand complete numerical datasets to perform calculations. Missing values interrupt these calculations, leading to errors or the inability to execute algorithms entirely.
-
-\highlight{\textbf{Finding 1.5} The study identifies three outputs (P74, O12 and O36) used to check for missing data. Missing values can lead to biased or incorrect conclusions, and many ML algorithms require complete numerical datasets for accurate calculations. Identifying and addressing missing data during preprocessing is essential to avoid errors and improve model reliability.}
-
-\subsubsection{Model performance check ($N = 33$)}
-% (O3, O50, O52, O57, O74, P3, P6, P8--12, P16--19, P23, P24, P28, P30, P34, P42, P47, P48, P50, P51, P54, P55, P57, P58, P61, P78, P93)
-% TODO: feedback from Luis
-% - if needed, we can merge Excution time check here. (both execution time and model correctness can be presented as a KPI)
-\begin{table}
-  \centering
-  \caption{Various cell outputs used to check the performance of an ML model after training.}
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.4\textwidth} m{0.4\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}}&
-    \emph{\textbf{Code}}&
-    \emph{\textbf{Visual Output}}\\
-    \midrule
-
-    P3&
-    \lstinline[]$print('The mean accuracy with 10 fold cross validation is: %s ' % round(scores * 100, 2), '%')$&
-    \\
-
-    P6&
-    \lstinline[]$print('RMSE:', np.sqrt(metrics.mean_squared_error(y_test, pred)))$&
-    \\
-
-    P18&
-    \lstinline[]$print('The Accuracy is:', accuracy_score(y_test, y_pred))$&
-    \\
-
-    P50&
-    \lstinline[]$print('Classification Report: SVM (validation data)')$&
-    \\
-
-    P54&
-    \lstinline[]$print('Intercept value:', lm.intercept_)$&
-    \\
-
-    O3&
-    \lstinline[]$skplt.metrics. plot_confusion_matrix(Y_val, Vote.predict(X_val), normalize=True, figsize=(10, 10))$&
-    \includegraphics[width=\linewidth]{model-perf-confusion-matrix.png}\\
-
-    O52&
-    \lstinline[]$spot_check_recs(classifier, 910)$&
-    \\
-    \bottomrule
-  \end{tabular}
-  \label{tab:model-perf}
-\end{table}
-
-Table~\ref{tab:model-perf} presents a few examples of cell outputs used to check the performance of a trained ML model. Besides the \emph{accuracy} of the model (\emph{P3} and \emph{P18}), we also see checks for the \emph{Root Mean Square Error (RMSE)} (\emph{P6}) and the use of the classification report (\emph{P50}) provided by scikit-learn~\footnote{https://scikit-learn.org/stable/modules/generated/sklearn.metrics.classification\_report.html} which reports the \emph{accuracy}, \emph{precision}, \emph{recall} and \emph{f1 score} for all labels present in the target feature.
-
-% TODO: this feels hallucinated; revisit
-Print statement \emph{P54} prints the intercepts of a linear regression model. Checking the intercept of a linear regression model is essential for understanding the baseline prediction when all predictors are zero, interpreting the model, identifying potential data biases or missing variables, assessing model validity, and comparing baseline predictions across different models. This insight is critical for accurate model interpretation and effective decision-making in practical applications.
-
-Output \emph{O3} shows a heatmap used to visualise the confusion matrix of a multi-label classification task. The values are normalised using the actual number of examples of each class which makes the comparisons of the values across the classes possible.
-
-Output \emph{O52} shows a function implemented by the practitioners to manually evaluate an image classification model on a random sample of input images. The function \texttt{spot\_check\_recs} displays the input image along with the prediction of the model which the practitioner uses to spot-check the performance of the model.
-
-During the model development phase, the performance of an ML model is often printed to facilitate comparisons against other models or variations. Throughout this continuous experimentation phase, authors may adjust model parameters or modify the data by engineering new features. The model is then re-trained to check if these changes lead to performance improvements.
-
-\highlight{\textbf{Finding 1.6} The study identifies 33 outputs used to check the performance of trained ML models. These include outputs that print key performance metrics (P3, P6, P18, P50), a normalised heatmap used to visualise the confusion matrix of a model's predictions (O3) and a custom function written for manual evaluation of model predictions on random input samples (O52). These checks are used throughout the iterative model development phase, enabling practitioners to compare different models or variations, adjust parameters, and refine features to improve performance.}
-
-\subsubsection{Neural network architecture ($N = 1$)}
-% (P92)
-
-\begin{table}
-  \centering
-  \caption{Print the architecture of a neural network.}
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}}&
-    \emph{\textbf{Code}}\\
-    \midrule
-    P92&
-    \lstinline[]$print(MyNetwork)$\\
-    \bottomrule
-  \end{tabular}
-  \label{tab:network-architecture}
-\end{table}
-
-% TODO: need more description and context around this print statement (where was it written, and why?)
-Table~\ref{tab:network-architecture} shows print statement \emph{P92} which shows the architecture of a neural network.
-
-Printing the structure of a neural network serves crucial purposes such as verifying the correct implementation of the architecture, aiding in debugging by ensuring layer compatibility, and providing a clear, human-readable format for documentation and educational insights. It helps in verifying configurations like layer dimensions and operations before initiating computationally intensive training, ensuring the model is set up efficiently for the intended tasks. This practice is fundamental for maintaining accuracy, facilitating collaboration, and enhancing the reproducibility of the model.
-
-\highlight{\textbf{Finding 1.7} The study identifies one output (P92) used to print the architecture of a neural network. Such outputs can be used during the model development phase to ensure compatibility between the layers of a neural network, for understanding and learning about the architecture of pre-trained models and for documentation purposes.}
-
-\subsubsection{Shape check ($N = 3$)}
-% (P4, P32, P117)
-
-\begin{table}
-  \centering
-  \caption{Example of outputs used to check the shape of the data.}
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}} & \emph{\textbf{Code}}\\
-    \midrule
-    P4 &
-    \lstinline[]$print('no.of examples in test data : ', len(test_data))$\\
-
-    P32 &
-    \lstinline[]$print('Training set shape : ', x_train.shape)$\\
-
-    P117&
-    \lstinline[]$print('Y_train.shape: ', Y_train.shape)$\\
-    \bottomrule
-  \end{tabular}
-  \label{tab:shape-check}
-\end{table}
-
-Table~\ref{tab:shape-check} shows print statements discovered in this study which check the shape of the data. \emph{P4} prints the number of rows or examples in the test set. \emph{P32} and \emph{P117} prints the number of rows and columns (or features) in the training and test data respectively.
-
-Ensuring that data dimensions align with expectations is important particularly following data pre-processing or transformation steps. Primarily, the number of features in the training set must match those in the testing set. This alignment is crucial because statistical machine learning models are trained on specific data dimensions and expect the same dimensional structure during inference to perform accurately. Similarly, in neural network architectures, the configuration of input layers depends directly on the shape of the training data, dictating the number of input neurons needed. Furthermore, the correspondence between the number of test examples and their respective labels is essential for accurately computing performance metrics, such as accuracy.
-
-Such checks are indicative of the meticulous attention to detail necessary in the model training and validation process, underscoring the importance of shape validation in achieving reliable machine learning outcomes.
-
-\highlight{\textbf{Finding 1.8} The study identifies three outputs used to check the shape of data. These checks are used to ensure data dimensions align with expectations, particularly after preprocessing or transformation steps.}
+\highlight{\textbf{Finding 3.8} The study identifies two outputs used to verify linear relationships between features in the data. Visualisations such as a scatter plot with a regression line and a line plot are employed to assess the linearity between features. These checks are used for identifying and potentially removing redundant features or performing feature selection to ensure that the training dataset is optimized for linear ML models.}
 
 \subsubsection{Type check ($N = 2$)}
 % (O71, P43)
 
-% TODO: the narrative is not as strong here; it would help to also show the actual output as well? For instance, in P43 by itself doesn't make that much sense, the output however shows that all features in the dataset are floats which is a pre-requisite for ML training data
-\begin{table}
-  \centering
-  \caption{Outputs used to check the data type of features in the data.}
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}} &
-    \emph{\textbf{Code}}\\
+Type checks are crucial not only for confirming the current state of the data but also for determining the specific transformations required to make the data suitable for subsequent modelling steps. Ensuring data types align with model requirements is a fundamental step in the exploratory data analysis phase. Since all ML algorithms perform mathematical operations, they require the input data to be entirely numerical to avoid computational errors (\emph{P43, L71}). The process of checking data types helps in identifying the necessary pre-processing or transformation steps to convert the data into a form that is compatible with these models. For example, numerical features often require normalisation to bring them within a specific scale and categorical features must be converted into a numerical format through methods like one-hot encoding to ensure they can be effectively integrated into the model.
 
-    P43&
-    \lstinline[]$print('data type:', images.dtype)$\\
+\highlight{\textbf{Finding 3.9} The study identifies two outputs used to verify the data types of features in the dataset. These checks are used to determine the necessary preprocessing or transformation steps requried to make the data suitable for training. Type checks are also used to ensure that all features are numerical prior to performing mathematical operations such as matrix multiplication, which is used in several ML models.}
 
-    O71&
-    \lstinline[]$type(Y)$\\
-    \bottomrule
-  \end{tabular}
-  \label{tab:type-check}
-\end{table}
+\subsubsection{Execution time check ($N = 1$)}
+% (P66)
+\begin{lstlisting}[caption={Print statement \emph{P66} used to check the total execution time of training an ML model with various hyper-parameter configurations.}, label={lst:P66}]
+print('Total Run Time:')
+\end{lstlisting}
 
-% TODO: for O71, the output shows its a ndarray; without showing this to the reader we cannot make a strong narrative around these type checks
-Table~\ref{tab:type-check} illustrates outputs of cells found in our analysis, where checks are employed to verify the data types of the features in the dataset. Print statement \emph{P43} is written prior to training a neural network. The output validates that all features in the training data are numerical. Similarly, output \emph{O71} shows the data type of the target column.
+While training multiple ML models for a single task is common, choosing the best model considers not only its performance but also its training speed. Faster training times are more cost-effective for iterative tasks and promote sustainability in the long run~\cite{shome2022data}. Listing~\ref{lst:P66} presents print statement \emph{P66} that prints the total execution time of a code cell which trains an ML model with various hyper-parameter configurations using a grid-search. 
 
-Type checks are crucial not only for confirming the current state of the data but also for determining the specific transformations required to make the data suitable for subsequent modelling steps. Ensuring data types align with model requirements is a fundamental step in the exploratory data analysis (EDA) phase of developing machine learning models. Since all machine learning algorithms perform mathematical operations, such as matrix multiplications, they require the input data to be entirely numerical to avoid computational errors. The process of checking data types helps in identifying the necessary pre-processing or transformation steps to convert the data into a form that is compatible with these models. For example, while numerical features often require normalisation to bring them within a specific scale, categorical features must be converted into a numerical format through methods like one-hot encoding to ensure they can be effectively integrated into the model.
+\highlight{\textbf{Finding 3.10} The study identifies one print statement used to check the total execution time of training and cross-validating an ML model. The print statement can be used to evaluate the efficiency of model training, especially when multiple models are trained iteratively.}
 
-\highlight{\textbf{Finding 1.9} The study identifies two outputs used to verify the data types of features in the dataset. These checks are used to determine the necessary preprocessing or transformation steps requried to make the data suitable for training. Type checks are also used to ensure that all features are numerical prior to performing mathematical operations such as matrix multiplication, which is used in several ML models.}
+\subsubsection{Network architecture check ($N = 1$)}
+% (P92)
 
-\subsubsection{Spot checks ($N = 5$)}
-% (O56, O60, P64, P67, P114)
+Printing the structure of a neural network (\emph{P92}) serves crucial purposes such as verifying the correct implementation of the architecture, aiding in debugging by ensuring layer compatibility, and providing a clear, human-readable format for documentation and educational insights. It helps in verifying configurations like layer dimensions and operations before initiating computationally intensive training and ensuring that the model is set up efficiently for the intended tasks.
 
-\begin{table}
-  \centering
-  \caption{Example of outputs used to perform spot checks.}
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}}&
-    \emph{\textbf{Code}}\\
-    \midrule
-
-    O60 &
-    \lstinline[]$X_pca.head()$\\
-
-    P64 &
-    \lstinline[]$print(np.max(cur[:, :, 1]))$\\
-
-    P114 &
-    \lstinline[]$print(onehot_encoded)$\\
-    \bottomrule
-  \end{tabular}
-  \label{tab:spot-check}
-\end{table}
-
-Table~\ref{tab:spot-check} presents outputs which were used to perform spot checks at various stages of the ML development cycle. In \emph{O60}, the practitioner verifies that the number of features in the data matches expectations after apply Principal Component Analysis (PCA). \emph{P64} demonstrates another case which is particularly relevant in image processing contexts. The maximum value in the second channel of a 3D numpy array is extracted and verified, ensuring that the data manipulation retains its expected properties. Lastly, \emph{P114} assesses the correctness of one-hot encoding, a fundamental preprocessing step for categorical data, ensuring that the transformation has been executed correctly.
-
-Performing value or spot checks can be an essential practice for ensuring data integrity and model accuracy at various stages of development. These checks are crucial for verifying that operations such as data transformations, model predictions, and feature engineering are functioning as expected. Each of these checks not only validates individual transformations or predictions but also reinforces the overall reliability and robustness of the machine learning models being developed.
-
-\highlight{\textbf{Finding 1.10} This study finds five outputs used to perform spot checks at various stages of the MLDL. Spot checks are used to ensure data integrity by verifying data transformation and feature engineering steps meet expectations.}
-
-\subsubsection{Model training ($N = 4$)}
-% (O8, O31, O42, P77)
-
-% TODO: feedback from luis
-% - this cluster makes me wonder: should we make a point that some of these outputs may happen by chance and were not explicitly defined by users/developers?
-\begin{table}
-  \centering
-  \caption{Example of outputs used to monitor model training.}
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}}&
-    \emph{\textbf{Code}}\\
-    \midrule
-
-    O8 &
-    \lstinline[]$autoencoder.fit(x=X_train, y=X_train, epochs=15, validation_data=[X_test, X_test], callbacks=[keras_utils.TqdmProgressCallback()], verbose=0)$\\
-
-    O31 &
-    \lstinline[]$adaBoost.fit(X_train, y_train)$\\
-
-    O42&
-    \lstinline[]$m_r.best_params_$\\
-    \bottomrule
-  \end{tabular}
-  \label{tab:model-training}
-\end{table}
-
-During training it is common practice to monitor progress periodically, as illustrated by outputs \emph{O8} in Table~\ref{tab:model-training}, where the training loss and accuracy are printed to give real-time feedback on the model's learning efficacy. This feedback allows for adjustments in training parameters or early stopping to prevent overfitting. For instance, in output O8, the autoencoder is trained using a custom callback from \texttt{keras\_utils} to provide a progress update without cluttering the output stream, which is particularly useful in lengthy training sessions. In contrast, output \emph{O31} represents a crucial validation step where the \texttt{adaBoost} model is fitted to the training data to ensure it adheres to the expected data patterns without errors, a typical task in the model experimentation phase where various models are assessed for their suitability. Output \emph{O42} checks for the best parameters found through tuning methods, highlighting the importance of parameter optimisation in achieving optimal model performance.
-
-Each of these outputs underscores different facets of the model training phase, from initialization and real-time monitoring to validation and finalization, illustrating the layered complexity of developing predictive models.
-
-\highlight{\textbf{Finding 1.11} The study identifies four outputs used to monitor model training progress. These outputs provide real-time feedback on training loss and accuracy (O8), validate model adherence to expected data patterns (O31), and identify optimal parameters through tuning methods (O42). These checks facilitate timely adjustments during the training process to prevent overfitting and ensure model performance optimization.}
-
-\subsection{(RQ3) How are assertions used to validate ML code written in Jupyter notebooks?}~\label{sec:result-rq2}
-
-% TODO: bring in the notion of pre and post condition checks (the wikipedia page on assertions is very interesting: https://en.wikipedia.org/wiki/Assertion_(software_development)); specifically the part on run-time assertions
-
-\subsubsection{Batch size check ($N = 3$)}
-% (A21, A28, A70)
-
-\begin{table}
-  \centering
-  \caption{Assertions used to validate the batch size of input data.}
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}}&
-    \emph{\textbf{Code}}\\
-    \midrule
-
-    A21 &
-    \lstinline[]$assert x.size(0) % batch_size == 0, f'the first dimension of input tensor ({x.size(0)}) should be divisible by batch_size ({batch_size})'$\\
-
-    A28 &
-    \lstinline[]$assert image_size % patch_size_small == 0, 'Image dimensions must be divisible by the patch size.'$\\
-
-    A70 &
-    \lstinline[]$assert n_img > batch_size$\\
-    \bottomrule
-  \end{tabular}
-  \label{tab:batch-size}
-\end{table}
-
-Table~\ref{tab:batch-size} shows the assertions found in this study that validate the batch size. \emph{A21} ensure that the batch size divides evenly into the training dataset size, thereby confirming that every training epoch processes full batches without leftover data. Similarly, \emph{A28} checks that image dimensions are suitably divisible by the patch size, which is essential for certain types of convolutional networks. \emph{A70} is another critical check which confirms that the number of images is greater than the batch size, which is necessary to commence batch processing.
-
-In the context of neural network training, the practice of using batch processing is a key strategy to enhance computational efficiency and hardware utilization, particularly GPU cores. Batching allows for a more stable and smoother learning curve as the model's weights are updated not for each individual example, but rather based on the average gradient of a batch. This technique not only optimizes learning but also enhances the model's generalizability due to more robust gradient estimations. Given these benefits, it becomes crucial to ensure that the batch size is appropriately set to match the hardware's capacity, avoiding memory overflow issues that can halt training. These assertions are strategically placed to prevent common errors that could undermine training efficiency and model performance, thereby safeguarding the training process from potential disruptions due to misconfigured batch sizes.
-
-\highlight{\textbf{Finding 2.1} This study identifies three assertions validating batch size configurations. These assertions ensure batch sizes are divisible by dataset sizes, image dimensions are appropriately divided by patch sizes, and the number of images exceeds the batch size. These checks are crucial for optimizing computational efficiency and ensuring stable and smooth model training.}
-
-\subsubsection{Data leakage check ($N = 1$)}
-% (A33)
-
-\begin{table}
-  \centering
-  \caption{Assert used to prevent data leakage.}
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}}&
-    \emph{\textbf{Code}}\\
-    \midrule
-
-    A33&
-    \lstinline[]$assert len(set( tr_df.PetID.unique()).intersection(valid_df.PetID.unique())) == 0$\\
-    \bottomrule
-  \end{tabular}
-  \label{tab:data-leakage}
-\end{table}
-
-Assertion \emph{A33} in Table~\ref{tab:data-leakage} ensures that there are no overlapping \texttt{PetID} values between the training set \texttt{tr\_df} and the validation set \texttt{valid\_df}, thereby preventing any possibility of data leakage.
-
-Ensuring the absence of data leakage between training and validation datasets is a fundamental best practice in machine learning to prevent models from overfitting. Overfitting occurs when a model is excessively complex, learning not only the underlying patterns but also the noise in the training data, which can degrade its performance on unseen data. To guarantee that the model can generalize effectively to new examples, it's crucial to verify that the training and validation sets are completely distinct with no shared examples. By strictly separating these datasets, the validation phase serves its purpose of providing an unbiased evaluation of the model's ability to generalize---to data similar to, but not identical to that which it was trained on---thus maintaining the integrity and validity of the evaluation metrics derived during model testing.
-
-\highlight{\textbf{Finding 2.2} This study identifies one assertion to ensure there are no overlapping values between training and validation sets to prevent data leakage. Preventing data leakage is essential to avoid overfitting and ensure the model's ability to generalize to new data. This practice maintains the integrity and validity of the model evaluation metrics.}
-
-\subsubsection{Existence check ($N = 8$)}
-% NOTE: this is a combination of missing-value-check and existence-check
-% (A23, A42, A43, A50, A51, A63, A79, A86)
-
-\begin{table}
-  \centering
-  \caption{Assertions used to perform existence checks.}
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}}&
-    \emph{\textbf{Code}}\\
-    \midrule
-
-    A23 &
-    \lstinline[]$assert np.all(orders.groupby('user_id') .days_since_prior_order.tail(1).notnull())$\\
-
-    A42 &
-    \lstinline[]$assert not lab_s.isnull().values.any()$\\
-
-    A43 &
-    \lstinline[]$assert len(data) != 0, 'cannot divide by zero'$\\
-
-    A50 &
-    \lstinline[]$assert not np.any(np.isnan(X))$\\
-
-    A51 &
-    \lstinline[]$assert data.target.notnull().all()$\\
-
-    A63 &
-    \lstinline[]$assert X.isnull().sum().sum() == 0$\\
-
-    A79 &
-    \lstinline[]$assert not processed_data_df.isna().any().any()$\\
-
-    A86 &
-    \lstinline[]$assert p0 in poi_info.index$\\
-    \bottomrule
-  \end{tabular}
-  \label{tab:existence-check}
-\end{table}
-
-Assertions \emph{A23} and \emph{A42} in Table~\ref{tab:existence-check} ensure that specific data columns do not contain any missing entries, which could compromise the reliability of subsequent analyses. Assertion \emph{A43} guards against operations on empty datasets, which are a potential risk after filtering or merging data processes. Assertions \emph{A50}, \emph{A51} and \emph{A63} rigorously confirm that the datasets are entirely free from \texttt{NaN} values, thus preserving the integrity of the dataset for reliable model training. Assertions \emph{A79} and \emph{A86} ensure that no unexpected missing values are introduced and that all expected indices are present in the dataset respectively.
-
-Existence checks are a fundamental component of data preprocessing in ML, serving multiple critical purposes to ensure data integrity before analysis and modelling. These checks primarily focus on verifying the presence of necessary columns and the absence of missing values within those columns. Such validations are especially crucial after data preprocessing steps, where transformations might inadvertently introduce null values. These checks are also crucial for maintaining the accuracy and efficiency of data handling processes, ensuring that the datasets are ready for robust machine learning applications.
-
-\highlight{\textbf{Finding 2.3} Eight assertions ensure the presence of specific columns in the dataset and the absence of missing values. These checks prevent operations on empty datasets and confirm the absence of \texttt{NaN} values, maintaining data integrity and reliability for model training.}
-
-\subsubsection{Mathematical property checks ($N = 4$)}
-% (A3, A25, A56, A64)
-
-\begin{table}
-  \centering
-  \caption{Assertions used to validate mathematical properties of neural networks.}
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}}&
-    \emph{\textbf{Code}}\\
-    \midrule
-
-    A3 &
-    \lstinline[]$assert (xH - wH) % self.stride == 0$\\
-
-    A25 &
-    \lstinline[]$assert test_output.std() < 0.15, "Don't use batchnorm here"$\\
-
-    A56 &
-    \lstinline[]$assert np.allclose(e_v_states[:, -1], np.ones_like(e_v_states[:, -1]))$\\
-
-    A64 &
-    \lstinline[]$assert np.allclose(T, T.T)$\\
-    \bottomrule
-  \end{tabular}
-  \label{tab:maths-check}
-\end{table}
-
-Assertion \emph{A3} in Table~\ref{tab:maths-check} checks that the dimension differences between height of input and the filter, when divided by the stride, result in an integer, ensuring that convolution operations are dimensionally consistent. \emph{A25} monitors the standard deviation of outputs to decide the appropriateness of using batch normalisation, thus guiding the model optimization process based on statistical behaviour. \emph{A56} verifies the uniformity of certain computations, essential for maintaining consistency in state or parameter arrays over iterations. Similarly \emph{A64} checks for the symmetry of a matrix, a crucial property in many algorithms, particularly those involving covariance matrices and distance calculations. 
-
-When working with neural networks and other statistical models, it is imperative to ensure that mathematical properties are preserved throughout operations involving arrays and matrices. This rigour is captured through the assertions in Table~\ref{tab:maths-check} tha validate these properties after matrix manipulations. These assertions are not just precautionary but are vital for confirming that the underpinnings of ML algorithms align with expected mathematical principles, thereby ensuring the robustness and reliability of model computations and outcomes.
-
-\highlight{\textbf{Finding 2.4} Four assertions validate key mathematical properties of data and model outputs. These include ensuring dimensional consistency in convolution operations, monitoring standard deviation for batch normalization suitability, verifying uniformity in computations, and checking matrix symmetry. These checks confirm the robustness and reliability of model computations.}
-
-\subsubsection{Model performance check ($N = 11$)}\label{sec:assert-model-perf}
-% (A7, A15, A19, A22, A24, A26, A38, A54, A58, A59, A72)
-
-\begin{table}
-  \centering
-  \caption{Assertions used to check performance of ML models.}
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}}&
-    \emph{\textbf{Code}}\\
-    \midrule
-
-    A7 &
-    \lstinline[]$assert len(neighbours_1) == 20, "Neighbors don't match!"$\\
-
-    A15 &
-    \lstinline[]$assert np.allclose(verify('images/camera_1.jpg', 'bertrand', database, FRmodel), (0.54364836, True))$\\
-
-    A19 &
-    \lstinline[]$assert np.allclose(linear_model.coef_, [[1.57104472, 0.92521608]]), 'The model parameters you learned seem incorrect!'$\\
-
-    A38 &
-    \lstinline[]$assert 0.75 < auc(fpr, tpr) < 0.85$\\
-
-    A58 &
-    \lstinline[]$assert np.isclose(accuracy, 0.9666666666666667)$\\
-    \bottomrule
-  \end{tabular}
-  \label{tab:model-perf-explicit}
-\end{table}
-
-This study finds several assertions used to test model performance against predefined thresholds for key metrics such as accuracy, precision, recall, F1 score, and others.
-
-% TODO: verify if this applies to recommender systems as well?
-For example, \emph{A7} in Table~\ref{tab:model-perf-explicit} checks for the expected number of neighbours as an indirect measure of model performance in specific scenarios like recommendation systems or clustering. Meanwhile, direct comparisons of model outputs with expected results, as seen in \emph{A15} validate the model's predictive accuracy and reliability under operational conditions. Other assertions, such as \emph{A19}, ensure that the learned parameters align closely with theoretically or empirically derived values, further cementing the model’s statistical validity. Range checks like \emph{A38} confirm that the performance metrics such as \emph{AUC} and \emph{Gini coefficient} fall within acceptable boundaries, indicating good predictive performance without overfitting.
-
-The use of \texttt{np.isclose} in \emph{A58} is particularly noteworthy. This method accounts for the stochastic nature of many ML models, where slight variations in performance metrics can occur due to differences in initial conditions, random seed settings, or inherent randomness in algorithms. By allowing a small tolerance in the comparison, np.isclose ensures that the model's performance is consistently close to the expected benchmark, thereby affirming its reliability despite the stochastic elements.
-
-\highlight{\textbf{Finding 2.5} Eleven assertions evaluate model performance against predefined thresholds for accuracy, precision, recall, F1 score, and other metrics. These checks validate the model's predictive accuracy and reliability, ensuring it meets expected performance standards despite the stochastic nature of ML models.}
-
-\subsubsection{Network architecture check ($N = 3$)}
-% (A11, A62, A75)
-
-\begin{table}
-  \centering
-  \caption{Assertions used to check the architecture of neural networks.}
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}}&
-    \emph{\textbf{Code}}\\
-    \midrule
-
-    A11 &
-    \lstinline[]$assert self.encoder_conv_01[0].weight.size() == self.vgg16.features[2].weight.size()$\\
-
-    A62 &
-    \lstinline[]$assert activations[i + 1].shape[1] == self.encoder_layer_sizes[-1] * 2$\\
-    
-    A75 &
-    \lstinline[]$assert reg in ['none', 'l2']$\\
-    \bottomrule
-  \end{tabular}
-  \label{tab:assert-network-architecture}
-\end{table}
-
-Assertion \emph{A11} verifies that the weight dimensions of the first convolutional layer in the \lstinline{encoder_conv_01} module match the weight dimensions of the third layer in the \lstinline{vgg16.features} module. The \lstinline{vgg16} model is a widely-used pre-trained convolutional neural network often employed as a feature extractor or backbone for transfer learning tasks. By ensuring that the weight dimensions are consistent, the code guarantees that the input data to the \lstinline{encoder_conv_01} module has the expected spatial dimensions and number of channels, enabling seamless integration with the pre-trained \lstinline{vgg16} model.
-
-Assertion \emph{A62} checks that the shape of the activations at index \lstinline{i + 1} has the correct number of channels, which should be twice the size of the last encoder layer. This ensures that the intermediate activations maintain the expected structure necessary for the proper functioning of the subsequent layers in the network. Ensuring that the shape of activations is consistent throughout the network is crucial for maintaining the integrity of the data flow and preventing errors during the forward pass.
-
-Assertion \emph{A75} ensures that the regularization parameter \lstinline{reg} is either 'none' or 'l2'. This check is important for validating that the specified regularization method is among the acceptable options, thereby preventing potential misconfigurations that could lead to unexpected behaviour or suboptimal model performance.
-
-When integrating pre-trained models or leveraging transfer learning techniques, it is crucial to ensure the compatibility of the custom neural network architecture with the pre-trained components. This is particularly important when combining convolutional layers from different sources, as the spatial dimensions and channel configurations must align correctly. Such architectural checks are crucial for preventing potential issues during the forward pass of the neural network and ensuring that the custom and pre-trained components are compatible, ultimately leading to reliable and accurate model performance.
-
-\highlight{\textbf{Finding 2.6} Three assertions verify the consistency of neural network architecture. These include ensuring weight dimensions match across layers and that activation shapes and regularization parameters are as expected. These checks ensure that the neural network is correctly configured and integrated with pre-trained models, maintaining the integrity of data flow during training.}
-
-\subsubsection{Resource check ($N = 7$)}
-% (A10, A14, A18, A37, A60, A67 A74)
-
-\begin{table}
-  \centering
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}}&
-    \emph{\textbf{Code}}\\
-    \midrule
-
-    A10 &
-    \lstinline[]$assert le_path.is_file(), f"Label encoder file not found at {le_path}. Make sure 'label_encoder.pkl' exists in the lightning_logs directory."$\\
-
-    A14 &
-    \lstinline[]$assert self.model is not None, 'Model is not loaded, load it by calling .load_model()'$\\
-
-    A18&
-    \lstinline[]$assert pd.__version__.rpartition('.')[0] == '1.0', f"Unexpected pandas version: expected 1.0, got {pd.__version__.rpartition('.')[0]}"$\\
-
-    A37 &
-    \lstinline[]$assert svm.fit_status_ == 0, 'Forgot to train the SVM!'$\\
-
-    A60 &
-    \lstinline[]$assert f2.gca().has_data()$\\
-
-    A67&
-    \lstinline[]$assert pm.__version__ == '3.9.2'$\\
-
-    A74 &
-    \lstinline[]$assert os.path.exists(image_dir)$\\
-    \bottomrule
-  \end{tabular}
-  \caption{Assertions used to validate availability of resources.}
-  \label{tab:assert-resource-check}
-\end{table}
-
-Table~\ref{tab:assert-resource-check} persents the assertions encountered in this study, that perform resource checks encompassing pre-trained models, data paths, visualisations, and model training status. These checks help prevent runtime errors and ensure the proper execution of code.
-
-One set of assertions verify the existence of files on the file system, such as pre-trained models (\emph{A10}) or data files (\emph{A74}). These checks ensure that the required resources are present before proceeding with subsequent operations, preventing potential issues caused by missing resources.
-
-Additionally, assertions are employed to validate the successful loading of models (\emph{A14}) and the completion of model training processes (\emph{A37}). A unique aspect of working with notebooks is the ability to re-run cells while experimenting, which can lead to unintended consequences. The assertion \emph{A37} addresses this scenario by checking if the SVM model has been properly trained before proceeding with further operations. This check prevents inconsistent model states from executing cells out of order or multiple times.
-
-Assertion \emph{A60} is used to verify the presence of data in visualisations generated using the Matplotlib~\footnote{https://matplotlib.org/} library. These checks are crucial for ensuring that the visualisations accurately represent the underlying data and do not contain empty or incomplete plots, which could lead to misleading interpretations.
-
-Assertions \emph{A18} and \emph{A67} explicitly verify the versions of critical libraries. For instance, \emph{A18} checks that the major version of pandas is precisely what is expected for the notebook’s tasks, ensuring compatibility and preventing errors that could arise from API changes in newer or older versions.
-
-Resource check assertions play a vital role in maintaining the reliability and robustness of the machine learning workflows by ensuring the availability and validity of essential resources, preventing runtime errors, and maintaining the integrity of the data, models, and visualisations.
-
-% NOTE: left over loads, move to implications if required
-% In the dynamic and sometimes unstructured environment of Jupyter notebooks, managing dependencies directly within the notebook becomes crucial due to the workflow peculiarities associated with interactive sessions. Unlike traditional software development environments where dependencies are managed through dedicated solutions like dependency management tools or by specifying requirements in a \emph{requirements.txt} file, notebooks often require on-the-fly checks to ensure the correct library versions are loaded to avoid compatibility issues.
-
-% These assertions safeguard the notebook against potential disruptions caused by version mismatches, thereby maintaining the integrity of the codebase and ensuring reproducibility across different execution environments.
-
-\highlight{\textbf{Finding 2.7} Seven assertions confirm the availability of essential resources like pre-trained models, data files, successful model loading, and completion of training processes. These checks prevent runtime errors and ensure proper code execution, maintaining the reliability and robustness of the ML workflows.}
-
-\subsubsection{Data shape check ($N = 26$)}
-% (A5, A9, A13, A16, A17, A29, A31, A61, A71, A76--78, A82, A84, A85, A89, A90, A91, A93--96, A98--101)
-
-% TODO: revisit the assertions in this section; we may have misclassified assertions or need to create a new group
-
-\begin{table}
-  \centering
-  \caption{Assertions used to check the shape of the data.}
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}}&
-    \emph{\textbf{Code}}\\
-    \midrule
-
-    A5 &
-    \lstinline[]$assert y_valid.shape == (1132,)$\\
-
-    A17 &
-    \lstinline[]$assert X.shape[1] == 13, 'Did you drop/lose some columns in X? Did you properly load and split the data?'$\\
-
-    A29 &
-    \lstinline[]$assert len(test_y_preds) == len(test_y), 'Unexpected number of predictions.'$\\
-
-    A31 &
-    \lstinline[]$assert img.shape == (112, 92)$\\
-
-    A76 &
-    \lstinline[]$assert len(encoding['token_type_ids']) == max_seq_length$\\
-
-    A84 &
-    \lstinline[]$assert red.get_shape().as_list()[1:] == [224, 224, 1]$\\
-
-    A90 &
-    \lstinline[]$assert len(X_train) == 2000$\\
-
-    A93 &
-    \lstinline[]$assert temp_embed.shape[0] == stride$\\
-    \bottomrule
-  \end{tabular}
-  \label{tab:assert-shape-check}
-\end{table}
-
-
-Assertions \emph{A17} and \emph{A90} verify that the input features have the correct number of columns and examples, respectively. Such checks are essential for preventing downstream errors and ensuring the compatibility of the data with the chosen model architecture and preprocessing steps. 
-
-Assertions \emph{A5} and \emph{A29} ensure that the labels or predictions have the expected length or shape, which is crucial for accurate performance evaluation and model training.
-
-In the context of computer vision tasks, assertions \emph{A31} and \emph{A84} verify that the input images have the correct dimensions, which is essential for compatibility with convolutional neural network architectures and image preprocessing techniques.
-
-Furthermore, assertions \emph{A76} and \emph{A93} check the dimensions of sequences, embeddings, and other data structures used in natural language processing tasks, ensuring their compatibility with various models and algorithms.
-
-Data shape checks can be considered the ``Swiss army knife'' of assertions, as they are ubiquitous and serve multiple purposes throughout the machine learning workflow. We encountered a vast array of assert statements that verify the dimensions of various data structures, including input features, labels, predictions, images, sequences, and embeddings. These assertions ensure that the data adheres to the expected format and dimensions required by different components of the machine learning pipeline.
-
-Data shape check assertions serve as a crucial safeguard against data inconsistencies, ensuring the integrity and compatibility of the data throughout the machine learning workflow. By verifying the expected dimensions and shapes of various data structures, these assertions help prevent runtime errors, ensure accurate model training and evaluation, and maintain the reliability of the entire machine learning pipeline.
-
-\highlight{\textbf{Finding 2.8} 26 assertions verify the dimensions of various data structures such as input features, labels, predictions, images, sequences, and text embeddings. These checks ensure data consistency and compatibility throughout the ML pipeline, preventing runtime errors and ensuring accurate model training and evaluation.}
-
-\subsubsection{Type check ($N = 5$)}
-% (A2, A35, A40, A81, A88)
-
-\begin{table}
-  \centering
-  \caption{Assertions used to check the data type of features in the dataset.}
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}}&
-    \emph{\textbf{Code}}\\
-    \midrule
-
-    A2 &
-    \lstinline[]$assert isinstance(X_trn, torch.FloatTensor), 'Features should be float32!'$\\
-
-    A35 &
-    \lstinline[]$assert isinstance(column_transformer, ColumnTransformer), "Input isn't a ColumnTransformer"$\\
-
-    A40 &
-    \lstinline[]$assert isinstance(model_3, sklearn.ensemble.RandomForestClassifier)$\\
-
-    A81 &
-    \lstinline[]$assert is_all_ints(filled_df[r]) is True$\\
-
-    A88 &
-    \lstinline[]$assert isinstance(betas, np.ndarray)$\\
-    \bottomrule
-  \end{tabular}
-  \label{tab:assert-type-check}
-\end{table}
-
-Assertion \emph{A2} in Table~\ref{tab:assert-type-check} demonstrates a very common type check performed on the input features. This assertion ensures that the input features are represented as PyTorch float tensors, which is a requirement for many deep learning models and operations.
-
-Another type check is applied to verify the type of the machine learning models themselves. For instance, the \emph{A40} checks if the \lstinline{model_3} object is an instance of the \lstinline{RandomForestClassifier} class from the scikit-learn library. This type of assertion is essential when working with different types of models, as it helps prevent errors arising from using incompatible methods or attributes.
-
-In addition to input features and models, type checks are also performed on data structures and intermediate objects. The assertion \emph{A35} verifies that the \lstinline{column_transformer} object is an instance of the \lstinline{ColumnTransformer} class, which is commonly used for preprocessing and feature engineering tasks in scikit-learn.
-
-Type checking is not limited to objects and data structures--it can also be applied to individual columns or elements within a dataset. The assertion \emph{A81} checks if all the elements in a specific column (\lstinline[]$filled_df[r]$) of a DataFrame are integers.
-
-Furthermore, type checks are performed on NumPy arrays, as demonstrated by the assertion \emph{A88}. This assertion ensures that the \lstinline{betas} object is a NumPy array, which is a fundamental data structure used in many numerical and scientific computing operations.
-
-Type check assertions are essential for maintaining data integrity, ensuring compatibility between different components of the machine learning pipeline, and preventing errors and unexpected behaviour. By verifying the types of input features, models, data structures, and other objects, these assertions contribute to the overall reliability and robustness of the machine learning workflow.
-
-\highlight{\textbf{Finding 2.9} Five assertions validate the data types of input features, models, and intermediate objects. These checks ensure compatibility with ML models and operations, preventing errors from incompatible methods or attributes, thus maintaining the reliability of the ML workflow.}
-
-\subsubsection{Data validation check ($N = 14$)}
-% formerly value-check (A20, A30, A41, A44--46, A52, A65, A68, A69, A73, A83, A87, A92)
-
-\begin{table}
-  \centering
-  \caption{Assertions used to perform data validation checks.}
-  \begin{tabular}{@{}m{0.05\textwidth} m{0.8\textwidth}@{}}
-    \toprule
-    \emph{\textbf{Key}}&
-    \emph{\textbf{Code}}\\
-    \midrule
-
-    A41 &
-    \lstinline[]$assert np.all(np.unique(X['smoke'].values) == np.array([0, 1]))$\\
-
-    A44 &
-    \lstinline[]$assert abs(min(entity_embedding[low:high]) - max(entity_embedding[low:high])) <= 1$\\
-
-    A46 &
-    \lstinline[]$assert np.isclose(stdev_norm, 1.0, atol=1e-16)$\\
-
-    A52 &
-    \lstinline[]$assert grouped_users['user_id'].nunique() == user_engagement['user_id'].nunique()$\\
-
-    A65 &
-    \lstinline[]$assert np.all(y <= nb_classes)$\\
-
-    A73 &
-    \lstinline[]$assert df['clf'].value_counts()[1] == len(df[df['quality'] >= 7])$\\
-    \bottomrule
-  \end{tabular}
-  \label{tab:data-validation}
-\end{table}
-
-% TODO: revisit, we have new assertions here; update the count
-Table~\ref{tab:data-validation} presents a range of assert statements that perform various validation checks on data structures, such as NumPy arrays and pandas DataFrames. These checks help ensure the data meets specific criteria or constraints, preventing potential errors or inconsistencies in downstream operations.
-
-One type of validation check involves verifying the presence of specific values or ranges within arrays or columns. For example, assertion \emph{A41} checks if the unique values in the \lstinline{smoke} column of the DataFrame \lstinline{X} are limited to 0 and 1. Similarly, \emph{A65} ensures that all values in the array \lstinline{y} are less than or equal to a certain number of classes.
-
-Another common validation check is verifying the equality or closeness of values or arrays. Assertion \emph{A44} checks if the difference between the minimum and maximum values in a specific range of the \lstinline{entity_embedding} array is less than or equal to 1. Assertion \emph{A46} verifies that the \lstinline{stdev_norm} value is close to 1.0 within a specified absolute tolerance.
-
-Some assertions focus on validating the uniqueness or cardinality of values in arrays or DataFrames. For instance, \emph{A52} checks if the number of unique user IDs in the \lstinline{grouped_users} DataFrame is equal to the number of unique user IDs in the \lstinline{user_engagement} DataFrame.
-
-Other assertions validate the presence of specific values or conditions within DataFrames or other data structures. The assertion \emph{A73} checks if the count of a specific value (1) in the ``clf'' column of the DataFrame \lstinline{df} is equal to the number of rows where the ``quality'' column is greater than or equal to 7.
-
-By verifying specific conditions, value ranges, uniqueness, and equality constraints, these assertions help catch potential errors or inconsistencies early in the pipeline, preventing downstream issues and ensuring reliable and accurate results.
-
-\highlight{\textbf{Finding 2.10} Fourteen assertions perform validation checks on data structures, ensuring the presence of specific values, verifying value ranges, and confirming uniqueness or cardinality of values. These checks catch potential errors or inconsistencies early, ensuring data meets specific criteria or constraints for robust ML applications.}
-
-\subsection{(RQ4) How are assertions used to validate visual outputs in Jupyter notebooks?}~\label{sec:result-rq3}
-
-\subsubsection{Model Performance ($N = 15$)}
-
-\begin{longtable}{@{} m{0.05\textwidth} m{0.4\textwidth} m{0.4\textwidth} @{}}
-  \caption{VA pairs used to validate the performance of a model.} \\
-  \toprule
-  \emph{\textbf{Key}} &
-  \emph{\textbf{Visual Output}} &
-  \emph{\textbf{Assertion}}\\
-  \midrule
-  \endfirsthead
-
-  \caption[]{VA pairs used to validate the performance of a model (continued).} \\
-  \toprule
-  \emph{\textbf{Key}} &
-  \emph{\textbf{Visual Output}} &
-  \emph{\textbf{Assertion}}\\
-  \midrule
-  \endhead
-
-  \midrule
-  \endfoot
-
-  \bottomrule
-  \endlastfoot
-
-  VA2 &
-  \includegraphics[width=\linewidth]{va2.png} &
-  \lstinline[]$assert final_score > 300, 'not good enough for DQN'$\\
-
-  VA3 &
-  \includegraphics[width=\linewidth]{va3.png} &
-  \lstinline[]$assert accuracy_score(y_test, pred) > 0.95$\\
-
-  VA9 &
-  \includegraphics[width=\linewidth]{va9.png} &
-  \lstinline[]$assert np.mean(mean_rw_history[-10:]) > 10.$\\
-
-  VA11 &
-  \includegraphics[width=\linewidth]{va11.png} &
-  \lstinline[]$assert np.mean(metrics['dev_bleu'][-10:], axis=0)[1] > 35, "We kind of need a higher bleu BLEU from you. Kind of right now."$\\
-
-  VA15 &
-  \includegraphics[width=\linewidth]{va15.png} &
-  \lstinline[]$assert np.mean(train_history[:10], axis=0)[1] > np.mean(train_history[-10:], axis=0)[1], "The model didn't converge."$\\
-
-  VA28 &
-  \includegraphics[width=\linewidth]{va28.png} &
-  \lstinline[]$assert np.mean(dev_recall_history[-10:]) > 0.85, "Please train for at least 85% recall on test set. You may need to change vectorizer model for that."$\\
-
-  VA68 &
-  \includegraphics[width=\linewidth]{va68.png} &
-  \lstinline[]$np.testing.assert_almost_equal(ans4, 0.3042764)$\\
-
-  VA107 &
-  \includegraphics[width=\linewidth]{va107.png} &
-  \lstinline[]$assert r2_gru > 0.6$\\
-
-\end{longtable}\label{tab:va-model-perf}
-
-The visualisations in VA2, VA9, and VA15 provide a comprehensive view of key metrics for evaluating the performance of various machine learning models. VA2 includes mean reward per episode, TD loss history, initial state value (V), and gradient norm history for a Deep Q-Network (DQN) model. These metrics collectively indicate the model's learning progress and stability during training. The visualisation in VA9 shows the mean reward per game for a DQN applied to the Breakout Atari game, tracking the model's performance over 200 games. The general upward trend indicates learning and improvement in gameplay over time. VA15 presents the training and development loss over time for a character-level language model, showing a gradual decrease in loss and suggesting effective learning.
-
-The visualisation in VA3 presents a two-dimensional scatter plot showing the decision boundary of a Support Vector Machine (SVM) model, with red and yellow points representing two different classes and a background colour gradient indicating the decision function of the SVM. This visualisation aids in understanding the model's ability to distinguish between classes and the distance of the samples from the decision boundary. The visualisations in VA28 display the training loss and development recall, respectively. The left graph shows a decrease in training loss over time, indicating learning progress, while the right graph shows development recall over time, highlighting improvements in the model's ability to correctly identify positive instances. The visualisations in VA11 depict key metrics for evaluating the performance of a machine learning model in text generation or machine translation. The left plot shows a steady increase in the development BLEU score over the training iterations, indicating improving quality of the model's output, while the right plot displays a steady decrease in training loss, suggesting effective learning and error minimization. In VA107, the scatter plot displays the predicted versus true values of Nitrogen Dioxide (NO2) levels, used to assess the model's performance in predicting continuous variables.
-
-The corresponding assertions for these visualisations ensure that the models meet specific performance standards. For VA2, the assertion ensures that the final score exceeds 300, validating the model's performance for deployment. In VA9, the assertion checks whether the mean of the last ten rewards exceeds 10, ensuring stable and satisfactory learning progress. For VA15, the assertion checks if the mean of the first ten training observations is greater than the mean of the last ten, ensuring loss convergence and validating the model's learning without overfitting. The assertion in VA3 ensures the accuracy score on the test set exceeds 0.95, confirming the model's reliability and generalization capability. For VA28, the assertion checks whether the average development recall in the last ten evaluations exceeds 0.85, ensuring high recall rate critical for tasks like medical diagnostics. In VA11, the assertion ensures the average development BLEU score in the last ten evaluations exceeds 35, confirming the model produces high-quality translations. Lastly, in VA107, the assertion checks whether the R2 score exceeds 0.6, validating the model's fit and reliability for making accurate predictions in real-world scenarios. These validations confirm that iterative training processes lead to meaningful improvements and ensure the models' readiness for deployment and practical applications.
-
-\highlight{\textbf{Finding 3.1} 15 VA pairs are used to evaluate the performance of ML models. The visualisations include metrics such as mean reward, training loss, accuracy, BLEU scores, and R2 scores. Assertions associated with these visualisations ensure models meet a specific performance criteria.}
-
-\subsubsection{Distribution Check ($N = 1$)}
-
-\begin{table}
-  \centering
-  \caption{VA pairs used to check data distribution.}
-  \begin{tabular}{@{} m{0.05\textwidth} m{0.4\textwidth} m{0.4\textwidth} @{}}
-    \toprule
-    \emph{\textbf{Key}}&
-    \emph{\textbf{Visual Output}}&
-    \emph{\textbf{Assertion}}\\
-    \midrule
-
-    VA13 &
-    \includegraphics[width=\linewidth]{va13.png} &
-    \lstinline[]$assert 80 < boot_mean_mean < 81$\\
-    \bottomrule
-  \end{tabular}
-  \label{tab:va-dist-check}
-\end{table}
-
-The visualisation in VA13 displays the distribution of bootstrapped sample means as a histogram with a superimposed kernel density estimate (KDE) curve, illustrating the central tendency and variability of the bootstrapped means.
-
-Bootstrapped sample means are calculated by repeatedly resampling the original dataset with replacement and computing the mean for each resampled dataset. This process generates a distribution of the mean, known as the bootstrap distribution, which helps in estimating the variability and central tendency of the original dataset's mean.
-
-The corresponding assertion checks whether the bootstrapped mean lies between 80 and 81, ensuring that the statistical estimation is consistent with expected values. This validation is crucial for confirming the reliability of the bootstrapped estimates and the accuracy of statistical conclusions.
-
-\highlight{\textbf{Finding 3.1} One visualisation is used to display the distribution of bootstrapped sample means. The corresponding assertion checks if the bootstrapped mean lies between a specific range, ensuring a consistent statistical estimation.}
-
-\subsubsection{Data Validation ($N = 9$)}
-
-\begin{longtable}{@{} m{0.05\textwidth} m{0.4\textwidth} m{0.4\textwidth} @{}}
-  \caption{VA pairs used for data validation.} \\
-  \toprule
-  \emph{\textbf{Key}} &
-  \emph{\textbf{Visual Output}} &
-  \emph{\textbf{Assertion}}\\
-  \midrule
-  \endfirsthead
-
-  \caption[]{VA pairs used for data validation (continued).} \\
-  \toprule
-  \emph{\textbf{Key}} &
-  \emph{\textbf{Visual Output}} &
-  \emph{\textbf{Assertion}}\\
-  \midrule
-  \endhead
-
-  \midrule
-  \endfoot
-
-  \bottomrule
-  \endlastfoot
-
-  VA30 &
-  \includegraphics[width=\linewidth]{va30.png} &
-  \lstinline[]$assert scaled_data[scaled_data.argmax()] <= 1$\\
-
-  V35 &
-  \includegraphics[width=\linewidth]{va35.png} &
-  \lstinline[]$assert(all(df_lower['inspection_score'] > 75))$\\
-
-  V57 &
-  \includegraphics[width=\linewidth]{va57.png} &
-  \lstinline[]$assert kstest(data_transformed[:, feature], 'norm').statistic < 1e-2$\\
-
-  VA62 &
-  \includegraphics[width=\linewidth]{va62.png} &
-  \lstinline[]$assert not np.allclose(x_aug, x_original)$\\
-
-\end{longtable}\label{tab:va-data-validatio}
-
-The VA pairs in Table~\ref{tab:va-data-validatio} collectively illustrate various data validation techniques essential for ensuring the integrity and quality of data used in ML models. 
-
-The visualisation in VA30 consists of two histograms comparing the original and scaled distributions of an exponential dataset. The left plot shows the distribution of the original data, while the right plot displays the distribution after scaling. The scaling process adjusts the data to fall within a specified range of 0 and 1. The corresponding assertion checks whether the maximum value in the scaled data is less than or equal to 1, ensuring that the scaling procedure was applied correctly.
-
-The visualisation in VA35 shows the distribution of health inspection scores in areas with the bottom 25\% and top 25\% of median household income. The blue bars represent areas with the top 25\% median household income, while the orange bars represent areas with the bottom 25\%. This comparison helps identify any disparities in health inspection scores based on income levels. The corresponding assertion checks that all inspection scores in the lower-income areas are above 75, ensuring that the data reflects a minimum standard of health inspection scores in these areas.
-
-The visualisation in VA57 shows a histogram of transformed data after it has been normalised. The corresponding assertion checks that the Kolmogorov-Smirnov (KS) test statistic for the transformed data is less than $1 \times 10^{-2}$, ensuring that the data closely follows a normal distribution.
-
-The visualisation in VA62 displays a heatmap of an augmented dataset generated using a weighted k-nearest-neighbors (k-NN) method. This heatmap helps in visualizing the differences and similarities between the original and augmented data. The corresponding assertion checks that the augmented data \lstinline{x_aug} is not nearly identical to the original data \lstinline{x_original}, ensuring that the data augmentation process has introduced sufficient variability.
-
-These validations are crucial for confirming that data preprocessing techniques such as scaling, transformation, and augmentation have been correctly applied. Ensuring the integrity and quality of the data is essential for the subsequent steps in the machine learning pipeline, as it directly impacts the robustness, reliability, and generalization of the models developed. By validating these steps, we can maintain high standards of data quality and model performance, which are fundamental for accurate and meaningful analyses.
-
-\highlight{\textbf{Finding 3.3} Nine VA pairs focus on data validation tasks such as comparing the original with the scaled data distribution and ensuring augmented data is different from the original. These validations confirm that data preprocessing steps like scaling, transformation, and augmentation are correctly applied.}
+\highlight{\textbf{Finding 3.11} The study identifies one print statement used to show the architecture of a neural network. Such outputs can be used during the model development phase to ensure compatibility between the layers of a neural network, for understanding and learning about the architecture of pre-trained models and for documentation purposes.}
 
 \section{Discussion}\label{sec:discuss}
 
-Our results from RQ1 reveal that outputs from code cells in Jupyter notebooks are extensively used to make design and implementation decisions during the ML development cycle. Making such decisions however, requires manual validation of the outputs. For instance, we find several instances where practitioners use visualisations to check data distributions and print statements to verify data shapes and types before proceeding with model training. Critical decisions, such as deciding whether to normalize features based on their distributions or adjusting model parameters based on training feedback, rely heavily on these manual checks. Like traditional software systems, an ML pipeline is subject to change due to evolving model requirements, personnel turnover, and changes in the data itself. Such changes can introduce inconsistencies or errors that manual checks might miss, highlighting the need for more automated and explicit validation mechanisms. 
+Our results from RQ1 reveal that outputs from code cells in Jupyter notebooks are extensively used to make design and implementation decisions during the ML development cycle. Making such decisions however, requires manual validation of the outputs. For instance, we find several instances where practitioners use visualisations to check data distributions and print statements to verify data shapes and types before proceeding with model training. Critical decisions, such as deciding whether to normalize features based on their distributions or adjusting model parameters based on training feedback, rely heavily on these manual checks. Like traditional software systems, an ML pipeline is subject to change due to evolving model requirements, personnel turnover, and changes in the data itself. Such changes can introduce inconsistencies or errors that manual checks might miss, highlighting the need for more automated and explicit validation mechanisms.
 
 Assertions can play a crucial role in automatically validating critical assumptions in ML workflows. As seen in the results from RQ2, assertions can verify that data distributions remain consistent with expectations or that model performance metrics meet predefined thresholds. Embedding assertions into the code helps ensure that any deviation from expected conditions is promptly flagged, reducing the reliance on manual verification and enhancing the robustness and maintainability of ML pipelines. Assertions also serve as an executable form of documentation that captures the assumptions and decisions made during model development. This is particularly important in collaborative environments where multiple practitioners might work on the same project. Assertions ensure that all team members have a clear understanding of the requirements and constraints across the entire ML pipeline, facilitating smoother transitions and handovers. Moreover, they enhance the reproducibility of ML experiments by ensuring that the same validation checks are applied consistently, regardless of the execution order of the notebook cells.
 
-% P71 highlights the lack of proper software engineering best practices within Jupyter notebooks. This shortcoming in computational notebooks has been identified by prior studies~\cite{quaranta2021kgtorrent, pimentel2019large-scale}. In this case study, managing dependencies through external tools is recommended. Python's built-in \emph{requirements.txt}~\footnote{https://pip.pypa.io/en/stable/reference/requirements-file-format/} file allows specifying dependencies and versions. Alternatively, external programs like \emph{pipenv}~\footnote{https://pipenv.pypa.io/en/latest/} and \emph{poetry}~\footnote{https://python-poetry.org/} use lockfiles to ensure specific version control, guaranteeing reproducibility across different systems. 
+% P71 highlights the lack of proper software engineering best practices within Jupyter notebooks. This shortcoming in computational notebooks has been identified by prior studies~\cite{quaranta2021kgtorrent, pimentel2019large-scale}. In this case study, managing dependencies through external tools is recommended. Python's built-in \emph{requirements.txt}~\footnote{https://pip.pypa.io/en/stable/reference/requirements-file-format/} file allows specifying dependencies and versions. Alternatively, external programs like \emph{pipenv}~\footnote{https://pipenv.pypa.io/en/latest/} and \emph{poetry}~\footnote{https://python-poetry.org/} use lockfiles to ensure specific version control, guaranteeing reproducibility across different systems.
 
 % NOTE: here we need to bring in prior literature on ML testing; and how majority of the research is working on testing using a test dataset; however we also have data and models
 % NOTE: 3 pillars of of ML (sato2019continuous)
@@ -1567,4 +735,3 @@ Extending ML testing to dynamic real-world scenarios should be explored further.
 
 \end{document}
 % end of file template.tex
-
