@@ -1,5 +1,39 @@
+# @education @ml kastner2020teaching
 
-# @ml @testing zhang2020machine
+```bibtex
+@Misc{            kastner2020teaching,
+  title         = {Teaching Software Engineering for AI-Enabled Systems},
+  author        = {Christian Kästner and Eunsuk Kang},
+  year          = {2020},
+  eprint        = {2001.06691},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.SE},
+  url           = {https://arxiv.org/abs/2001.06691}
+}
+```
+
+# @data @testing biessmann2021automated
+
+@Article{         biessmann2021automated,
+  author        = {Felix Biessmann and Jacek Golebiowski and Tammo Rukat and
+                  Dustin Lange and Philipp Schmidt},
+  title         = {Automated data validation in machine learning systems},
+  year          = {2021},
+  url           = {https://www.amazon.science/publications/automated-data-validation-in-machine-learning-systems},
+  journal       = {IEEE Data Engineering Bulletin}
+}
+
+# @ml @data @testing breck2019data
+
+@InProceedings{   breck2019data,
+  title         = {Data Validation for Machine Learning.},
+  author        = {Breck, Eric and Polyzotis, Neoklis and Roy, Sudip and
+                  Whang, Steven and Zinkevich, Martin},
+  booktitle     = {MLSys},
+  year          = 2019
+}
+
+# @ml @testing zhang2022machine
 
 ```bibtex
 @Article{         zhang2022machine,
@@ -592,7 +626,7 @@ Goes into the workflow in computational notebooks, and the improvements that can
 }
 ```
 
-# @inbox simmons2020large-scale
+# @msr simmons2020large-scale
 
 ```bibtex
 @InProceedings{   simmons2020large-scale,

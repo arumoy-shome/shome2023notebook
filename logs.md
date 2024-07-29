@@ -1,4 +1,8 @@
 
+# @method open card sorting
+
+I learned about the open-card sorting from kochhar2017. It's basically what I did for the EMSE paper, only I didn't know it had a format definition before.
+
 # @idea do asserts fail and why?
 
 Collect the `stderr` outputs of jupyter cells and analyse them?
