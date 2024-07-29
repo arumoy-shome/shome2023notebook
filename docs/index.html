@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.53">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Understanding Feedback Mechanisms in Machine Learning Jupyter Notebooks</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="index_files/libs/clipboard/clipboard.min.js"></script>
+<script src="index_files/libs/quarto-html/quarto.js"></script>
+<script src="index_files/libs/quarto-html/popper.min.js"></script>
+<script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="index_files/libs/quarto-html/anchor.min.js"></script>
+<link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="index_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="index_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#rq2-how-is-explicit-feedback-from-assert-statements-used-to-validate-ml-code-written-in-jupyter-notebooks" id="toc-rq2-how-is-explicit-feedback-from-assert-statements-used-to-validate-ml-code-written-in-jupyter-notebooks" class="nav-link active" data-scroll-target="#rq2-how-is-explicit-feedback-from-assert-statements-used-to-validate-ml-code-written-in-jupyter-notebooks">(RQ2) How is explicit feedback from assert statements used to validate ML code written in Jupyter notebooks?</a>
+  <ul class="collapse">
+  <li><a href="#data-shape-check-n-26" id="toc-data-shape-check-n-26" class="nav-link" data-scroll-target="#data-shape-check-n-26">Data Shape Check (<span class="math inline">\(N = 26\)</span>)</a></li>
+  <li><a href="#data-validation-check-n-14" id="toc-data-validation-check-n-14" class="nav-link" data-scroll-target="#data-validation-check-n-14">Data Validation Check (<span class="math inline">\(N = 14\)</span>)</a></li>
+  <li><a href="#model-performance-check-n-11" id="toc-model-performance-check-n-11" class="nav-link" data-scroll-target="#model-performance-check-n-11">Model Performance Check (<span class="math inline">\(N = 11\)</span>)</a></li>
+  <li><a href="#existence-check-n-8" id="toc-existence-check-n-8" class="nav-link" data-scroll-target="#existence-check-n-8">Existence Check (<span class="math inline">\(N = 8\)</span>)</a></li>
+  <li><a href="#resource-check-n-7" id="toc-resource-check-n-7" class="nav-link" data-scroll-target="#resource-check-n-7">Resource Check (<span class="math inline">\(N = 7\)</span>)</a></li>
+  <li><a href="#type-check-n-5" id="toc-type-check-n-5" class="nav-link" data-scroll-target="#type-check-n-5">Type Check (<span class="math inline">\(N = 5\)</span>)</a></li>
+  <li><a href="#mathematical-property-check-n-4" id="toc-mathematical-property-check-n-4" class="nav-link" data-scroll-target="#mathematical-property-check-n-4">Mathematical Property Check (<span class="math inline">\(N = 4\)</span>)</a></li>
+  <li><a href="#batch-size-check-n-3" id="toc-batch-size-check-n-3" class="nav-link" data-scroll-target="#batch-size-check-n-3">Batch Size Check (<span class="math inline">\(N = 3\)</span>)</a></li>
+  <li><a href="#network-architecture-check-n-3" id="toc-network-architecture-check-n-3" class="nav-link" data-scroll-target="#network-architecture-check-n-3">Network Architecture Check (<span class="math inline">\(N = 3\)</span>)</a></li>
+  <li><a href="#data-leakage-check-n-1" id="toc-data-leakage-check-n-1" class="nav-link" data-scroll-target="#data-leakage-check-n-1">Data Leakage Check (<span class="math inline">\(N = 1\)</span>)</a></li>
+  </ul></li>
+  <li><a href="#rq3-how-is-implicit-feedback-from-print-statements-and-last-cell-statements-used-when-writing-ml-code-in-jupyter-notebooks" id="toc-rq3-how-is-implicit-feedback-from-print-statements-and-last-cell-statements-used-when-writing-ml-code-in-jupyter-notebooks" class="nav-link" data-scroll-target="#rq3-how-is-implicit-feedback-from-print-statements-and-last-cell-statements-used-when-writing-ml-code-in-jupyter-notebooks">(RQ3) How is implicit feedback from print statements and last cell statements used when writing ML code in Jupyter notebooks?</a>
+  <ul class="collapse">
+  <li><a href="#model-performance-check-n-33" id="toc-model-performance-check-n-33" class="nav-link" data-scroll-target="#model-performance-check-n-33">Model Performance Check (<span class="math inline">\(N = 33\)</span>)</a></li>
+  <li><a href="#data-distribution-n-7" id="toc-data-distribution-n-7" class="nav-link" data-scroll-target="#data-distribution-n-7">Data Distribution (<span class="math inline">\(N = 7\)</span>)</a></li>
+  <li><a href="#resource-check-n-7-1" id="toc-resource-check-n-7-1" class="nav-link" data-scroll-target="#resource-check-n-7-1">Resource Check (<span class="math inline">\(N = 7\)</span>)</a></li>
+  <li><a href="#spot-check-n-5" id="toc-spot-check-n-5" class="nav-link" data-scroll-target="#spot-check-n-5">Spot Check (<span class="math inline">\(N = 5\)</span>)</a></li>
+  <li><a href="#model-training-check-n-4" id="toc-model-training-check-n-4" class="nav-link" data-scroll-target="#model-training-check-n-4">Model Training Check (<span class="math inline">\(N = 4\)</span>)</a></li>
+  <li><a href="#missing-value-check-n-3" id="toc-missing-value-check-n-3" class="nav-link" data-scroll-target="#missing-value-check-n-3">Missing Value Check (<span class="math inline">\(N = 3\)</span>)</a></li>
+  <li><a href="#shape-check-n-3" id="toc-shape-check-n-3" class="nav-link" data-scroll-target="#shape-check-n-3">Shape Check (<span class="math inline">\(N = 3\)</span>)</a></li>
+  <li><a href="#data-relationship-check-n-2" id="toc-data-relationship-check-n-2" class="nav-link" data-scroll-target="#data-relationship-check-n-2">Data Relationship Check (<span class="math inline">\(N = 2\)</span>)</a></li>
+  <li><a href="#type-check-n-2" id="toc-type-check-n-2" class="nav-link" data-scroll-target="#type-check-n-2">Type Check (<span class="math inline">\(N = 2\)</span>)</a></li>
+  <li><a href="#execution-time-check-n-1" id="toc-execution-time-check-n-1" class="nav-link" data-scroll-target="#execution-time-check-n-1">Execution Time Check (<span class="math inline">\(N = 1\)</span>)</a></li>
+  <li><a href="#network-architecture-check-n-1" id="toc-network-architecture-check-n-1" class="nav-link" data-scroll-target="#network-architecture-check-n-1">Network Architecture Check (<span class="math inline">\(N = 1\)</span>)</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Understanding Feedback Mechanisms in Machine Learning Jupyter Notebooks</h1>
+<p class="subtitle lead">Online Appendix</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+<div>
+  <div class="abstract">
+    <div class="block-title">Abstract</div>
+    <p>This website hosts the online appendix for the research paper titled <em>Understanding Feedback Mechanisms in Machine Learning Jupyter Notebooks</em> which has been submitted to the Journal of Empirical Software Engineering.</p>
+  </div>
+</div>
+
+
+</header>
+
+
+<section id="rq2-how-is-explicit-feedback-from-assert-statements-used-to-validate-ml-code-written-in-jupyter-notebooks" class="level1">
+<h1>(RQ2) How is explicit feedback from assert statements used to validate ML code written in Jupyter notebooks?</h1>
+<section id="data-shape-check-n-26" class="level2">
+<h2 class="anchored" data-anchor-id="data-shape-check-n-26">Data Shape Check (<span class="math inline">\(N = 26\)</span>)</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 4%">
+<col style="width: 95%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A5</td>
+<td><code>assert y_valid.shape == (1132,)</code></td>
+</tr>
+<tr class="even">
+<td>A17</td>
+<td><code>assert X.shape[1] == 13, 'Did you drop/lose some columns in X? Did you properly load and split the data?'</code></td>
+</tr>
+<tr class="odd">
+<td>A29</td>
+<td><code>assert len(test_y_preds) == len(test_y), 'Unexpected number of predictions.'</code></td>
+</tr>
+<tr class="even">
+<td>A31</td>
+<td><code>assert img.shape == (112, 92)</code></td>
+</tr>
+<tr class="odd">
+<td>A76</td>
+<td><code>assert len(encoding['token_type_ids']) == max_seq_length</code></td>
+</tr>
+<tr class="even">
+<td>A84</td>
+<td><code>assert red.get_shape().as_list()[1:] == [224, 224, 1]</code></td>
+</tr>
+<tr class="odd">
+<td>A90</td>
+<td><code>assert len(X_train) == 2000</code></td>
+</tr>
+<tr class="even">
+<td>A93</td>
+<td><code>assert temp_embed.shape[0] == stride</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data-validation-check-n-14" class="level2">
+<h2 class="anchored" data-anchor-id="data-validation-check-n-14">Data Validation Check (<span class="math inline">\(N = 14\)</span>)</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 94%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A41</td>
+<td><code>assert np.all(np.unique(X['smoke'].values) == np.array([0, 1]))</code></td>
+</tr>
+<tr class="even">
+<td>A44</td>
+<td><code>assert np.all(np.unique(X['smoke'].values) == np.array([0, 1]))</code></td>
+</tr>
+<tr class="odd">
+<td>A46</td>
+<td><code>assert np.isclose(stdev_norm, 1.0, atol=1e-16)</code></td>
+</tr>
+<tr class="even">
+<td>A52</td>
+<td><code>assert grouped_users['user_id'].nunique() == user_engagement['user_id'].nunique()</code></td>
+</tr>
+<tr class="odd">
+<td>A65</td>
+<td><code>assert np.all(y &lt;= nb_classes)</code></td>
+</tr>
+<tr class="even">
+<td>A73</td>
+<td><code>assert df['clf'].value_counts()[1] == len(df[df['quality'] &gt;= 7])</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="model-performance-check-n-11" class="level2">
+<h2 class="anchored" data-anchor-id="model-performance-check-n-11">Model Performance Check (<span class="math inline">\(N = 11\)</span>)</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 3%">
+<col style="width: 96%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A7</td>
+<td><code>assert len(neighbours_1) == 20, "Neighbors don't match!"</code></td>
+</tr>
+<tr class="even">
+<td>A15</td>
+<td><code>assert np.allclose(verify('images/camera_1.jpg', 'bertrand', database, FRmodel), (0.54364836, True))$</code></td>
+</tr>
+<tr class="odd">
+<td>A19</td>
+<td><code>assert np.allclose(linear_model.coef_, [[1.57104472, 0.92521608]]), 'The model parameters you learned seem incorrect!'</code></td>
+</tr>
+<tr class="even">
+<td>A38</td>
+<td><code>assert 0.75 &lt; auc(fpr, tpr) &lt; 0.85</code></td>
+</tr>
+<tr class="odd">
+<td>A58</td>
+<td><code>assert np.isclose(accuracy, 0.9666666666666667)</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="existence-check-n-8" class="level2">
+<h2 class="anchored" data-anchor-id="existence-check-n-8">Existence Check (<span class="math inline">\(N = 8\)</span>)</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 94%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A23</td>
+<td><code>assert np.all(orders.groupby('user_id') .days_since_prior_order.tail(1).notnull())</code></td>
+</tr>
+<tr class="even">
+<td>A42</td>
+<td><code>assert not lab_s.isnull().values.any()</code></td>
+</tr>
+<tr class="odd">
+<td>A43</td>
+<td><code>assert len(data) != 0, 'cannot divide by zero'</code></td>
+</tr>
+<tr class="even">
+<td>A50</td>
+<td><code>assert not np.any(np.isnan(X))</code></td>
+</tr>
+<tr class="odd">
+<td>A51</td>
+<td><code>assert data.target.notnull().all()</code></td>
+</tr>
+<tr class="even">
+<td>A63</td>
+<td><code>assert X.isnull().sum().sum() == 0</code></td>
+</tr>
+<tr class="odd">
+<td>A79</td>
+<td><code>assert not processed_data_df.isna().any().any()</code></td>
+</tr>
+<tr class="even">
+<td>A86</td>
+<td><code>assert p0 in poi_info.index</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="resource-check-n-7" class="level2">
+<h2 class="anchored" data-anchor-id="resource-check-n-7">Resource Check (<span class="math inline">\(N = 7\)</span>)</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 3%">
+<col style="width: 96%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A10</td>
+<td><code>assert le_path.is_file(), f"Label encoder file not found at {le_path}. Make sure 'label_encoder.pkl' exists in the lightning_logs directory."</code></td>
+</tr>
+<tr class="even">
+<td>A14</td>
+<td><code>assert self.model is not None, 'Model is not loaded, load it by calling .load_model()'</code></td>
+</tr>
+<tr class="odd">
+<td>A18</td>
+<td><code>assert pd.__version__.rpartition('.')[0] == '1.0', f"Unexpected pandas version: expected 1.0, got {pd.__version__.rpartition('.')[0]}"</code></td>
+</tr>
+<tr class="even">
+<td>A37</td>
+<td><code>assert svm.fit_status_ == 0, 'Forgot to train the SVM!'</code></td>
+</tr>
+<tr class="odd">
+<td>A60</td>
+<td><code>assert f2.gca().has_data()</code></td>
+</tr>
+<tr class="even">
+<td>A67</td>
+<td><code>assert pm.__version__ == '3.9.2'</code></td>
+</tr>
+<tr class="odd">
+<td>A74</td>
+<td><code>assert os.path.exists(image_dir)</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="type-check-n-5" class="level2">
+<h2 class="anchored" data-anchor-id="type-check-n-5">Type Check (<span class="math inline">\(N = 5\)</span>)</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 95%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A2</td>
+<td><code>assert isinstance(X_trn, torch.FloatTensor), 'Features should be float32!'</code></td>
+</tr>
+<tr class="even">
+<td>A35</td>
+<td><code>assert isinstance(column_transformer, ColumnTransformer), "Input isn't a ColumnTransformer"</code></td>
+</tr>
+<tr class="odd">
+<td>A40</td>
+<td><code>assert isinstance(model_3, sklearn.ensemble.RandomForestClassifier)</code></td>
+</tr>
+<tr class="even">
+<td>A81</td>
+<td><code>assert is_all_ints(filled_df[r]) is True</code></td>
+</tr>
+<tr class="odd">
+<td>A88</td>
+<td><code>assert isinstance(betas, np.ndarray)</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mathematical-property-check-n-4" class="level2">
+<h2 class="anchored" data-anchor-id="mathematical-property-check-n-4">Mathematical Property Check (<span class="math inline">\(N = 4\)</span>)</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 93%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A3</td>
+<td><code>assert (xH - wH) % self.stride == 0</code></td>
+</tr>
+<tr class="even">
+<td>A25</td>
+<td><code>assert test_output.std() &lt; 0.15, "Don't use batchnorm here"</code></td>
+</tr>
+<tr class="odd">
+<td>A56</td>
+<td><code>assert np.allclose(e_v_states[:, -1], np.ones_like(e_v_states[:, -1]))</code></td>
+</tr>
+<tr class="even">
+<td>A64</td>
+<td><code>assert np.allclose(T, T.T)</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="batch-size-check-n-3" class="level2">
+<h2 class="anchored" data-anchor-id="batch-size-check-n-3">Batch Size Check (<span class="math inline">\(N = 3\)</span>)</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 3%">
+<col style="width: 96%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A21</td>
+<td><code>assert x.size(0) % batch_size == 0, f'the first dimension of input tensor ({x.size(0)}) should be divisible by batch_size ({batch_size})'</code></td>
+</tr>
+<tr class="even">
+<td>A28</td>
+<td><code>assert image_size % patch_size_small == 0, 'Image dimensions must be divisible by the patch size.'</code></td>
+</tr>
+<tr class="odd">
+<td>A70</td>
+<td><code>assert n_img &gt; batch_size</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="network-architecture-check-n-3" class="level2">
+<h2 class="anchored" data-anchor-id="network-architecture-check-n-3">Network Architecture Check (<span class="math inline">\(N = 3\)</span>)</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 94%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A11</td>
+<td><code>assert self.encoder_conv_01[0].weight.size() == self.vgg16.features[2].weight.size()</code></td>
+</tr>
+<tr class="even">
+<td>A62</td>
+<td><code>assert self.encoder_conv_01[0].weight.size() == self.vgg16.features[2].weight.size()</code></td>
+</tr>
+<tr class="odd">
+<td>A75</td>
+<td><code>assert reg in ['none', 'l2']</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data-leakage-check-n-1" class="level2">
+<h2 class="anchored" data-anchor-id="data-leakage-check-n-1">Data Leakage Check (<span class="math inline">\(N = 1\)</span>)</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 94%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A33</td>
+<td><code>assert len(set( tr_df.PetID.unique()).intersection(valid_df.PetID.unique())) == 0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="rq3-how-is-implicit-feedback-from-print-statements-and-last-cell-statements-used-when-writing-ml-code-in-jupyter-notebooks" class="level1">
+<h1>(RQ3) How is implicit feedback from print statements and last cell statements used when writing ML code in Jupyter notebooks?</h1>
+<section id="model-performance-check-n-33" class="level2">
+<h2 class="anchored" data-anchor-id="model-performance-check-n-33">Model Performance Check (<span class="math inline">\(N = 33\)</span>)</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 4%">
+<col style="width: 95%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>P3</td>
+<td><code>print('The mean accuracy with 10 fold cross validation is: %s ' % round(scores * 100, 2), '%')</code></td>
+</tr>
+<tr class="even">
+<td>P6</td>
+<td><code>print('RMSE:', np.sqrt(metrics.mean_squared_error(y_test, pred)))</code></td>
+</tr>
+<tr class="odd">
+<td>P18</td>
+<td><code>print('The Accuracy is:', accuracy_score(y_test, y_pred))</code></td>
+</tr>
+<tr class="even">
+<td>P50</td>
+<td><code>print('Classification Report: SVM (validation data)')$</code></td>
+</tr>
+<tr class="odd">
+<td>P54</td>
+<td><code>print('Intercept value:', lm.intercept_)</code></td>
+</tr>
+<tr class="even">
+<td>L3</td>
+<td><code>skplt.metrics. plot_confusion_matrix(Y_val, Vote.predict(X_val), normalize=True, figsize=(10, 10))</code></td>
+</tr>
+<tr class="odd">
+<td>L52</td>
+<td><code>spot_check_recs(classifier, 910)</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data-distribution-n-7" class="level2">
+<h2 class="anchored" data-anchor-id="data-distribution-n-7">Data Distribution (<span class="math inline">\(N = 7\)</span>)</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 94%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>L2</td>
+<td><code>_ = sns.catplot(x='category_id', y='likes', data=train, height=5, aspect=1.5)</code></td>
+</tr>
+<tr class="even">
+<td>L9</td>
+<td><code>sns.kdeplot(data=data.loc[ data['Survived'] == 0].Age, label='Died', shade=True)</code></td>
+</tr>
+<tr class="odd">
+<td>L14</td>
+<td><code>pd.pivot_table(train, index='Survived', values=['Age', 'SibSp', 'Parch', 'Fare'])</code></td>
+</tr>
+<tr class="even">
+<td>L25</td>
+<td><code>sns.countplot(house_pred['OverallQual'])</code></td>
+</tr>
+<tr class="odd">
+<td>L48</td>
+<td><code>x_train.describe()</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="resource-check-n-7-1" class="level2">
+<h2 class="anchored" data-anchor-id="resource-check-n-7-1">Resource Check (<span class="math inline">\(N = 7\)</span>)</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>P68</td>
+<td><code>print('GPU is available')</code></td>
+</tr>
+<tr class="even">
+<td>P71</td>
+<td><code>print('Hub version: ', hub.__version__)</code></td>
+</tr>
+<tr class="odd">
+<td>P82</td>
+<td><code>print('Running on TPU ', tpu.master())</code></td>
+</tr>
+<tr class="even">
+<td>P86</td>
+<td><code>print('Cuda is available')</code></td>
+</tr>
+<tr class="odd">
+<td>P107</td>
+<td><code>print('Model loaded')</code></td>
+</tr>
+<tr class="even">
+<td>L64</td>
+<td><code>full_table.head(-5)</code></td>
+</tr>
+<tr class="odd">
+<td>L66</td>
+<td><code>prostate_cancer_df.shape</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="spot-check-n-5" class="level2">
+<h2 class="anchored" data-anchor-id="spot-check-n-5">Spot Check (<span class="math inline">\(N = 5\)</span>)</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>L60</td>
+<td><code>X_pca.head()</code></td>
+</tr>
+<tr class="even">
+<td>P64</td>
+<td><code>print(np.max(cur[:, :, 1]))</code></td>
+</tr>
+<tr class="odd">
+<td>P114</td>
+<td><code>print(onehot_encoded)</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="model-training-check-n-4" class="level2">
+<h2 class="anchored" data-anchor-id="model-training-check-n-4">Model Training Check (<span class="math inline">\(N = 4\)</span>)</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 3%">
+<col style="width: 96%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>L8</td>
+<td><code>autoencoder.fit(x=X_train, y=X_train, epochs=15, validation_data=[X_test, X_test], callbacks=[keras_utils.TqdmProgressCallback()], verbose=0)</code></td>
+</tr>
+<tr class="even">
+<td>L31</td>
+<td><code>adaBoost.fit(X_train, y_train)</code></td>
+</tr>
+<tr class="odd">
+<td>L42</td>
+<td><code>m_r.best_params_</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="missing-value-check-n-3" class="level2">
+<h2 class="anchored" data-anchor-id="missing-value-check-n-3">Missing Value Check (<span class="math inline">\(N = 3\)</span>)</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 94%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>P74</td>
+<td><code>print(train_df.isnull().sum())</code></td>
+</tr>
+<tr class="even">
+<td>L12</td>
+<td><code>sns.heatmap(test_df.isnull(), yticklabels=False, cbar=False, cmap='viridis')</code></td>
+</tr>
+<tr class="odd">
+<td>L36</td>
+<td><code>test.isna().sum().unique()</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="shape-check-n-3" class="level2">
+<h2 class="anchored" data-anchor-id="shape-check-n-3">Shape Check (<span class="math inline">\(N = 3\)</span>)</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>P4</td>
+<td><code>print('no.of examples in test data : ', len(test_data))</code></td>
+</tr>
+<tr class="even">
+<td>P32</td>
+<td><code>print('Training set shape : ', x_train.shape)</code></td>
+</tr>
+<tr class="odd">
+<td>P117</td>
+<td><code>print('Y_train.shape: ', Y_train.shape)</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data-relationship-check-n-2" class="level2">
+<h2 class="anchored" data-anchor-id="data-relationship-check-n-2">Data Relationship Check (<span class="math inline">\(N = 2\)</span>)</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 4%">
+<col style="width: 95%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>L6</td>
+<td><code>b = sns.relplot(x='SIZE', y='Cash', hue='CLARITY', alpha=0.9, palette='muted', height=8, data=raw_data)</code></td>
+</tr>
+<tr class="even">
+<td>L10</td>
+<td><code>sns.regplot(x='X4 number of convenience stores', y='Y house price of unit area', data=data)</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="type-check-n-2" class="level2">
+<h2 class="anchored" data-anchor-id="type-check-n-2">Type Check (<span class="math inline">\(N = 2\)</span>)</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>P43</td>
+<td><code>print('data type:', images.dtype)</code></td>
+</tr>
+<tr class="even">
+<td>L71</td>
+<td><code>type(Y)</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="execution-time-check-n-1" class="level2">
+<h2 class="anchored" data-anchor-id="execution-time-check-n-1">Execution Time Check (<span class="math inline">\(N = 1\)</span>)</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>P66</td>
+<td><code>print('Total Run Time:')</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="network-architecture-check-n-1" class="level2">
+<h2 class="anchored" data-anchor-id="network-architecture-check-n-1">Network Architecture Check (<span class="math inline">\(N = 1\)</span>)</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>P92</td>
+<td><code>print(MyNetwork)</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/arumoy\.me");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

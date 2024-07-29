@@ -1,0 +1,213 @@
+---
+title: Understanding Feedback Mechanisms in Machine Learning Jupyter Notebooks
+subtitle: Online Appendix
+abstract: |
+  This website hosts the online appendix for the research paper titled
+  *Understanding Feedback Mechanisms in Machine Learning Jupyter
+  Notebooks* which has been submitted to the Journal of Empirical
+  Software Engineering.
+toc: true
+format:
+  html:
+    theme: cosmo
+website:
+  site-url: "https://arumoy.me"
+  back-to-top-navigation: true
+page-footer:
+  center: "All materials on this website are open sourced under the CC-BY 4.0 license."
+---
+
+# (RQ2) How is explicit feedback from assert statements used to validate ML code written in Jupyter notebooks?
+## Data Shape Check ($N = 26$)
+
+| Key | Code                                                                                                        |
+|-----|-------------------------------------------------------------------------------------------------------------|
+| A5  | `assert y_valid.shape == (1132,)`                                                                           |
+| A17 | `assert X.shape[1] == 13, 'Did you drop/lose some columns in X? Did you properly load and split the data?'` |
+| A29 | `assert len(test_y_preds) == len(test_y), 'Unexpected number of predictions.'`                              |
+| A31 | `assert img.shape == (112, 92)`                                                                             |
+| A76 | `assert len(encoding['token_type_ids']) == max_seq_length`                                                  |
+| A84 | `assert red.get_shape().as_list()[1:] == [224, 224, 1]`                                                     |
+| A90 | `assert len(X_train) == 2000`                                                                               |
+| A93 | `assert temp_embed.shape[0] == stride`                                                                      |
+
+## Data Validation Check ($N = 14$)
+
+| Key | Code                                                                                |
+|-----|-------------------------------------------------------------------------------------|
+| A41 | `assert np.all(np.unique(X['smoke'].values) == np.array([0, 1]))`                   |
+| A44 | `assert np.all(np.unique(X['smoke'].values) == np.array([0, 1]))`                   |
+| A46 | `assert np.isclose(stdev_norm, 1.0, atol=1e-16)`                                    |
+| A52 | `assert grouped_users['user_id'].nunique() == user_engagement['user_id'].nunique()` |
+| A65 | `assert np.all(y <= nb_classes)`                                                    |
+| A73 | `assert df['clf'].value_counts()[1] == len(df[df['quality'] >= 7])`                 |
+
+## Model Performance Check ($N = 11$)
+
+| Key | Code                                                                                                                     |
+|-----|--------------------------------------------------------------------------------------------------------------------------|
+| A7  | `assert len(neighbours_1) == 20, "Neighbors don't match!"`                                                               |
+| A15 | `assert np.allclose(verify('images/camera_1.jpg', 'bertrand', database, FRmodel), (0.54364836, True))$`                  |
+| A19 | `assert np.allclose(linear_model.coef_, [[1.57104472, 0.92521608]]), 'The model parameters you learned seem incorrect!'` |
+| A38 | `assert 0.75 < auc(fpr, tpr) < 0.85`                                                                                     |
+| A58 | `assert np.isclose(accuracy, 0.9666666666666667)`                                                                        |
+
+## Existence Check ($N = 8$)
+
+| Key | Code                                                                                 |
+|-----|--------------------------------------------------------------------------------------|
+| A23 | `assert np.all(orders.groupby('user_id') .days_since_prior_order.tail(1).notnull())` |
+| A42 | `assert not lab_s.isnull().values.any()`                                             |
+| A43 | `assert len(data) != 0, 'cannot divide by zero'`                                     |
+| A50 | `assert not np.any(np.isnan(X))`                                                     |
+| A51 | `assert data.target.notnull().all()`                                                 |
+| A63 | `assert X.isnull().sum().sum() == 0`                                                 |
+| A79 | `assert not processed_data_df.isna().any().any()`                                    |
+| A86 | `assert p0 in poi_info.index`                                                        |
+
+## Resource Check ($N = 7$)
+
+| Key | Code                                                                                                                                            |
+|-----|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| A10 | `assert le_path.is_file(), f"Label encoder file not found at {le_path}. Make sure 'label_encoder.pkl' exists in the lightning_logs directory."` |
+| A14 | `assert self.model is not None, 'Model is not loaded, load it by calling .load_model()'`                                                        |
+| A18 | `assert pd.__version__.rpartition('.')[0] == '1.0', f"Unexpected pandas version: expected 1.0, got {pd.__version__.rpartition('.')[0]}"`        |
+| A37 | `assert svm.fit_status_ == 0, 'Forgot to train the SVM!'`                                                                                       |
+| A60 | `assert f2.gca().has_data()`                                                                                                                    |
+| A67 | `assert pm.__version__ == '3.9.2'`                                                                                                              |
+| A74 | `assert os.path.exists(image_dir)`                                                                                                              |
+
+## Type Check ($N = 5$)
+
+| Key | Code                                                                                          |
+|-----|-----------------------------------------------------------------------------------------------|
+| A2  | `assert isinstance(X_trn, torch.FloatTensor), 'Features should be float32!'`                  |
+| A35 | `assert isinstance(column_transformer, ColumnTransformer), "Input isn't a ColumnTransformer"` |
+| A40 | `assert isinstance(model_3, sklearn.ensemble.RandomForestClassifier)`                         |
+| A81 | `assert is_all_ints(filled_df[r]) is True`                                                    |
+| A88 | `assert isinstance(betas, np.ndarray)`                                                        |
+
+## Mathematical Property Check ($N = 4$)
+
+| Key | Code                                                                     |
+|-----|--------------------------------------------------------------------------|
+| A3  | `assert (xH - wH) % self.stride == 0`                                    |
+| A25 | `assert test_output.std() < 0.15, "Don't use batchnorm here"`            |
+| A56 | `assert np.allclose(e_v_states[:, -1], np.ones_like(e_v_states[:, -1]))` |
+| A64 | `assert np.allclose(T, T.T)`                                             |
+
+## Batch Size Check ($N = 3$)
+
+| Key | Code                                                                                                                                        |
+|-----|---------------------------------------------------------------------------------------------------------------------------------------------|
+| A21 | `assert x.size(0) % batch_size == 0, f'the first dimension of input tensor ({x.size(0)}) should be divisible by batch_size ({batch_size})'` |
+| A28 | `assert image_size % patch_size_small == 0, 'Image dimensions must be divisible by the patch size.'`                                        |
+| A70 | `assert n_img > batch_size`                                                                                                                 |
+
+## Network Architecture Check ($N = 3$)
+
+| Key | Code                                                                                   |
+|-----|----------------------------------------------------------------------------------------|
+| A11 | `assert self.encoder_conv_01[0].weight.size() == self.vgg16.features[2].weight.size()` |
+| A62 | `assert self.encoder_conv_01[0].weight.size() == self.vgg16.features[2].weight.size()` |
+| A75 | `assert reg in ['none', 'l2']`                                                         |
+
+## Data Leakage Check ($N = 1$)
+
+| Key | Code                                                                                |
+|-----|-------------------------------------------------------------------------------------|
+| A33 | `assert len(set( tr_df.PetID.unique()).intersection(valid_df.PetID.unique())) == 0` |
+
+# (RQ3) How is implicit feedback from print statements and last cell statements used when writing ML code in Jupyter notebooks?
+
+## Model Performance Check ($N = 33$)
+
+| Key | Code                                                                                                 |
+|-----|------------------------------------------------------------------------------------------------------|
+| P3  | `print('The mean accuracy with 10 fold cross validation is: %s ' % round(scores * 100, 2), '%')`     |
+| P6  | `print('RMSE:', np.sqrt(metrics.mean_squared_error(y_test, pred)))`                                  |
+| P18 | `print('The Accuracy is:', accuracy_score(y_test, y_pred))`                                          |
+| P50 | `print('Classification Report: SVM (validation data)')$`                                             |
+| P54 | `print('Intercept value:', lm.intercept_)`                                                           |
+| L3  | `skplt.metrics. plot_confusion_matrix(Y_val, Vote.predict(X_val), normalize=True, figsize=(10, 10))` |
+| L52 | `spot_check_recs(classifier, 910)`                                                                   |
+
+## Data Distribution ($N = 7$)
+
+| Key | Code                                                                                |
+|-----|-------------------------------------------------------------------------------------|
+| L2  | `_ = sns.catplot(x='category_id', y='likes', data=train, height=5, aspect=1.5)`     |
+| L9  | `sns.kdeplot(data=data.loc[ data['Survived'] == 0].Age, label='Died', shade=True)`  |
+| L14 | `pd.pivot_table(train, index='Survived', values=['Age', 'SibSp', 'Parch', 'Fare'])` |
+| L25 | `sns.countplot(house_pred['OverallQual'])`                                          |
+| L48 | `x_train.describe()`                                                                |
+
+## Resource Check ($N = 7$)
+
+| Key  | Code                                      |
+|------|-------------------------------------------|
+| P68  | `print('GPU is available')`               |
+| P71  | `print('Hub version: ', hub.__version__)` |
+| P82  | `print('Running on TPU ', tpu.master())`  |
+| P86  | `print('Cuda is available')`              |
+| P107 | `print('Model loaded')`                   |
+| L64  | `full_table.head(-5)`                     |
+| L66  | `prostate_cancer_df.shape`                |
+
+## Spot Check ($N = 5$)
+
+| Key  | Code                          |
+|------|-------------------------------|
+| L60  | `X_pca.head()`                |
+| P64  | `print(np.max(cur[:, :, 1]))` |
+| P114 | `print(onehot_encoded)`       |
+
+## Model Training Check ($N = 4$)
+
+| Key | Code                                                                                                                                            |
+|-----|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| L8  | `autoencoder.fit(x=X_train, y=X_train, epochs=15, validation_data=[X_test, X_test], callbacks=[keras_utils.TqdmProgressCallback()], verbose=0)` |
+| L31 | `adaBoost.fit(X_train, y_train)`                                                                                                                |
+| L42 | `m_r.best_params_`                                                                                                                              |
+
+## Missing Value Check ($N = 3$)
+
+| Key | Code                                                                           |
+|-----|--------------------------------------------------------------------------------|
+| P74 | `print(train_df.isnull().sum())`                                               |
+| L12 | `sns.heatmap(test_df.isnull(), yticklabels=False, cbar=False, cmap='viridis')` |
+| L36 | `test.isna().sum().unique()`                                                   |
+
+## Shape Check ($N = 3$)
+
+| Key  | Code                                                      |
+|------|-----------------------------------------------------------|
+| P4   | `print('no.of examples in test data : ', len(test_data))` |
+| P32  | `print('Training set shape : ', x_train.shape)`           |
+| P117 | `print('Y_train.shape: ', Y_train.shape)`                 |
+
+## Data Relationship Check ($N = 2$)
+
+| Key | Code                                                                                                      |
+|-----|-----------------------------------------------------------------------------------------------------------|
+| L6  | `b = sns.relplot(x='SIZE', y='Cash', hue='CLARITY', alpha=0.9, palette='muted', height=8, data=raw_data)` |
+| L10 | `sns.regplot(x='X4 number of convenience stores', y='Y house price of unit area', data=data)`             |
+
+## Type Check ($N = 2$)
+
+| Key | Code                                |
+|-----|-------------------------------------|
+| P43 | `print('data type:', images.dtype)` |
+| L71 | `type(Y)`                           |
+
+## Execution Time Check ($N = 1$)
+
+| Key | Code                       |
+|-----|----------------------------|
+| P66 | `print('Total Run Time:')` |
+
+## Network Architecture Check ($N = 1$)
+
+| Key | Code               |
+|-----|--------------------|
+| P92 | `print(MyNetwork)` |
