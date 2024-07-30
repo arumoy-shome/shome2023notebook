@@ -4,5 +4,5 @@ Use the following command to build the paper (assuming you have the full latex d
 
 ```{.bash}
 cd report/
-latexmk -pdf esem24.tex
+latexmk -pdf emse24.tex
 ```
