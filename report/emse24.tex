@@ -1,29 +1,5 @@
 % vim: wrap cursorline
 
-% First comes an example EPS file -- just ignore it and
-% proceed on the \documentclass line
-% your LaTeX will extract the file if required
-\begin{filecontents*}{example.eps}
-%!PS-Adobe-3.0 EPSF-3.0
-%%BoundingBox: 19 19 221 221
-%%CreationDate: Mon Sep 29 1997
-%%Creator: programmed by hand (JK)
-%%EndComments
-gsave
-newpath
-  20 20 moveto
-  20 220 lineto
-  220 220 lineto
-  220 20 lineto
-closepath
-2 setlinewidth
-gsave
-  .4 setgray fill
-grestore
-stroke
-grestore
-\end{filecontents*}
-%
 \RequirePackage{fix-cm}
 %
 % \documentclass{svjour3}                     % onecolumn (standard format)
@@ -33,6 +9,7 @@ grestore
 %
 \smartqed  % flush right qed marks, e.g. at end of proof
 %
+%% \usepackage{hyperref}
 \usepackage{natbib}
 \usepackage{graphicx}
 \usepackage[most]{tcolorbox}
@@ -674,6 +651,18 @@ Unlike prior work that focuses on standalone visual analytics tools, our study e
 \section{Conclusion}
 
 This study provides a comprehensive analysis of feedback mechanisms employed within Jupyter notebooks during the machine learning development lifecycle. Our findings indicate that while implicit feedback mechanisms such as print statements and last cell statements are extensively utilized, there is a significant gap in the adoption of explicit feedback mechanisms like assertions. This reliance on manual validation highlights the potential for automated data validation to enhance the robustness and maintainability of ML pipelines. This study also underscores the necessity for better documentation practices to mitigate technical debt and ensure the reproducibility of ML experiments. Feedback mechanisms are used throughout the ML development workflow to achieve more reliable and efficent model development processes. Future work should focus on developing specialized tools and frameworks to support these practices, thereby advancing the field of ML engineering.
+
+\section{Declarations}
+
+\paragraph{\textbf{Conflict of Interest}} The authors declare that they have no
+conflict of interest.
+
+\paragraph{\textbf{Data Availability Statement}} The dataset created and used
+in this study along with the replication package is shared publicly
+under the Creative Commons Attribution (CC-BY) licence:
+https://doi.org/10.6084/m9.figshare.26372140.v1. The case study
+candidates analysed in RQ2 and RQ3 can be viewed in our online
+appendix: https://arumoy.me/shome2023notebook.
 
 % BibTeX users please use one of
 \bibliographystyle{spbasic}      % basic style, author-year citations
