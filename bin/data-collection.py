@@ -149,6 +149,15 @@ dirname = dirname.replace("data/", "data/shome2023notebook/", 1)
 if not os.path.exists(dirname):
     os.makedirs(dirname)
 
+name = os.path.join(dirname, os.path.splitext(filename)[0] + "-stats.csv")
+pd.DataFrame(
+    {
+        "notebook": [args.notebook],
+        "num_cells": [len(df)]
+    }
+).to_csv(name, header=False)
+print(f"OUTPUT: {name}")
+
 if not asserts.empty:
     asserts.loc[:, "notebook"] = args.notebook
     name = os.path.join(dirname, os.path.splitext(filename)[0] + "-asserts.csv")
