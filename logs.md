@@ -1,1 +1,0 @@
-../../org/phd/logs.md
