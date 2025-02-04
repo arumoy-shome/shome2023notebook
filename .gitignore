@@ -1,6 +1,7 @@
 report/icst24.pdf
 report/esem24.pdf
 report/emse24.pdf
+report/emse24-revised.pdf
 report/emse24-teaser.pdf
 report/example-eps-converted-to.pdf
 report/icse24-nlbse.pdf
@@ -10,4 +11,7 @@ presentation/siesta-2023.html
 data/
 *.csv
 *.clo
+*.synctex.gz
 presentation/siesta-2023_files
+docs/appendix.pdf
+
