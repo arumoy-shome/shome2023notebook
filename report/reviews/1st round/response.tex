@@ -1,0 +1,260 @@
+\documentclass[11pt,fleqn]{article}
+
+\usepackage{vmargin}
+\setpapersize{A4}
+\setmarginsrb{2.5cm}{2.5cm}{2.5cm}{2.5cm}%
+{\baselineskip}{2\baselineskip}{baselineskip}{2\baselineskip}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+\usepackage{caption}
+\usepackage{subcaption}
+
+
+\usepackage{epsfig}
+\usepackage{latexsym}
+\usepackage{url}
+\usepackage{tgheros}
+\renewcommand*\familydefault{\sfdefault}
+
+\newcommand{\eline}{\vspace*{.75\baselineskip}}
+\newcommand{\Referee}[1]{\eline \noindent {\bf Reviewer comment #1:} \\}
+\newcommand{\Us}{\eline \noindent {\bf Response:}\\}
+\newcommand{\TBD}{{\bf To Be Done}}
+\newcommand{\newreviewer}[1]{\section*{Reviewer #1}\vspace*{-1.05\baselineskip}}
+
+%\usepackage{tikz}
+\usepackage[skins,breakable]{tcolorbox}
+\tcbset{textmarker/.style={
+%
+skin=enhancedmiddle jigsaw,breakable,parbox=false,before skip=-1mm, after skip=0mm,
+boxrule=0mm,leftrule=2mm,rightrule=2mm,boxsep=0mm,arc=0mm,outer arc=0mm,
+left=2mm,right=2mm,top=2mm,bottom=2mm,toptitle=1mm,bottomtitle=1mm,oversize}}
+
+\newtcolorbox{rcomment}{textmarker,colback=gray!15!white,colframe=gray!80!white}
+
+\newenvironment{revcomment}[1][]
+{\Referee{#1}\begin{rcomment}}
+{\end{rcomment}}
+
+\usepackage{todo}
+\usepackage{hyperref}
+
+%customized
+\usepackage{xfrac}
+\usepackage{framed}
+\newcommand{\highlight}[1]{\begin{framed}%
+  \noindent\emph{#1}
+\end{framed}} 
+ 
+\expandafter\def\expandafter\quote\expandafter{\quote\itshape}
+
+\graphicspath{{../../}}
+
+\usepackage{xspace}
+\newcommand{\ING}{ING\xspace}
+
+% more lenient line breaking (avoids text protruding into margins)
+\sloppy
+
+\title{\vspace*{-2cm}{\bf Authors' Response to the Review of
+ EMSE-D-24-00354:\\
+ ``Understanding Feedback Mechanisms in Machine Learning Jupyter Notebooks''}}
+
+\author{Arumoy Shome, Lu\'{i}s Cruz, Diomidis Spinellis, Arie van Deursen}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\newreviewer{Editor}
+
+\begin{revcomment}
+  
+Despite the paper has significant strengths, there are numerous significant weaknesses that go beyond the process and period of a major revision. Specifically, there are serious concerns about the sampling procedure and the missing details about the inter-rater reliability analysis and recommendations to practitioners.
+
+Since this paper interests EMSE, I suggest the authors revise and resubmit it as new. When submitting as new, if the authors ask to be assigned to the same editor, I will do my best to assign it to the same reviewers to speed up the revision process.
+
+\end{revcomment}
+
+\Us We thank the editor and reviewers for their valuable feedback -- it helped us improve the paper in this new submission. In the following, we address point-by-point the concerns raised by the reviewers.
+
+\newreviewer{1}
+
+\begin{revcomment}[1.1]
+The paper presents an insightful exploration of feedback mechanisms within the machine learning (ML) development lifecycle, focusing specifically on Jupyter notebooks authored in Python. By conducting an analysis of ~297.8 thousand notebooks, the authors identify three key feedback mechanisms: assertions as a form of explicit feedback; print statements and last cell statements as forms of implicit feedback. The findings underscore a widespread reliance on implicit feedback mechanisms in Jupyter notebooks. Despite their utility for automated validation, assertions are found to be underutilized, highlighting a significant gap in current testing practices.
+
+\end{revcomment}
+
+\Us Thank you for your valuable comments.
+
+\begin{revcomment}[1.2]
+
+To date, Jupyter notebooks are pervasively used in the ML development lifecycle, especially in the data preparation and model training phases. Moreover, this year, Python overtook JavaScript as the most popular programming language on GitHub, underscoring a surge in open-source data science and ML projects on the platform [1]. Hence, investigating how data scientists leverage Python Jupyter notebooks in their daily work is a timely and relevant research endeavor, which could inform the evolution of Jupyter Notebook implementations. Also, understanding the nature of feedback mechanisms used in notebooks paves the way to improve overall testing and QA practices in data science projects. In addition, as the authors suggest, this understanding can be useful for optimizing the transition from notebook-based prototyping to production-grade ML code [2].
+
+The dataset contributed by this study—comprising assertions, print statements, and last-cell statements from notebooks—further enhances its relevance and utility, offering a rich resource for future research.
+
+Concerning the final discussion, I wonder whether - based on their findings - the authors have thought of any recommendations for designers of notebook platforms (e.g., Jupyter Notebook, Jupyter Lab, Google Colaboratory, etc.). Integrating such recommendations could potentially enhance the practical relevance of this study.
+
+
+\end{revcomment}
+
+\Us Revised Section 5.1 Documentation and Technical Debt to incorporate recommendation for notebook designers and developers.
+
+Based on that, we have updated the manuscript with the following text (cf. Section XX):
+
+\begin{quote}
+GitHub is a popular platform to host and collaborate on software projects. It offers extensive tools for project management such as issue tracking, pull requests, code reviews and tooling for continuous integration and delivery. In contrast, Kaggle is focused specifically on data science and machine learning. It provides integrated computational resources, a rich repository of datasets, and a platform to host machine learning competitions. While GitHub supports formal project workflows, Kaggle encourages a more informal approach to data exploration and modeling, making it a preferred choice for data science practitioners looking for hands-on experience with developing machine learning models.  
+\end{quote}
+
+\Todo{write response based on text above.}
+\Todo{refer to the section where the text was updated (XX).}
+
+\begin{revcomment}[1.3]
+  
+To the best of my knowledge, this study is original and it is the first to explore feedback mechanisms in ML Python Jupyter notebooks. Moreover, the work is well-situated within the existing literature, offering a thoughtful background and context for its findings.
+
+\end{revcomment}
+
+\Us 
+\Todo{say something nice.}
+
+
+\begin{revcomment}[1.4]
+The methodology employed in this study generally appears robust and well-structured.
+
+To address RQ1, the authors undertake an archival study drawing on two distinct sources: GitHub and Kaggle. The unit of analysis, selection criteria for notebooks, and data collection processes are all clearly delineated. However, I suggest that the authors provide additional context about the source platforms for the benefit of researchers who may not be familiar with them - especially Kaggle. Indeed, GitHub and Kaggle have different purposes and present significantly different environments for notebook authoring and sharing.
+\end{revcomment}
+
+\Us Revised Section 3.1 Data Collection to include more information regarding the distinction between Kaggle and Github.
+
+Based on that, we updated the manuscriptin with text below (cf. Section XX):
+
+\begin{quote}
+GitHub is a popular platform to host and collaborate on software projects. It offers extensive tools for project management such as issue tracking, pull requests, code reviews and tooling for continuous integration and delivery. In contrast, Kaggle is focused specifically on data science and machine learning. It provides integrated computational resources, a rich repository of datasets, and a platform to host machine learning competitions. While GitHub supports formal project workflows, Kaggle encourages a more informal approach to data exploration and modeling, making it a preferred choice for data science practitioners looking for hands-on experience with developing machine learning models.
+\end{quote}
+
+
+\Todo{expand the first line into a response.}
+
+
+\begin{revcomment}[1.5]
+  
+To answer RQ2 and RQ3, the authors delve in a manual analysis of a sample of notebooks, allocating a budget of 200 hours to this task. However, I have the following concerns regarding this procedure.
+
+-  The manual task constitutes qualitative coding/annotation, which is inherently subjective. Nonetheless, only a single annotator (the first author) has been involved unless they were "unable to determine the purpose of the candidate," in which case it would be "additionally analyzed by the second and third author." However, for tasks of this type, it is usually advised to involve multiple annotators - at least to code a first, pilot subset of examples, thereby validating the annotation strategy through inter-rater reliability metrics.  I recommend that the authors elaborate more on how they addressed potential subjective bias within this annotation process.
+
+
+\end{revcomment}
+
+\Us 
+
+Section 3.3 Case studies was revised to provide additional details regarding how the exploratory case studies were conducted.
+
+Additionally, to validate the feedback mechanism taxonomy created by the first author, the second author independently annotated the case study candidates using the codes developed by the first author. We have an inter-rater agreement score of X (highly agreeable).
+
+\Todo{start with an agreeable statement}
+\Todo{add revised text from Section 3.3, the same way we do in response 1.4}
+
+
+\begin{revcomment}[1.6]
+
+While it's reasonable to set a predefined time budget for qualitative analysis, and the sampling strategy used seems sound, the number of analyzed notebooks appears quite limited. Consequently, several findings are drawn from an exceedingly small number of ``case studies,'' sometimes as few as one. Although the exploratory nature of this study is acknowledged, deriving generalizable conclusions from such isolated instances is challenging. Therefore, it would be advisable for the authors to underscore this limitation more prominently in the Threats to Validity section, and reconsider presenting cases based solely on a single example as definitive findings.
+\end{revcomment}
+
+\Us
+
+Revised results section to emphasize the exploratory nature of the study. We also explicitly mentioned that due to the qualitative nature of the study, the results should be interpreted with caution.
+
+Additionally we replaced the word ``Finding'' with ``Observation'' in all summary boxes.
+
+In the Threats to validity section, we remind the reader that the results should not be interpreted as generalizable results.
+
+\Todo{explain why we replace Finding by Observation -- don't expect people to get it immediately if you don't explain why. }
+
+\begin{revcomment}[1.7]
+Overall, the paper is well-written and well-organized. The explanations provided are clear. The images and charts are well-crafted, providing valuable visual support to the text and enhancing comprehension.
+
+However, the methodology section lacks specific details about the processes and steps involved in addressing RQ1.
+\end{revcomment}
+
+\Us
+
+We have to say that we started from observations and patterns of use of notebooks from prior experience and what you typically see in books, courses and videos. Then to validate, we used X methodology...
+
+“Clever way” to say asserts, prints and last cell statements are common patterns in notebooks
+
+OR 
+
+Forget about it...
+
+
+“ we considerably improved the methodology section...” and include text from other responses to comments
+
+\Todo{work on response based on text above}
+
+\begin{revcomment}[1.8]
+Moreover, the authors have summarized each finding using a summary box; while this is potentially useful to improve the paper understandability, the number of these boxes is high and, in a few cases, the summarized text is shorter than the summary itself (see Sect. 4.3.3) or takes up a comparable space (see Sect 4.3.5). The result is a certain degree of repetition, while it remains challenging to keep the big picture.
+\end{revcomment}
+
+\Us
+We tried our best to reduce the size of the summary boxes, especially where the boxes are the same size of larger than the main text itself. Almost all summary boxes were revised, please see the diff document for the exact changes.
+
+\begin{revcomment}[1.9]
+  
+On a minor note, from Fig. 2 it is not clear how many notebooks were left after applying the filtering criteria.
+\end{revcomment}
+
+\Us
+Figure 2 updated to reflect how many notebooks were left out after the filters.
+
+On second thought, avoid taking action because getting this number is proving to be tricky...
+
+
+\begin{revcomment}[1.10]
+
+The methodology adopted in this study is thoroughly described. Moreover, the authors have released the dataset and replication package of this paper on Figshare, under a CC-BY license. Overall, I believe the study should be quite easy to replicate.
+
+An additional appendix has been shared by the authors, containing the most representative examples referenced in the article. However, this appendix is hosted online on a personal website, rather than being incorporated directly at the end of the paper or included with the replication package. Given that references to this appendix are distributed throughout the paper and considering that publications are ideally self-contained, incorporating the appendix within the paper itself would be preferable. If the appendix is too extensive to be included in full, I recommend publishing it as part of the replication package on Figshare, where its long-term accessibility and persistency can be ensured.
+\end{revcomment}
+
+\Us Online appendix added to the replication package as a PDF document.
+
+\Todo{make answer more complete}
+
+\begin{revcomment}[1.11]
+
+\textbf{Minor issues}
+
+\begin{itemize}
+
+  \item - [page 4, lines 44-46] "Jupyter notebooks […] leverage the IPython kernel to execute Python code and extends its capabilities […]" => "extend"
+
+  \item - [page 5, Fig. 1] "Content of the cell are in the source key" => "The content of the cell is in the source key" as well as "The raw content of outputs that produce text are under the text key." => "… is …"
+
+  \item - [page 10, lines 31-33] "Methods such as […] were frequently used to accomodate for the stochastic nature of ML algorithms and comparing high-dimensional data structures." => "for comparing" or "to compare"
+
+  \item - [page 13, lines 33-34] "Figure 16 show" => "Figure 16 shows"
+
+  \item - [page 26, lines 35-36] "Catching data errors are critical" => "Catching data errors is critical"
+
+  \item - Section 5.3: in addition to the course by Kästner and Kang, other courses covering MLOps and Software Engineering for ML are currently fostering ML testing literacy among data science students. Examples are the course on "Software Engineering for AI-enables Systems" [2, 3] held at the University of Bari (Italy) and at the Universitat Politècnica de Catalunya (Spain), as well as the course "Machine Learning Systems Design" held at ULiege (Belgium) [4].
+
+\end{itemize}
+\end{revcomment}
+
+\Us We thank the reviewer for flagging all these minor issues. We have addressed all of them with the new version of the manuscript and hope our improvements meet your expectations.
+
+\Todo{Address all minor issues}
+
+%%%%%%%%%%%%%%%%%%%
+\newreviewer{2}
+
+\newreviewer{3}
+
+
+\todos
+
+\end{document}
+  
