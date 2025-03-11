@@ -1,7 +1,7 @@
 % vim: wrap cursorline
 %DIF LATEXDIFF DIFFERENCE FILE
 %DIF DEL report/emse24.tex           Sat Oct 12 16:17:17 2024
-%DIF ADD report/emse24-revised.tex   Sun Mar  9 14:10:42 2025
+%DIF ADD report/emse24-revised.tex   Mon Mar 10 14:13:15 2025
 
 \RequirePackage{fix-cm}
 %
@@ -273,7 +273,6 @@ The Python \lstinline{ast} module enables the parsing, manipulation, and analysi
 
 \subsection{Data Collection}\label{sec:data-collect}
 
-%DIF >  TODO: update figure, 190861 notebooks included in analysis
 %DIF >  NOTE: above number extracted using the following shell command: `cat data-collection.log |grep '^OUTPUT'|cut -d: -f2|sed -e 's/-asserts\.csv//' -e 's/-prints\.csv//' -e 's/-lasts\.csv//'|sort|uniq|wc -l`
 \begin{figure}
 	\centering
@@ -302,7 +301,6 @@ examining six million GitHub Jupyter notebooks confirms that most ML-oriented no
 
 \subsubsection{\DIFadd{Collection of Feedback Mechanisms}}
 
-%DIF >  TODO: make sure that tense is consistent, here its present perfect but before I used past I think
 \DIFadd{For RQ1, we extracted the contents of all code cells from the Jupyter notebooks by parsing the underlying JSON structure. We then used the }\DIFaddend \lstinline{ast} module \DIFaddbegin \DIFadd{provided by the Python programming language }\DIFaddend to extract the assert, print and last statements from all code cells.
 \DIFaddbegin 
 
@@ -336,7 +334,10 @@ examining six million GitHub Jupyter notebooks confirms that most ML-oriented no
 
 For RQ2 and RQ3, we allocated a fixed time resource of 200 hours to conduct the \DIFaddbegin \DIFadd{exploratory }\DIFaddend case study analysis of all candidate assertions, print statements and last cell statements. \DIFdelbegin \DIFdel{To surface interesting candidates for the case studies, we }\DIFdelend \DIFaddbegin \DIFadd{We specified Jupyter notebooks written in the Python programming language as the }\emph{\DIFadd{site}} \DIFadd{for the study. Given the exploratory nature of this study, we emphasized capturing a diverse range of candidates by }\DIFaddend apply text processing \DIFaddbegin \DIFadd{and sampling }\DIFaddend techniques as described below.
 
-The assertions, print statements and last cell statements are first tokenized---special characters and alphanumeric words shorter than two characters are removed. Two stop words namely ``assert'' and ``print'' are removed since they appear in all assertions and print statements respectively. The term frequency (TF) for \DIFdelbegin \DIFdel{all }\DIFdelend \DIFaddbegin \DIFadd{the remaining }\DIFaddend tokens is calculated and then normalized using their inter-document frequency (IDF)\DIFdelbegin \DIFdel{such that tokens that appear less frequently are assigned a higher value . We apply }\DIFdelend \DIFaddbegin \DIFadd{. This normalization process assigns higher values to tokens that are less frequently encountered, which can lead to overemphasis of candidates that contain rare tokens. Consider for instance, the trivial print statement }{\color{blue}%DIFAUXCMD
+The assertions, print statements and last cell statements are first tokenized---special characters and alphanumeric words shorter than two characters are removed. Two stop words namely ``assert'' and ``print'' are removed since they appear in all assertions and print statements respectively. The term frequency (TF) for \DIFdelbegin \DIFdel{all }\DIFdelend \DIFaddbegin \DIFadd{the remaining }\DIFaddend tokens is calculated and then normalized using their inter-document frequency (IDF)\DIFdelbegin \DIFdel{such that tokens that appear less frequently are assigned a higher value . We apply }\DIFdelend \DIFaddbegin \DIFadd{. This technique allows us to surface both frequently occurring feedback mechanisms and those that are rarer in the dataset.
+}
+
+\DIFadd{The normalization using IDF assigns higher values to tokens that are less frequently encountered, which can lead to overemphasis of candidates that contain rare tokens. Consider for instance, the trivial print statement }{\color{blue}%DIFAUXCMD
 \lstinline{print("hello, world!")}%
 }%DIFAUXCMD
 \DIFadd{. Since this statement does not commonly appear in the context of machine learning Jupyter notebooks, it will have a high TF-IDF score but adds little substantive value to the analysis.
@@ -354,7 +355,6 @@ The assertions, print statements and last cell statements are first tokenized---
 
 \DIFaddend \section{Results}
 
-%DIF >  TODO: now that we created a taxonomy, read other papers that did the same to understand how results are presented
 \begin{figure}
 	\centering
 	\includegraphics[width=0.75\textwidth]{taxonomy.pdf}
@@ -369,8 +369,6 @@ The assertions, print statements and last cell statements are first tokenized---
 }
 
 \subsection{\DIFadd{Descriptive Statistics}}
-
-%DIF >  TODO: improve the arrangement of these figures; they are taking up too much space right now.
 
 \begin{figure}
 	\centering
@@ -839,12 +837,7 @@ Printing the structure of a neural network (\emph{P92}) serves crucial purposes 
 
 Drawing from the results of this study, we discuss implications and future work in this section.
 
-%DIF >  TODO: ideas towards discussion regarding best practices
-%DIF >  Observation 3.3 indicates that print statements are defined towards to beginning of the notebook (prior to any ML workflow code is executed) to ensure critical resources are available on the system where we are executing the notebook. One particular example P71 checks if a particular version of an external library is available. Perhaps we can comment on this anti-pattern, it should be defined and managed by a dependency management system such as requirements.txt to ensure a reproducible environment.
-%DIF >  TODO: explicitly link the observations to the discussion points below
-\DIFaddbegin 
-
-\DIFaddend \subsection{Documentation and Technical Debt}
+\subsection{Documentation and Technical Debt}
 
 Jupyter notebooks are primarily used to explore different ideas or approaches, often neglecting software development best practices in \DIFdelbegin \DIFdel{favour }\DIFdelend \DIFaddbegin \DIFadd{favor }\DIFaddend of rapid experimentation~\citep{kery2018story,rule2018exploration,pimentel2019large-scale}. Once the code is finalized, it is typically transferred into a script that is run in a production environment. Alternatively, the notebook may contain significant exploratory work such as developing a model or performing data exploration. To effectively communicate the information present in the notebooks with clients, collaborators or teammates, the practitioners add annotations and structure to the notebook using markdown cells~\citep{kery2018story,rule2018exploration}. In both scenarios, practitioners need to revisit the notebooks to obtain up-to-date and accurate requirements, their rationale and design decisions, and \DIFdelbegin \DIFdel{tests---artefacts }\DIFdelend \DIFaddbegin \DIFadd{tests---artifacts }\DIFaddend which are usually missing in the original notebooks~\citep{pimentel2019large-scale,psallidas2019data,grotov2022large-scale}.
 
@@ -911,8 +904,6 @@ Results from RQ1 show that 68\% of the assertions do not contain a failure messa
 
 \DIFaddbegin \subsection{\DIFadd{Complexity of Notebooks}}
 
-%DIF >  TODO: why is it important to analyze FMs wrt complexity of notebooks?
-%DIF >  TBH I do not agree with the reviewer's comment about this...
 \DIFadd{Analyzing the feedback mechanisms with respect to the complexity of Jupyter notebooks remains a promising direction for future research. We believe that the primary challenge here will be to develop an appropriate definition for notebook complexity.
 }
 
