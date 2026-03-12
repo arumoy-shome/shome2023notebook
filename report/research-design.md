@@ -1,29 +1,32 @@
+# Next Steps
+Back up the use of asserts, prints and last cell output (LCO).
+Asserts are well strudied in SE research, prints and LCO are more trickly.
+Our best bet, is to back this choice using literature.
+
+Read relevant literature on ML bugs, faults, failures and crashes. Wang 2025 has a nice table that summarizes prior work. And we are already citing the taxonomy presented by Morovati 2024.
+
+Read up on the case-study methodology.
+
 # Data Collection
-I have serious concerns regarding the data quality of the corpus of notebooks that we analyzed.
-Just looking at the code statements, it is clear that they were from tutorial style notebooks.
+Reviewers raised concerns regarding the quality of the notebooks/projects mined from GitHub (but didn't care so much about the notebooks from Kaggle).
 
-Recently, I came across several papers on computational notebooks published in high quality SE venues.
-Study the data collection methodology of these papers and replicate here.
-1. 
+I read several papers that worked with notebooks, and none of them took quality measures (such as stars, forks, contributors, commits, etc.) into account.
 
-[DistilKaggle](https://dl-acm-org.tudelft.idm.oclc.org/doi/pdf/10.1145/3643991.3644882)
-could be an alternative dataset for KGTorrent?
-Make sure that authors took into account quality considerations.
-We are looking for high-quality DS or ML repositories.
+It is too late to change the data sources and mine the data again. Stick with what we have, and instead strengthen the methodology section. Some ideas I have:
+1. Discuss how we are deliberately making a trade-off between 2 threats to validity (not sure which ones though)
+1. Cite prior papers that followed the same methodology.
+1. Find or discuss how the sampling strategy & manual analysis addresses the quality concerns.
+1. The mapping with existing work on bugs in ML validates our findings and speaks to the quality of the data.
 
-The authors collected notebooks from both Github and Kaggle.
-They discarded inactive projects by selecting projects that had any GitHub activity in the past year.
-Two authors manually checked the README of all 1000 projects,
-and identified 376 active projects (reported IRR 88%).
+# Research Methodology
 
-Consider broadening the perspective to Data Science (DS) projects.
-Look in MSR, see if there are any papers with high quality there.
-To narrow down to ML, use filtering based on Python libraries.
-Find papers that use this filtering approach (I am sure there are many).
+I am unsure which qualitative methodology is appropriate for this paper.
+In the current version, we claim to use case-study. Perhaps understand this methodology better?
+I found the following papers:
+- [Lenberg 2024](https://doi-org.tudelft.idm.oclc.org/10.1002/smr.2607): Qualitative software engineering research: Reflections and guidelines
+- [Runeson 2008](https://link-springer-com.tudelft.idm.oclc.org/article/10.1007/S10664-008-9102-8): Guidelines for conducting and reporting case study research in software engineering. 
 
-Read 1-2 papers from ESEM 2025 to understand the expectations for a qualitative study.
-My primary concern, is if they will always expect IRR for any sort of work.
-Actually, it will be good to clarify for what types of qualitative work, we need IRR.
+Perhaps also revisit the meta papers in my library.
 
 # Relevant Literature
 
