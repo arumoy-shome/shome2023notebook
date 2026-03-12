@@ -11,8 +11,6 @@ could be an alternative dataset for KGTorrent?
 Make sure that authors took into account quality considerations.
 We are looking for high-quality DS or ML repositories.
 
-Read [Exploring the Jupyter Ecosystem: An Empirical Study of Bugs and Vulnerabilities](https://arxiv.org/abs/2507.18833) to understand paper structure and design for ESEM.
-
 The authors collected notebooks from both Github and Kaggle.
 They discarded inactive projects by selecting projects that had any GitHub activity in the past year.
 Two authors manually checked the README of all 1000 projects,
@@ -27,23 +25,44 @@ Read 1-2 papers from ESEM 2025 to understand the expectations for a qualitative 
 My primary concern, is if they will always expect IRR for any sort of work.
 Actually, it will be good to clarify for what types of qualitative work, we need IRR.
 
-## Data Sources
-1. [Pimentel 2019](http://dx.doi.org/10.1109/MSR.2019.00077), although I suspect that won't fly anymore.
-1. [Grotov 2020](http://dx.doi.org/10.1145/3524842.3528447) could be useful. Authors compared code quality in notebooks and scripts.
-1. [Psallidas 2019](https://arxiv.org/abs/1912.09536) related or cited by papers could lead to something good.
-1. [Nahar 2025](http://dx.doi.org/10.1109/ICSE55347.2025.00006) has a dataset of open-source ML repositories. I think this is what we should use to identify
-
 # Relevant Literature
-GS query to find relevant papers: `allintitle: jupyter OR notebook source:ICSE OR source:ICSME OR source:MSR OR source:ESEM`
 
-## [Nahar 2025](https://dx.doi.org/10.1109/ICSE55347.2025.00006) 
+## [Wang 2025 (TSS)](https://dx.doi.org/10.1109/TSE.2025.3574500) 
+The only paper to connect ML and notebooks.
+They collected notebooks from GitHub and Kaggle, so we can use this.
+Dataset available on [Zenodo](https://zenodo.org/records/15551901).
+
+Highly relevant to this paper, use this for methodology and discussion.
+
+Table 1 summarizes prior work on ML bugs, faults, failures and crashes.
+
+They used *proportional stratified sampling* combined with *Jaccard similarity*. Could be something to consider in our paper as well.
+
+## [Pimentel 2019 (MSR)](http://dx.doi.org/10.1109/MSR.2019.00077)
+Code quality issues in notebooks.
+
+## [Grotov 2020 (MSR)](http://dx.doi.org/10.1145/3524842.3528447)
+Authors compared code quality in notebooks and scripts.
+The data was collected from GitHub but the authors did not do any quality checks or filtering (e.g., stars, forks, contributors, etc.).
+[Larsen 2025](https://dx.doi.org/10.1109/ESEM64174.2025.00030) published in ESEM 2025 and used Grotov's dataset.
+So as long as, we use an already published dataset, we are okay.
+
+## [Psallidas 2019 (ArXiv)](https://arxiv.org/abs/1912.09536)
+Related or cited by papers could lead to something good.
+
+## [Simmons 2020 (ESEM)](https://dl-acm-org.tudelft.idm.oclc.org/doi/pdf/10.1145/3382494.3410680)
+This was published in ESEM and should be cited here.
+The study design could be useful for some inspiration.
+
+## [Nahar 2025 (ICSE)](https://dx.doi.org/10.1109/ICSE55347.2025.00006)
 Nahar proposed a high-quality dataset of open source ML products.
 [Supplemental material](https://osf.io/gqyex/overview) contains list of all projects.
+I randomly looked at 5 projects from this list, non of them had a notebook in the main branch.
+Could expand search to entire git history?
 
 This paper also used a combination of quantitative and qualitative research methods. Use this paper to guide our writing.
 
-## [Jiang 2022](https://dx.doi.org/10.1109/ICSME55016.2022.00047)
-
+## [Jiang 2022 (ICSME)](https://dx.doi.org/10.1109/ICSME55016.2022.00047)
 This paper was published in ICSME 2022.
 The research objective of the paper is to support tool development for notebooks
 to facilitate code understanding, modularization, and maintenance.
@@ -59,7 +78,7 @@ What's interesting to me is the data collection strategy.
 Authors downloaded **all** notebooks published on 2 separate dates,
 which represent the random sample of notebooks.
 
-## [Siddik 2025](https://doi-org.tudelft.idm.oclc.org/10.1016/j.jss.2025.112758)
+## [Siddik 2025 (JSS)](https://doi-org.tudelft.idm.oclc.org/10.1016/j.jss.2025.112758)
 SLR of SE research on Jupyter notebooks.
 The paper presents a good overview of research efforts on Jupyter notebooks.
 I didn't find anything that links with the narrative of this paper,
