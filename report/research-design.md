@@ -1,4 +1,5 @@
 # Next Steps
+
 Back up the use of asserts, prints and last cell output (LCO).
 Asserts are well strudied in SE research, prints and LCO are more trickly.
 Our best bet, is to back this choice using literature.
@@ -7,7 +8,16 @@ Read relevant literature on ML bugs, faults, failures and crashes. Wang 2025 has
 
 Read up on the case-study methodology.
 
+# Research Goal
+
+Still needs work, but I think I have the "funnel":
+1. Large-scale dataset of *feedback mechanisms* used in Jupyter notebooks. Mined from two distinct sources: GitHub and Kaggle. A high level quantitative analysis of the data using descriptive and lexical analysis.
+1. A qualitative analysis using case-study (or more appropriate) methodology to analyze X FMs and create a thematic mapping to existing work on ML bugs. Might need to strengthen the analysis here.
+1. From this mapping we generate Y something.
+1. A tight discussion section with implications for researchers and practitioners.
+
 # Data Collection
+
 Reviewers raised concerns regarding the quality of the notebooks/projects mined from GitHub (but didn't care so much about the notebooks from Kaggle).
 
 I read several papers that worked with notebooks, and none of them took quality measures (such as stars, forks, contributors, commits, etc.) into account.
