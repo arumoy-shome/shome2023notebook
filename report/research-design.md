@@ -1,5 +1,13 @@
 # Next Steps
 
+Figure out sample sizes for asserts and lasts, separately for GitHub and Kaggle.
+
+Experiment & understand the following parameters:
++ The `max_length` in the tokenizer (currently set to 128 for asserts, does it need to change for lasts?)
++ Understand the parameters of UMAP
++ Understand the parameters of HDBSCAN
++ What other distance `metric` should we be using in HDBSCAN? Wang 2025 uses Jacard similarity, how does that compare to Euclidian distance?
+
 Read relevant literature on ML bugs, faults, failures and crashes. Wang 2025 has a nice table that summarizes prior work. And we are already citing the taxonomy presented by Morovati 2024.
 
 # Research Goal
@@ -47,6 +55,11 @@ I found the following papers:
 Perhaps also revisit the meta papers in my library.
 
 # Relevant Literature
+
+## [Chan 1996](https://doi-org.tudelft.idm.oclc.org/10.1016/0950-5849(96)01103-2)
+
+Wang 2025 uses this paper to justify sampling at least 1 example from each cluster.
+We should do the same.
 
 ## [Jiang 2025 (ESEM)](https://dx.doi.org/10.1109/ESEM64174.2025.00052)
 **Exploring the Jupyter Ecosystem: An Empirical Study of Bugs and Vulnerabilities**
