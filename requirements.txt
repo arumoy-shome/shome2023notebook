@@ -1,9 +1,7 @@
 pandas
-pyarrow
 numpy
-nbformat
-ast-comments
-jupyter
 seaborn
-wordcloud
 scikit-learn
+transformers
+torch
+umap-learn
