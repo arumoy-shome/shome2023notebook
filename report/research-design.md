@@ -32,16 +32,6 @@ A high level quantitative analysis of the data using descriptive and lexical ana
 1. From this mapping we generate Y something.
 1. A tight discussion section with implications for researchers and practitioners.
 
-# Data Collection
-
-I think that I lack a fundamental understanding of how to derive a high-quality sample of notebooks.
-That's why I am reading a selection of high-quality papers from the past 3 years.
-I am taking note of the research goal/questions of these papers,
-and how they influenced their data collection,
-and subsequent sampling methodology.
-My objective is to find an appropriate data collection,
-and sampling strategy, for this paper from this persuit.
-
 # Research Methodology
 
 Use [Baltes 2022](https://link-springer-com.tudelft.idm.oclc.org/article/10.1007/s10664-021-10072-8) for best practices on sampling.
