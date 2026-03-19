@@ -8,23 +8,22 @@ import umap
 from tqdm import tqdm
 
 def embed_batch(texts: list[str], batch_size: int = 32) -> np.ndarray:
-    """Return CLS-token embeddings, shape (n, 768)."""
-    all_vecs = []
+    """Return CLS-token embeddings, shape (n, 768), float16."""
+    out_array = np.empty((len(texts), 768), dtype=np.float16)
     for i in tqdm(range(0, len(texts), batch_size), desc="Embedding"):
         batch = texts[i : i + batch_size]
-        enc = tokenizer (
+        enc = tokenizer(
             batch,
             padding=True,
             truncation=True,
-            max_length=128, # assert statements are short
+            max_length=128,  # assert statements are short
             return_tensors="pt",
         ).to(device)
         with torch.no_grad():
             out = model(**enc)
         # CLS token = out.last_hidden_state[:, 0, :]
-        vecs = out.last_hidden_state[:, 0, :].cpu().numpy()
-        all_vecs.append(vecs)
-    return np.vstack(all_vecs)
+        out_array[i : i + len(batch)] = out.last_hidden_state[:, 0, :].cpu().numpy()
+    return out_array
 
 if __name__ == "__main__":
     asserts = pd.read_csv(
@@ -81,4 +80,4 @@ if __name__ == "__main__":
     data.loc[data["source"] == "GH", "CGH"] = pipeline.fit_predict(XGH)
     data.loc[data["source"] == "KG", "CKG"] = pipeline.fit_predict(XKG)
 
-    data.to_csv("data/shome2023notebook/clusters.csv")
+    # data.to_csv("data/shome2023notebook/clusters.csv")
