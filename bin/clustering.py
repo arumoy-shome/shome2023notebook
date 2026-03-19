@@ -3,6 +3,7 @@ import numpy as np
 from transformers import AutoTokenizer, AutoModel
 import torch
 from sklearn.cluster import HDBSCAN
+from sklearn.pipeline import Pipeline
 import umap
 from tqdm import tqdm
 
@@ -50,22 +51,23 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
-    reducer = umap.UMAP(
-        n_components=10,
-        n_neighbors=15,
-        min_dist=0.0,
-        metric="cosine",
-        random_state=42,
-    )
+    pipeline = Pipeline([
+        ("reducer", umap.UMAP(
+            n_components=10,
+            n_neighbors=15,
+            min_dist=0.0,
+            metric="cosine",
+            random_state=42,
+        )),
+        ("clusterer", HDBSCAN(
+            min_cluster_size=50,
+            min_samples=5,
+            metric="euclidean",
+            cluster_selection_method="eom",
+        )),
+    ])
 
-    clusterer = HDBSCAN(
-        min_cluster_size=50,
-        min_samples=5,
-        metric="euclidean",
-        cluster_selection_method="eom",
-    )
-
-    # NOTE: embed once, then use mask to obtain X_GH and X_KG
+    # NOTE: embed once, then use mask to obtain XGH and XKG
     X = embed_batch(data["stmt"].to_list())  # (n_samples, 768)
 
     gh_mask = (data["source"] == "GH").values
@@ -75,8 +77,8 @@ if __name__ == "__main__":
     XKG = X[kg_mask]
 
     # NOTE: add the cluster labels back to data
-    data.loc[:, "CALL"] = clusterer.fit_predict(reducer.fit_transform(X))
-    data.loc[data["source"] == "GH", "CGH"] = clusterer.fit_predict(reducer.fit_transform(XGH))
-    data.loc[data["source"] == "KG", "CKG"] = clusterer.fit_predict(reducer.fit_transform(XKG))
+    data.loc[:, "CALL"] = pipeline.fit_predict(X)
+    data.loc[data["source"] == "GH", "CGH"] = pipeline.fit_predict(XGH)
+    data.loc[data["source"] == "KG", "CKG"] = pipeline.fit_predict(XKG)
 
     data.to_csv("data/shome2023notebook/clusters.csv")
