@@ -1,6 +1,7 @@
 import json
 import argparse
 import pandas as pd
+import numpy as np
 from io import StringIO
 import os
 import ast
@@ -38,7 +39,7 @@ class FunctionNameCollector(ast.NodeVisitor):
         self.names.append(node.attr)
 
 
-def get_ast(source: str) -> ast.Module | None:
+def get_ast(source: str) -> ast.Module:
     try:
         tree = ast.parse(source)
     except:
