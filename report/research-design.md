@@ -1,12 +1,8 @@
 # Next Steps
 
-Figure out sample sizes for asserts and lasts, separately for GitHub and Kaggle.
+Cluster the entire dataset.
 
-Experiment & understand the following parameters:
-+ The `max_length` in the tokenizer (currently set to 128 for asserts, does it need to change for lasts?)
-+ Understand the parameters of UMAP
-+ Understand the parameters of HDBSCAN
-+ What other distance `metric` should we be using in HDBSCAN? Wang 2025 uses Jacard similarity, how does that compare to Euclidian distance?
+Create final sample using proportional stratified sampling.
 
 Read relevant literature on ML bugs, faults, failures and crashes. Wang 2025 has a nice table that summarizes prior work. And we are already citing the taxonomy presented by Morovati 2024.
 
