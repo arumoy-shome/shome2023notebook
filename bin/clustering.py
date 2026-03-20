@@ -39,7 +39,6 @@ if __name__ == "__main__":
     data = pd.concat([asserts, lasts], ignore_index=True)
     data.loc[data["notebook"].str.contains(r"^data/assert"), "source"] = "GH"
     data.loc[data["notebook"].str.contains(r"^data/quaranta"), "source"] = "KG"
-    data = data.sample(frac=0.001)
     data = data.dropna()
     print(f"data sample size: {data.shape}")
 
@@ -80,4 +79,4 @@ if __name__ == "__main__":
     data.loc[data["source"] == "GH", "CGH"] = pipeline.fit_predict(XGH)
     data.loc[data["source"] == "KG", "CKG"] = pipeline.fit_predict(XKG)
 
-    # data.to_csv("data/shome2023notebook/clusters.csv")
+    data.to_csv("data/shome2023notebook/clusters.csv")
