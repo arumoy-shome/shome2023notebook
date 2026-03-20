@@ -40,6 +40,7 @@ if __name__ == "__main__":
     data.loc[data["notebook"].str.contains(r"^data/assert"), "source"] = "GH"
     data.loc[data["notebook"].str.contains(r"^data/quaranta"), "source"] = "KG"
     data = data.dropna()
+    data = data.drop_duplicates(subset=["stmt"])
     print(f"data sample size: {data.shape}")
 
     MODEL = "microsoft/codebert-base"
