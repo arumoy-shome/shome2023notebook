@@ -1,9 +1,5 @@
 # Next Steps
 
-Cluster the entire dataset.
-
-Create final sample using proportional stratified sampling.
-
 Read relevant literature on ML bugs, faults, failures and crashes. Wang 2025 has a nice table that summarizes prior work. And we are already citing the taxonomy presented by Morovati 2024.
 
 # Research Goal
