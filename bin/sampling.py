@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import seaborn as sns
 
 
 def stratified_proportional_sampling(
@@ -24,14 +23,56 @@ def stratified_proportional_sampling(
     return pd.concat(frames).reset_index(drop=True)
 
 
+def collapse_clusters(
+    data: pd.DataFrame, col: str, coverage_target: float = 0.7
+) -> None:
+    """Collapse existing clusters based on coverage_target."""
+    cluster_sizes = data[col].value_counts()
+    total = len(data)
+
+    cumulative_coverage = cluster_sizes.cumsum() / total
+    large_clusters = cumulative_coverage[
+        cumulative_coverage <= coverage_target
+    ].index.tolist()
+
+    print(f"Large clusters  : {len(large_clusters)}")
+    print(f"Coverage        : {cluster_sizes[large_clusters].sum() / total:.1%}")
+
+    data[col] = data[col].apply(lambda c: c if c in large_clusters else -2)
+
+
+def calculate_sample_size(total: int) -> int:
+    """Standard formula: n = Z^2 · p(1-p) / e^2  (with finite-population correction)"""
+    Z, p, e = 1.96, 0.5, 0.05
+    n_inf = (Z**2 * p * (1 - p)) / e**2  # infinite population
+    n_target = int(np.ceil(n_inf / (1 + (n_inf - 1) / total)))  # finite-pop correction
+    return n_target
+
+
+def main(data: pd.DataFrame, col: str):
+    total = len(data)
+
+    collapse_clusters(data, col)
+    strata = data[col].value_counts()
+    print(f"Total strata    : {len(strata)}")
+
+    n_target = calculate_sample_size(total)
+    print(f"Sample size    : {n_target}")
+
+    sample = stratified_proportional_sampling(data, col, n_target)
+    print(f"Sampled         : {len(sample)} items")
+
+    return sample
+
+
 if __name__ == "__main__":
     data = pd.read_csv("data/shome2023notebook/clusters-dedup.csv", index_col=0)
 
     GH = data.loc[data["CGH"].notna()]
-    KG = data.loc[data["CKG"].notna()]
+    GH_sample = main(GH, "CGH")
 
-    GH_sample = stratified_proportional_sampling(data=GH, col="CGH")
-    KG_sample = stratified_proportional_sampling(data=KG, col="CKG")
+    KG = data.loc[data["CKG"].notna()]
+    KG_sample = main(KG, "CKG")
 
     print(f"GH sample: {GH_sample.shape} KG sample: {KG_sample.shape}")
 
