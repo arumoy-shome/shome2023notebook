@@ -1,22 +1,18 @@
-# Next Steps
-
-Read relevant literature on ML bugs, faults, failures and crashes. Wang 2025 has a nice table that summarizes prior work. And we are already citing the taxonomy presented by Morovati 2024.
-
 # Research Goal
 
 The reseach goal is to *characterize* the validation methods used
 in ML Jupyter notebooks.
 
-I think it's better to drop prints and simplify to validation methods.
 Then we can clearly argue using existing work that:
-- We look at the output of code cells since that is the predominant way data scientists validate their code.
+- We look at the output of code cells since that is the predominant way data scientists validate their code (back with Rule, Head and Kery).
 - And assertions form the backbone of automated software testing.
 - By cross-cutting the analysis across implicit and explicit forms of validation, we can derive rich insights: e.g., the limitations of automated validation techniques for DS work. The implications can help design automated tests for ML.
 - And then mapping it to existing taxonomy of NB bugs from Wang 2025.
 Their taxonomy is rich, and encompases ML bugs.
 We can find the overlaps and gaps of current validation techniques.
 
-Still needs work, but I think the contributions are:
+## Contributions
+
 1. Large-scale dataset of *validation methods* used in Jupyter notebooks.
 Mined from two distinct sources: GitHub and Kaggle.
 A high level quantitative analysis of the data using descriptive and lexical analysis.
@@ -24,17 +20,51 @@ A high level quantitative analysis of the data using descriptive and lexical ana
 1. From this mapping we generate Y something.
 1. A tight discussion section with implications for researchers and practitioners.
 
-# Research Methodology
+# Data Analysis
 
-Use [Baltes 2022](https://link-springer-com.tudelft.idm.oclc.org/article/10.1007/s10664-021-10072-8) for best practices on sampling.
+We used open-coding to manually analyze a representative sample of validation methods from both GH and KG.
 
-I am unsure which qualitative methodology is appropriate for this paper.
-In the current version, we claim to use case-study. Perhaps understand this methodology better?
-I found the following papers:
-- [Lenberg 2024](https://doi-org.tudelft.idm.oclc.org/10.1002/smr.2607): Qualitative software engineering research: Reflections and guidelines
-- [Runeson 2008](https://link-springer-com.tudelft.idm.oclc.org/article/10.1007/S10664-008-9102-8): Guidelines for conducting and reporting case study research in software engineering. 
+The analysis considered two dimensions:
+- Dimension A: Identifying the functional intent of the statement.
+- Dimension B: The machine learning development lifecycle stage in which the statement was defined.
 
-Perhaps also revisit the meta papers in my library.
+## Dimension A Codebook 
+| Code | Label | Definition | Example |
+| ------------- | -------------- | :------------: | ------------- |
+| VAL-EQ | Value equality check | Assert that a result equals a known correct value. Also use when `in` operator with a literal collection in RHS is used. | `assert dataY[0] == 35` or `assert type in ['healthy', 'failed']` |
+| VAL-EXIST | Check for existance of value | Assert that checks if a value exists inside a dynamically generated collection in RHS. | `assert i in sig.parameters.keys()` |
+| VAL-SHAPE | Dimensionality check | Assert tensor/array shape or length | `assert x.shape == means.shape` |
+| VAL-TYPE | Type check | Assert object type or class membership | `assert type(embedding_layer) == Embedding` |
+| VAL-APPROX | Approximate equality | Assert numerical closeness within tolerance | `assert np.allclose(..., atol=0.001)` |
+| VAL-BOOL | Boolean invariant | Assert a boolean condition holds | `assert bb2['y1'] < bb2[y2]` |
+| VAL-LIB | Library-mediated check | Using a testing library to assert structural equality | `assert_frame_equal(X_train, X_prod)` |
+| EXP-INSPECT | Object inspection | Display an object to visually verify its contents | `decoder_prediction`, `sr_items` |
+| EXP-STATS | Statistical summary | Compute and display descriptive statistics | `kindel_reviews.summary_length.describe(...)` |
+| EXP-STRUCT | Structural probe | Inspect shape, size, keys, columns, type metadata | `wv.vector_size`, `dir(tf.math)` |
+| EXP-COMPUTE | Exploratory computation | Compute a value to visually inspect the result | `softmax(np.array([[1, 2, 3]]) - 1)` |
+| DOC | Documentation display | Output primarily for communicating to a notebook reader | f-string narrating what happened |
+| UNC | Unclear | Cannot determine intent without more context |  |
+
+The top level splits are:
+
+- VAL: verification, programmer knows expected value
+- EXP: exploration, programmer is discovering
+- DOC: communication to reader
+
+## Dimension B Codebook
+
+| Code   | Stage                         | Signals to look for                                     |
+| ------ | ----------------------------- | ------------------------------------------------------- |
+| DATA   | Data loading/ingestion        | `read_csv`, `load`, file paths, dataset names           |
+| PREP   | Preprocessing/cleaning        | `transform`, `normalize`, `fillna`, `encode`, tokenize  |
+| FEAT   | Feature engineering           | `fit`, `vectorize`, embeddings, `TF-IDF`                |
+| MODEL  | Model definition              | `model = ...`, layer definitions, `output_shape`        |
+| TRAIN  | Training/optimization         | `model.fit`, `epochs`, loss, `grid.fit`                 |
+| EVAL   | Evaluation/metrics            | `predict`, `score`, `pearsonr`, `mse`, confusion matrix |
+| INTERP | Interpretation/explainability | `interpret`, `feature_importance`, SHAP, attention      |
+| UNC    | Unclear                       | Insufficient context from statement alone               |
+
+
 
 # Relevant Literature
 
