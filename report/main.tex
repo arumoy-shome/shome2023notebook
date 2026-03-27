@@ -129,6 +129,12 @@ We
 
 \subsection{Clustering}
 
+TODO: We remove duplicate statements prior to clustering. We applied clustering
+to the entire data and manually analyzed X statements. We observe that the
+duplicate statements conflates the clusters. Thus a random sample from the
+clusters does not capture diverse. We deliberately trade-off diversity with
+representativeness for the taxonomy.
+
 We use CodeBERT to obtain the code embeddings.
 This is important since the Python statements in our dataset have semantic meaning.
 E.g., \lstinline{assert X == Y} is semantically equivalent to \lstinline{assert X is Y}.
@@ -148,7 +154,8 @@ In total, we obtain X statements from GitHub and Y statements from Kaggle.
 We observe validation statements that were exploratory in nature (EC:EXP).
 Although they appeared in an ML notebook, the purpose of the statement was not
 to validate, but to explore perhaps an API end-point or how a function from an
-imported library works. We discarded such statements.
+imported library works.
+We discarded such statements.
 
 We observe assert statements what did not validate anything in the pipeline (EC:HW).
 But they were written in academic notebooks which served as assignments (e.g., autograder).
@@ -181,6 +188,12 @@ still valuable and apply to the real-world workflow of developing ML prototypes.
 
 \subsection{Data Analysis}
 
+TODO: statements associated with train/test splits should go under PREP stage.
+The rationale is that it is a data transformation operation.
+DATA is about ingestion.
+TRAIN is about optimization.
+The split is a precondition for training, not a part of it.
+
 TODO: Fine-tune the rationale for each category. There is some ambiguity around
 a few e.g., VAL-BOOl versus VAL-EXIST. Also sometime unclear whre visualizations
 go.
@@ -189,6 +202,8 @@ TODO: Revisit and verify all labels, make sure I didn't mislabel anyhing.
 
 TODO: Revisit the PREP and FEAT stage labels. Consider merging together (I remember
 seeing a paper that did that).
+
+TODO: There is some ambiguity between the EXP-INSPECT and EXP-COMPUTE labels.
 
 I think the use of precondition assertions are interesting. E.g., GH227 is a
 precondition assertion defined inside a function that creates a visualization.
