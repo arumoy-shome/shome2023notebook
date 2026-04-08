@@ -33,17 +33,15 @@ The analysis considered two dimensions:
 | ------------- | -------------- | :------------: | ------------- |
 | VAL-EQ | Value equality check | Assert that a result equals a known correct value. Also use when `in` operator with a literal collection in RHS is used. | `assert dataY[0] == 35` or `assert type in ['healthy', 'failed']` |
 | VAL-EXIST | Check for existance of value | Assert that checks if a value exists inside a dynamically generated collection in RHS. | `assert i in sig.parameters.keys()` |
-| VAL-SHAPE | Dimensionality check | Assert tensor/array shape or length | `assert x.shape == means.shape` |
-| VAL-TYPE | Type check | Assert object type or class membership | `assert type(embedding_layer) == Embedding` |
-| VAL-APPROX | Approximate equality | Assert numerical closeness within tolerance | `assert np.allclose(..., atol=0.001)` |
-| VAL-BOOL | Boolean invariant | Assert a boolean condition holds | `assert bb2['y1'] < bb2[y2]` |
-| VAL-LIB | Library-mediated check | Using a testing library to assert structural equality | `assert_frame_equal(X_train, X_prod)` |
-| EXP-INSPECT | Object inspection | Display an object to visually verify its contents | `decoder_prediction`, `sr_items` |
-| EXP-STATS | Statistical summary | Compute and display descriptive statistics | `kindel_reviews.summary_length.describe(...)` |
-| EXP-STRUCT | Structural probe | Inspect shape, size, keys, columns, type metadata | `wv.vector_size`, `dir(tf.math)` |
-| EXP-COMPUTE | Exploratory computation | Compute a value to visually inspect the result | `softmax(np.array([[1, 2, 3]]) - 1)` |
-| DOC | Documentation display | Output primarily for communicating to a notebook reader | f-string narrating what happened |
-| UNC | Unclear | Cannot determine intent without more context |  |
+| VAL-SHAPE | Dimensionality check | Assert tensor/array shape or length. | `assert x.shape == means.shape` |
+| VAL-TYPE | Type check | Assert object type or class membership. | `assert type(embedding_layer) == Embedding` |
+| VAL-APPROX | Approximate equality | Assert numerical closeness within tolerance. | `assert np.allclose(..., atol=0.001)` |
+| VAL-BOOL | Boolean invariant | Assert a boolean condition holds. | `assert bb2['y1'] < bb2[y2]` |
+| EXP-INSPECT | Object inspection | Display an object as-is (no transformation applied) to visually verify its contents. | `decoder_prediction`, `sr_items` |
+| EXP-STATS | Statistical summary | Compute and display descriptive statistics. | `kindel_reviews.summary_length.describe(...)`, `plt.hist(...)`, `df.describe()` |
+| EXP-STRUCT | Structural probe | Inspect shape, size, keys, columns, type metadata. | `wv.vector_size`, `dir(tf.math)`, `df.shape`, `df.columns`, `df.dtypes`, `len(x)`, `.unique()` (cardinality) |
+| EXP-COMPUTE | Exploratory computation | Apply a function or transformation and inspect the result. | `softmax(np.array([[1, 2, 3]]) - 1)` |
+| DOC | Documentation display | Output primarily for communicating to a notebook reader. | f-string narrating what happened |
 
 The top level splits are:
 
@@ -65,7 +63,15 @@ The top level splits are:
 | UNC    | Unclear                       | Insufficient context from statement alone               |
 
 
-
+## Exclusion Criteria
+| Code | Definition |
+| ---- | ---------- |
+| HW | Assert statements written in academic notebooks with assignments (e.g., autograder). |
+| ERR | Misuse of notebook cells e.g., writing documentation using block quotes in a code cell (rather than using a markdown cell), or code that was commented out but not reexecuted (so still had stale output). |
+| ENG | Statement and/or notebook not authored in English. |
+| NOINT | No functionl intent relevant to this study e.g., `plt.ylabel('Win %')`. |
+| NOML | Statements that perform scientific simulations/computations, but do not train any ML model. These statements were captured since the notebooks import statistical computation functions implemented in the library we used to identify ML related notebooks. |
+| EXP | Statements used to quickly explore an API or how an imported function works. |
 # Relevant Literature
 
 ## [Chan 1996](https://doi-org.tudelft.idm.oclc.org/10.1016/0950-5849(96)01103-2)
