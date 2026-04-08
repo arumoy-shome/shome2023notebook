@@ -189,6 +189,33 @@ still valuable and apply to the real-world workflow of developing ML prototypes.
 
 \subsection{Data Analysis}
 
+One assertion from KG \texttt{test_raw.shape[0] == test.shape[0]} is worth highlighting.
+This is a key discovery of the paper. 
+The statement structurally EXP-COMPUTE, but semantically functions as an informal VAL-SHAPE check.
+This is an example of how programmers use last-cell outputs as implicit assertions.
+Another example is \texttt{pd.Series(options_short_list).isin(dummies.columns).all()},
+also an implicit validation which returns a bool.
+
+There are two sub-patterns within VAL-EQ: (a) literal value
+checks where the expected value comes from domain knowledge or specification
+(e.g., \texttt{assert n_classes == 10}, \texttt{assert d_emb == 4)}, and (b) zero/identity
+invariants where the expected value is a mathematical boundary (\texttt{== 0}, \texttt{== True},
+\texttt{!= 0}). Use for discussion section.
+
+One assertion from GH
+\texttt{assert len(top_negative_words) == 25 and [isinstance(w, str) for w in top_negative_words]}
+contained multiple conditions.
+In such situations, the primary intent of the assertion was adopted.
+Conflicts resolved through discussion amongst raters until consensus is reached.
+
+I also used the primary intent rule
+to code statements under EXP-STRUCT
+that chained a transformation (e.g., \texttt{.groupby()})
+with a structural probe (e.g., \texttt{.head()}).
+The ambiguity is between EXP-STRUCT and EXP-COMPUTE.
+The boundary is: does the statement retrieve structure,
+or compute something from the data?
+
 TODO: Visualizations like \texttt{barplot} or \texttt{catplot} that inspect the
 size or count of a feature should be EXP-STRUCT.
 
