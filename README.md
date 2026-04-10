@@ -101,3 +101,9 @@ latexdiff old.tex new.tex >diff.tex
 ### Other conference papers
 - report/icse24-nlbse.tex: ICSE 2024 NLBSE workshop paper
 - report/icst24.tex: ICST 2024 paper
+
+## Data
+1. `asserts.csv`, `prints.csv`, `lasts.csv` and `stats.csv` contain the raw data collected.
+1. `clusters.csv` and `clusters-dedup.csv` contain asserts and last statements with clustering annotation.
+1. `GH_sample.csv` and `KG_sample.csv` contain a representative sample from each source using proportional stratified sampling.
+1. `GH_sample-annot.csv` and `KG_sample-annot.csv` contain the open coding annotations.
