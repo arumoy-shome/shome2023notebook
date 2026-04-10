@@ -225,48 +225,49 @@ we first remove all cells that did not produce any output
 and consequently extract the last top-level node from the AST of the code cell.
 The raw Python code is regenerated from the ASTs
 using the \lstinline{unparse} method provided by the \lstinline{ast} module.
-We obtain 220,095 statements (80,034 asserts and 140,951 lasts) from GitHub
+
+We obtain a population of 220,095 statements (80,034 asserts and 140,951 lasts) from GitHub
 and 872,685 statements (9,572 asserts and 863,113 lasts) from Kaggle.
 
 \subsection{Sampling}
 
-The extracted dataset contains several duplicate statements.
-In our preliminary analysis with clustering,
+In a premiminary analysis,
+we apply clustering to the entire dataset,
+and manually analyze 100 statements (50 from GH and KG) sampled randomly from GH and KG.
 we find that duplicate statements coflate the cluster structure
 and cause a random sample to under-represent diverse patterns.
-TODO: We remove duplicate statements prior to clustering. We applied clustering
-to the entire data and manually analyzed X statements. We observe that the
-duplicate statements conflates the clusters. Thus a random sample from the
-clusters does not capture diverse. We deliberately trade-off diversity with
-representativeness for the taxonomy.
+We therefore remove exact duplicate statements prior to clustering.
+We delimerately trade-off diversity with representativeness for the taxonomy.
 
-We use CodeBERT to obtain the code embeddings.
-This is important since the Python statements in our dataset have semantic meaning.
-E.g., \lstinline{assert X == Y} is semantically equivalent to \lstinline{assert X is Y}.
+We use CodeBERT to obtain semantic code embeddings for each unique statement.
+Semantic embeddings are appropriate
+because statements with different surface forms can express the same intent.
+E.g., \lstinline{assert X == Y} and \lstinline{assert X is Y}
+are syntactically distinct but semantically related.
+We apply UMAP~\cite{McInnes2018} to reduce the embedding dimentionality to 10.
+We then apply HDBSCAN~\cite{McInnes2017} to cluster the reduced embeddings
+into groups based on semantic similarity of the embeddings.
 
-We apply UMAP to reduce the dimensions of the embeddings to 10.
+We obtain 277 clusters from GH and 1031 clusters from KG.
+Prior to sampling,
+we collapse small clusters to prevent excessive fragmentation of the strata.
+We rank clusters by size and compute their cumulative coverage of the entire population.
+Clusters that together account for the top 70\% of statements are retrained as individual strata.
+All remaining clusters are merged into a single residual stratum
+to ensure that each retained stratum is large enough to yield a meaningful proportional allocation.
 
-We apply HDBSCAN to cluster the embeddings into distinct groups based
-on the similarity of the embeddings.
-We use Proportional Stratified Sampling to obtain a representative sample of
-validation statements.
-We sample separately for GitHub and Kaggle.
-In total, we obtain X statements from GitHub and Y statements from Kaggle.
+We apply proportional stratified sampling
+with a 95\% confidence interval (CI)
+and a 5\% margin of error (MoE)
+to estimate a representative sample of validation statements.
+This gives a minimum sample size of 383 statements for GH and KG.
+To ensure comprehensive coverage,
+we sample from all strata
+and ensure that at least one statement is sampled from each stratum.
+The sampling is done separately for GitHub and Kaggle.
+In total, we obtain 383 statements from GitHub and 433 statements from Kaggle.
 
 \subsection{Data Analysis}
-
-One assertion from KG \lstinline{test_raw.shape[0] == test.shape[0]} is worth highlighting.
-This is a key discovery of the paper. 
-The statement structurally EXP-COMPUTE, but semantically functions as an informal VAL-SHAPE check.
-This is an example of how programmers use last-cell outputs as implicit assertions.
-Another example is \lstinline{pd.Series(options_short_list).isin(dummies.columns).all()},
-also an implicit validation which returns a bool.
-
-There are two sub-patterns within VAL-EQ: (a) literal value
-checks where the expected value comes from domain knowledge or specification
-(e.g., \lstinline{assert n_classes == 10}, \lstinline{assert d_emb == 4)}, and (b) zero/identity
-invariants where the expected value is a mathematical boundary (\lstinline{== 0}, \lstinline{== True},
-\lstinline{!= 0}). Use for discussion section.
 
 One assertion from GH
 \lstinline{assert len(top_negative_words) == 25 and [isinstance(w, str) for w in top_negative_words]}
@@ -333,6 +334,19 @@ still valuable and apply to the real-world workflow of developing ML prototypes.
 \subsection{RQ3: What is the overlap with ML Bugs taxonomy?}
 
 \section{Discussion}
+
+There are two sub-patterns within VAL-EQ: (a) literal value
+checks where the expected value comes from domain knowledge or specification
+(e.g., \lstinline{assert n_classes == 10}, \lstinline{assert d_emb == 4)}, and (b) zero/identity
+invariants where the expected value is a mathematical boundary (\lstinline{== 0}, \lstinline{== True},
+\lstinline{!= 0}). Use for discussion section.
+
+One assertion from KG \lstinline{test_raw.shape[0] == test.shape[0]} is worth highlighting.
+This is a key discovery of the paper. 
+The statement structurally EXP-COMPUTE, but semantically functions as an informal VAL-SHAPE check.
+This is an example of how programmers use last-cell outputs as implicit assertions.
+Another example is \lstinline{pd.Series(options_short_list).isin(dummies.columns).all()},
+also an implicit validation which returns a bool.
 
 Read relevant literature on ML bugs, faults, failures and crashes. Wang 2025 has
 a nice table that summarizes prior work. And we are already citing the taxonomy
