@@ -131,19 +131,109 @@ The contributions of this paper are:
 
 \begin{figure}
  \includegraphics[width=0.95\textwidth]{method.pdf} 
+ \label{fig:method}
 \end{figure}
 
 The research goal is to \emph{characterize} the validation methods used in ML
 Jupyter notebooks. This research goal guides the data collection and analysis
-methodology outlined below.
+methodology outlined in this section.
 
 \subsection{Data Collection}
-We collect Jupyter notebooks authored in the Python programming language from
-two distinct sources, namely GitHub and Kaggle.
-We
 
-\subsection{Clustering}
+Figure~\ref{fig:method} illustrates the
+data collection,
+filtering,
+sampling,
+and manual analysis
+employed in this study
+to gather and analyze
+Jupyter notebooks written in Python
+from GitHub and Kaggle.
 
+GitHub is a popular platform to host and collaborate on software projects.
+It offers extensive tools for project management
+such as issue tracking,
+pull requests,
+code reviews and tooling for continuous integration and delivery.
+In contrast,
+Kaggle is focused specifically on data science and machine learning.
+It provides integrated computational resources,
+a rich repository of datasets,
+and a platform to host machine learning competitions.
+While GitHub supports formal project workflows,
+Kaggle encourages a more informal approach to data exploration and modeling,
+making it a preferred choice
+for data science practitioners
+looking for hands-on experience
+with developing machine learning models.
+
+We use GitHub's advanced search syntax~\footnote{https://docs.github.com/en/search-github/searching-on-github/searching-code},
+~\footnote{We use the following search query: \lstinline[language={}]$language:"Jupyter Notebook"$}
+to collect \emph{all} Jupyter notebooks from public repositories
+authored on June 22, 2023.
+We use the pre-existing dataset KGTorrent~\cite{quaranta2021kgtorrent,kgtorrent-zenodo} for Kaggle
+since it does not support advanced code-based search like GitHub.
+To the best of our knowledge,
+KGTorrent is the largest dataset of Python Jupyter notebooks obtained from Kaggle.
+Consequently, we start with 297,851 notebooks (283 GB)
+comprising of 49,090 notebooks from GitHub and 248,761 notebooks from Kaggle.
+
+\subsection{Data Filtering}
+
+For the notebooks collected from GitHub,
+we excluded notebooks that did not contain Python code.
+This step is not applied to the Kaggle notebooks
+since KGTorrent only contains Python notebooks.
+
+Since the focus of this study is to analyze Python code in Jupyter notebooks,
+we remove notebooks with invalid JSON structures
+and notebooks that do not contain any code cells.
+To concentrate specifically on machine learning projects,
+we only include notebooks that import at least one major ML library:
+Scikit Learn~\cite{pedregosa2011scikit-learn},
+PyTorch~\cite{paszke2017automatic},
+TensorFlow~\cite{abadi2015tensorflow},
+or Keras~\cite{chollet2015keras}.
+While this approach may exclude some
+ML projects using alternative libraries,
+prior research by Psallidas et al\.~\cite{psallidas2019data}
+examined six million GitHub Jupyter notebooks
+and confirmed that most ML-oriented notebooks utilize these frameworks.
+
+We deliberately exclude notebooks
+that import Pandas, NumPy, and SciPy.
+Despite their widespread usage in ML,
+these libraries serve numerous purposes beyond ML
+and are not specifically designed for model training.
+
+After applying these
+filters, we exclude 102,276 (41\%) notebooks
+and retain 195,575 notebooks (25,947 from GH and 169,628 from KG) for analysis.
+
+We extract the contents of \emph{all} code cells from the notebooks
+by parsing the underlying JSON structure.
+We then use the \lstinline{ast} module provided by the Python standard library,
+to extract \emph{all} assert, and last statements from the code cells.
+The raw contents of each cell are converted into an abstract syntax tree (AST).
+The \lstinline{NodeVisitor} class from the \lstinline{ast} module is used
+to traverse the AST and collect all \lstinline{Assert} nodes.
+To collect assertions written using Python modules not included in the standard distribution,
+we also collect all function \lstinline{Call} nodes
+that contain the string ``assert'' in their name.
+To collect the last statements,
+we first remove all cells that did not produce any output
+and consequently extract the last top-level node from the AST of the code cell.
+The raw Python code is regenerated from the ASTs
+using the \lstinline{unparse} method provided by the \lstinline{ast} module.
+We obtain 220,095 statements (80,034 asserts and 140,951 lasts) from GitHub
+and 872,685 statements (9,572 asserts and 863,113 lasts) from Kaggle.
+
+\subsection{Sampling}
+
+The extracted dataset contains several duplicate statements.
+In our preliminary analysis with clustering,
+we find that duplicate statements coflate the cluster structure
+and cause a random sample to under-represent diverse patterns.
 TODO: We remove duplicate statements prior to clustering. We applied clustering
 to the entire data and manually analyzed X statements. We observe that the
 duplicate statements conflates the clusters. Thus a random sample from the
@@ -158,13 +248,48 @@ We apply UMAP to reduce the dimensions of the embeddings to 10.
 
 We apply HDBSCAN to cluster the embeddings into distinct groups based
 on the similarity of the embeddings.
-
-\subsection{Sampling}
-
 We use Proportional Stratified Sampling to obtain a representative sample of
 validation statements.
 We sample separately for GitHub and Kaggle.
 In total, we obtain X statements from GitHub and Y statements from Kaggle.
+
+\subsection{Data Analysis}
+
+One assertion from KG \lstinline{test_raw.shape[0] == test.shape[0]} is worth highlighting.
+This is a key discovery of the paper. 
+The statement structurally EXP-COMPUTE, but semantically functions as an informal VAL-SHAPE check.
+This is an example of how programmers use last-cell outputs as implicit assertions.
+Another example is \lstinline{pd.Series(options_short_list).isin(dummies.columns).all()},
+also an implicit validation which returns a bool.
+
+There are two sub-patterns within VAL-EQ: (a) literal value
+checks where the expected value comes from domain knowledge or specification
+(e.g., \lstinline{assert n_classes == 10}, \lstinline{assert d_emb == 4)}, and (b) zero/identity
+invariants where the expected value is a mathematical boundary (\lstinline{== 0}, \lstinline{== True},
+\lstinline{!= 0}). Use for discussion section.
+
+One assertion from GH
+\lstinline{assert len(top_negative_words) == 25 and [isinstance(w, str) for w in top_negative_words]}
+contained multiple conditions.
+In such situations, the primary intent of the assertion was adopted.
+Conflicts resolved through discussion amongst raters until consensus is reached.
+
+I also used the primary intent rule
+to code statements under EXP-STRUCT
+that chained a transformation (e.g., \lstinline{.groupby()})
+with a structural probe (e.g., \lstinline{.head()}).
+The ambiguity is between EXP-STRUCT and EXP-COMPUTE.
+The boundary is: does the statement retrieve structure,
+or compute something from the data?
+
+I think the use of precondition assertions are interesting. E.g., GH227 is a
+precondition assertion defined inside a function that creates a visualization.
+Writing a test for such a function does not make sense,
+yet we might make decisions downstream using this visualization.
+In such a case, using a precondition assert that explicitly fails
+when there is a fault in the data prevents error being propagated.
+
+\subsection{Resampling}
 
 We observe validation statements that were exploratory in nature (EC:EXP).
 Although they appeared in an ML notebook, the purpose of the statement was not
@@ -201,62 +326,6 @@ the quota is filled.
 
 Although several notebooks are assignments or tutorials, the statements are
 still valuable and apply to the real-world workflow of developing ML prototypes.
-
-\subsection{Data Analysis}
-
-One assertion from KG \lstinline{test_raw.shape[0] == test.shape[0]} is worth highlighting.
-This is a key discovery of the paper. 
-The statement structurally EXP-COMPUTE, but semantically functions as an informal VAL-SHAPE check.
-This is an example of how programmers use last-cell outputs as implicit assertions.
-Another example is \lstinline{pd.Series(options_short_list).isin(dummies.columns).all()},
-also an implicit validation which returns a bool.
-
-There are two sub-patterns within VAL-EQ: (a) literal value
-checks where the expected value comes from domain knowledge or specification
-(e.g., \lstinline{assert n_classes == 10}, \lstinline{assert d_emb == 4)}, and (b) zero/identity
-invariants where the expected value is a mathematical boundary (\lstinline{== 0}, \lstinline{== True},
-\lstinline{!= 0}). Use for discussion section.
-
-One assertion from GH
-\lstinline{assert len(top_negative_words) == 25 and [isinstance(w, str) for w in top_negative_words]}
-contained multiple conditions.
-In such situations, the primary intent of the assertion was adopted.
-Conflicts resolved through discussion amongst raters until consensus is reached.
-
-I also used the primary intent rule
-to code statements under EXP-STRUCT
-that chained a transformation (e.g., \lstinline{.groupby()})
-with a structural probe (e.g., \lstinline{.head()}).
-The ambiguity is between EXP-STRUCT and EXP-COMPUTE.
-The boundary is: does the statement retrieve structure,
-or compute something from the data?
-
-TODO: Visualizations like \lstinline{barplot} or \lstinline{catplot} that inspect the
-size or count of a feature should be EXP-STRUCT.
-
-TODO: statements associated with train/test splits should go under PREP stage.
-The rationale is that it is a data transformation operation.
-DATA is about ingestion.
-TRAIN is about optimization.
-The split is a precondition for training, not a part of it.
-
-TODO: Fine-tune the rationale for each category. There is some ambiguity around
-a few e.g., VAL-BOOl versus VAL-EXIST. Also sometime unclear whre visualizations
-go.
-
-TODO: Revisit and verify all labels, make sure I didn't mislabel anyhing.
-
-TODO: Revisit the PREP and FEAT stage labels. Consider merging together (I remember
-seeing a paper that did that).
-
-TODO: There is some ambiguity between the EXP-INSPECT and EXP-COMPUTE labels.
-
-I think the use of precondition assertions are interesting. E.g., GH227 is a
-precondition assertion defined inside a function that creates a visualization.
-Writing a test for such a function does not make sense,
-yet we might make decisions downstream using this visualization.
-In such a case, using a precondition assert that explicitly fails
-when there is a fault in the data prevents error being propagated.
 
 \section{Results}
 \subsection{RQ1: What is the functional intent of validation statements?}
