@@ -24,3 +24,4 @@ docs/appendix.pdf
 report/.$figures.drawio.bkp
 /notebooks/.ipynb_checkpoints
 /report/main.blg
+/bin/__pycache__
