@@ -269,64 +269,61 @@ In total, we obtain 383 statements from GitHub and 433 statements from Kaggle.
 
 \subsection{Data Analysis}
 
-One assertion from GH
-\lstinline{assert len(top_negative_words) == 25 and [isinstance(w, str) for w in top_negative_words]}
-contained multiple conditions.
-In such situations, the primary intent of the assertion was adopted.
-Conflicts resolved through discussion amongst raters until consensus is reached.
+We apply grounded theory and analyze all validation statements manually.
+A code book is developed using a seed of 50 validation statements, targetted to the top 5 clusters.
+Two members of the research team analyze each statement independently,
+to answer ``What the developer is trying to learn or confirm?'' with the statement,
+and ``Where in the development lifecycle?'' is the statement defined.
+In addition to the statement, the entire code cell of the statement,
+any related code cells where variables or functions are defined,
+and the markdown cells containing documentation is analyzed to bring in additional context.
 
-I also used the primary intent rule
-to code statements under EXP-STRUCT
-that chained a transformation (e.g., \lstinline{.groupby()})
-with a structural probe (e.g., \lstinline{.head()}).
-The ambiguity is between EXP-STRUCT and EXP-COMPUTE.
-The boundary is: does the statement retrieve structure,
-or compute something from the data?
+The authors then meet to compare the codes and discuss on disagreements until consensus
+is reached on a definition that both can apply consistenly. After two additional iterations,
+no new codes are added to the codebook.
 
-I think the use of precondition assertions are interesting. E.g., GH227 is a
-precondition assertion defined inside a function that creates a visualization.
-Writing a test for such a function does not make sense,
-yet we might make decisions downstream using this visualization.
-In such a case, using a precondition assert that explicitly fails
-when there is a fault in the data prevents error being propagated.
+The stability of the codebook is verified with a fresh set of 50 validation statements.
+Cohen's kappa score of X is observed.
+Following this one researcher analyzed all remaining statements.
+
+% One assertion from GH
+% \lstinline{assert len(top_negative_words) == 25 and [isinstance(w, str) for w in top_negative_words]}
+% contained multiple conditions.
+% In such situations, the primary intent of the assertion was adopted.
+% Conflicts resolved through discussion amongst raters until consensus is reached.
+
+% I also used the primary intent rule
+% to code statements under EXP-STRUCT
+% that chained a transformation (e.g., \lstinline{.groupby()})
+% with a structural probe (e.g., \lstinline{.head()}).
+% The ambiguity is between EXP-STRUCT and EXP-COMPUTE.
+% The boundary is: does the statement retrieve structure,
+% or compute something from the data?
+
+% I think the use of precondition assertions are interesting. E.g., GH227 is a
+% precondition assertion defined inside a function that creates a visualization.
+% Writing a test for such a function does not make sense,
+% yet we might make decisions downstream using this visualization.
+% In such a case, using a precondition assert that explicitly fails
+% when there is a fault in the data prevents error being propagated.
 
 \subsection{Resampling}
 
-We observe validation statements that were exploratory in nature (EC:EXP).
-Although they appeared in an ML notebook, the purpose of the statement was not
-to validate, but to explore perhaps an API end-point or how a function from an
-imported library works.
-We discarded such statements.
+While conducting the manual analysis,
+we oberve 91 validation statements that are not within the scope of this study,
+and were excluded from the study.
+For instance,
+we observe exploratory statements meant to quickly explore an API or how an imported function works (EC:EXP),
+statements that perform scientific simulations, but do not train any ML model (EX:NOML),
+misuse of notebook cells by writing documentation using block quotes in a code cell or commented out code with stale output from a prior execution (EC:ERROR),
+statements with no functional intent relevant to this study such as \lstinline{plt.ylabel('Win %')} (EC:NOINT),
+statements that are not authored in English (EC:ENG),
+and finally assertions written in academic notebooks for automatic grading (EC:HW).
 
-We observe assert statements what did not validate anything in the pipeline (EC:HW).
-But they were written in academic notebooks which served as assignments (e.g., autograder).
-We discarded such statements.
-
-We observe code cells where author wrote documentation using Python block comments (EC:ERR).
-Cluster 11 contains these statements, excluded prior to sampling.
-This produces an output (which is why our data collection script captured them).
-However, these are incorrect use of a code cell (should have used markdown cell
-instead). We discard such statements.
-
-We discard statements where we cannot gather sufficient context
-as the notebooks are not authored in English (EC:ENG).
-
-TODO: cluster 6 contains statements such as \lstinline{plt.ylabel('Win \%')}
-which has no functional intent relevant to this study (EC:NOINT).
-We discovered this during our preliminary analysis.
-This group was excluded entirely prior to sampling.
-
-We observe statements that perform scientific simulations (EC:NOML). These
-statements were captured since the notebooks import statistical function
-implemented in the libraries we used to identify ML related notebooks. We
-discard these statements.
-
-In total, we find X such statements. We follow the same methodology outlined in
-the sections above to sample new statements from the respective clusters, until
-the quota is filled.
-
-Although several notebooks are assignments or tutorials, the statements are
-still valuable and apply to the real-world workflow of developing ML prototypes.
+To ensure a statistically significant sample size,
+we resample replacements from the same clusters where the exclusions occured.
+Replacements are verified and if necessary replaced once again.
+We perform resampling iteratively until the target sample size (383 for both GH and KG) is reached.
 
 \section{Results}
 \subsection{RQ1: What is the functional intent of validation statements?}
