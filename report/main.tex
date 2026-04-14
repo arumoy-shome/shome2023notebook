@@ -326,7 +326,35 @@ Replacements are verified and if necessary replaced once again.
 We perform resampling iteratively until the target sample size (383 for both GH and KG) is reached.
 
 \section{Results}
+
+We apply $\chi^2$ test to determine if there is a significant difference
+between two distributions with a null hypothesis that there is no difference.
+We adopt a 95\% confidence level, such that a p-value less than 0.05 indicates a significant difference.
+For distributions with $<5$ sample size, we apply Barnard's exact test,
+using Bonferroni correction to adjust the p-value.
+
 \subsection{RQ1: What is the functional intent of validation statements?}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{distribution-intent.pdf}
+  \end{center}
+  \caption{Distribution of the intent of the validation statement across GH and KG.}\label{fig:distribution-intent}
+\end{figure}
+
+Figure~\ref{fig:distribution-intent} shows the distribution of the intent of the validation statements across GH and KG.
+84\% (GH: 67.3\%, KG: 98.8\%) of the statements are implicit validation statements,
+followed by 15.1\% (GH: 31.2\%, KG: 0.9\%) explicit assertions
+and 0.9\% (GH: 1.6\%, KG: 0.2\%) documentation.
+
+We find a significant difference in the intent of the statements between GH and KG.
+GH notebooks have a non-trivial presence of formal assertions,
+while KG notebooks are overwhelmingly exploratory.
+
+This is a platform-level effect.
+GH hosts more software engineering projects where assertions are a natural practice.
+KG notebooks are closer to data exploration and competition submission workflows.
+
 \subsection{RQ2: Which stage of the MLDL are the validation statements used in?}
 \subsection{RQ3: What is the overlap with ML Bugs taxonomy?}
 
