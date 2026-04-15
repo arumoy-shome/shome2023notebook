@@ -64,6 +64,25 @@ python bin/clustering.py
 python bin/sampling.py
 ```
 
+Modify and use `bin/resampling.py` to resample interactively from specific population (GH or KG) and cluster as required.
+
+### 5. Merge annotations
+
+The open-coding is done using Google Sheets. Use `merge-annotations.py` to merge the annotated csv files into a single `data/shome2023notebook/annotations.csv` file.
+
+## Notebooks
+
+The data analysis is conducted using Jupyter notebooks located in the `notebooks/` directory.
+
+### 1. Raw numbers and statistics
+
+`notebooks/data-collection-numbers.ipynb` contains raw numbers and statistics
+from the data collection process.
+
+### 2. Results analysis
+
+`notebooks/results.ipynb` contains all analysis of the annotated data.
+
 ## Building PDF files
 
 All latex source files are located inside the `report/` directory. You can use the `latexmk` command (included in the full distribution of LaTeX) to build the PDF document.
