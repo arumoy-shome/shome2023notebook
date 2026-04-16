@@ -327,14 +327,16 @@ We perform resampling iteratively until the target sample size (383 for both GH 
 
 \section{Results}
 
-We apply $\chi^2$ test to determine if there is a significant difference
+We apply Pearson chi-squared ($\chi^2$) test to determine if there is a significant difference
 between two distributions with a null hypothesis that there is no difference.
 We adopt a 95\% confidence level, such that a p-value less than 0.05 indicates a significant difference.
 For distributions with a small sample size ($<5$),
 we apply Barnard's exact test,
 using Bonferroni correction to adjust the p-value.
 
-\subsection{RQ1: What is the functional intent of validation statements?}
+\subsection{RQ1: Prevalence and Variation of Feedback Mechanisms}
+
+% Intent x Source
 
 \begin{figure}
   \begin{center}
@@ -343,52 +345,82 @@ using Bonferroni correction to adjust the p-value.
   \caption{Distribution of the intent of the validation statement across GH and KG.}\label{fig:distribution-intent}
 \end{figure}
 
-Figure~\ref{fig:distribution-intent} shows the distribution of the intent of the validation statements across GH and KG.
-84.9\% (GH: 68.8\%, KG: 99.1\%) of the statements are implicit validation statements,
-while 15.1\% (GH: 31.2\%, KG: 0.9\%) are explicit assertions.
-
-We apply Fisher's exact test
+We apply $\chi^2$ test
 to examine whether intent is associated with the source of the notebook.
-The test reveals a significant association between intent and source ($p < 0.001$, Cramer's $V = 0.421$).
-GH notebooks have a non-trivial presence of formal assertions (31.2\%),
+All expected cell frequencies exceed 5(min = 57.7), and satisfy the validity conditions of the test.
+The test reveals a significant association between intent and source ($\chi^2(1) = 144.72$, $p < 0.001$, Cramer's $V = 0.421$).
+From Figure~\ref{fig:distribution-intent} we see that
+GH notebooks contain proportionally more formal assertions (31.2\%),
 while KG notebooks are overwhelmingly exploratory and only contain four assertions (0.9\%).
 This is a platform-level effect.
 GH hosts more software engineering projects where assertions are a natural practice.
 KG notebooks are closer to data exploration and competition submission workflows.
 
-\subsubsection{EXP Breakdown}
+% Stage x Source
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{distribution-stage.pdf}
+  \end{center}
+  \caption{Distribution of the stage of the validation statements across GH and KG.}\label{fig:distribution-stage}
+\end{figure}
+
+We apply $\chi^2$ test
+to examine whether ML pipeline stage is independent of notebook source.
+The UNC stage ($N=2$) is excluded which leaves $N=813$ statements across six stages.
+All remaining expected frequencies exceed 5 (min = 19.63).
+The test indicates highly significant and large association ($\chi^2(5) = 158.04$, $p<0.001$, Cramer's $V=0.441$).
+Figure~\ref{fig:distribution-stage} shows the distribution of the stage in which the validation statements were used.
+KG notebooks concentrate predominantly on the \emph{PREP} stage (58\%),
+whereas GH notebooks distribute more evenly across DATA (18.7\%), EVAL (24.7\%) and TRAIN (13.2\%).
+The MODEL stage is almost entirely absent in KG (0.5\% vs. 10.5\% in GH).
+
+The dominance of the PREP stage and absence of the MODEL stage in KG notebooks,
+is a reflection of the competition format.
+It suggests that competition notebooks concentrage on data preparation pipelines,
+and typically consume pre-configured model APIs rather than defining model architectures.
+
+% Intent x Stage
+
+We apply $\chi^2$ test
+to examine whether intent is associated with the ML development stage.
+However in the analysis above we observe that intent and stage are both associated with the source.
+Therefore, in this test source is a confounding variable since any observed association between intent and stage
+could be partially or entirely explained by their shared dependence on source.
+
+We therefore conduct the test separately within GH and KG.
+Within GH the association is significant ($\chi^2(5) = 20.35$, p=0.001, Cramer's $V=0.231$).
+We observe that VAL concentrates disproportionately at MODEL (GH-VAL: 21\%, GH-EXP: 6\%).
+
+The KG stratum is not formally testable since there are only four VAL statements,
+which makes several expected frequencies to be less than 1.
+This renders both $\chi^2$ and Fisher's exact test inconclusive.
+
+% Intent-EXP x Source
 
 \begin{figure}
   \begin{center}
     \includegraphics[width=0.95\textwidth]{distribution-intent-exp.pdf}
   \end{center}
-  \caption{Distribution of the intent sub-types of the validation statements across GH and KG.}\label{fig:distribution-intent-exp}
+  \caption{Distribution of the EXP sub-types across GH and KG.}\label{fig:distribution-intent-exp}
 \end{figure}
+
+We restrict the analysis to \emph{EXP} coded statements ($N=692$)
+and apply $\chi^2$ test to examine whether EXP subtype (Type) is independent of notebook source.
+All expected cell frequencies exceed 5 (min = 29.64).
+The test reveals a statistically significant but weak association ($\chi^2(3) = 10.77$, $p=0.013$, Cramer's $V=0.125$).
 
 Figure~\ref{fig:distribution-intent-exp} shows the distribution of the intent sub-types
 across GH and KG.
-43.8\% of the statements (GH: 46\%, KG: 42.4\%) are used to inspect an object,
-making it the most common validation behaviour observed in ML notebooks.
-Despite sharing the same code,
-the qualitative content of these statements differs substantially between the two platforms,
-and across pipeline stages.
+The distributions are broadly similar across sources, which explains the weak effect.
+INSPECT is the dominant type in both sources (GH: 46\%, KG: 42.4\%).
+The most notable differences are in STATS (GH: 7.6\%, KG: 13.5\%)
+and COMPUTE (GH: 31.2\%, KG: 24.0\%).
+KG notebooks proportionally favor statistical summaries and structural inspection.
+GH notebooks on the other hand, lean more toward direct computation.
 
-We find two distinct forms that these inspection statements take.
-First, is a bare variable name or a display call such as \lstinline{.head()} or \lstinline{.tail()},
-which produces an object directly into the notebook output for visual inspection.
-The second is a visualization call using \lstinline{plt}, \lstinline{sns}, \lstinline{imshow}, or equivalent,
-that renders a chart, heatmap, or image.
-We also find more complex expressions that select or slice into an object before display.
-All three forms however, share the same epistemic structure,
-that enables a developer to inspect an object \emph{as-is},
-and relies on visual judgement to determine whether the output is acceptable.
-No automated criterion exists.
-
-
-\subsubsection{VAL Breakdown}
-
-\subsection{RQ2: Which stage of the MLDL are the validation statements used in?}
-\subsection{RQ3: What is the overlap with ML Bugs taxonomy?}
+\subsection{RQ2: Intent Taxonomy of Validation Statements}
+\subsection{RQ3: Pipeline Stage Distribution of Validation Statements}
 
 \section{Discussion}
 

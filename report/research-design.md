@@ -74,6 +74,19 @@ The top level splits are:
 | EXP | Statements used to quickly explore an API or how an imported function works. |
 # Relevant Literature
 
+## Wohlin 2012
+
+Conditions for Chi2 test:
+> Chi-2 test final remarks. The Chi-2 test is based on certain assumptions, which
+are likely to be fulfilled if the expected values, Ei , are not too small. A rule of thumb
+is, if the number of degrees of freedom (f ) is equal to 1, the Chi-2 test should not be
+used if any of the expected frequencies are less than 5. If f > 1 the Chi-2 test should
+not be used if more than 20% of the expected frequencies are less than 5 or any of
+them is less than 1. It should be observed that sometimes the test is used although
+the expected frequencies are not fulfilled. In these cases, this is a calculated risk.
+One way to obtain larger expected frequencies is to combine related categories to
+new categories. However, the new categories must be meaningful.
+
 ## [Chan 1996](https://doi-org.tudelft.idm.oclc.org/10.1016/0950-5849(96)01103-2)
 
 Wang 2025 uses this paper to justify sampling at least 1 example from each cluster.
