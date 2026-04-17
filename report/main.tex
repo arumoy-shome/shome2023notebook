@@ -668,6 +668,308 @@ often suppress type errors silently.
 When a wrong type does not immediately crash the computation,
 practitioners have no obvious signal that a check is needed.
 
+\subsubsection{EXP Subcodes}
+\label{sec:exp-subcodes}
+
+We identify four subcodes within the EXP family
+across 263~GH statements and 429~KG statements.
+Unlike VAL statements, which are distributed relatively evenly between sources,
+EXP statements are substantially more frequent in KG notebooks (62.0\% of all EXP statements).
+
+\paragraph{EXP-INSPECT (n=303, 43.8\%).}
+
+Inspection statements are the most frequent form of exploratory feedback in the corpus.
+A practitioner places a bare variable name,
+a plot call,
+or a lightweight accessor expression as the last statement in a cell
+to surface the current state of a data structure
+without transforming it.
+The output is consumed visually and immediately.
+
+Inspection is used throughout the pipeline
+but concentrates at the data loading and preparation stages,
+where practitioners establish a running mental model of the dataset
+before any transformation is applied.
+A bare \lstinline{.head()} call after loading a CSV,
+such as the one shown in Listing~\ref{lst:209},
+confirms that column names parsed correctly,
+that data types look plausible,
+and that no obvious loading artefact is present.
+The same lightweight pattern is used to monitor the effect of individual cleaning operations.
+After imputing missing values,
+a practitioner inspects the result to confirm that the fill worked.
+
+\begin{lstlisting}[caption={}, label={lst:209}]
+df_subjects.head()
+\end{lstlisting}
+
+At the evaluation stage,
+inspection shifts from data structure verification to model output monitoring.
+Practitioners surface intermediate predictions,
+confusion matrices,
+learned coefficients,
+and cross-validation results
+as bare last-cell expressions.
+
+A recurring pattern during model training
+is the periodic visual inspection of generated outputs or loss curves.
+One notebook displays a GAN-generated image
+at regular intervals during training
+to assess whether the generator is producing realistic samples.
+Another plots the training log-likelihood over epochs
+to monitor convergence.
+These statements serve as progress signals that are cheaper
+and more immediate than a formal metric computation.
+
+A distinct theme in GH notebooks
+is the use of inspection to debug internal model state.
+Practitioners surface the names of specific layers in a neural network,
+the values of learned weight slices,
+or the output of a forward hook
+to understand what the model is doing internally.
+
+\begin{lstlisting}[caption={}, label={lst:302}]
+weights_conv1[:, :, 0, 0]
+\end{lstlisting}
+
+Listing~\ref{lst:302} slices a 4D convolutional weight tensor
+to expose a single filter's learned spatial kernel,
+which is then visualized to check what the filter has learned.
+Inspection of this kind is not possible with a high-level metric,
+as it requires looking directly at model internals.
+
+\paragraph{EXP-COMPUTE (n=185, 26.7\%).}
+
+Compute statements execute a transformation,
+aggregation,
+or model operation
+and return a result that the practitioner examines.
+The key distinction from inspection is that the result is not
+already present in a variable,
+rather it is produced on the fly by the statement itself.
+
+The dominant use of EXP-COMPUTE in both GH and KG notebooks
+is metric computation at the evaluation stage.
+Practitioners compute accuracy, RMSE, F1, NDCG, AUC, and log-loss
+as last-cell expressions
+to obtain an immediate reading of model performance.
+
+\begin{lstlisting}[caption={}, label={lst:339}]
+accuracy_score(test_y, rf_pred_y)
+\end{lstlisting}
+
+These calls,
+such as the one shown in Listing~\ref{lst:339}
+are often repeated across multiple experimental runs,
+each with a different model or hyperparameter setting,
+to drive an iterative selection process.
+One notebook computes cross-validated mean and standard deviation
+of a Random Forest regressor's score
+and compares it against a Logistic Regression
+to decide which model to retain.
+
+A second prominent theme is the use of EXP-COMPUTE
+to check whether individual preprocessing steps worked as intended.
+After applying a standard scaler,
+a practitioner computes the mean and standard deviation of the transformed features
+to verify that both are near their expected values (Listing~\ref{lst:293}).
+After a \lstinline{dropna} operation,
+a practitioner computes a null count to confirm that missing values were removed (Listing~\ref{lst:284}).
+
+
+\begin{lstlisting}[caption={}, label={lst:293}]
+(y_test.mean(), y_test.std())
+\end{lstlisting}
+
+\begin{lstlisting}[caption={}, label={lst:284}]
+data.isnull().sum(axis=0)
+\end{lstlisting}
+
+These are informal postconditions.
+They express an expectation about the output of the preceding operation,
+but they rely on the practitioner's visual judgment
+rather than a programmatic threshold.
+
+A third theme,
+distinctive to GH notebooks,
+is the use of model fitting calls as pipeline integrity checks.
+Practitioners run \lstinline{model.fit()} calls
+and observe the training output
+to confirm that the pipeline wiring is correct
+before committing to a full training run.
+One notebook runs a capsule network training call for 15 epochs
+with a fraction of the data
+to verify that loss decreases before launching the full experiment.
+
+We code these statements as EXP-COMPUTE
+because the fitting call is the statement under analysis
+and the practitioner's intent is to observe whether the pipeline runs without error
+rather than to record a final trained model.
+
+In KG notebooks,
+EXP-COMPUTE statements are also used extensively for exploratory feature analysis.
+Practitioners compute grouped aggregations and correlation matrices
+to understand whether a candidate feature
+has a meaningful relationship with the target
+before deciding whether to include it (Listing~\ref{lst:564}).
+
+\begin{lstlisting}[caption={}, label={lst:564}]
+train.drop('Type', axis=1).apply(lambda x: x.corr(train.Type))
+\end{lstlisting}
+
+\begin{lstlisting}[caption={}, label={lst:397}]
+df_train.groupby(['Pclass', 'Sex'])['Survived'].value_counts(normalize=True)
+\end{lstlisting}
+
+Listing~\ref{lst:397} reveals a survival rate interaction between passenger class and sex.
+The practitioner uses this insight
+to motivate a subsequent feature engineering step.
+This pattern of computing a grouped statistic
+and acting on the result in the next cell,
+is a core workflow unit in competition notebooks.
+
+\begin{lstlisting}[caption={}, label={lst:480}]
+test\_raw.shape[0] == test.shape[0]
+\end{lstlisting}
+
+A KG notebook uses Listing~\ref{lst:480}
+as a last-cell boolean expression
+to verify that no rows were lost during a transformation.
+The expression is not wrapped in an \lstinline{assert},
+so a False result would be visible in the cell output
+but would not halt execution.
+We code this statement as EXP-COMPUTE rather than VAL-SHAPE,
+but the intent is identical to a shape assertion.
+
+\paragraph{EXP-STRUCT (n=126, 18.2\%).}
+
+Structural inspection statements
+query the metadata of a data structure
+rather than its values.
+They surface shape, column names, dtypes, unique values, cardinality, or value counts.
+EXP-STRUCT concentrates overwhelmingly at the preparation stage (78 of 126 statements),
+where practitioners use these lightweight queries
+to understand and verify the current state of the data
+before applying the next transformation.
+
+A pervasive theme is the use of structural inspection
+as a lightweight checkpoint after each cleaning or encoding step.
+After dropping columns,
+a practitioner inspects \lstinline{.columns}
+to confirm the drop worked.
+After one-hot encoding,
+a practitioner checks \lstinline{.shape}
+to confirm that the column count increased as expected.
+After undersampling the majority class,
+a practitioner inspects the shape of the resulting arrays
+to confirm that the class ratio changed (Listing~\ref{lst:593}).
+
+\begin{lstlisting}[caption={}, label={lst:593}]
+(X_train_under.shape, y_train_under.shape, X_test_under.shape)
+\end{lstlisting}
+
+These checkpoints serve the same purpose as postcondition assertions
+but rely on visual confirmation
+rather than programmatic enforcement.
+
+A second theme is the use of \lstinline{.unique()} and \lstinline{.value\_counts()}
+to audit the actual contents of a categorical column
+before deciding on an encoding strategy.
+Practitioners check whether unexpected values or label inconsistencies
+are present before applying \lstinline{LabelEncoder} or \lstinline{OneHotEncoder}.
+
+\begin{lstlisting}[caption={}, label={lst:528}]
+combi['Item_Fat_Content'].value_counts()
+\end{lstlisting}
+
+The practitioner uses the output of Listing~\ref{lst:528}
+to map all five variants of a categorical feature
+to a binary encoding
+before applying feature tools
+for automated feature engineering.
+Without this inspection,
+the encoding library would treat the five strings as five distinct categories
+and produce a semantically incorrect feature.
+
+A third theme,
+more common in GH notebooks,
+is the use of structural queries to set downstream model parameters dynamically.
+Practitioners inspect \lstinline{.vector\_size} of a word embedding
+to determine the input layer dimension of a neural network,
+or check \lstinline{X\_train.shape[2]}
+to set the \lstinline{input\_shape} parameter of a 1D CNN.
+These statements serve as interface checks
+between the data preparation and model construction stages.
+
+\paragraph{EXP-STATS (n=78, 11.3\%).}
+
+Statistical summary statements
+produce distributional views of a feature or target variable.
+They include calls to \lstinline{.describe()},
+\lstinline{.hist()},
+\lstinline{.value\_counts()},
+and distribution or box plots via seaborn and matplotlib.
+EXP-STATS is proportionally more prevalent in KG notebooks (13.5\% of KG EXP)
+than in GH notebooks (7.6\% of GH EXP),
+which reflects Kaggle's culture of systematic exploratory data analysis before modelling.
+
+The dominant theme is pre-modelling data auditing.
+Practitioners use distribution plots and summary statistics
+to detect outliers,
+assess class imbalance,
+and check whether a feature's distribution motivates a transformation.
+A seaborn \lstinline{distplot} of insurance charges in Listing~\ref{lst:634}
+reveals a right-skewed distribution,
+which motivates a log transform
+before fitting a linear regression model
+whose residuals are assumed to be normally distributed.
+
+\begin{lstlisting}[caption={}, label={lst:634}]
+sns.distplot(data.charges)
+\end{lstlisting}
+
+A box plot of engine power values
+in a used car dataset
+drives a decision to remove extreme outliers.
+A histogram of model prediction confidence scores
+reveals whether the model is well-calibrated
+or uncertain across its predictions.
+In each case,
+the statistical summary is not an end in itself
+but a decision point that gates the next preprocessing or modelling step.
+
+A second theme is post-processing verification.
+After scaling features with \lstinline{StandardScaler},
+practitioners call \lstinline{.describe()}
+to confirm that the mean is near zero and the standard deviation is near one
+(Listing~\ref{lst:580}).
+
+\begin{lstlisting}[caption={}, label={lst:580}]
+bikesData[columnsToScale].describe()
+\end{lstlisting}
+
+After imputing missing values for a column,
+a practitioner plots the column's distribution
+to confirm that the imputed values
+do not distort the shape of the distribution
+in a physiologically implausible direction.
+These verification uses of EXP-STATS
+occupy the same functional niche as EXP-STRUCT checkpoints,
+by confirming that a preceding operation produced the expected result.
+But they do so through distributional inspection
+rather than structural metadata.
+
+A third theme,
+present primarily in GH notebooks,
+is the use of statistical summaries to diagnose model behaviour.
+A histogram of a model's confidence scores across a held-out test set
+reveals whether predictions cluster near 0.5 (uncertain) or toward 0 and 1 (confident).
+A KDE plot of SARIMA residuals checks whether the model's errors
+approximate a normal distribution,
+which is a formal assumption of the ARIMA model class.
+These uses treat the statistical summary
+as a model diagnostic tool rather than a data auditing tool.
+
 \subsection{RQ3: Pipeline Stage Distribution of Validation Statements}
 
 \section{Discussion}
