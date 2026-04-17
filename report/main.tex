@@ -420,6 +420,254 @@ KG notebooks proportionally favor statistical summaries and structural inspectio
 GH notebooks on the other hand, lean more toward direct computation.
 
 \subsection{RQ2: Intent Taxonomy of Validation Statements}
+
+\subsubsection{VAL Subcodes}
+\label{sec:val-subcodes}
+
+We identify six subcodes within the VAL family
+across 119~GH statements and 4~KG statements.
+
+\paragraph{VAL-SHAPE ($n=47$, 38.84\%).}
+
+Shape validation is the most prevalent form of explicit validation in the corpus.
+Practitioners use these statements to verify
+that arrays and tensors carry the dimensions that downstream operations require.
+A shape mismatch in a PyTorch or NumPy pipeline
+either raises a cryptic runtime error far from its origin,
+or silently produces wrong results through unintended broadcasting.
+Both failure modes are difficult to diagnose after the fact.
+
+Shape validation concentrates at two points in the pipeline.
+At the model construction stage,
+practitioners verify that
+each layer of a neural network produces the expected output shape
+before the next layer is wired in.
+
+\begin{lstlisting}[caption={}, label={lst:61}]
+assert output['x5'].size() == torch.Size([BATCH_SIZE, 512, 7, 7])
+\end{lstlisting}
+
+For example, Listing~\ref{lst:61} checks the shape
+of the fifth feature map from a VGG16 encoder
+immediately before it is connected to a segmentation decoder.
+A similar pattern appears across GAN encoders,
+transformer attention blocks,
+and GRU sequence models,
+where practitioners assert the shape of intermediate tensors at each architectural boundary.
+
+At the evaluation stage,
+shape validation primarily guards against misaligned prediction and label arrays.
+Before computing metrics such as RMSE or F1,
+practitioners verify that predictions and ground truth have the same length.
+
+\begin{lstlisting}[caption={}, label={lst:62}]
+assert len(predictions_array) == len(label_batch_test.numpy())
+\end{lstlisting}
+
+Listing~\ref{lst:62} is not a trivial check.
+A dropped remainder batch,
+an off-by-one error in a data loader,
+or a silent failure during sampling
+can each produce a length mismatch that either crashes the metric computation
+or, worse, produces a numerically plausible but incorrect score.
+
+A third recurring theme is data integrity after joins, splits, and transformations.
+Practitioners assert that a train-test split accounts for all rows,
+that a join did not silently add or drop records,
+and that a preprocessing step such as \lstinline{QuantileTransformer} preserves the number of samples.
+These statements reflect an awareness
+that pandas operations can silently alter the size of a dataframe
+in ways that are not immediately visible in a notebook output.
+
+\paragraph{VAL-EQ ($n=34$, 28.09\%).}
+
+Practitioners check that a specific value, configuration parameter, or computed result
+matches a known expected value.
+The expected value is always statically known at the time of writing the assertion,
+and is derived either from domain knowledge, architectural constraints, or a prior specification.
+
+A prominent theme is the enforcement of architectural constraints
+that have no runtime enforcement in the framework.
+For example, sinusoidal positional embeddings
+require an even embedding dimension
+because the vector is split in half between sine and cosine components.
+This is validated using Listing~\ref{lst:4}
+which checks that the embedding dimensions are even.
+If \lstinline{dim} is odd, downstream dimension expectations will not hold.
+
+\begin{lstlisting}[caption={}, label={lst:4}]
+assert dim % 2 == 0
+\end{lstlisting}
+
+Similarly, Wide ResNet filter counts must remain even at each resolution level,
+and certain ResNet depth configurations
+must satisfy a modular arithmetic relationship
+to accommodate the bottleneck block structure.
+These constraints are derived from the mathematical structure of the architecture
+and are invisible to the framework at instantiation time.
+Without the assertion,
+a violated constraint produces a shape error
+deep inside the forward pass whose connection to the misconfigured hyperparameter is not obvious.
+
+A second theme is schema validation on loaded data.
+Practitioners check that a CSV file has the expected number of classes,
+% NOTE: e.g., common to use \lstinline{y = df[:, -1]} to get the labels from the last column
+that a required column appears in the correct position,
+that an index contains no duplicates,
+and that a normalization step produced a zero-sum result.
+These checks reflect the reality that data loading involves
+external files whose schema cannot be verified statically.
+
+\begin{lstlisting}[caption={}, label={lst:118}]
+assert_frame_equal( X_train_prepro_ks.to_pandas(), X_train_prod_prepro_ks.to_pandas())
+\end{lstlisting}
+
+A third theme is the detection of training-serving skew.
+Listing~\ref{lst:118} verifies
+that the offline preprocessing pipeline and the production preprocessing pipeline
+produce identical training data after feature selection.
+A divergence between the two would cause the deployed model
+to operate on a different feature distribution than the one it was trained on,
+which would result in a silent failure with no crash signal.
+
+\paragraph{VAL-BOOL ($n=21$, 17.35\%).}
+
+Boolean validation captures a wide range of preconditions
+that do not reduce to a shape check or an exact equality.
+These statements guard pipeline steps against inputs
+that are structurally valid but semantically incorrect.
+
+The most common theme is data quality enforcement before a downstream step
+that cannot recover from a violated precondition.
+Practitioners assert the absence of missing values before feature selection,
+the absence of class imbalance before oversampling logic executes,
+and the satisfaction of domain constraints before domain-specific computations begin.
+
+\begin{lstlisting}[caption={}, label={lst:54}]
+assert not predictors.isnull().values.any()
+\end{lstlisting}
+
+For example, Listing~\ref{lst:54} is used in a cardiovascular disease mortality pipeline
+to prevent missing values
+from silently corrupting feature selection algorithms
+or cause crashes in estimators that assume complete data.
+The assertion ensures that an imputation or dropping step
+was completed correctly upstream.
+
+A second theme is the enforcement of geometric and physical invariants
+derived from domain knowledge.
+An object detection notebook asserts that both coordinates of a bounding box
+satisfy the correct ordering before computing intersection over union.
+A physics domain notebook asserts that model predictions
+fall within the interval \([0, 1]\)
+as required by the problem formulation.
+A word2vec implementation asserts that the number of context words sampled
+does not exceed the size of the context window.
+These constraints cannot be inferred from the data alone
+and require knowledge of the problem domain.
+
+\begin{lstlisting}[caption={}, label={lst:22}]
+assert all((layer.weight.grad is None
+    for layer in dict(model.backbone.named_modules()).values()
+    if hasattr(layer, 'weight')))
+\end{lstlisting}
+
+A third theme is transfer learning setup validation.
+Listing~\ref{lst:22} asserts that all gradient tensors in a frozen backbone are \lstinline{None}.
+A backbone that is not fully frozen continues to update during fine-tuning,
+which silently degrades transfer learning performance without raising any error.
+
+\paragraph{VAL-APPROX ($n=7$, 5.78\%).}
+
+Approximate validation appears in contexts
+where exact equality is either mathematically inappropriate
+or unachievably strict due to floating-point arithmetic.
+Two distinct use cases emerge from the data.
+
+The first is unit testing of numerical implementations.
+Practitioners validate custom loss functions,
+data transformation utilities,
+and metric implementations
+by comparing their output to a known reference value within a specified tolerance.
+
+\begin{lstlisting}[caption={}, label={lst:374}]
+assert np.isclose(ndcg([3, 1, 2], [3, 1, 2], 3), 1)
+\end{lstlisting}
+
+For example, Listing~\ref{lst:374} validates
+that a custom NDCG implementation returns a perfect score of 1.0
+when predicted and true rankings are identical.
+
+The second use case is reproducibility verification.
+Practitioners who implement a notebook to reproduce the results of a published paper
+use approximate assertions to confirm that their experimental setup matches the reported values.
+
+\begin{lstlisting}[caption={}, label={lst:300}]
+assert np.allclose(
+    sp.stats.pearsonr(all_cfd_pred, all_truth)[0],
+    0.409, atol=0.001)
+\end{lstlisting}
+
+Listing~\ref{lst:300} confirms that a Pearson correlation coefficient
+matches the value reported in the source paper
+within a tolerance of 0.001.
+The tolerance is deliberately chosen
+to allow for minor numerical differences across platforms and library versions
+while still catching a substantively incorrect result.
+
+\paragraph{VAL-EXIST ($n=6$, 5.0\%).}
+
+Existence validation checks for membership in,
+or presence within,
+a dynamic runtime structure.
+Two themes emerge.
+
+The first is data leakage prevention.
+In Listing~\ref{lst:84},
+practitioners verify that training and validation sets are disjoint before model fitting begins.
+
+\begin{lstlisting}[caption={}, label={lst:84}]
+assert set(train_dataset.filenames).isdisjoint(
+    set(valid_dataset.filenames))
+\end{lstlisting}
+
+Data leakage from validation into training inflates evaluation metrics
+without any runtime error.
+The only way to detect it programmatically
+is to check for overlap explicitly,
+as demonstrated in the listing.
+
+The second theme is precondition checking on external resources.
+Practitioners assert that a required file path exists
+before attempting to load it,
+and that a hyperparameter name is present in the parameter space of an estimator
+before launching an expensive grid search.
+In both cases the failure mode without the assertion
+is either a cryptic I/O error
+or a silent search over the wrong parameter space.
+
+\paragraph{VAL-TYPE ($n=6$, 5.0\%).}
+
+Practitioners use these statements to enforce
+that objects carry the correct Python type or NumPy dtype
+before passing them to operations that would fail silently
+or with a misleading error
+if given the wrong type.
+Listing~\ref{lst:232} checks that model parameters are NumPy arrays
+rather than Python lists,
+since many NumPy operations accept both but produce different results.
+
+\begin{lstlisting}[caption={}, label={lst:232}]
+assert isinstance(mu, np.ndarray) and isinstance(sigma, np.ndarray),
+    'mu/sigma must be numpy arrays.'
+\end{lstlisting}
+
+The low frequency of VAL-TYPE likely reflects the fact
+that Python's dynamic typing and framework-level type coercion
+often suppress type errors silently.
+When a wrong type does not immediately crash the computation,
+practitioners have no obvious signal that a check is needed.
+
 \subsection{RQ3: Pipeline Stage Distribution of Validation Statements}
 
 \section{Discussion}
