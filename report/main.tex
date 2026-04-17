@@ -336,6 +336,11 @@ using Bonferroni correction to adjust the p-value.
 
 \subsection{RQ1: Prevalence and Variation of Feedback Mechanisms}
 
+Our corpus consists of 815 validation statements,
+collected from GH (n=383, 46\%) and KG (n=433, 54\%).
+The validation statements consist of two top level intent codes
+EXP (n=692, 85\%) and VAL (n=123, 15\%).
+
 % Intent x Source
 
 \begin{figure}
@@ -347,7 +352,8 @@ using Bonferroni correction to adjust the p-value.
 
 We apply $\chi^2$ test
 to examine whether intent is associated with the source of the notebook.
-All expected cell frequencies exceed 5(min = 57.7), and satisfy the validity conditions of the test.
+All expected cell frequencies exceed 5(min = 57.7),
+and satisfy the validity conditions of the test.
 The test reveals a significant association between intent and source ($\chi^2(1) = 144.72$, $p < 0.001$, Cramer's $V = 0.421$).
 From Figure~\ref{fig:distribution-intent} we see that
 GH notebooks contain proportionally more formal assertions (31.2\%),
@@ -355,6 +361,50 @@ while KG notebooks are overwhelmingly exploratory and only contain four assertio
 This is a platform-level effect.
 GH hosts more software engineering projects where assertions are a natural practice.
 KG notebooks are closer to data exploration and competition submission workflows.
+
+% Intent-EXP x Source
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{distribution-intent-exp.pdf}
+  \end{center}
+  \caption{Distribution of the EXP sub-types across GH and KG.}\label{fig:distribution-intent-exp}
+\end{figure}
+
+We restrict the analysis to \emph{EXP} coded statements ($N=692$)
+and apply $\chi^2$ test to examine whether EXP subtype (Type) is independent of notebook source.
+All expected cell frequencies exceed 5 (min = 29.64).
+The test reveals a statistically significant but weak association ($\chi^2(3) = 10.77$, $p=0.013$, Cramer's $V=0.125$).
+
+Figure~\ref{fig:distribution-intent-exp} shows the distribution of the intent sub-types
+across GH and KG.
+The distributions are broadly similar across sources, which explains the weak effect.
+INSPECT is the dominant type in both sources (GH: 46\%, KG: 42.4\%).
+The most notable differences are in STATS (GH: 7.6\%, KG: 13.5\%)
+and COMPUTE (GH: 31.2\%, KG: 24.0\%).
+KG notebooks proportionally favor statistical summaries and structural inspection.
+GH notebooks on the other hand, lean more toward direct computation.
+
+% Intent-VAL x Source
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{distribution-intent-val.pdf}
+  \end{center}
+  \caption{Distribution of the VAL sub-types across GH and KG.}\label{fig:distribution-intent-val}
+\end{figure}
+
+We restrict the analysis to VAL coded statements (n=123).
+We observe that no statistical test for independence can be applied reliably,
+due to the marginal imbalance in the data which leaves little power to detect any association.
+
+Figure~\ref{fig:distribution-intent-val} thus presents
+a descriptive distribution of all VAL statements.
+SHAPE (n=47, 38.2\%) and EQ (n=35, 28.5\%)
+together account for two thirds of all VAL statements.
+Approximate equality, existence and type checks are rare.
+
+\subsection{RQ2: Pipeline Stage Distribution of Validation Statements}
 
 % Stage x Source
 
@@ -382,44 +432,21 @@ and typically consume pre-configured model APIs rather than defining model archi
 
 % Intent x Stage
 
-We apply $\chi^2$ test
-to examine whether intent is associated with the ML development stage.
-However in the analysis above we observe that intent and stage are both associated with the source.
-Therefore, in this test source is a confounding variable since any observed association between intent and stage
-could be partially or entirely explained by their shared dependence on source.
+% We apply $\chi^2$ test
+% to examine whether intent is associated with the ML development stage.
+% However in the analysis above we observe that intent and stage are both associated with the source.
+% Therefore, in this test source is a confounding variable since any observed association between intent and stage
+% could be partially or entirely explained by their shared dependence on source.
 
-We therefore conduct the test separately within GH and KG.
-Within GH the association is significant ($\chi^2(5) = 20.35$, p=0.001, Cramer's $V=0.231$).
-We observe that VAL concentrates disproportionately at MODEL (GH-VAL: 21\%, GH-EXP: 6\%).
+% We therefore conduct the test separately within GH and KG.
+% Within GH the association is significant ($\chi^2(5) = 20.35$, p=0.001, Cramer's $V=0.231$).
+% We observe that VAL concentrates disproportionately at MODEL (GH-VAL: 21\%, GH-EXP: 6\%).
 
-The KG stratum is not formally testable since there are only four VAL statements,
-which makes several expected frequencies to be less than 1.
-This renders both $\chi^2$ and Fisher's exact test inconclusive.
+% The KG stratum is not formally testable since there are only four VAL statements,
+% which makes several expected frequencies to be less than 1.
+% This renders both $\chi^2$ and Fisher's exact test inconclusive.
 
-% Intent-EXP x Source
-
-\begin{figure}
-  \begin{center}
-    \includegraphics[width=0.95\textwidth]{distribution-intent-exp.pdf}
-  \end{center}
-  \caption{Distribution of the EXP sub-types across GH and KG.}\label{fig:distribution-intent-exp}
-\end{figure}
-
-We restrict the analysis to \emph{EXP} coded statements ($N=692$)
-and apply $\chi^2$ test to examine whether EXP subtype (Type) is independent of notebook source.
-All expected cell frequencies exceed 5 (min = 29.64).
-The test reveals a statistically significant but weak association ($\chi^2(3) = 10.77$, $p=0.013$, Cramer's $V=0.125$).
-
-Figure~\ref{fig:distribution-intent-exp} shows the distribution of the intent sub-types
-across GH and KG.
-The distributions are broadly similar across sources, which explains the weak effect.
-INSPECT is the dominant type in both sources (GH: 46\%, KG: 42.4\%).
-The most notable differences are in STATS (GH: 7.6\%, KG: 13.5\%)
-and COMPUTE (GH: 31.2\%, KG: 24.0\%).
-KG notebooks proportionally favor statistical summaries and structural inspection.
-GH notebooks on the other hand, lean more toward direct computation.
-
-\subsection{RQ2: Intent Taxonomy of Validation Statements}
+\subsection{RQ3: Intent Taxonomy of Validation Statements}
 
 \subsubsection{VAL Subcodes}
 \label{sec:val-subcodes}
@@ -969,8 +996,6 @@ approximate a normal distribution,
 which is a formal assumption of the ARIMA model class.
 These uses treat the statistical summary
 as a model diagnostic tool rather than a data auditing tool.
-
-\subsection{RQ3: Pipeline Stage Distribution of Validation Statements}
 
 \section{Discussion}
 
