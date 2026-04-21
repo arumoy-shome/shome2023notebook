@@ -25,3 +25,8 @@ report/.$figures.drawio.bkp
 /notebooks/.ipynb_checkpoints
 /report/main.blg
 /bin/__pycache__
+/report/main.out
+/report/main.fls
+/report/main.fdb_latexmk
+/report/main.bbl
+/report/main.aux
