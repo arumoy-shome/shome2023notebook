@@ -130,8 +130,8 @@ The contributions of this paper are:
 \section{Methodology}
 
 \begin{figure}
- \includegraphics[width=0.95\textwidth]{method.pdf} 
- \label{fig:method}
+ \includegraphics[width=0.95\textwidth]{method.pdf}
+ \caption{\textcolor{red}{TODO}}\label{fig:method}
 \end{figure}
 
 The research goal is to \emph{characterize} the validation methods used in ML
@@ -355,63 +355,37 @@ we stratify by source and report separate tests for GH and KG.
 \subsection{RQ1: Prevalence and Variation of Feedback Mechanisms}
 \label{sec:rq1}
 
-
 \highlight{\textbf{Finding 1.} Feedback in ML notebooks is overwhelmingly exploratory.
 EXP statements account for 85\% of the corpus.
 Formal assertions are rare on Kaggle and common on GitHub.
 This platform asymmetry is large and highly significant.}
 
-Our corpus consists of 816 validation statements,
-collected from GH ($n=383$, 46\%) and KG ($n=433$, 54\%).
+Our corpus consists of 815 validation statements,
+collected from GH ($n=382$, 46\%) and KG ($n=433$, 54\%).
 The validation statements consist of two top level intent codes
 EXP (n=692, 85\%) and VAL (n=123, 15\%).
-
-% Intent x Source
-
-% TODO: Normalize all barplots by percentage
+The statements come from 6 ML pipeline stages,
+and have 10 functional sub-types (4 EXP and 6 VAL sub-types).
+% TODO: mention that Type is disjoint for EXP and VAL
 
 \begin{figure}
-  \begin{subfigure}[t]{0.32\textwidth}
+  \begin{subfigure}[t]{0.5\textwidth}
     \centering
     \includegraphics[width=\textwidth]{distribution-intent.pdf}
     \caption{Distribution of the intent (EXP vs.\ VAL) across GH and KG, normalized by source.}
     \label{fig:distribution-intent}
   \end{subfigure}
-  \begin{subfigure}[t]{0.32\textwidth}
+  \begin{subfigure}[t]{0.5\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{distribution-intent-exp.pdf}
-    \caption{Distribution of the EXP sub-types across GH and KG, normlized by source.}
-    \label{fig:distribution-intent-exp}
+    \includegraphics[width=\textwidth]{distribution-type.pdf}
+    \caption{Distribution of type across VAL and EXP, normalized by type.}
+    \label{fig:distribution-type}
   \end{subfigure}
-  \begin{subfigure}[t]{0.32\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{distribution-intent-val.pdf}
-    \caption{Distribution of all VAL sub-types.}
-    \label{fig:distribution-intent-val}
-  \end{subfigure}
-  \caption{\textcolor{red}{TODO}: think of a better caption.}\label{fig:distribution-intent-all}
+  \caption{\textcolor{red}{TODO}: think of a better caption.}
+  % \label{fig:distribution-intent-all}
 \end{figure}
 
-% \begin{figure}
-%   \begin{center}
-%     \includegraphics[width=0.95\textwidth]{distribution-intent.pdf}
-%     \caption{Distribution of the intent (EXP vs.\ VAL) across GH and KG, normalized by source.}\label{fig:distribution-intent}
-%   \end{center}
-% \end{figure}
-
-% \begin{figure}
-%   \begin{center}
-%     \includegraphics[width=0.95\textwidth]{distribution-intent-exp.pdf}
-%   \end{center}
-%   \caption{Distribution of the EXP sub-types across GH and KG, normlized by source.}\label{fig:distribution-intent-exp}
-% \end{figure}
-
-% \begin{figure}
-%   \begin{center}
-%     \includegraphics[width=0.95\textwidth]{distribution-intent-val.pdf}
-%   \end{center}
-%   \caption{Distribution of all VAL sub-types.}\label{fig:distribution-intent-val}
-% \end{figure}
+% Intent x Source
 
 We apply $\chi^2$ to test whether intent is associated with notebook source.
 The test reveals a significant and large association ($\chi^2(1) = 144.72$, $p < 0.001$, Cram\'er's $V = 0.421$).
@@ -422,6 +396,9 @@ This pattern is a platform-level effect.
 GH hosts software engineering projects where assertions are a natural practice.
 In contrst, KG hosts data exploration and competition submission workflows
 where programmatic validation is uncommon.
+
+% Intent x Type
+% TODO: collapse Intent-EXP x Source and Intent-VAL x Source here
 
 % Intent-EXP x Source
 
@@ -458,6 +435,10 @@ Approximate equality, existence and type checks are rare.
 KG notebooks concentrate on data preparation.
 GH notebooks distribute feedback more evenly across data ingestion, training, and evaluation.}
 
+PREP (40\%) is the single largest stage,
+followed by EVAL (21\%), DATA (12\%), FEAT (12\%), TRAIN (9\%) and MODEL (6\%).
+The corpus contains 2 statements (0.25\%) where the stage was unclear (UNC).
+
 % Stage x Source
 
 \begin{figure}
@@ -469,9 +450,6 @@ GH notebooks distribute feedback more evenly across data ingestion, training, an
   \end{subfigure}
   \begin{subfigure}[t]{0.5\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{distribution-stage-val.pdf}
-    \caption{Distribution of GH VAL statements across the pipeline stages.}
-    \label{fig:distribution-stage-val}
   \end{subfigure}
   \caption{\textcolor{red}{TODO}: think of a better caption.}\label{fig:distribution-stage-all}
 \end{figure}
@@ -492,8 +470,24 @@ is a reflection of the competition format.
 It suggests that competition notebooks concentrage on data preparation pipelines,
 and typically consume pre-configured model APIs rather than defining model architectures.
 
+% Intent x Stage (within GH)
+
+We restrict to GH statements ($n=380$, excluding 2 UNC stage)
+and apply $\chi^2$ test to examine whether intent is associated with pipeline stage.
+The test reveals a statistically significant association ($\chi^2(5)=20.34$, $p=0.001$, Cram\'er's $V=0.231$).
+
+Figure~\ref{fig:distribution-stage-intent} shows that VAL share varies by stage.
+MODEL is the most validation-heavy stage (60\%), followed by TRAIN (34\%) and FEAT (29\%).
+DATA (76\%) and EVAL (77\%) are more exploratory.
+
+Practitioners validate when the code defines reusable structure (model definitions and training loops)
+and inspect when code is exploratory and data-facing (preprocessing and evaluation).
+
 % Type-VAL x Stage
 
+% \includegraphics[width=\textwidth]{distribution-stage-val.pdf}
+% \caption{Distribution of GH VAL statements across the pipeline stages.}
+% \label{fig:distribution-stage-val}
 We apply Fisher's exact test
 to examine whether pipeline stage is associated with VAL sub-type
 within GH notebooks ($n=117$).
@@ -552,33 +546,33 @@ with EVAL (27\%), DATA (21\%), and PREP (20\%) as the largest hosts.
 
 INSPECT is the dominant Type in four of six stages,
 including DATA (57\%), MODEL (50\%), FEAT (46\%), and PREP (45\%),
-peaking at DATA (25.6%) and EVAL (24.8%). COMPUTE is sharply model-centric:
-62.2% of its instances fall at TRAIN (20.7%) and EVAL (41.5%), and it leads the
-column composition at both stages (51.5% of TRAIN, 47.2% of EVAL). STRUCT runs
-opposite, with 70.0% of instances in data-centric stages and a visible share at
-MODEL (25.0% of the column). STATS concentrates at PREP (50.0% of the row,
-18.9% of the column) and contributes nothing to FEAT or TRAIN. Aggregating to
-pipeline phases yields a 62% / 38% data-centric / model-centric split overall,
-with INSPECT (59% / 41%), STRUCT (70% / 30%), and STATS (75% / 25%) leaning
-data-centric while COMPUTE inverts the pattern (34% / 66%). GH exploratory
+peaking at DATA (25.6\%) and EVAL (24.8\%). COMPUTE is sharply model-centric:
+62.2\% of its instances fall at TRAIN (20.7\%) and EVAL (41.5\%), and it leads the
+column composition at both stages (51.5\% of TRAIN, 47.2\% of EVAL). STRUCT runs
+opposite, with 70.0\% of instances in data-centric stages and a visible share at
+MODEL (25.0\% of the column). STATS concentrates at PREP (50.0\% of the row,
+18.9\% of the column) and contributes nothing to FEAT or TRAIN. Aggregating to
+pipeline phases yields a 62\% / 38\% data-centric / model-centric split overall,
+with INSPECT (59\% / 41\%), STRUCT (70\% / 30\%), and STATS (75\% / 25\%) leaning
+data-centric while COMPUTE inverts the pattern (34\% / 66\%). GH exploratory
 activity thus follows a compositional arc across the pipeline:
 inspection-dominant early stages give way to computation-dominant late stages,
 with STRUCT and STATS playing supporting data-side roles.
 
-EXP statements in Kaggle notebooks (N = 429). INSPECT leads at 42.4% of the
-sample, followed by COMPUTE (24.0%), STRUCT (20.0%), and STATS (13.5%). The
+EXP statements in Kaggle notebooks (N = 429). INSPECT leads at 42.4\% of the
+sample, followed by COMPUTE (24.0\%), STRUCT (20.0\%), and STATS (13.5\%). The
 Type marginal is flatter than GH, with noticeably higher shares of STRUCT and
-STATS. The Stage marginal is dramatically skewed: PREP alone holds 58.7% of all
-KG exploratory statements, with EVAL (17.7%), FEAT (11.9%), DATA (6.8%), TRAIN
-(4.7%), and MODEL (0.2%) trailing. All four Types peak at PREP, with the
-intensity of the peak varying: STATS 86.2%, STRUCT 80.2%, INSPECT 50.0%,
-COMPUTE 40.8%. INSPECT is the dominant Type in five of six stages, while TRAIN
-is the one stage where COMPUTE takes over (95.0%, 19 of 20 observations).
-STRUCT and STATS are almost exclusively data-side: 98.8% and 93.1% of their
+STATS. The Stage marginal is dramatically skewed: PREP alone holds 58.7\% of all
+KG exploratory statements, with EVAL (17.7\%), FEAT (11.9\%), DATA (6.8\%), TRAIN
+(4.7\%), and MODEL (0.2\%) trailing. All four Types peak at PREP, with the
+intensity of the peak varying: STATS 86.2\%, STRUCT 80.2\%, INSPECT 50.0\%,
+COMPUTE 40.8\%. INSPECT is the dominant Type in five of six stages, while TRAIN
+is the one stage where COMPUTE takes over (95.0\%, 19 of 20 observations).
+STRUCT and STATS are almost exclusively data-side: 98.8\% and 93.1\% of their
 instances respectively fall in data-centric stages. Aggregating to pipeline
-phases yields a 77% / 23% data-centric / model-centric split overall, with
-STRUCT (99% / 1%), STATS (93% / 7%), and INSPECT (75% / 25%) strongly
-data-leaning while COMPUTE is closer to even (54% / 46%). KG exploratory
+phases yields a 77\% / 23\% data-centric / model-centric split overall, with
+STRUCT (99\% / 1\%), STATS (93\% / 7\%), and INSPECT (75\% / 25\%) strongly
+data-leaning while COMPUTE is closer to even (54\% / 46\%). KG exploratory
 activity is structurally concentrated in data preparation, with all four Types
 peaking at PREP and model-side activity reduced to a narrow COMPUTE-led
 appendix at TRAIN and EVAL.
