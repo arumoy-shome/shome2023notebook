@@ -332,7 +332,7 @@ Section~\ref{sec:rq1} reports the prevalence of feedback mechanisms and their va
 section~\ref{sec:rq2} characterises their distribution across ML pipeline stages,
 and section~\ref{sec:rq3} presents the intent taxonomy derived from open coding.
 
-\paragraph{Statistical framework}
+\paragraph*{Statistical framework}
 We test whether two categorical variables are associated.
 The null hypothesis states that the variables are independent.
 We adopt a 95\% confidence level and treat any p-value below 0.05 as a statistically significant association.
@@ -364,18 +364,15 @@ Our corpus consists of 815 validation statements,
 collected from GH ($n=382$, 46\%) and KG ($n=433$, 54\%).
 The validation statements consist of two top level intent codes
 EXP (n=692, 85\%) and VAL (n=123, 15\%).
-The statements come from 6 ML pipeline stages,
-and have 10 functional sub-types (4 EXP and 6 VAL sub-types).
-% TODO: mention that Type is disjoint for EXP and VAL
 
 \begin{figure}
-  \begin{subfigure}[t]{0.5\textwidth}
+  \begin{subfigure}[t]{0.4\textwidth}
     \centering
     \includegraphics[width=\textwidth]{distribution-intent.pdf}
     \caption{Distribution of the intent (EXP vs.\ VAL) across GH and KG, normalized by source.}
     \label{fig:distribution-intent}
   \end{subfigure}
-  \begin{subfigure}[t]{0.5\textwidth}
+  \begin{subfigure}[t]{0.6\textwidth}
     \centering
     \includegraphics[width=\textwidth]{distribution-type.pdf}
     \caption{Distribution of type across VAL and EXP, normalized by type.}
@@ -398,35 +395,48 @@ In contrst, KG hosts data exploration and competition submission workflows
 where programmatic validation is uncommon.
 
 % Intent x Type
-% TODO: collapse Intent-EXP x Source and Intent-VAL x Source here
 
-% Intent-EXP x Source
-
-We restrict the analysis to EXP coded statements ($N=692$)
-and apply $\chi^2$ to test whether EXP sub-type is associated with notebook source.
+The statements are also coded along 10 sub-types based on the intent.
+We restrict the analysis to EXP ($n=692$)
+and VAL ($n=123$) coded statements individually.
+For EXP coded statements,
+we apply $\chi^2$ to test whether the type of statements is associated with notebook source.
 The test reveals a statistically significant but weak association
 ($\chi^2(3) = 10.77$, $p=0.013$, Cram\'er's $V=0.125$).
-
-Figure~\ref{fig:distribution-intent-exp} shows the distribution of the intent sub-types
-across GH and KG.
-The distributions are broadly similar across sources, which explains the weak effect.
-INSPECT is the dominant type in both sources (GH: 46\%, KG: 42.4\%).
-The most notable differences are in STATS (GH: 7.6\%, KG: 13.5\%)
-and COMPUTE (GH: 31.2\%, KG: 24.0\%).
-KG notebooks proportionally favor statistical summaries and structural inspection.
-GH notebooks on the other hand, lean more toward direct computation.
-
-% Intent-VAL x Source
-
-We restrict the analysis to VAL coded statements ($n=123$).
-We observe that no statistical test for independence can be applied reliably,
+Looking at VAL coded statements,
+we observe that no statistical test for independence can be applied reliably,
 due to the marginal imbalance in the data which leaves little power to detect any association.
 
-Figure~\ref{fig:distribution-intent-val} thus presents
-a descriptive distribution of all VAL statements.
-SHAPE ($n=47$, 38.2\%) and EQ ($n=35$, 28.5\%)
-together account for two thirds of all VAL statements.
-Approximate equality, existence and type checks are rare.
+Figure~\ref{fig:distribution-type} thus presents
+a descriptive distribution of the types of statements.
+The statements contain 10 types,
+which are disjoint across the intent of the statements.
+Within EXP, four sub-types account for the entire distribution.
+INSPECT (44\%) is the most frequent,
+followed by COMPUTE (27\%), STRUCT (18\%), and STATS (11\%).
+The rank order is consistent with a notebook-as-scratchpad model of feedback.
+Practitioners most often print or display values
+to confirm what an expression evaluates to (INSPECT),
+then compute derived quantities they intend to read off (COMPUTE),
+then probe the structure of an object (STRUCT),
+and least often request a statistical summary (STATS).
+The same rank order holds on both platforms, with proportions within five percentage points.
+
+Within VAL, the distribution is more skewed.
+SHAPE (38\%) and EQ (29\%),
+together covering two-thirds of all VAL statements,
+followed by BOOL (17\%).
+Practitioners predominantly assert dimensional and equality invariants.
+Type checks, existence checks, and approximate equality are present
+but appear in fewer than one in ten validation statements.
+
+The within-VAL distribution is concentrated almost entirely on GitHub.
+Of the 123 VAL statements, 119 occur in GH notebooks.
+The four KG VAL statements consist of three BOOL and one EQ.
+Four of the six VAL sub-types (SHAPE, APPROX, EXIST, TYPE)
+do not appear in any KG notebook in the sample.
+This may indicate that
+Kaggle contributors effectively do not use structural validation at all.
 
 \subsection{RQ2: Pipeline Stage Distribution of Validation Statements}
 \label{sec:rq2}
@@ -438,8 +448,7 @@ GH notebooks distribute feedback more evenly across data ingestion, training, an
 PREP (40\%) is the single largest stage,
 followed by EVAL (21\%), DATA (12\%), FEAT (12\%), TRAIN (9\%) and MODEL (6\%).
 The corpus contains 2 statements (0.25\%) where the stage was unclear (UNC).
-
-% Stage x Source
+Notebook feedback is concentrated upstream of model training, not downstream.
 
 \begin{figure}
   \begin{subfigure}[t]{0.5\textwidth}
@@ -451,8 +460,11 @@ The corpus contains 2 statements (0.25\%) where the stage was unclear (UNC).
   \begin{subfigure}[t]{0.5\textwidth}
     \centering
   \end{subfigure}
-  \caption{\textcolor{red}{TODO}: think of a better caption.}\label{fig:distribution-stage-all}
+  \caption{\textcolor{red}{TODO}: think of a better caption.}
+  % \label{fig:distribution-stage-all}
 \end{figure}
+
+% Stage x Source
 
 We apply $\chi^2$ test
 to examine whether ML pipeline stage is independent of notebook source.
@@ -460,10 +472,11 @@ The UNC stage ($N=2$) is excluded which leaves $N=813$ statements across six sta
 All remaining expected frequencies exceed 5 (min = 19.63).
 The test indicates highly significant and large association ($\chi^2(5) = 158.04$, $p<0.001$, Cramer's $V=0.441$).
 
-Figure~\ref{fig:distribution-stage} shows the distribution of the stage in which the validation statements were used.
+Figure~\ref{fig:distribution-stage} shows the distribution of the stage
+in which the validation statements were used.
 KG notebooks concentrate predominantly on the \emph{PREP} stage (58\%),
 whereas GH notebooks distribute more evenly across DATA (18.7\%), EVAL (24.7\%) and TRAIN (13.2\%).
-The MODEL stage is almost entirely absent in KG (0.5\% vs. 10.5\% in GH).
+The MODEL stage is almost entirely absent in KG (0.5\% vs. 11\% in GH).
 
 The dominance of the PREP stage and absence of the MODEL stage in KG notebooks,
 is a reflection of the competition format.
@@ -482,100 +495,6 @@ DATA (76\%) and EVAL (77\%) are more exploratory.
 
 Practitioners validate when the code defines reusable structure (model definitions and training loops)
 and inspect when code is exploratory and data-facing (preprocessing and evaluation).
-
-% Type-VAL x Stage
-
-% \includegraphics[width=\textwidth]{distribution-stage-val.pdf}
-% \caption{Distribution of GH VAL statements across the pipeline stages.}
-% \label{fig:distribution-stage-val}
-We apply Fisher's exact test
-to examine whether pipeline stage is associated with VAL sub-type
-within GH notebooks ($n=117$).
-We exclude KG VAL statements because the marginal distribution is severely imbalanced.
-The test indicates no association between VAL sub-type and pipeline stage ($p=0.093$, Cram\'er's $V=0.140$).
-This absence of association
-suggests that practitioners apply each form of explicit validation across the entire pipeline,
-rather than concentrating a particular check type at a single stage.
-
-Figure~\ref{fig:distribution-stage-val}
-shows the distribution of the types of VAL statements in GH notebooks
-across the pipeline stages.
-SHAPE (40\%) and EQ (28\%) cover over two thirds of GH validation activity.
-Validation distributes relatively evenly across pipeline stages.
-MODEL (21\%), PREP (20\%), and EVAL (19\%) are the largest hosts
-and FEAT the smalled (12\%).
-No stage concentrates validation,
-in contrast to the PREP-heavy KG profile.
-
-SHAPE is the dominant Type in five of six stages,
-claiming 55\% of EVAL, 46\% of MODEL, 41\% of DATA, 39\% of PREP, and 29\% of TRAIN.
-The one exception is FEAT,
-where EQ takes over with 50\% of the column,
-reflecting the frequent use of equality assertions
-after feature transformations.
-BOOL acts predominantly as a data-side guard,
-peaking at PREP (26\% of the column).
-
-The three rare Types show localized but fragile patterns.
-EXIST clusters at TRAIN (4 of 6 instances),
-TYPE at MODEL and EVAL,
-and APPROX splits between DATA and EVAL.
-Aggregating to pipeline phases yields a near-even 46\% / 54\%
-split between data-centric (DATA + PREP + FEAT) and model-centric (MODEL + TRAIN + EVAL) stages.
-SHAPE (40\% / 60\%) and TYPE (17\% / 83\%) are more model-centric
-while EQ, BOOL, and APPROX track the marginal ratio.
-
-Overall, GH validation is anchored by shape and equality checks
-deployed across the full pipeline rather than concentrated at any single stage.
-The specialized check types fill narrow, stage-specific roles.
-
-% Type-EXP x Stage
-
-We apply Fisher's exact test
-to examine whether EXP sub-type is associated with pipeline stage,
-separately for GH ($n=263$) and KG ($n=429$).
-Both tests reveal a statistically significant association ($p<0.001$).
-This indicates that
-practitioners select different forms of exploratory feedback for different stages.
-
-Two type categories,
-INSPECT (46\%) and COMPUTE (31\%) dominate in GH notebooks,
-followed by STRUCT (15\%) and STATS (8\%).
-Stage distribution is spread across the pipeline,
-with EVAL (27\%), DATA (21\%), and PREP (20\%) as the largest hosts.
-
-INSPECT is the dominant Type in four of six stages,
-including DATA (57\%), MODEL (50\%), FEAT (46\%), and PREP (45\%),
-peaking at DATA (25.6\%) and EVAL (24.8\%). COMPUTE is sharply model-centric:
-62.2\% of its instances fall at TRAIN (20.7\%) and EVAL (41.5\%), and it leads the
-column composition at both stages (51.5\% of TRAIN, 47.2\% of EVAL). STRUCT runs
-opposite, with 70.0\% of instances in data-centric stages and a visible share at
-MODEL (25.0\% of the column). STATS concentrates at PREP (50.0\% of the row,
-18.9\% of the column) and contributes nothing to FEAT or TRAIN. Aggregating to
-pipeline phases yields a 62\% / 38\% data-centric / model-centric split overall,
-with INSPECT (59\% / 41\%), STRUCT (70\% / 30\%), and STATS (75\% / 25\%) leaning
-data-centric while COMPUTE inverts the pattern (34\% / 66\%). GH exploratory
-activity thus follows a compositional arc across the pipeline:
-inspection-dominant early stages give way to computation-dominant late stages,
-with STRUCT and STATS playing supporting data-side roles.
-
-EXP statements in Kaggle notebooks (N = 429). INSPECT leads at 42.4\% of the
-sample, followed by COMPUTE (24.0\%), STRUCT (20.0\%), and STATS (13.5\%). The
-Type marginal is flatter than GH, with noticeably higher shares of STRUCT and
-STATS. The Stage marginal is dramatically skewed: PREP alone holds 58.7\% of all
-KG exploratory statements, with EVAL (17.7\%), FEAT (11.9\%), DATA (6.8\%), TRAIN
-(4.7\%), and MODEL (0.2\%) trailing. All four Types peak at PREP, with the
-intensity of the peak varying: STATS 86.2\%, STRUCT 80.2\%, INSPECT 50.0\%,
-COMPUTE 40.8\%. INSPECT is the dominant Type in five of six stages, while TRAIN
-is the one stage where COMPUTE takes over (95.0\%, 19 of 20 observations).
-STRUCT and STATS are almost exclusively data-side: 98.8\% and 93.1\% of their
-instances respectively fall in data-centric stages. Aggregating to pipeline
-phases yields a 77\% / 23\% data-centric / model-centric split overall, with
-STRUCT (99\% / 1\%), STATS (93\% / 7\%), and INSPECT (75\% / 25\%) strongly
-data-leaning while COMPUTE is closer to even (54\% / 46\%). KG exploratory
-activity is structurally concentrated in data preparation, with all four Types
-peaking at PREP and model-side activity reduced to a narrow COMPUTE-led
-appendix at TRAIN and EVAL.
 
 \subsection{RQ3: Intent Taxonomy of Validation Statements}
 \label{sec:rq3}
