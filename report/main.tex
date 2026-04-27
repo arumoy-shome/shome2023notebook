@@ -368,13 +368,13 @@ EXP (n=692, 85\%) and VAL (n=123, 15\%).
 \begin{figure}
   \begin{subfigure}[t]{0.4\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{distribution-intent.pdf}
+    \includegraphics[width=\linewidth]{distribution-intent.pdf}
     \caption{Distribution of the intent (EXP vs.\ VAL) across GH and KG, normalized by source.}
     \label{fig:distribution-intent}
   \end{subfigure}
   \begin{subfigure}[t]{0.6\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{distribution-type.pdf}
+    \includegraphics[width=\linewidth]{distribution-type.pdf}
     \caption{Distribution of type across VAL and EXP, normalized by type.}
     \label{fig:distribution-type}
   \end{subfigure}
@@ -453,12 +453,15 @@ Notebook feedback is concentrated upstream of model training, not downstream.
 \begin{figure}
   \begin{subfigure}[t]{0.5\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{distribution-stage.pdf}
+    \includegraphics[width=\linewidth]{distribution-stage.pdf}
     \caption{Distribution of the pipeline stage of the feedback statements across GH and KG, normalized by source.}
     \label{fig:distribution-stage}
   \end{subfigure}
   \begin{subfigure}[t]{0.5\textwidth}
     \centering
+    \includegraphics[width=\linewidth]{distribution-stage-intent.pdf}
+    \caption{Distribution of intent across stages for GH statements, normalized by stage.}
+    \label{fig:distribution-stage-intent}
   \end{subfigure}
   \caption{\textcolor{red}{TODO}: think of a better caption.}
   % \label{fig:distribution-stage-all}
@@ -483,10 +486,21 @@ is a reflection of the competition format.
 It suggests that competition notebooks concentrage on data preparation pipelines,
 and typically consume pre-configured model APIs rather than defining model architectures.
 
-% Intent x Stage (within GH)
+% Intent x Stage (GH)
 
-We restrict to GH statements ($n=380$, excluding 2 UNC stage)
-and apply $\chi^2$ test to examine whether intent is associated with pipeline stage.
+We examine if the intent of statements is associated with the stage in which they occur.
+We stratify the analysis by source,
+since source is associated with both the intent and the stage of the statements,
+and thus acts as a confounding variable.
+For KG statements ($n=433$),
+we apply Fisher's exact test
+which reveals a statistically significant association ($p=0.009$, Cram\'er's $V=0.364$).
+While the test is valid under these conditions,
+there are however only 4 VAL statements in the data,
+which makes the effect size estimate unstable at such low counts.
+
+We therefore restrict further analysis to GH statements ($n=380$).
+We apply $\chi^2$ test to examine whether intent is associated with pipeline stage.
 The test reveals a statistically significant association ($\chi^2(5)=20.34$, $p=0.001$, Cram\'er's $V=0.231$).
 
 Figure~\ref{fig:distribution-stage-intent} shows that VAL share varies by stage.
@@ -496,8 +510,129 @@ DATA (76\%) and EVAL (77\%) are more exploratory.
 Practitioners validate when the code defines reusable structure (model definitions and training loops)
 and inspect when code is exploratory and data-facing (preprocessing and evaluation).
 
+% Type x Stage (GH)
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{distribution-stage-type.pdf}
+  \end{center}
+  \caption{\textcolor{red}{TODO:} Distribution of }\label{fig:distribution-stage-type}
+\end{figure}
+
+We restrict the type-stage analysis to GH for the same reason as RQ2.
+KG contains too few VAL statements to support inference,
+and KG's heavy concentration in PREP obscures within-stage type patterns.
+We report the GH distribution descriptively
+since the substantive question is which feedback types appear at which stages,
+not whether the two variables are statistically dependent.
+
+% EXP-Type x Stage on GH
+
+Within the GH EXP statements ($n=263$),
+INSPECT is the dominant exploratory type at every stage
+and accounts for 36\% to 57\% of EXP within each stage.
+Three patterns stand out for the remaining types.
+COMPUTE peaks in TRAIN (52\%) and EVAL (47\%),
+where practitioners compute losses, predictions, and metrics inline.
+STATS appears almost exclusively in PREP (19\%) and DATA (9\%)
+and is absent from FEAT and TRAIN.
+This matches the role of summary statistics in early data understanding.
+STRUCT is small but spread across DATA (20\%), FEAT (23\%), MODEL (25\%), and PREP (17\%),
+reflecting structural probing of inputs, engineered features, and model components.
+
+% VAL-Type x Stage on GH
+
+Within GH VAL statements ($n=117$), the picture differs.
+The choice of validation type is largely stage-agnostic.
+SHAPE is the modal validation type in four of the six stages
+(DATA, EVAL, MODEL, PREP)
+and accounts for 39\% to 55\% of VAL within those stages.
+EQ is modal in FEAT (50\%) and TRAIN (29\%)
+and appears at every stage.
+BOOL appears at every stage in small numbers (4\% to 26\%).
+The rarer types (APPROX, EXIST, TYPE) appear too few times
+to support stage-level claims,
+with the single exception of EXIST in TRAIN
+where four of the six EXIST statements occur.
+
+This pattern complements RQ2.
+Whether a statement is validation or exploration depends on stage,
+but within each intent the choice of feedback type does not.
+Practitioners pick exploratory types according to what each stage demands of them
+and pick validation types according to what each statement asserts about,
+not according to where in the pipeline the assertion appears.
+
 \subsection{RQ3: Intent Taxonomy of Validation Statements}
 \label{sec:rq3}
+
+\begin{table}
+  \centering
+  \caption{Intent taxonomy summary}\label{tab:taxonomy}
+  \begin{tabularx}{\textwidth}{l l X X X}
+    \toprule
+    \textbf{Intent} &
+    \textbf{Type} &
+    \textbf{Label} &
+    \textbf{Definition} &
+    \textbf{Example} \\
+    \multirow{6}{*}{VAL} &
+    EQ &
+    Value equality check &
+    Assert that a result equals a known correct value &
+    \lstinline{assert dataY[0] == 35} \newline
+    \lstinline{assert type in ['healthy', 'failed']} \newline
+    \lstinline{assert_frame_equal(...)} \\
+    & EXIST &
+    Check for existane of value &
+    Assert that checks if a value exists inside a dynamically generated collection in RHS &
+    \lstinline{assert i in sig.parameters.keys()} \\
+    & SHAPE &
+    Dimensionality check &
+    Assert tensor/array shape or length &
+    \lstinline{assert x.shape == means.shape} \newline
+    \lstinline{assert x.ndims > 1} \\
+    & TYPE &
+    Type check &
+    Assert object type or class membership &
+    \lstinline{assert type(embedding_layer) == Embedding} \\
+    & APPROX &
+    Approximate equality &
+    Assert numerical closeness within tolerance &
+    \lstinline{assert np.allclose(..., atol=0.001)} \newline
+    \lstinline{assert np.isclose} \newline
+    \lstinline{np.abs(...) < 0.001} \\
+    & BOOL &
+    Boolean invariant &
+    Assert a boolean condition holds &
+    \lstinline{assert bb2['y1'] < bb2['y2']} \\
+    \midrule
+    \multirow{4}{*}{EXP} &
+    INSPECT &
+    Object inspection &
+    Display an object as-is (no transformation applied) to visually verify its contents &
+    \lstinline{decoder_prediction} \newline
+    \lstinline{df.head()} \newline
+    \lstinline{sns.heatmap(...)} \\
+    & STATS &
+    Statistical summary &
+    Compute and display descriptive statistics or visualizations that provide statistical summaries &
+    \lstinline{kindel_reviews.summary_length.describe(...)} \newline
+    \lstinline{plt.hist(...)} \newline
+    \lstinline{df.describe()} \\
+    & STRUCT &
+    Structural probe &
+    Inspect shape, size, keys, columns and type metadata &
+    \lstinline{wv.vector_size} \newline
+    \lstinline{df.shape} \newline
+    \lstinline{df.columns} \\
+    & COMPUTE &
+    Exploratory computation &
+    Apply a function or transformation and inspect the result &
+    \lstinline{softmax(np.array[[1, 2, 3]]) - 1} \newline
+    \lstinline{.sort_values()} \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
 
 \subsubsection{VAL Subcodes}
 \label{sec:val-subcodes}
