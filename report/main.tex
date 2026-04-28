@@ -1202,6 +1202,146 @@ Read relevant literature on ML bugs, faults, failures and crashes. Wang 2025 has
 a nice table that summarizes prior work. And we are already citing the taxonomy
 presented by Morovati 2024.
 
+\subsection{Comparison With the Wang et al.\ Taxonomy}
+\label{sec:wang-comparison}
+
+Wang et al.~\cite{wang2025why} examined ML Jupyter notebooks
+collected from GitHub and Kaggle,
+and cataloged \emph{crashes}
+which halt execution and surface an exception in the cell output.
+In contrast,
+we catalog the statements practitioners write
+to gain confidence in code that has not yet crashed.
+While the Wang taxonomy identifies the failure mode,
+our taxonomy provides validation statements
+designed to pre-emptively catch such errors.
+The two taxonomies therefore provide complementary views,
+and their duality is summarized in Table~\ref{tab:wang-mapping}.
+
+We establish this mapping
+by checking if a VAL subcode
+maps to a crash type from Wang.
+This is done
+by checking if the assertion would either prevent the crash from occurring
+or surface an upstream defect
+that would otherwise to that crash type at a later stage.
+
+\begin{table}
+  \centering
+  \caption{Mapping of our VAL subcodes to Wang et al.~\cite{wang2025why} crash types.
+  Each row identifies the crash types that the corresponding VAL subcode is designed to pre-empt.}
+  \label{tab:wang-mapping}
+  \begin{tabularx}{\textwidth}{l X}
+    \toprule
+    \textbf{VAL subcode} & \textbf{Wang crash types pre-empted} \\
+    \midrule
+    SHAPE  & Tensor Shape Mismatch, Unsupported Broadcast, Feature Name Mismatch \\
+    EQ     & Data Value Violation, Invalid Argument, Model Initialization Error \\
+    BOOL   & Data Value Violation, Invalid Argument \\
+    EXIST  & Variable Not Found, Key Error \\
+    TYPE   & Type Error, Attribute Error \\
+    APPROX & (no direct counterpart) \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+VAL-SHAPE maps to three of the six ML-specific crash types Wang et al.\ identify.
+Wang et al.\ report that Tensor Shape Mismatch (5.5\%),
+Unsupported Broadcast (1.6\%),
+and Feature Name Mismatch (1.2\%)
+together account for 8.3\% of crashes in their sample.
+Our results are consistent with this finding
+since we find that
+VAL-SHAPE is the most prominent validation subcode (38.84\% of VAL).
+
+Wang et al.\ report that API misuse alone accounts for 66\% of Invalid Argument crashes
+and 31\% of Data Value Violation crashes.
+VAL-EQ and VAL-BOOL,
+both pre-empt these crashes that arise
+when downstream code receives semantically incorrect inputs.
+Architectural constraints (Listing~\ref{lst:4})
+pre-empt Model Initialization Error,
+while data quality checks (Listing~\ref{lst:54})
+pre-empt Data Value Violation crashes
+and directly mirror the data confusion root cause in the Wang taxonomy.
+
+Wang et al.\ attribute Variable Not Found crashes
+primarily to notebook-specific issues such as out-of-order execution,
+which a code-level assertion cannot prevent.
+However, a subset of these crashes
+arise from references to objects
+that should have been constructed earlier in the same cell
+or earlier in a logically ordered sequence of cells.
+VAL-EXIST statements that check for the presence of a key, attribute, or filename
+before the dependent operation runs
+catch this subset of Variable Not Found crashes
+and surface the missing dependency as an explicit assertion failure
+rather than a downstream cryptic error.
+
+Wang et al.\ report that 42\% of Type Error crashes
+are caused by API misuse
+and that 44\% of Attribute Error crashes
+share the same root cause.
+VAL-TYPE statements (e.g., \lstinline{assert type(embedding_layer) == Embedding})
+pre-empt these crashes
+by enforcing the type contract that the API expects.
+
+% \paragraph*{Coverage gaps in both directions}
+
+Wang et al.\ report
+Out of Memory, Module Not Found, IO Error, Environment Error, and Request Error crash types
+that together account for 28\% of crashes in the Wang sample.
+These crash types however are not captured by our taxonomy of validation statements
+because these crashes are not preventable through code-level assertions.
+In contrast,
+our taxonomy captures defensive practices
+that are invisible to a crash-based study.
+For instance,
+The training-serving skew detection theme within VAL-EQ (Listing~\ref{lst:118})
+catches a divergence that produces no crash signal at all.
+The data leakage prevention theme within VAL-EXIST (Listing~\ref{lst:84})
+catches a defect that inflates evaluation metrics
+without producing any error output.
+A study that examines only crashes cannot observe these practices
+because the practices exist precisely to prevent silent failures
+that never reach the cell output as an exception.
+The asymmetry suggests that the failure space of ML notebooks
+is wider than what crash analysis alone can capture.
+
+% \paragraph*{Convergence on data preparation}
+
+Despite the inverted lenses,
+the two studies converge on data preparation
+as the empirical centre of gravity
+in ML notebook development.
+Wang et al.\ measure where execution failes,
+and report that 33.0\% of crashes occur during data preparation.
+We measure where practitioners author feedback statements,
+and independently report
+that 40\% of feedback statements occur during the same stage.
+The convergence of these two independent studies,
+strongly suggests that data preparation stage
+demands the most attention and effort from pracitioners to handle crashes,
+and consequently the largest share of tooling investment.
+
+% \paragraph{Synthesis}
+
+The two taxonomies together provide a more complete picture
+of ML notebook development than either alone.
+Wang et al.\ answer \emph{what goes wrong and why}.
+Our taxonomy answers \emph{what practitioners check, and where}.
+A combined view supports two distinct tooling directions.
+The first is detection of patterns that already cause crashes,
+which the Wang taxonomy informs.
+The second is amplification of defensive practices that practitioners already author,
+which our taxonomy informs.
+The two directions are not in competition.
+A static analyser that recognises VAL-SHAPE patterns on GitHub notebooks
+and proposes equivalent assertions for Kaggle notebooks
+addresses both the prevention of Tensor Shape Mismatch crashes
+and the platform asymmetry in validation effort
+that our study and Wang et al.\ both observe.
+
 \section{Threats to Validity}
 
 One threat to validity is that the last cell statement and the output of the
