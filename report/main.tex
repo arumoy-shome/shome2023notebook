@@ -1577,30 +1577,32 @@ that our study and Wang et al.\ both observe.
 We discuss threats to the validity of our findings
 along three dimensions: external, internal, and construct.
 
-\subsection{External Validity}
+\paragraph*{External Validity}
 
-\paragraph*{Data selection bias.}
+\textbf{Data selection bias.}
 Our corpus consists of publicly shared notebooks from GitHub and Kaggle.
 This excludes notebooks that practitioners author privately
 and notebooks that are part of proprietary or industrial workflows.
 Validation practices in industrial ML notebooks may differ from public ones,
-particularly where production handoffs, code review,
-or compliance requirements introduce stricter validation discipline.
+particularly where production handoffs, code review, or compliance requirements
+introduce stricter validation discipline.
 Our findings therefore reflect the validation practices visible in public notebooks
 and may not generalise to industrial settings.
 A study of industrial ML prototype notebooks would be required
 to assess how far our findings extend.
 
-\paragraph*{Temporal scope.}
+\textbf{Temporal scope.}
 The GitHub data is collected through GitHub's code search on a single date in June 2023.
-The Kaggle data is drawn from KGTorrent.
+The Kaggle data is drawn from KGTorrent,
+% TODO: confirm these dates
+which was collected between November--December 2021.
 Notebook practices evolve as libraries, tooling, and platform features change.
 Patterns observed in our corpus may not reflect the most recent conventions.
 We mitigate this threat by collecting notebooks across a broad time window
 and by focusing on patterns rather than specific API usage.
 Replication on a more recent corpus is the appropriate way to test temporal stability.
 
-\paragraph*{Library scope.}
+\textbf{Library scope.}
 We restrict the corpus to notebooks that import at least one of four ML libraries:
 Scikit Learn, PyTorch, TensorFlow, or Keras.
 This excludes notebooks that use alternative ML libraries such as
@@ -1611,19 +1613,17 @@ which limits but does not eliminate the threat.
 The exclusion of Pandas, NumPy, and SciPy as standalone qualifiers is deliberate
 and is necessary to avoid conflating data science notebooks with ML notebooks.
 
-\paragraph*{Platform asymmetry.}
+\textbf{Platform asymmetry.}
 GitHub and Kaggle host different modes of ML work
 and produce qualitatively different feedback patterns.
 Findings derived from GitHub may not transfer to Kaggle and vice versa.
 We address this directly in the analysis by stratifying every test by source
 and reporting platform-level differences as substantive findings rather than confounders.
 Section~\ref{sec:platform-asymmetry} discusses the implications.
-Studies that aggregate the two sources without stratification
-risk obscuring the platform-level effects we identify.
 
 \subsection{Internal Validity}
 
-\paragraph*{Last-cell expression and output drift.}
+\textbf{Last-cell expression and output drift.}
 Our extraction of last-cell expressions assumes that the source code
 in the cell matches the output stored in the notebook.
 A practitioner who edits a cell after execution
@@ -1640,7 +1640,7 @@ regardless of whether the displayed output matches the current code.
 The threat is therefore confined to cases where the static intent itself is ambiguous,
 which the codebook resolution process is designed to handle.
 
-\paragraph*{Manual coding and inter-rater reliability.}
+\textbf{Manual coding and inter-rater reliability.}
 Our analysis depends on manual coding of feedback statements.
 Manual coding introduces subjectivity and the risk of inconsistent application of codes.
 We mitigate this through several measures.
@@ -1656,7 +1656,7 @@ Spot-checks during the analysis surface no systematic drift,
 but a complete double-coding of the corpus is the most rigorous remedy
 and is left to future replication work.
 
-\paragraph*{Codebook saturation.}
+\textbf{Codebook saturation.}
 Saturation is reached when no new codes are introduced
 across two consecutive iterations of the codebook.
 We meet this criterion within three iterations.
@@ -1668,7 +1668,7 @@ by ensuring that each high-density semantic cluster contributes at least one sta
 The residual stratum of merged small clusters bounds the effect to clusters
 that individually account for fewer than 1\% of the population.
 
-\paragraph*{Primary intent rule for compound assertions.}
+\textbf{Primary intent rule for compound assertions.}
 Some assertions chain multiple checks within a single statement
 (e.g., a length check combined with an element-wise type check).
 We adopt the primary intent rule
@@ -1678,7 +1678,7 @@ and may under-count secondary types within compound statements.
 The effect is small in practice
 because compound assertions account for fewer than 5\% of the corpus.
 
-\paragraph*{Stage assignment.}
+\textbf{Stage assignment.}
 Pipeline stage is assigned by tracing the role of the statement
 in the surrounding cell and notebook context.
 Assignment is unambiguous in most cases
@@ -1689,9 +1689,9 @@ with priority given to the most upstream stage when the construct spans several.
 Two statements (0.25\% of the corpus) are coded as UNC because no rule could be applied.
 The small share of UNC statements indicates that the rule is broadly applicable.
 
-\subsection{Construct Validity}
+\paragraph*{Construct Validity}
 
-\paragraph*{Operationalisation of feedback.}
+\textbf{Operationalisation of feedback.}
 We operationalise feedback as the union of assertion statements and last-cell expressions
 that produce visible output.
 This excludes feedback delivered through other channels
@@ -1706,7 +1706,7 @@ who prefer print-based or log-based feedback.
 We do not claim that our corpus exhausts the space of feedback in ML notebooks.
 We claim that it captures the two dominant idioms.
 
-\paragraph*{Cluster structure and sample composition.}
+\textbf{Cluster structure and sample composition.}
 We cluster statements using semantic embeddings from CodeBERT
 and use the resulting clusters as strata for proportional sampling.
 The validity of this construction rests on the assumption
@@ -1723,7 +1723,7 @@ independently of the cluster it came from.
 The clustering serves only as a sampling device to ensure diversity
 and not as a classifier.
 
-\paragraph*{Mapping to the Wang taxonomy.}
+\textbf{Mapping to the Wang taxonomy.}
 The mapping in Section~\ref{sec:wang-comparison}
 is established on functional grounds
 by judging whether an assertion would prevent or surface a given crash type.
