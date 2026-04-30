@@ -123,59 +123,76 @@ clean and preprocess it,
 build candidate models,
 evaluate them,
 revise feature engineering choices,
-and repeat the cycle until the model satisfies the target
-criteria~\cite{haakman2021ai,amershi2019software,sculley2015hidden}.
-Each cycle is driven by feedback.
-The CRISP-DM process model and Agile software engineering principles
-both emphasise short feedback loops
-and frequent revision in response to what each cycle
-reveals~\cite{betz2018managing,martinez-plumed2021crisp-dm}.
+and repeat the cycle until the model
+satisfies the target criteria~\cite{haakman2021ai,amershi2019software,sculley2015hidden}.
+Each cycle is driven by feedback,
+closely resembling prominent development processes,
+such as Agile~\cite{betz2018managing} and CRISP-DM~\cite{martinez-plumed2021crisp-dm},
+that advocate for short feedback loops
+and frequent revision in response to what each cycle reveals.
 
-Jupyter notebooks have become the dominant medium for this work.
-The notebook environment supports
-a read-eval-print loop style of development
-in which practitioners write a small unit of code,
+Jupyter notebooks have become the dominent medium for developing ML prototypes
+since they support a feedback-driven workflow
+through a read-eval-print loop style of development.
+Practitioners write a small unit of code within a \emph{cell},
 execute it,
 read the result,
 and decide what to do next~\cite{pimentel2019large-scale,quaranta2021kgtorrent,psallidas2019data,perkel2018why}.
-The output of each cell is the unit of feedback.
-Practitioners read it,
-interpret it,
-and either continue or revise.
-The notebook structure makes this feedback continuous and visible.
-Each executed cell leaves an output that the practitioner can
-inspect~\cite{kery2018story,rule2018exploration,chattopadhyay2020whats}.
+The output of each cell is a unit of feedback,
+that is made visible by the notebook structure.
 
-We define a \emph{feedback mechanism}
+We define a \emph{feedback statement}
 as a statement that the practitioner intentionally adds to the code
 to obtain information about the program's execution.
-This includes statements that display values for the practitioner to interpret
-and statements that enforce a condition programmatically.
-The first kind is exploratory.
-The practitioner reads the output and judges whether the program is behaving correctly.
-The second kind is validation.
-The condition is encoded in the statement,
+This includes
+\textbf{(1)} exploratory statements (EXP)
+that display values for the practitioner to interpret
+and \textbf{(2)} validation statements (VAL)
+that enforce a condition programmatically.
+The former kind of feedback,
+is obtained from the last statement in a code cell,
+whose value is displayed beneath the cell when it executes.
+The practitioner reads the output
+and judges whether the program is behaving correctly.
+This is the primary mode of exploratory programming,
+that prior studies identify
+as central to data science work
+in Jupyter notebooks~\cite{kery2018story,rule2018exploration}.
+In the latter,
+the condition is encoded in the statement,
 and a violation halts execution with an explicit signal.
-Both kinds of feedback are intentional.
-A bug that produces an error message is feedback in a colloquial sense
+This form of feedback
+is obtained from \lstinline{assert} statements,
+used by practitioners to validate assumptions regarding a piece of code.
+Pimentel et al.~\cite{pimentel2019large-scale} report
+that unit tests are virtually absent from Jupyter notebooks.
+We therefore study assertions directly
+rather than the unit test functions that contain them.
+% TODO: is this clarification necessary?
+Note that
+both forms of feedback are intentional.
+A bug that produces an error message also provides feedback,
 but does not satisfy our definition
 because the practitioner did not author the bug to obtain feedback.
 
-Existing empirical work on ML notebooks has examined what happens when feedback fails.
-Wang et al.~\cite{wang2025why} catalogue crashes
-that surface as exceptions in the cell output.
-De Santana et al.~\cite{desantana2024bug} classify general bugs in Jupyter notebooks.
-Both studies look at the points at which execution halts.
-Neither study characterises what practitioners check
-when execution does not halt.
-This is the gap our study addresses.
-Feedback mechanisms encode the practitioner's mental model
+Feedback statements encode the practitioner's mental model
 of what the code should be doing
 and what could go wrong.
-A statement that displays the shape of a tensor after a transformation
+For example,
+a statement that displays the shape of a tensor after a transformation
 encodes the expectation that the transformation should preserve some dimension.
+Similarly,
 A statement that asserts the absence of missing values before feature selection
 encodes a precondition for the next step.
+Existing empirical work on ML notebooks
+has examined points where the execution halts
+by analyzing crashes~\cite{wang2025why} and bugs~\cite{desantana2024bug}
+that occur within Jupyter notebooks.
+In contrast,
+this study explores
+what practitioners check
+when execution does not halt.
+We do this to complement prior crash-based studies.
 Crash-based studies cannot observe these statements
 because they exist precisely to prevent crashes
 or to confirm that no crash has occurred.
