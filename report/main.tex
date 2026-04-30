@@ -115,16 +115,139 @@
 \begin{abstract}
 \end{abstract}
 
-
 \section{Introduction}
 
+Machine learning development is iterative and exploratory.
+Practitioners assemble data from heterogeneous sources,
+clean and preprocess it,
+build candidate models,
+evaluate them,
+revise feature engineering choices,
+and repeat the cycle until the model satisfies the target
+criteria~\cite{haakman2021ai,amershi2019software,sculley2015hidden}.
+Each cycle is driven by feedback.
+The CRISP-DM process model and Agile software engineering principles
+both emphasise short feedback loops
+and frequent revision in response to what each cycle
+reveals~\cite{betz2018managing,martinez-plumed2021crisp-dm}.
+
+Jupyter notebooks have become the dominant medium for this work.
+The notebook environment supports
+a read-eval-print loop style of development
+in which practitioners write a small unit of code,
+execute it,
+read the result,
+and decide what to do next~\cite{pimentel2019large-scale,quaranta2021kgtorrent,psallidas2019data,perkel2018why}.
+The output of each cell is the unit of feedback.
+Practitioners read it,
+interpret it,
+and either continue or revise.
+The notebook structure makes this feedback continuous and visible.
+Each executed cell leaves an output that the practitioner can
+inspect~\cite{kery2018story,rule2018exploration,chattopadhyay2020whats}.
+
+We define a \emph{feedback mechanism}
+as a statement that the practitioner intentionally adds to the code
+to obtain information about the program's execution.
+This includes statements that display values for the practitioner to interpret
+and statements that enforce a condition programmatically.
+The first kind is exploratory.
+The practitioner reads the output and judges whether the program is behaving correctly.
+The second kind is validation.
+The condition is encoded in the statement,
+and a violation halts execution with an explicit signal.
+Both kinds of feedback are intentional.
+A bug that produces an error message is feedback in a colloquial sense
+but does not satisfy our definition
+because the practitioner did not author the bug to obtain feedback.
+
+Existing empirical work on ML notebooks has examined what happens when feedback fails.
+Wang et al.~\cite{wang2025why} catalogue crashes
+that surface as exceptions in the cell output.
+De Santana et al.~\cite{desantana2024bug} classify general bugs in Jupyter notebooks.
+Both studies look at the points at which execution halts.
+Neither study characterises what practitioners check
+when execution does not halt.
+This is the gap our study addresses.
+Feedback mechanisms encode the practitioner's mental model
+of what the code should be doing
+and what could go wrong.
+A statement that displays the shape of a tensor after a transformation
+encodes the expectation that the transformation should preserve some dimension.
+A statement that asserts the absence of missing values before feature selection
+encodes a precondition for the next step.
+Crash-based studies cannot observe these statements
+because they exist precisely to prevent crashes
+or to confirm that no crash has occurred.
+A complete picture of ML notebook development requires both lenses.
+
+We mine 297,851 publicly available Python Jupyter notebooks
+from GitHub and Kaggle,
+filter to 195,575 ML notebooks,
+and extract 1,092,780 feedback statements
+through abstract syntax tree analysis.
+We sample 815 statements using proportional stratified sampling
+over semantic clusters obtained from CodeBERT embeddings.
+We code each statement along two dimensions
+through grounded theory and open coding:
+\emph{intent}, which captures what the practitioner is trying to learn or confirm,
+and \emph{pipeline stage}, which captures where in the ML workflow the statement appears.
+The intent dimension distinguishes exploratory feedback (EXP)
+from formal validation (VAL),
+each with its own set of subcodes.
+The pipeline stage dimension follows the standard ML workflow
+from data ingestion through evaluation.
+
+We answer three research questions.
+
+\begin{description}
+  \item[RQ1.] \emph{What feedback mechanisms do practitioners use in ML notebooks,
+    and how do they vary by platform?}
+  \item[RQ2.] \emph{Where in the ML pipeline do practitioners author feedback statements?}
+  \item[RQ3.] \emph{What does the practitioner intend to learn or confirm
+    from each feedback statement?}
+\end{description}
+
+Three findings stand out.
+First, feedback in ML notebooks is overwhelmingly exploratory.
+Exploratory statements account for 85\% of the corpus.
+Formal assertions account for the remaining 15\%
+and are concentrated almost entirely on GitHub.
+Of 123 validation statements in the sample,
+119 occur in GitHub notebooks and four in Kaggle notebooks.
+The platform asymmetry is large and statistically significant.
+Second, the two platforms host qualitatively different modes of ML work.
+Kaggle notebooks concentrate 58\% of feedback in the data preparation stage
+and contain almost no model construction code.
+GitHub notebooks distribute feedback across data ingestion,
+model construction, training, and evaluation.
+Treating the two platforms as a single population
+obscures effects that are visible only at the platform level.
+Third, both our study and the Wang et al.\ crash study
+identify data preparation as the empirical centre of gravity in ML notebook development.
+Wang et al.\ report that 33\% of crashes occur in data preparation.
+We report that 40\% of feedback statements occur in the same stage.
+Two studies with inverted lenses arrive at the same conclusion
+about where practitioner attention concentrates.
+
 The contributions of this paper are:
+
 \begin{enumerate}
-  \item Dataset of validation methods used in ML Jupyter Notebooks,
-  collected from GitHub and Kaggle.
-  \item A taxonomy of the validation methods
-  \item Mapping of our taxonomy with the taxonomy proposed by Wang 2025
-  on ML Jupyter notebook bugs and crashes.
+  \item A two-dimensional taxonomy of feedback mechanisms in ML Jupyter notebooks,
+    coding 815 statements along intent and pipeline stage,
+    derived through grounded theory open coding with inter-rater agreement validation.
+  \item An empirical characterisation of platform-level differences
+    between GitHub and Kaggle in feedback practice,
+    showing that source acts as a confounder for any cross-platform analysis
+    and motivating source stratification as a default analytic choice.
+  \item A mapping between our validation taxonomy
+    and the Wang et al.~\cite{wang2025why} crash taxonomy
+    that establishes the duality between defensive practice and observed failure
+    and identifies regions of the failure space
+    that crash analysis alone cannot capture.
+  \item A publicly available dataset of feedback statements
+    coded along both dimensions of the taxonomy,
+    suitable for replication and for downstream tooling research.
 \end{enumerate}
 
 \section{Methodology}
@@ -1449,13 +1572,169 @@ and the platform asymmetry in validation effort
 that our study and Wang et al.\ both observe.
 
 \section{Threats to Validity}
+\label{sec:threats}
 
-One threat to validity is that the last cell statement and the output of the
-cell may not match or be in sync if say the code in the cell was updated but
-never executed.
-I wonder if Wang 2025 address this, especially because they looked at error
-messages and linked them to the root cause.
+We discuss threats to the validity of our findings
+along three dimensions: external, internal, and construct.
 
+\subsection{External Validity}
+
+\paragraph*{Data selection bias.}
+Our corpus consists of publicly shared notebooks from GitHub and Kaggle.
+This excludes notebooks that practitioners author privately
+and notebooks that are part of proprietary or industrial workflows.
+Validation practices in industrial ML notebooks may differ from public ones,
+particularly where production handoffs, code review,
+or compliance requirements introduce stricter validation discipline.
+Our findings therefore reflect the validation practices visible in public notebooks
+and may not generalise to industrial settings.
+A study of industrial ML prototype notebooks would be required
+to assess how far our findings extend.
+
+\paragraph*{Temporal scope.}
+The GitHub data is collected through GitHub's code search on a single date in June 2023.
+The Kaggle data is drawn from KGTorrent.
+Notebook practices evolve as libraries, tooling, and platform features change.
+Patterns observed in our corpus may not reflect the most recent conventions.
+We mitigate this threat by collecting notebooks across a broad time window
+and by focusing on patterns rather than specific API usage.
+Replication on a more recent corpus is the appropriate way to test temporal stability.
+
+\paragraph*{Library scope.}
+We restrict the corpus to notebooks that import at least one of four ML libraries:
+Scikit Learn, PyTorch, TensorFlow, or Keras.
+This excludes notebooks that use alternative ML libraries such as
+JAX, XGBoost, or LightGBM as their primary modelling tool.
+Prior work~\cite{psallidas2019data} examined six million GitHub Jupyter notebooks
+and confirmed that most ML notebooks use the four libraries we include,
+which limits but does not eliminate the threat.
+The exclusion of Pandas, NumPy, and SciPy as standalone qualifiers is deliberate
+and is necessary to avoid conflating data science notebooks with ML notebooks.
+
+\paragraph*{Platform asymmetry.}
+GitHub and Kaggle host different modes of ML work
+and produce qualitatively different feedback patterns.
+Findings derived from GitHub may not transfer to Kaggle and vice versa.
+We address this directly in the analysis by stratifying every test by source
+and reporting platform-level differences as substantive findings rather than confounders.
+Section~\ref{sec:platform-asymmetry} discusses the implications.
+Studies that aggregate the two sources without stratification
+risk obscuring the platform-level effects we identify.
+
+\subsection{Internal Validity}
+
+\paragraph*{Last-cell expression and output drift.}
+Our extraction of last-cell expressions assumes that the source code
+in the cell matches the output stored in the notebook.
+A practitioner who edits a cell after execution
+without re-running it leaves the cell in an inconsistent state.
+The expression we extract may then differ from the expression that produced the output.
+This is a structural property of the notebook format.
+Wang et al.~\cite{wang2025why} face the same threat
+when linking error messages to root causes.
+We mitigate the threat by analysing the static intent of the expression
+rather than its runtime value.
+Our taxonomy is anchored in what the practitioner authored, not what was last executed.
+A statement coded as EXP-STRUCT remains a structural probe
+regardless of whether the displayed output matches the current code.
+The threat is therefore confined to cases where the static intent itself is ambiguous,
+which the codebook resolution process is designed to handle.
+
+\paragraph*{Manual coding and inter-rater reliability.}
+Our analysis depends on manual coding of feedback statements.
+Manual coding introduces subjectivity and the risk of inconsistent application of codes.
+We mitigate this through several measures.
+Two researchers independently code an initial seed of 50 statements
+and iterate on the codebook until consensus is reached on the definition of each code.
+The codebook is then validated on a fresh set of 50 statements
+and Cohen's kappa is reported as a measure of inter-rater agreement (Section~\ref{sec:rq3}).
+% TODO: insert actual kappa value when available
+The remaining statements are coded by a single researcher after stabilisation.
+A residual risk remains for statements coded after the kappa measurement,
+since these statements are not double-coded.
+Spot-checks during the analysis surface no systematic drift,
+but a complete double-coding of the corpus is the most rigorous remedy
+and is left to future replication work.
+
+\paragraph*{Codebook saturation.}
+Saturation is reached when no new codes are introduced
+across two consecutive iterations of the codebook.
+We meet this criterion within three iterations.
+Saturation is a property of the sample, not the population.
+It is possible that rare patterns exist in the broader population
+that our sample does not surface.
+The proportional stratified sampling design (Section~\ref{sec:sampling}) is intended to mitigate this threat
+by ensuring that each high-density semantic cluster contributes at least one statement to the sample.
+The residual stratum of merged small clusters bounds the effect to clusters
+that individually account for fewer than 1\% of the population.
+
+\paragraph*{Primary intent rule for compound assertions.}
+Some assertions chain multiple checks within a single statement
+(e.g., a length check combined with an element-wise type check).
+We adopt the primary intent rule
+and code each compound assertion under the dominant check.
+This compresses the type distribution slightly toward the dominant types
+and may under-count secondary types within compound statements.
+The effect is small in practice
+because compound assertions account for fewer than 5\% of the corpus.
+
+\paragraph*{Stage assignment.}
+Pipeline stage is assigned by tracing the role of the statement
+in the surrounding cell and notebook context.
+Assignment is unambiguous in most cases
+but can be uncertain when a single cell contains code spanning multiple stages.
+We resolve such cases through the codebook rule
+that assigns a statement to the stage of the construct it operates on,
+with priority given to the most upstream stage when the construct spans several.
+Two statements (0.25\% of the corpus) are coded as UNC because no rule could be applied.
+The small share of UNC statements indicates that the rule is broadly applicable.
+
+\subsection{Construct Validity}
+
+\paragraph*{Operationalisation of feedback.}
+We operationalise feedback as the union of assertion statements and last-cell expressions
+that produce visible output.
+This excludes feedback delivered through other channels
+such as inline print statements that are not in the last position,
+logging calls,
+and visualisations rendered through magic commands.
+The choice is grounded in practitioner workflow.
+Last-cell expressions are the canonical idiom for inspecting state in Jupyter
+and assertions are the canonical idiom for enforcing invariants.
+The operationalisation may nevertheless under-represent practitioners
+who prefer print-based or log-based feedback.
+We do not claim that our corpus exhausts the space of feedback in ML notebooks.
+We claim that it captures the two dominant idioms.
+
+\paragraph*{Cluster structure and sample composition.}
+We cluster statements using semantic embeddings from CodeBERT
+and use the resulting clusters as strata for proportional sampling.
+The validity of this construction rests on the assumption
+that semantic similarity in the embedding space
+corresponds to similarity in feedback intent.
+The assumption is approximate.
+Two statements with identical surface form but different intent
+may end up in the same cluster.
+Two statements with the same intent but different surface form
+may end up in different clusters.
+We mitigate this threat at the analysis stage rather than the clustering stage.
+Manual coding determines the intent of each sampled statement
+independently of the cluster it came from.
+The clustering serves only as a sampling device to ensure diversity
+and not as a classifier.
+
+\paragraph*{Mapping to the Wang taxonomy.}
+The mapping in Section~\ref{sec:wang-comparison}
+is established on functional grounds
+by judging whether an assertion would prevent or surface a given crash type.
+The judgement is informed by the Wang root cause analysis
+but is itself a construction of this study.
+Different judgements are possible at the boundaries,
+particularly for the VAL-EXIST to Variable Not Found mapping
+which depends on whether the missing reference is a within-cell defect
+or a notebook-semantic defect.
+We document the mapping rule explicitly
+to allow replication and disagreement.
 \bibliography{bibliography}
 
 \end{document}
