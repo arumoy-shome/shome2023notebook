@@ -1352,19 +1352,17 @@ where formal assertions account for fewer than one in a hundred feedback stateme
 The dominant feedback mode in ML notebook development
 is therefore visual confirmation, not assertion-based validation.
 
-% TODO: link to tools/prior work that flag poor code quality in NBs based on lack of tests
-% Pimentel's work comes to mind.
-Consequently,
-static analysers and quality checkers
-that operate on \lstinline{assert} statements
-will miss misses the practitioner's actual feedback practice
-which are encoded in print statements, last-cell expressions, and visualization calls.
-Our findings indicate that
-in addition to assertion-based tooling,
-exploratory feedback should be considered as an additional signal
-to cover a much larger surface area.
+Breck et al.~\cite{breck2017ml} argue
+that training data deserves the same testing discipline as production code,
+and propose a rubric for assessing the readiness of an ML pipeline.
+The same authors later introduce \emph{TensorFlow Data Validation}~\cite{breck2019data},
+a tool that validates each batch of data against a declared schema.
+Data validation libraries such as TFDV and Great Expectations
+require practitioners to author the schema as a separate artefact.
+Our results indicate that
+practitioners already author the same checks in their notebooks,
+but in an exploratory rather than declarative form.
 
-% TODO: better to ground this to existing data validation libraries like great expectations
 We see two concrete directions for tool developers
 that amplify what practitioners already do.
 First,
@@ -1374,6 +1372,7 @@ serve as informal post-condition checkpoints after data transformations.
 A static analyser can detect these statements,
 record the values they produce on a successful run,
 and propose a corresponding shape assertion.
+or a shape constraint in a data schema.
 The taxonomy proposed in Section~\ref{sec:rq3}
 can be used to identify candidate assertions
 that were authored by practitioners as structural probes.
@@ -1383,7 +1382,9 @@ EXP-STATS calls to \lstinline{.describe()}
 that follow a scaling or imputation step
 encode an expected post-condition (e.g., mean near zero, no missing values).
 A tool can extract these expectations from the visible output
-and emit an explicit precondition for the next cell.
+and emit an explicit precondition for the next cell,
+or contribute the same expectation
+to a Great Expectations suite attached to the notebook.
 
 \highlight{\textbf{Takeaway 1.}
 ML notebook feedback is predominantly visual, not programmatic.
@@ -1398,9 +1399,10 @@ Within the EXP-COMPUTE category,
 practitioners author boolean expressions in the last cell of a code block
 that are structurally exploratory
 but functionally equivalent to assertions.
+For instance,
 Listing~\ref{lst:480} verifies that no rows were lost during a transformation.
 Similarly,
-\lstinline{pd.Series(options_short_list).isin(dummies.columns).all()}
+the statement \lstinline{pd.Series(options_short_list).isin(dummies.columns).all()}
 verifies that all expected columns are present after one-hot encoding.
 Since neither expression is wrapped in an \lstinline{assert},
 a False result is visible in the cell output
@@ -1418,6 +1420,35 @@ that identifies last-cell expressions
 whose root AST node is a comparison or boolean operation.
 The tool can record the expression's value across executions of the notebook,
 and surface candidates whose value is consistently True.
+
+Since these statements produces visible output but does not halt execution,
+downstream cells in the notebook
+continue to run on data
+that violates an assumption
+the practitioner authored and enforced manually.
+The decision to proceed despite the violation
+is therefore implicit and undocumented,
+and accumulates as technical debt
+as data, personnel, and execution environments change
+over the lifetime of the notebook~\cite{sculley2015hidden,sambasivan2021everyone,pimentel2019large-scale}.
+Promoting the same expression to an \lstinline{assert}
+makes the assumption explicit
+and turns an undocumented decision into a checked invariant.
+
+The promotion also addresses a reproducibility threat
+that is specific to the notebook format.
+Notebook cells can execute in any order,
+and an out-of-order execution
+can leave the kernel in a state
+that does not reflect the source code~\cite{wang2020assessing,pimentel2019large-scale}.
+A last-cell boolean expression
+evaluates against the kernel state at the moment of execution
+but does not offer protection against a later out-of-order run.
+An \lstinline{assert} authored at the same point
+fires every time the cell is re-executed,
+regardless of the order in which surrounding cells were run.
+% TODO: how does this help? I think the point is to prevent silent data
+% quality corrosion.
 
 \highlight{\textbf{Takeaway 2.}
 Practitioners author validation logic in the form of last-cell boolean expressions
