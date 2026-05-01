@@ -1457,7 +1457,7 @@ Static analysers can detect these expressions
 and propose their promotion to formal assertions
 without changing practitioner intent.}
 
-\subsubsection{Platform asymmetry and the limits of single-source studies}
+\subsubsection{Platform asymmetry}
 \label{sec:platform-asymmetry}
 
 The two platforms in our study host two qualitatively different modes of ML work.
@@ -1469,7 +1469,6 @@ The MODEL stage is almost entirely absent on Kaggle (0.5\%).
 Validation effort follows the same asymmetry,
 as GitHub contains 119 of the 123 VAL statements in our corpus.
 
-% TODO: contradicts our finding that KG notebooks concentrate feedback in data prep stage.
 Kaggle competition workflows operate primarily on data exploration,
 and delegate evaluation of the model to the platform leaderboard.
 GitHub on the other hand, hosts a broader range of activities that spans the entire ML development lifecycle.
@@ -1675,121 +1674,135 @@ GitHub and Kaggle host different modes of ML work
 and produce qualitatively different feedback patterns.
 Findings derived from GitHub may not transfer to Kaggle and vice versa.
 We address this directly in the analysis by stratifying every test by source
-and reporting platform-level differences as substantive findings rather than confounders.
-Section~\ref{sec:platform-asymmetry} discusses the implications.
+and reporting platform-level differences.
 
-\subsection{Internal Validity}
+\paragraph*{Internal Validity}
 
 \textbf{Last-cell expression and output drift.}
-Our extraction of last-cell expressions assumes that the source code
-in the cell matches the output stored in the notebook.
-A practitioner who edits a cell after execution
-without re-running it leaves the cell in an inconsistent state.
-The expression we extract may then differ from the expression that produced the output.
-This is a structural property of the notebook format.
-Wang et al.~\cite{wang2025why} face the same threat
-when linking error messages to root causes.
-We mitigate the threat by analysing the static intent of the expression
+Our extraction of last-cell expressions
+assumes that the source code in the cell matches the output stored in the notebook.
+A practitioner who edits a cell after execution,
+without re-running it,
+leaves the cell in an inconsistent state.
+The expression we extract
+can then differ
+from the expression that produced the output.
+We mitigate this threat
+by analysing the static intent of the expression
 rather than its runtime value.
-Our taxonomy is anchored in what the practitioner authored, not what was last executed.
-A statement coded as EXP-STRUCT remains a structural probe
+Our taxonomy is thus anchored in what the practitioner authored,
+not what was last executed.
+For instance,
+a statement coded as EXP-STRUCT
+remains a structural probe
 regardless of whether the displayed output matches the current code.
-The threat is therefore confined to cases where the static intent itself is ambiguous,
+The threat is therefore confined
+to cases where the static intent itself is ambiguous,
 which the codebook resolution process is designed to handle.
 
 \textbf{Manual coding and inter-rater reliability.}
-Our analysis depends on manual coding of feedback statements.
-Manual coding introduces subjectivity and the risk of inconsistent application of codes.
+Our analysis depends on manual coding of feedback statements,
+which introduces subjectivity,
+and the risk of inconsistent application of codes.
 We mitigate this through several measures.
 Two researchers independently code an initial seed of 50 statements
-and iterate on the codebook until consensus is reached on the definition of each code.
+and Cohen's kappa is reported as a measure of inter-rater agreement.
 The codebook is then validated on a fresh set of 50 statements
-and Cohen's kappa is reported as a measure of inter-rater agreement (Section~\ref{sec:rq3}).
-% TODO: insert actual kappa value when available
-The remaining statements are coded by a single researcher after stabilisation.
-A residual risk remains for statements coded after the kappa measurement,
-since these statements are not double-coded.
+and further iterations are performed
+until consensus is reached on the definition of each code.
+The remaining statements
+are coded by a single researcher after stabilization,
+which carry a residual risk,
+since these statements are not coded by both researchers.
+% TODO: validate coding with the clusters
 Spot-checks during the analysis surface no systematic drift,
 but a complete double-coding of the corpus is the most rigorous remedy
 and is left to future replication work.
 
+%TODO: the last sentence is overly complex, needs simplification
 \textbf{Codebook saturation.}
-Saturation is reached when no new codes are introduced
+Saturation is reached
+when no new codes are introduced
 across two consecutive iterations of the codebook.
 We meet this criterion within three iterations.
-Saturation is a property of the sample, not the population.
-It is possible that rare patterns exist in the broader population
+However,
+saturation is a property of the sample,
+not the population.
+Therefore,
+it is possible that rare patterns exist in the broader population
 that our sample does not surface.
-The proportional stratified sampling design (Section~\ref{sec:sampling}) is intended to mitigate this threat
+The proportional stratified sampling design (Section~\ref{sec:sampling})
+is intended to mitigate this threat
 by ensuring that each high-density semantic cluster contributes at least one statement to the sample.
 The residual stratum of merged small clusters bounds the effect to clusters
 that individually account for fewer than 1\% of the population.
 
 \textbf{Primary intent rule for compound assertions.}
 Some assertions chain multiple checks within a single statement
-(e.g., a length check combined with an element-wise type check).
+(e.g., \lstinline{assert len(top_negative_words) == 25 and [isinstance(w, str) for w in top_negative_words]}
+which combines a length check with an element-wise type check).
 We adopt the primary intent rule
 and code each compound assertion under the dominant check.
-This compresses the type distribution slightly toward the dominant types
-and may under-count secondary types within compound statements.
-The effect is small in practice
-because compound assertions account for fewer than 5\% of the corpus.
+This compresses the type distribution toward the dominant types
+and may under represent secondary types within compound statements.
+The effect is small in practice however,
+as compound assertions account for fewer than 5\% of the corpus.
 
 \textbf{Stage assignment.}
-Pipeline stage is assigned by tracing the role of the statement
+Pipeline stage is assigned
+by tracing the role of the statement
 in the surrounding cell and notebook context.
 Assignment is unambiguous in most cases
-but can be uncertain when a single cell contains code spanning multiple stages.
+but can be uncertain
+when a single cell contains code spanning multiple stages.
 We resolve such cases through the codebook rule
-that assigns a statement to the stage of the construct it operates on,
-with priority given to the most upstream stage when the construct spans several.
+that assigns a statement
+to the stage of the construct it operates on,
+and give priority to the most upstream stage
+when the construct spans several.
 Two statements (0.25\% of the corpus) are coded as UNC because no rule could be applied.
-The small share of UNC statements indicates that the rule is broadly applicable.
+The small share of UNC statements
+indicates that the rule is broadly applicable.
 
 \paragraph*{Construct Validity}
 
-\textbf{Operationalisation of feedback.}
-We operationalise feedback as the union of assertion statements and last-cell expressions
-that produce visible output.
+\textbf{Definition of feedback.}
+We define feedback
+as a combination of assertion statements,
+and last-cell expressions that produce visible output.
 This excludes feedback delivered through other channels
 such as inline print statements that are not in the last position,
 logging calls,
-and visualisations rendered through magic commands.
-The choice is grounded in practitioner workflow.
-Last-cell expressions are the canonical idiom for inspecting state in Jupyter
+and visualisations rendered through magic commands~\footnote{Built-in
+magic commands in IPython: https://ipython.readthedocs.io/en/stable/interactive/magics.html}.
+Our choice is grounded in the practitioner workflow,
+since last-cell expressions are the canonical idiom for inspecting state in Jupyter
 and assertions are the canonical idiom for enforcing invariants.
-The operationalisation may nevertheless under-represent practitioners
+This scope may nevertheless under-represent practitioners
 who prefer print-based or log-based feedback.
-We do not claim that our corpus exhausts the space of feedback in ML notebooks.
-We claim that it captures the two dominant idioms.
+Our corpus does not exhaust the space of feedback in ML notebooks,
+but it captures the two dominant idioms.
 
 \textbf{Cluster structure and sample composition.}
 We cluster statements using semantic embeddings from CodeBERT
 and use the resulting clusters as strata for proportional sampling.
-The validity of this construction rests on the assumption
-that semantic similarity in the embedding space
-corresponds to similarity in feedback intent.
-The assumption is approximate.
-Two statements with identical surface form but different intent
-may end up in the same cluster.
-Two statements with the same intent but different surface form
-may end up in different clusters.
-We mitigate this threat at the analysis stage rather than the clustering stage.
-Manual coding determines the intent of each sampled statement
+The clustering serves only as a sampling device to ensure diversity.
+Classification is done through manual coding,
+that determines the intent of each sampled statement,
 independently of the cluster it came from.
-The clustering serves only as a sampling device to ensure diversity
-and not as a classifier.
 
 \textbf{Mapping to the Wang taxonomy.}
 The mapping in Section~\ref{sec:wang-comparison}
-is established on functional grounds
-by judging whether an assertion would prevent or surface a given crash type.
+is established on functional grounds,
+by judging whether an assertion would prevent
+or surface a given crash type.
 The judgement is informed by the Wang root cause analysis
 but is itself a construction of this study.
 Different judgements are possible at the boundaries,
 particularly for the VAL-EXIST to Variable Not Found mapping
 which depends on whether the missing reference is a within-cell defect
 or a notebook-semantic defect.
+% TODO: remove last sentence? Where did we document this?
 We document the mapping rule explicitly
 to allow replication and disagreement.
 
