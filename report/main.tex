@@ -192,80 +192,89 @@ In contrast,
 this study explores
 what practitioners check
 when execution does not halt.
-We do this to complement prior crash-based studies.
-Crash-based studies cannot observe these statements
-because they exist precisely to prevent crashes
+We do this to complement prior crash-based studies,
+which cannot observe these statements
+because they exist to prevent crashes
 or to confirm that no crash has occurred.
-A complete picture of ML notebook development requires both lenses.
 
 We mine 297,851 publicly available Python Jupyter notebooks
 from GitHub and Kaggle,
-filter to 195,575 ML notebooks,
-and extract 1,092,780 feedback statements
-through abstract syntax tree analysis.
-We sample 815 statements using proportional stratified sampling
-over semantic clusters obtained from CodeBERT embeddings.
-We code each statement along two dimensions
-through grounded theory and open coding:
-\emph{intent}, which captures what the practitioner is trying to learn or confirm,
-and \emph{pipeline stage}, which captures where in the ML workflow the statement appears.
-The intent dimension distinguishes exploratory feedback (EXP)
-from formal validation (VAL),
-each with its own set of subcodes.
-The pipeline stage dimension follows the standard ML workflow
-from data ingestion through evaluation.
+and extract 1,092,780 feedback statements.
+We sample 815 statements
+using proportional stratified sampling
+from semantic clusters obtained from CodeBERT embeddings.
+We use grounded theory and open coding
+to code each statement along two dimensions:
+\textbf{(1)} the \emph{intent} of the statement,
+which captures what the practitioner is trying to learn or confirm,
+and \textbf{(2)} the \emph{pipeline stage},
+which captures where in the ML workflow the statement appears.
 
-We answer three research questions.
+% The intent dimension distinguishes exploratory feedback (EXP)
+% from formal validation (VAL),
+% each with its own set of subcodes.
+% The pipeline stage dimension follows the standard ML workflow
+% from data ingestion through evaluation.
+
+We use a combination of statistical hypothesis testing
+and qualitative analysis
+to answer the following research questions.
 
 \begin{description}
-  \item[RQ1.] \emph{What feedback mechanisms do practitioners use in ML notebooks,
+  \item[RQ1.] \textbf{What feedback mechanisms do practitioners use in ML notebooks,
     and how do they vary by platform?}
-  \item[RQ2.] \emph{Where in the ML pipeline do practitioners author feedback statements?}
-  \item[RQ3.] \emph{What does the practitioner intend to learn or confirm
+  \item[RQ2.] \textbf{Where in the ML pipeline do practitioners author feedback statements?}
+  \item[RQ3.] \textbf{What does the practitioner intend to learn or confirm
     from each feedback statement?}
 \end{description}
 
-Three findings stand out.
-First, feedback in ML notebooks is overwhelmingly exploratory.
-Exploratory statements account for 85\% of the corpus.
+This study makes four contributions.
+\textbf{First},
+we provide an empirical characterisation of feedback practice in ML Jupyter notebooks,
+and highlight the platform-level differences between GitHub and Kaggle.
+\textbf{Second},
+we present a taxonomy of feedback statements in ML Jupyter notebooks.
+The taxonomy is created using grounded theory,
+and is coded along the intent and pipeline stage.
+\textbf{Third},
+we establish a mapping between our feedback taxonomy
+and the Wang et al.~\cite{wang2025why} crash taxonomy.
+The mapping surfaces the duality
+between defensive practice and observed failure,
+and identifies regions of the failure space
+that crash analysis alone cannot capture.
+\textbf{Finally},
+we release a publicly available dataset
+consisting of 1M+ feedback statements,
+suitable for replication and downstream tooling research.
+
+We find that
+feedback in ML notebooks is overwhelmingly exploratory,
+and account for 85\% of the corpus.
 Formal assertions account for the remaining 15\%
-and are concentrated almost entirely on GitHub.
-Of 123 validation statements in the sample,
-119 occur in GitHub notebooks and four in Kaggle notebooks.
-The platform asymmetry is large and statistically significant.
-Second, the two platforms host qualitatively different modes of ML work.
+and are concentrated almost entirely in GitHub.
+Additionally, we find that
+the two platforms host qualitatively different modes of ML work.
 Kaggle notebooks concentrate 58\% of feedback in the data preparation stage
 and contain almost no model construction code.
-GitHub notebooks distribute feedback across data ingestion,
-model construction, training, and evaluation.
-Treating the two platforms as a single population
-obscures effects that are visible only at the platform level.
-Third, both our study and the Wang et al.\ crash study
+GitHub notebooks on the other hand,
+distribute feedback across data ingestion, model construction, training, and evaluation.
+Finally, both our study and the Wang et al.\ crash study
 identify data preparation as the empirical centre of gravity in ML notebook development.
-Wang et al.\ report that 33\% of crashes occur in data preparation.
-We report that 40\% of feedback statements occur in the same stage.
-Two studies with inverted lenses arrive at the same conclusion
-about where practitioner attention concentrates.
+Wang et al.\ report that 33\% of crashes occur in data preparation,
+while we report that 40\% of feedback statements occur in the same stage.
+The two studies with inverted lenses
+together indicate where practitioner attention concentrates.
 
-The contributions of this paper are:
-
-\begin{enumerate}
-  \item A two-dimensional taxonomy of feedback mechanisms in ML Jupyter notebooks,
-    coding 815 statements along intent and pipeline stage,
-    derived through grounded theory open coding with inter-rater agreement validation.
-  \item An empirical characterisation of platform-level differences
-    between GitHub and Kaggle in feedback practice,
-    showing that source acts as a confounder for any cross-platform analysis
-    and motivating source stratification as a default analytic choice.
-  \item A mapping between our validation taxonomy
-    and the Wang et al.~\cite{wang2025why} crash taxonomy
-    that establishes the duality between defensive practice and observed failure
-    and identifies regions of the failure space
-    that crash analysis alone cannot capture.
-  \item A publicly available dataset of feedback statements
-    coded along both dimensions of the taxonomy,
-    suitable for replication and for downstream tooling research.
-\end{enumerate}
+As ML pipelines developed within Jupyter notebooks become business-critical,
+they are frequently transitioned into automated scripts
+% TODO: find better citations to support this
+for production environments~\cite{kery2018story,rule2018exploration}.
+Our findings suggest
+a crutial need to shift from implicit feedback through exploratory statements,
+to explicit validation performed using assertions.
+This asymmetry motivates the development of validation tooling,
+that integrates with the current iterative notebook workflow.
 
 \section{Methodology}
 
@@ -336,7 +345,7 @@ TensorFlow~\cite{abadi2015tensorflow},
 or Keras~\cite{chollet2015keras}.
 While this approach may exclude some
 ML projects using alternative libraries,
-prior research by Psallidas et al\.~\cite{psallidas2019data}
+prior research by Psallidas et al.~\cite{psallidas2019data}
 examined six million GitHub Jupyter notebooks
 and confirmed that most ML-oriented notebooks utilize these frameworks.
 
