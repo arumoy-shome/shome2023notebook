@@ -669,12 +669,406 @@ Four of the six VAL subcodes (SHAPE, APPROX, EXIST, TYPE)
 do not appear in any Kaggle notebook in the sample.
 Kaggle contributors effectively do not use structural validation at all.
 
-\subsection{RQ2: Pipeline Stage Distribution of Validation Statements}
+\subsection{RQ2: Intent Taxonomy of Feedback Statements}
 \label{sec:rq2}
 
-\highlight{\textbf{Finding 2.} Feedback concentrates in different pipeline stages on each platform.
-KG notebooks concentrate on data preparation.
-GH notebooks distribute feedback more evenly across data ingestion, training, and evaluation.}
+\highlight{\textbf{Finding 2.} The intent taxonomy resolves into ten subcodes
+across the EXP and VAL families.
+Within VAL, practitioners predominantly check shape, equality, and boolean invariants.
+Within EXP, practitioners predominantly inspect, compute, and probe structure.
+The subcodes capture distinct concerns
+that motivate different tooling responses.}
+
+Open coding of the 815 feedback statements
+produces ten subcodes
+distributed across the two top-level intents
+(see Table~\ref{tab:taxonomy}).
+We describe each subcode below
+and ground the description in the use cases that emerge from the data.
+We organize the description by intent and by subcode frequency.
+
+\paragraph*{Dimensionality check (VAL-SHAPE)}
+
+Shape validation is the most prevalent form of explicit validation in the corpus.
+Practitioners use these statements to verify
+that arrays and tensors carry the dimensions that downstream operations require.
+A shape mismatch in a PyTorch or NumPy pipeline
+either raises a cryptic runtime error far from its origin,
+or silently produces wrong results through unintended broadcasting.
+
+Shape validation concentrates at three points in the pipeline.
+At the model construction stage,
+practitioners verify that each layer of a neural network produces the expected output shape
+before the next layer is wired in.
+Listing~\ref{lst:61} checks the shape of the fifth feature map from a VGG16 encoder
+immediately before it is connected to a segmentation decoder.
+A similar pattern appears across GAN encoders,
+transformer attention blocks,
+and GRU sequence models.
+
+\begin{lstlisting}[caption={}, label={lst:61}]
+assert output['x5'].size() == torch.Size([BATCH_SIZE, 512, 7, 7])
+\end{lstlisting}
+
+At the evaluation stage,
+shape validation guards against misaligned prediction and label arrays
+before metrics such as RMSE or F1 are computed.
+A length mismatch from a dropped remainder batch or an off-by-one error
+either crashes the metric computation
+or produces a numerically plausible but incorrect score.
+A third theme is data integrity after joins, splits, and transformations.
+Practitioners assert that a train-test split accounts for all rows,
+that a join did not silently add or drop records,
+and that a preprocessing step such as \lstinline{QuantileTransformer} preserves the sample count.
+These statements reflect an awareness
+that pandas operations can silently alter the size of a dataframe
+in ways that are not immediately visible in a notebook output.
+
+\paragraph*{Value check (VAL-EQ)}
+
+Practitioners check that a specific value, configuration parameter, or computed result
+matches a known expected value.
+The expected value is statically known at the time of writing the assertion
+and is derived from domain knowledge, architectural constraints, or a prior specification.
+Three themes emerge.
+
+The first is the enforcement of architectural constraints
+that have no runtime enforcement in the framework.
+Sinusoidal positional embeddings require an even embedding dimension
+because the vector is split between sine and cosine components (Listing~\ref{lst:4}).
+Wide ResNet filter counts must remain even at each resolution level,
+and certain ResNet depth configurations must satisfy a modular arithmetic relationship
+to accommodate the bottleneck block structure.
+Without the assertion,
+a violated constraint produces a shape error deep inside the forward pass
+whose connection to the misconfigured hyperparameter is not obvious.
+
+\begin{lstlisting}[caption={}, label={lst:4}]
+assert dim % 2 == 0
+\end{lstlisting}
+
+The second theme is schema validation on loaded data.
+Practitioners check that a CSV file has the expected number of classes,
+that a required column appears in the correct position,
+that an index contains no duplicates,
+and that a normalization step produced a zero-sum result.
+These checks reflect the reality that data loading involves external files
+whose schema cannot be verified statically.
+
+The third theme is the detection of training-serving skew.
+Listing~\ref{lst:118} verifies
+that the offline preprocessing pipeline and the production preprocessing pipeline
+produce identical training data after feature selection.
+A divergence between the two would cause the deployed model
+to operate on a different feature distribution than the one it was trained on,
+which would result in a silent failure with no crash signal.
+
+\begin{lstlisting}[caption={}, label={lst:118}]
+assert_frame_equal(X_train_prepro_ks.to_pandas(), X_train_prod_prepro_ks.to_pandas())
+\end{lstlisting}
+
+\paragraph*{Boolean invariant (VAL-BOOL)}
+
+Boolean validation captures a wide range of preconditions
+that do not reduce to a shape check or an exact equality.
+These statements guard pipeline steps against inputs
+that are structurally valid but semantically incorrect.
+
+The most common theme is data quality enforcement
+before a downstream step that cannot recover from a violated precondition.
+Practitioners assert the absence of missing values before feature selection,
+the absence of class imbalance before oversampling logic executes,
+and the satisfaction of domain constraints before domain-specific computations begin.
+Listing~\ref{lst:54} appears in a cardiovascular disease mortality pipeline
+to prevent missing values from silently corrupting feature selection
+or crashing estimators that assume complete data.
+
+\begin{lstlisting}[caption={}, label={lst:54}]
+assert not predictors.isnull().values.any()
+\end{lstlisting}
+
+A second theme is the enforcement of geometric and physical invariants
+derived from domain knowledge.
+An object detection notebook asserts that both coordinates of a bounding box
+satisfy the correct ordering before computing intersection over union.
+A physics domain notebook asserts that model predictions fall within the interval \([0, 1]\)
+as required by the problem formulation.
+A word2vec implementation asserts that the number of context words sampled
+does not exceed the size of the context window.
+A third theme is transfer learning setup validation.
+Practitioners assert that all gradient tensors in a frozen backbone are \lstinline{None},
+since a backbone that is not fully frozen continues to update during fine-tuning
+and silently degrades transfer learning performance without any error.
+
+\paragraph*{Approximate equality (VAL-APPROX)}
+
+Approximate validation appears where exact equality is either mathematically inappropriate
+or unachievably strict due to floating-point arithmetic.
+Two use cases emerge.
+The first is unit testing of numerical implementations.
+Practitioners validate custom loss functions, data transformation utilities,
+and metric implementations
+by comparing their output to a known reference value within a specified tolerance.
+Listing~\ref{lst:374} validates
+that a custom NDCG implementation returns 1.0 when predicted and true rankings are identical.
+The second is reproducibility verification.
+Practitioners who reproduce results from a published paper
+use approximate assertions to confirm that their experimental setup matches the reported values
+within a tolerance that accommodates minor numerical differences
+across platforms and library versions
+while still catching a substantively incorrect result.
+
+\begin{lstlisting}[caption={}, label={lst:374}]
+assert np.isclose(ndcg([3, 1, 2], [3, 1, 2], 3), 1)
+\end{lstlisting}
+
+\paragraph*{Existence check (VAL-EXIST)}
+
+Existence validation checks for membership in or presence within a dynamic runtime structure.
+The first theme is data leakage prevention.
+Listing~\ref{lst:84} verifies that training and validation sets are disjoint
+before model fitting begins.
+Data leakage from validation into training inflates evaluation metrics
+without any runtime error,
+and the only way to detect it programmatically is to check for overlap explicitly.
+
+\begin{lstlisting}[caption={}, label={lst:84}]
+assert set(train_dataset.filenames).isdisjoint(set(valid_dataset.filenames))
+\end{lstlisting}
+
+The second theme is precondition checking on external resources.
+Practitioners assert that a required file path exists before attempting to load it,
+and that a hyperparameter name is present in the parameter space of an estimator
+before launching an expensive grid search.
+In both cases the failure mode without the assertion
+is either a cryptic I/O error
+or a silent search over the wrong parameter space.
+
+\paragraph*{Type check (VAL-TYPE)}
+
+Practitioners use these statements to enforce
+that objects carry the correct Python type or NumPy dtype
+before passing them to operations that would fail silently or with a misleading error
+if given the wrong type.
+A common pattern asserts that model parameters are NumPy arrays rather than Python lists,
+since many NumPy operations accept both but produce different results.
+The low frequency of VAL-TYPE likely reflects the fact
+that Python's dynamic typing and framework-level type coercion
+often suppress type errors silently.
+When a wrong type does not immediately crash the computation,
+practitioners have no obvious signal that a check is needed.
+
+\paragraph*{Object inspection (EXP-INSPECT)}
+
+Inspection statements are the most frequent form of exploratory feedback in the corpus.
+A practitioner places a bare variable name, a plot call,
+or a lightweight accessor expression as the last statement in a cell
+to surface the current state of a data structure without transforming it.
+The output is consumed visually and immediately.
+
+Inspection is used throughout the pipeline
+but concentrates at the data loading and preparation stages,
+where practitioners establish a running mental model of the dataset
+before any transformation is applied.
+A bare \lstinline{.head()} call after loading a CSV (Listing~\ref{lst:209})
+confirms that column names parsed correctly,
+that data types look plausible,
+and that no obvious loading artefact is present.
+The same lightweight pattern monitors the effect of individual cleaning operations,
+such as inspecting a column after imputing missing values to confirm that the fill worked.
+
+\begin{lstlisting}[caption={}, label={lst:209}]
+df_subjects.head()
+\end{lstlisting}
+
+At the evaluation stage,
+inspection shifts from data structure verification to model output monitoring.
+Practitioners surface intermediate predictions, confusion matrices, learned coefficients,
+and cross-validation results as bare last-cell expressions.
+During training, a recurring pattern is the periodic visual inspection of generated outputs
+or loss curves.
+One notebook displays a GAN-generated image at regular intervals
+to assess whether the generator is producing realistic samples.
+Another plots the training log-likelihood over epochs to monitor convergence.
+These statements serve as progress signals
+that are cheaper and more immediate than a formal metric computation.
+
+A theme distinctive to GH notebooks is the use of inspection to debug internal model state.
+Practitioners surface the names of specific layers in a neural network,
+the values of learned weight slices,
+or the output of a forward hook to understand what the model is doing internally.
+Inspection of this kind is not possible with a high-level metric,
+as it requires looking directly at model internals.
+
+\paragraph*{Exploratory computation (EXP-COMPUTE)}
+
+Compute statements execute a transformation, aggregation, or model operation
+and return a result that the practitioner examines.
+The distinction from inspection is that the result is not already present in a variable
+but is produced on the fly by the statement itself.
+
+The dominant use of EXP-COMPUTE in both GH and KG notebooks
+is metric computation at the evaluation stage.
+Practitioners compute accuracy, RMSE, F1, NDCG, AUC, and log-loss
+as last-cell expressions
+to obtain an immediate reading of model performance (Listing~\ref{lst:339}).
+These calls are repeated across multiple experimental runs
+to drive an iterative model and hyperparameter selection process.
+
+\begin{lstlisting}[caption={}, label={lst:339}]
+accuracy_score(test_y, rf_pred_y)
+\end{lstlisting}
+
+A second theme is informal postcondition checking on preprocessing steps.
+After applying a standard scaler,
+practitioners compute the mean and standard deviation of the transformed features
+to verify that both are near their expected values.
+After a \lstinline{dropna} operation,
+practitioners compute a null count to confirm that missing values were removed.
+These checks express an expectation about the output of the preceding operation
+but rely on visual judgment rather than a programmatic threshold.
+
+A third theme, distinctive to GH notebooks,
+is the use of \lstinline{model.fit()} calls as pipeline integrity checks.
+Practitioners run a short training call with a fraction of the data
+to confirm that the pipeline runs without error
+and that the loss decreases
+before committing to a full training run.
+
+In KG notebooks, EXP-COMPUTE is also used extensively for exploratory feature analysis.
+Practitioners compute grouped aggregations and correlation matrices
+to understand whether a candidate feature has a meaningful relationship with the target
+before deciding whether to include it.
+A grouped statistic such as a survival rate by passenger class and sex
+motivates a subsequent feature engineering step in the next cell.
+This compute-then-act pattern is a core workflow unit in competition notebooks.
+
+\begin{lstlisting}[caption={}, label={lst:480}]
+test_raw.shape[0] == test.shape[0]
+\end{lstlisting}
+
+Listing~\ref{lst:480} appears in a KG notebook as a last-cell boolean expression
+that verifies no rows were lost during a transformation.
+The expression is not wrapped in an \lstinline{assert},
+so a False result is visible in the cell output but does not halt execution.
+The intent is identical to a shape assertion,
+which we return to in Section~\ref{sec:implicit-validation}.
+
+\paragraph*{Structural probe (EXP-STRUCT)}
+
+Structural inspection statements query the metadata of a data structure rather than its values.
+They surface shape, column names, dtypes, unique values, cardinality, or value counts.
+EXP-STRUCT concentrates overwhelmingly at the preparation stage (78 of 126 statements),
+where practitioners use these lightweight queries
+to understand and verify the current state of the data
+before applying the next transformation.
+
+A pervasive theme is the use of structural inspection
+as a lightweight checkpoint after each cleaning or encoding step.
+After dropping columns, a practitioner inspects \lstinline{.columns} to confirm the drop worked.
+After one-hot encoding, a practitioner checks \lstinline{.shape}
+to confirm that the column count increased as expected.
+After undersampling the majority class,
+a practitioner inspects the shape of the resulting arrays
+to confirm that the class ratio changed (Listing~\ref{lst:593}).
+These checkpoints serve the same purpose as postcondition assertions
+but rely on visual confirmation rather than programmatic enforcement.
+
+\begin{lstlisting}[caption={}, label={lst:593}]
+(X_train_under.shape, y_train_under.shape, X_test_under.shape)
+\end{lstlisting}
+
+A second theme is the use of \lstinline{.unique()} and \lstinline{.value_counts()}
+to audit the actual contents of a categorical column before deciding on an encoding strategy.
+Practitioners check whether unexpected values or label inconsistencies are present
+before applying \lstinline{LabelEncoder} or \lstinline{OneHotEncoder}.
+Without this inspection,
+the encoder would treat surface variants of the same category as distinct
+and produce a semantically incorrect feature.
+
+A third theme, more common in GH notebooks,
+is the use of structural queries to set downstream model parameters dynamically.
+Practitioners inspect \lstinline{.vector_size} of a word embedding
+to determine the input layer dimension of a neural network,
+or check \lstinline{X_train.shape[2]}
+to set the \lstinline{input_shape} parameter of a 1D CNN.
+These statements serve as interface checks
+between the data preparation and model construction stages.
+
+\paragraph*{Statistical summary (EXP-STATS)}
+
+Statistical summary statements produce distributional views of a feature or target variable.
+They include calls to \lstinline{.describe()}, \lstinline{.hist()}, \lstinline{.value_counts()},
+and distribution or box plots via seaborn and matplotlib.
+EXP-STATS is proportionally more prevalent in KG notebooks (13.5\% of KG EXP)
+than in GH notebooks (7.6\% of GH EXP),
+which reflects Kaggle's culture of systematic exploratory data analysis before modelling.
+
+The dominant theme is pre-modelling data auditing.
+Practitioners use distribution plots and summary statistics
+to detect outliers, assess class imbalance,
+and check whether a feature's distribution motivates a transformation.
+A seaborn \lstinline{distplot} of insurance charges (Listing~\ref{lst:634})
+reveals a right-skewed distribution
+that motivates a log transform before fitting a linear regression model
+whose residuals are assumed to be normally distributed.
+A box plot of engine power values in a used car dataset
+drives a decision to remove extreme outliers.
+A histogram of model prediction confidence scores
+reveals whether the model is well-calibrated.
+In each case the statistical summary is not an end in itself
+but a decision point that gates the next preprocessing or modelling step.
+
+\begin{lstlisting}[caption={}, label={lst:634}]
+sns.distplot(data.charges)
+\end{lstlisting}
+
+A second theme is post-processing verification.
+After scaling features with \lstinline{StandardScaler},
+practitioners call \lstinline{.describe()}
+to confirm that the mean is near zero and the standard deviation is near one.
+After imputing missing values,
+a practitioner plots the column's distribution
+to confirm that the imputed values do not distort the shape
+in a physiologically implausible direction.
+These verification uses of EXP-STATS
+occupy the same functional niche as EXP-STRUCT checkpoints,
+but do so through distributional inspection rather than structural metadata.
+
+A third theme, present primarily in GH notebooks,
+is the use of statistical summaries to diagnose model behaviour.
+A histogram of a model's confidence scores across a held-out test set
+reveals whether predictions cluster near 0.5 or toward 0 and 1.
+A KDE plot of SARIMA residuals checks whether the model's errors
+approximate a normal distribution,
+which is a formal assumption of the ARIMA model class.
+These uses treat the statistical summary as a model diagnostic tool
+rather than a data auditing tool.
+
+\subsection{RQ3: Pipeline Stage Distribution of Feedback Statements}
+\label{sec:rq3}
+
+\highlight{\textbf{Finding 3.} Feedback concentrates in different pipeline stages on each platform.
+Kaggle notebooks concentrate on data preparation.
+GitHub notebooks distribute feedback across data ingestion, training, and evaluation.
+Within GitHub, intent is associated with stage,
+but the choice of subcode within each intent is largely stage-agnostic.}
+
+This section examines where in the ML pipeline
+practitioners author feedback statements,
+and how the choice of intent and subcode varies by stage.
+We organize the analysis as a sequence of three cross-tabulations
+of increasing granularity.
+First, we examine stage by source
+to characterize platform-level differences in where feedback appears.
+Next, we examine intent by stage,
+stratified by source to control for the platform-level confound established in RQ1.
+Finally, we examine subcode by stage on the GitHub subset only,
+because Kaggle's heavy concentration in data preparation
+and its small VAL count
+preclude meaningful comparisons.
+
+\paragraph*{Stage distribution and platform asymmetry.}
 
 PREP (40\%) is the single largest stage,
 followed by EVAL (21\%), DATA (12\%), FEAT (12\%), TRAIN (9\%) and MODEL (6\%).
@@ -685,84 +1079,92 @@ Notebook feedback is concentrated upstream of model training, not downstream.
   \begin{subfigure}[t]{0.5\textwidth}
     \centering
     \includegraphics[width=\linewidth]{distribution-stage.pdf}
-    \caption{Distribution of the pipeline stage of the feedback statements across GH and KG, normalized by source.}
+    \caption{Pipeline stage by source, normalized within source.}
     \label{fig:distribution-stage}
   \end{subfigure}
   \begin{subfigure}[t]{0.5\textwidth}
     \centering
     \includegraphics[width=\linewidth]{distribution-stage-intent.pdf}
-    \caption{Distribution of intent across stages for GH statements, normalized by stage.}
+    \caption{Intent by stage on GH, normalized within stage.}
     \label{fig:distribution-stage-intent}
   \end{subfigure}
-  \caption{\textcolor{red}{TODO}: think of a better caption.}
-  % \label{fig:distribution-stage-all}
+  \caption{Distribution of feedback statements across pipeline stages.
+  Kaggle concentrates feedback in PREP and barely touches MODEL,
+  while GitHub spreads feedback more evenly across stages.
+  On GitHub, the share of VAL within each stage
+  is highest in MODEL, TRAIN, and FEAT.}
 \end{figure}
 
-% Stage x Source
-
-We apply $\chi^2$ test
+We apply the $\chi^2$ test
 to examine whether ML pipeline stage is independent of notebook source.
 The UNC stage ($N=2$) is excluded which leaves $N=813$ statements across six stages.
-All remaining expected frequencies exceed 5 (min = 19.63).
-The test indicates highly significant and large association ($\chi^2(5) = 158.04$, $p<0.001$, Cramer's $V=0.441$).
+% All remaining expected frequencies exceed 5 (min = 19.63).
+The test indicates a highly significant and large association
+($\chi^2(5) = 158.04$, $p<0.001$, Cram\'er's $V=0.441$).
+Figure~\ref{fig:distribution-stage} shows the distribution.
+Kaggle notebooks concentrate predominantly on the PREP stage (58\%),
+while GitHub notebooks distribute more evenly
+across DATA (19\%), EVAL (25\%) and TRAIN (13\%).
+The MODEL stage is almost entirely absent on Kaggle (0.5\% vs. 11\% in GitHub).
 
-Figure~\ref{fig:distribution-stage} shows the distribution of the stage
-in which the validation statements were used.
-KG notebooks concentrate predominantly on the \emph{PREP} stage (58\%),
-whereas GH notebooks distribute more evenly across DATA (18.7\%), EVAL (24.7\%) and TRAIN (13.2\%).
-The MODEL stage is almost entirely absent in KG (0.5\% vs. 11\% in GH).
+The dominance of the PREP stage and absence of the MODEL stage in Kaggle notebooks,
+reflects the competition format.
+Competition notebooks concentrate on data preparation pipelines
+and typically consume pre-configured model APIs
+rather than defining model architectures.
 
-The dominance of the PREP stage and absence of the MODEL stage in KG notebooks,
-is a reflection of the competition format.
-It suggests that competition notebooks concentrage on data preparation pipelines,
-and typically consume pre-configured model APIs rather than defining model architectures.
-
-% Intent x Stage (GH)
+\paragraph*{Intent varies with stage on GitHub.}
 
 We examine if the intent of statements is associated with the stage in which they occur.
 We stratify the analysis by source,
-since source is associated with both the intent and the stage of the statements,
+since source is associated with both intent and stage
 and thus acts as a confounding variable.
-For KG statements ($n=433$),
+For Kaggle statements ($n=433$),
 we apply Fisher's exact test
-which reveals a statistically significant association ($p=0.009$, Cram\'er's $V=0.364$).
-While the test is valid under these conditions,
-there are however only 4 VAL statements in the data,
+which reveals a statistically significant association
+($p=0.009$, Cram\'er's $V=0.364$).
+The test is valid under these conditions
+but rests on only 4 VAL statements,
 which makes the effect size estimate unstable at such low counts.
+We therefore restrict further analysis to GitHub statements ($n=380$).
 
-We therefore restrict further analysis to GH statements ($n=380$).
-We apply $\chi^2$ test to examine whether intent is associated with pipeline stage.
-The test reveals a statistically significant association ($\chi^2(5)=20.34$, $p=0.001$, Cram\'er's $V=0.231$).
+We apply $\chi^2$ to examine whether intent is associated with pipeline stage on GitHub.
+The test reveals a statistically significant association
+($\chi^2(5)=20.34$, $p=0.001$, Cram\'er's $V=0.231$).
+Figure~\ref{fig:distribution-stage-intent} shows that the VAL share varies by stage.
+MODEL is the most validation-heavy stage (60\%),
+followed by TRAIN (34\%) and FEAT (29\%).
+DATA (76\% EXP) and EVAL (77\% EXP) are more exploratory.
+Practitioners validate when the code defines reusable structure,
+such as model definitions and training loops,
+and inspect when the code is exploratory and data-facing,
+such as preprocessing and evaluation.
 
-Figure~\ref{fig:distribution-stage-intent} shows that VAL share varies by stage.
-MODEL is the most validation-heavy stage (60\%), followed by TRAIN (34\%) and FEAT (29\%).
-DATA (76\%) and EVAL (77\%) are more exploratory.
-
-Practitioners validate when the code defines reusable structure (model definitions and training loops)
-and inspect when code is exploratory and data-facing (preprocessing and evaluation).
-
-% Type x Stage (GH)
+\paragraph*{Within each intent, subcode is largely stage-agnostic.}
 
 \begin{figure}
   \begin{center}
     \includegraphics[width=\textwidth]{distribution-stage-type.pdf}
   \end{center}
-  \caption{\textcolor{red}{TODO:} Distribution of }\label{fig:distribution-stage-type}
+  \caption{Subcode distribution by stage on GitHub statements.
+  Within EXP, COMPUTE peaks in TRAIN and EVAL, STATS in PREP and DATA,
+  AND INSPECT dominates every stage.
+  Within VAL, SHAPE is the modal subcode in four of six stages,
+  and EQ appears at every stage.}
+  \label{fig:distribution-stage-type}
 \end{figure}
 
-We restrict the type-stage analysis to GH for the same reason as RQ2.
-KG contains too few VAL statements to support inference,
-and KG's heavy concentration in PREP obscures within-stage type patterns.
-We report the GH distribution descriptively
-since the substantive question is which feedback types appear at which stages,
+We restrict the subcode-stage analysis to GitHub for the same reason as above.
+Kaggle contains too few VAL statements to support inference,
+and Kaggle's heavy concentration in PREP obscures within-stage subcode patterns.
+We report the GitHub distribution descriptively
+since the substantive question is which feedback subcodes appear at which stages,
 not whether the two variables are statistically dependent.
 
-% EXP-Type x Stage on GH
-
-Within the GH EXP statements ($n=263$),
-INSPECT is the dominant exploratory type at every stage
+Within the GitHub EXP statements ($n=263$),
+INSPECT is the dominant exploratory subcode at every stage
 and accounts for 36\% to 57\% of EXP within each stage.
-Three patterns stand out for the remaining types.
+Three patterns stand out for the remaining subcodes.
 COMPUTE peaks in TRAIN (52\%) and EVAL (47\%),
 where practitioners compute losses, predictions, and metrics inline.
 STATS appears almost exclusively in PREP (19\%) and DATA (9\%)
@@ -771,648 +1173,181 @@ This matches the role of summary statistics in early data understanding.
 STRUCT is small but spread across DATA (20\%), FEAT (23\%), MODEL (25\%), and PREP (17\%),
 reflecting structural probing of inputs, engineered features, and model components.
 
-% VAL-Type x Stage on GH
-
-Within GH VAL statements ($n=117$), the picture differs.
-The choice of validation type is largely stage-agnostic.
-SHAPE is the modal validation type in four of the six stages
+Within the GitHub VAL statements ($n=117$), the picture differs.
+The choice of validation subcode is largely stage-agnostic.
+SHAPE is the modal validation subcode in four of the six stages
 (DATA, EVAL, MODEL, PREP)
 and accounts for 39\% to 55\% of VAL within those stages.
 EQ is modal in FEAT (50\%) and TRAIN (29\%)
 and appears at every stage.
 BOOL appears at every stage in small numbers (4\% to 26\%).
-The rarer types (APPROX, EXIST, TYPE) appear too few times
+The rarer subcodes (APPROX, EXIST, TYPE) appear too few times
 to support stage-level claims,
 with the single exception of EXIST in TRAIN
 where four of the six EXIST statements occur.
 
-This pattern complements RQ2.
-Whether a statement is validation or exploration depends on stage,
-but within each intent the choice of feedback type does not.
-Practitioners pick exploratory types according to what each stage demands of them
-and pick validation types according to what each statement asserts about,
+The above patterns together show that
+whether a statement is validation or exploration depends on stage,
+but within each intent the choice of subcode does not.
+Practitioners pick exploratory subcodes
+according to what each stage demands of them
+and pick validation subcodes
+according to what each statement asserts about,
 not according to where in the pipeline the assertion appears.
 
-\subsection{RQ3: Intent Taxonomy of Validation Statements}
-\label{sec:rq3}
+\subsection{RQ4: Relationship to Known Crash Modes}
+\label{sec:rq4}
 
 \begin{table}
   \centering
-  \caption{Intent taxonomy summary}\label{tab:taxonomy}
-  \begin{tabularx}{\textwidth}{l l X X X}
+  \caption{Mapping of VAL subcodes to crash types reported by Wang et al.~\cite{wang2025why}.
+  Each row identifies the crash types that the corresponding VAL subcode is designed to pre-empt.}
+  \label{tab:wang-mapping}
+  \begin{tabularx}{\textwidth}{l X}
     \toprule
-    \textbf{Intent} &
-    \textbf{Type} &
-    \textbf{Label} &
-    \textbf{Definition} &
-    \textbf{Example} \\
-    \multirow{6}{*}{VAL} &
-    EQ &
-    Value equality check &
-    Assert that a result equals a known correct value &
-    \lstinline{assert dataY[0] == 35} \newline
-    \lstinline{assert type in ['healthy', 'failed']} \newline
-    \lstinline{assert_frame_equal(...)} \\
-    & EXIST &
-    Check for existane of value &
-    Assert that checks if a value exists inside a dynamically generated collection in RHS &
-    \lstinline{assert i in sig.parameters.keys()} \\
-    & SHAPE &
-    Dimensionality check &
-    Assert tensor/array shape or length &
-    \lstinline{assert x.shape == means.shape} \newline
-    \lstinline{assert x.ndims > 1} \\
-    & TYPE &
-    Type check &
-    Assert object type or class membership &
-    \lstinline{assert type(embedding_layer) == Embedding} \\
-    & APPROX &
-    Approximate equality &
-    Assert numerical closeness within tolerance &
-    \lstinline{assert np.allclose(..., atol=0.001)} \newline
-    \lstinline{assert np.isclose} \newline
-    \lstinline{np.abs(...) < 0.001} \\
-    & BOOL &
-    Boolean invariant &
-    Assert a boolean condition holds &
-    \lstinline{assert bb2['y1'] < bb2['y2']} \\
+    \textbf{VAL subcode} & \textbf{Wang crash types pre-empted} \\
     \midrule
-    \multirow{4}{*}{EXP} &
-    INSPECT &
-    Object inspection &
-    Display an object as-is (no transformation applied) to visually verify its contents &
-    \lstinline{decoder_prediction} \newline
-    \lstinline{df.head()} \newline
-    \lstinline{sns.heatmap(...)} \\
-    & STATS &
-    Statistical summary &
-    Compute and display descriptive statistics or visualizations that provide statistical summaries &
-    \lstinline{kindel_reviews.summary_length.describe(...)} \newline
-    \lstinline{plt.hist(...)} \newline
-    \lstinline{df.describe()} \\
-    & STRUCT &
-    Structural probe &
-    Inspect shape, size, keys, columns and type metadata &
-    \lstinline{wv.vector_size} \newline
-    \lstinline{df.shape} \newline
-    \lstinline{df.columns} \\
-    & COMPUTE &
-    Exploratory computation &
-    Apply a function or transformation and inspect the result &
-    \lstinline{softmax(np.array[[1, 2, 3]]) - 1} \newline
-    \lstinline{.sort_values()} \\
+    SHAPE  & Tensor Shape Mismatch, Unsupported Broadcast, Feature Name Mismatch \\
+    EQ     & Data Value Violation, Invalid Argument, Model Initialization Error \\
+    BOOL   & Data Value Violation, Invalid Argument \\
+    EXIST  & Variable Not Found, Key Error \\
+    TYPE   & Type Error, Attribute Error \\
+    APPROX & (no direct counterpart) \\
     \bottomrule
   \end{tabularx}
 \end{table}
 
-\subsubsection{VAL Subcodes}
-\label{sec:val-subcodes}
+\highlight{\textbf{Finding 4.}
+Each VAL subcode pre-empts a distinct family of crashes
+catalogued by Wang et al.~\cite{wang2025why}.
+The two studies converge on data preparation
+as the empirical centre of gravity in ML notebook development,
+where 40\% of feedback statements and 33\% of crashes occur.
+A subset of practitioner-authored validations
+catches silent failures that crash analysis alone cannot observe.}
 
-We identify six subcodes within the VAL family
-across 119~GH statements and 4~KG statements.
+RQ1 and RQ2 characterize what feedback statements practitioners author,
+and RQ3 shows where they author them.
+RQ4 situates those findings against the failure modes
+identified by analyzing crashes in Jupyter notebooks.
+Wang et al.~\cite{wang2025why} examined ML Jupyter notebooks
+collected from GitHub and Kaggle,
+and cataloged \emph{crashes}
+which halt execution and surface an exception in the cell output.
+While the Wang taxonomy identifies the failure mode,
+our taxonomy provides a complementary view,
+by identifying validation statements
+designed to pre-emptively catch such errors.
+% TODO: this part is not clear
+To make this duality concrete,
+we map each VAL subcode to the crash types it pre-empts.
+Next, we compare the stage distribution of feedback statements
+to the stage distribution of crashes.
+Additionally, we identify defensive practices in our corpus
+that crash analysis cannot observe
+because the practices exist precisely to prevent silent failures.
 
-\paragraph{VAL-SHAPE ($n=47$, 38.84\%).}
+\paragraph*{Mapping VAL subcodes to crash types.}
 
-Shape validation is the most prevalent form of explicit validation in the corpus.
-Practitioners use these statements to verify
-that arrays and tensors carry the dimensions that downstream operations require.
-A shape mismatch in a PyTorch or NumPy pipeline
-either raises a cryptic runtime error far from its origin,
-or silently produces wrong results through unintended broadcasting.
-Both failure modes are difficult to diagnose after the fact.
+We construct the mapping in Table~\ref{tab:wang-mapping}
+by checking, for each VAL subcode,
+whether an assertion either prevents the crash from occurring
+or surfaces an upstream defect
+that would otherwise produce that crash type at a later stage.
 
-Shape validation concentrates at two points in the pipeline.
-At the model construction stage,
-practitioners verify that
-each layer of a neural network produces the expected output shape
-before the next layer is wired in.
+VAL-SHAPE maps to three of the six ML-specific crash types Wang et al.\ identify.
+Tensor Shape Mismatch (5.5\%), Unsupported Broadcast (1.6\%), and Feature Name Mismatch (1.2\%)
+together account for 8.3\% of crashes in their sample.
+Our results are consistent with this prevalence.
+VAL-SHAPE is the most prominent validation subcode in our corpus
+and accounts for 38.84\% of VAL statements.
 
-\begin{lstlisting}[caption={}, label={lst:61}]
-assert output['x5'].size() == torch.Size([BATCH_SIZE, 512, 7, 7])
-\end{lstlisting}
+VAL-EQ and VAL-BOOL pre-empt crashes that arise
+when downstream code receives semantically incorrect inputs.
+Wang et al.\ report that API misuse alone accounts for
+66\% of Invalid Argument crashes and 31\% of Data Value Violation crashes.
+Architectural constraint assertions (Listing~\ref{lst:4})
+pre-empt Model Initialization Error,
+and data quality checks (Listing~\ref{lst:54})
+pre-empt Data Value Violation crashes.
+The latter directly mirrors the data confusion root cause identified by Wang et al.
 
-For example, Listing~\ref{lst:61} checks the shape
-of the fifth feature map from a VGG16 encoder
-immediately before it is connected to a segmentation decoder.
-A similar pattern appears across GAN encoders,
-transformer attention blocks,
-and GRU sequence models,
-where practitioners assert the shape of intermediate tensors at each architectural boundary.
+Wang et al.\ attribute Variable Not Found crashes
+primarily to notebook-specific issues such as out-of-order execution,
+which a code-level assertion cannot prevent.
+However, a subset of these crashes
+arise from references to objects
+that should have been constructed earlier in the same cell
+or earlier in a logically ordered sequence of cells.
+VAL-EXIST statements that check for the presence of a key, attribute, or filename
+before the dependent operation runs
+catch this subset of Variable Not Found crashes
+and surface the missing dependency as an explicit assertion failure
+rather than a downstream cryptic error.
 
-At the evaluation stage,
-shape validation primarily guards against misaligned prediction and label arrays.
-Before computing metrics such as RMSE or F1,
-practitioners verify that predictions and ground truth have the same length.
+VAL-TYPE pre-empts the API-misuse subset of type-related crashes.
+Wang et al.\ report that 42\% of Type Error crashes
+are caused by API misuse,
+and that 44\% of Attribute Error crashes share the same root cause.
+VAL-TYPE statements (e.g., \lstinline{assert type(embedding_layer) == Embedding})
+enforce the type contract that the API expects
+and convert a downstream cryptic error into an explicit assertion failure.
 
-\begin{lstlisting}[caption={}, label={lst:62}]
-assert len(predictions_array) == len(label_batch_test.numpy())
-\end{lstlisting}
+\paragraph*{Crashes and validations cover different parts of the failure space.}
 
-Listing~\ref{lst:62} is not a trivial check.
-A dropped remainder batch,
-an off-by-one error in a data loader,
-or a silent failure during sampling
-can each produce a length mismatch that either crashes the metric computation
-or, worse, produces a numerically plausible but incorrect score.
+Wang et al.\ report
+Out of Memory, Module Not Found, IO Error, Environment Error, and Request Error crash types
+that together account for 28\% of crashes in the Wang sample.
+These crash types however are not captured by our taxonomy of validation statements
+because these crashes are not preventable through code-level assertions.
 
-A third recurring theme is data integrity after joins, splits, and transformations.
-Practitioners assert that a train-test split accounts for all rows,
-that a join did not silently add or drop records,
-and that a preprocessing step such as \lstinline{QuantileTransformer} preserves the number of samples.
-These statements reflect an awareness
-that pandas operations can silently alter the size of a dataframe
-in ways that are not immediately visible in a notebook output.
-
-\paragraph{VAL-EQ ($n=34$, 28.09\%).}
-
-Practitioners check that a specific value, configuration parameter, or computed result
-matches a known expected value.
-The expected value is always statically known at the time of writing the assertion,
-and is derived either from domain knowledge, architectural constraints, or a prior specification.
-
-A prominent theme is the enforcement of architectural constraints
-that have no runtime enforcement in the framework.
-For example, sinusoidal positional embeddings
-require an even embedding dimension
-because the vector is split in half between sine and cosine components.
-This is validated using Listing~\ref{lst:4}
-which checks that the embedding dimensions are even.
-If \lstinline{dim} is odd, downstream dimension expectations will not hold.
-
-\begin{lstlisting}[caption={}, label={lst:4}]
-assert dim % 2 == 0
-\end{lstlisting}
-
-Similarly, Wide ResNet filter counts must remain even at each resolution level,
-and certain ResNet depth configurations
-must satisfy a modular arithmetic relationship
-to accommodate the bottleneck block structure.
-These constraints are derived from the mathematical structure of the architecture
-and are invisible to the framework at instantiation time.
+In contrast,
+our taxonomy captures defensive practices
+that are invisible to a crash-based study.
+For instance,
+VAL-APPROX has no direct counterpart in the Wang taxonomy.
+Approximate equality assertions verify reproducibility
+and catch large drifts in the results
+across multiple pipeline runs
+and different data versions.
+For instance,
+Listing~\ref{lst:374} pre-emptively stops the execution
+when the NDCG diverges from the expected value.
 Without the assertion,
-a violated constraint produces a shape error
-deep inside the forward pass whose connection to the misconfigured hyperparameter is not obvious.
-
-A second theme is schema validation on loaded data.
-Practitioners check that a CSV file has the expected number of classes,
-% NOTE: e.g., common to use \lstinline{y = df[:, -1]} to get the labels from the last column
-that a required column appears in the correct position,
-that an index contains no duplicates,
-and that a normalization step produced a zero-sum result.
-These checks reflect the reality that data loading involves
-external files whose schema cannot be verified statically.
-
-\begin{lstlisting}[caption={}, label={lst:118}]
-assert_frame_equal( X_train_prepro_ks.to_pandas(), X_train_prod_prepro_ks.to_pandas())
-\end{lstlisting}
-
-A third theme is the detection of training-serving skew.
-Listing~\ref{lst:118} verifies
-that the offline preprocessing pipeline and the production preprocessing pipeline
-produce identical training data after feature selection.
-A divergence between the two would cause the deployed model
-to operate on a different feature distribution than the one it was trained on,
-which would result in a silent failure with no crash signal.
-
-\paragraph{VAL-BOOL ($n=21$, 17.35\%).}
-
-Boolean validation captures a wide range of preconditions
-that do not reduce to a shape check or an exact equality.
-These statements guard pipeline steps against inputs
-that are structurally valid but semantically incorrect.
-
-The most common theme is data quality enforcement before a downstream step
-that cannot recover from a violated precondition.
-Practitioners assert the absence of missing values before feature selection,
-the absence of class imbalance before oversampling logic executes,
-and the satisfaction of domain constraints before domain-specific computations begin.
-
-\begin{lstlisting}[caption={}, label={lst:54}]
-assert not predictors.isnull().values.any()
-\end{lstlisting}
-
-For example, Listing~\ref{lst:54} is used in a cardiovascular disease mortality pipeline
-to prevent missing values
-from silently corrupting feature selection algorithms
-or cause crashes in estimators that assume complete data.
-The assertion ensures that an imputation or dropping step
-was completed correctly upstream.
-
-A second theme is the enforcement of geometric and physical invariants
-derived from domain knowledge.
-An object detection notebook asserts that both coordinates of a bounding box
-satisfy the correct ordering before computing intersection over union.
-A physics domain notebook asserts that model predictions
-fall within the interval \([0, 1]\)
-as required by the problem formulation.
-A word2vec implementation asserts that the number of context words sampled
-does not exceed the size of the context window.
-These constraints cannot be inferred from the data alone
-and require knowledge of the problem domain.
-
-\begin{lstlisting}[caption={}, label={lst:22}]
-assert all((layer.weight.grad is None
-    for layer in dict(model.backbone.named_modules()).values()
-    if hasattr(layer, 'weight')))
-\end{lstlisting}
-
-A third theme is transfer learning setup validation.
-Listing~\ref{lst:22} asserts that all gradient tensors in a frozen backbone are \lstinline{None}.
-A backbone that is not fully frozen continues to update during fine-tuning,
-which silently degrades transfer learning performance without raising any error.
-
-\paragraph{VAL-APPROX ($n=7$, 5.78\%).}
-
-Approximate validation appears in contexts
-where exact equality is either mathematically inappropriate
-or unachievably strict due to floating-point arithmetic.
-Two distinct use cases emerge from the data.
-
-The first is unit testing of numerical implementations.
-Practitioners validate custom loss functions,
-data transformation utilities,
-and metric implementations
-by comparing their output to a known reference value within a specified tolerance.
-
-\begin{lstlisting}[caption={}, label={lst:374}]
-assert np.isclose(ndcg([3, 1, 2], [3, 1, 2], 3), 1)
-\end{lstlisting}
-
-For example, Listing~\ref{lst:374} validates
-that a custom NDCG implementation returns a perfect score of 1.0
-when predicted and true rankings are identical.
-
-The second use case is reproducibility verification.
-Practitioners who implement a notebook to reproduce the results of a published paper
-use approximate assertions to confirm that their experimental setup matches the reported values.
-
-\begin{lstlisting}[caption={}, label={lst:300}]
-assert np.allclose(
-    sp.stats.pearsonr(all_cfd_pred, all_truth)[0],
-    0.409, atol=0.001)
-\end{lstlisting}
-
-Listing~\ref{lst:300} confirms that a Pearson correlation coefficient
-matches the value reported in the source paper
-within a tolerance of 0.001.
-The tolerance is deliberately chosen
-to allow for minor numerical differences across platforms and library versions
-while still catching a substantively incorrect result.
-
-\paragraph{VAL-EXIST ($n=6$, 5.0\%).}
-
-Existence validation checks for membership in,
-or presence within,
-a dynamic runtime structure.
-Two themes emerge.
-
-The first is data leakage prevention.
-In Listing~\ref{lst:84},
-practitioners verify that training and validation sets are disjoint before model fitting begins.
-
-\begin{lstlisting}[caption={}, label={lst:84}]
-assert set(train_dataset.filenames).isdisjoint(
-    set(valid_dataset.filenames))
-\end{lstlisting}
-
-Data leakage from validation into training inflates evaluation metrics
-without any runtime error.
-The only way to detect it programmatically
-is to check for overlap explicitly,
-as demonstrated in the listing.
-
-The second theme is precondition checking on external resources.
-Practitioners assert that a required file path exists
-before attempting to load it,
-and that a hyperparameter name is present in the parameter space of an estimator
-before launching an expensive grid search.
-In both cases the failure mode without the assertion
-is either a cryptic I/O error
-or a silent search over the wrong parameter space.
-
-\paragraph{VAL-TYPE ($n=6$, 5.0\%).}
-
-Practitioners use these statements to enforce
-that objects carry the correct Python type or NumPy dtype
-before passing them to operations that would fail silently
-or with a misleading error
-if given the wrong type.
-Listing~\ref{lst:232} checks that model parameters are NumPy arrays
-rather than Python lists,
-since many NumPy operations accept both but produce different results.
-
-\begin{lstlisting}[caption={}, label={lst:232}]
-assert isinstance(mu, np.ndarray) and isinstance(sigma, np.ndarray),
-    'mu/sigma must be numpy arrays.'
-\end{lstlisting}
-
-The low frequency of VAL-TYPE likely reflects the fact
-that Python's dynamic typing and framework-level type coercion
-often suppress type errors silently.
-When a wrong type does not immediately crash the computation,
-practitioners have no obvious signal that a check is needed.
-
-\subsubsection{EXP Subcodes}
-\label{sec:exp-subcodes}
-
-We identify four subcodes within the EXP family
-across 263~GH statements and 429~KG statements.
-Unlike VAL statements, which are distributed relatively evenly between sources,
-EXP statements are substantially more frequent in KG notebooks (62.0\% of all EXP statements).
-
-\paragraph{EXP-INSPECT (n=303, 43.8\%).}
-
-Inspection statements are the most frequent form of exploratory feedback in the corpus.
-A practitioner places a bare variable name,
-a plot call,
-or a lightweight accessor expression as the last statement in a cell
-to surface the current state of a data structure
-without transforming it.
-The output is consumed visually and immediately.
-
-Inspection is used throughout the pipeline
-but concentrates at the data loading and preparation stages,
-where practitioners establish a running mental model of the dataset
-before any transformation is applied.
-A bare \lstinline{.head()} call after loading a CSV,
-such as the one shown in Listing~\ref{lst:209},
-confirms that column names parsed correctly,
-that data types look plausible,
-and that no obvious loading artefact is present.
-The same lightweight pattern is used to monitor the effect of individual cleaning operations.
-After imputing missing values,
-a practitioner inspects the result to confirm that the fill worked.
-
-\begin{lstlisting}[caption={}, label={lst:209}]
-df_subjects.head()
-\end{lstlisting}
-
-At the evaluation stage,
-inspection shifts from data structure verification to model output monitoring.
-Practitioners surface intermediate predictions,
-confusion matrices,
-learned coefficients,
-and cross-validation results
-as bare last-cell expressions.
-
-A recurring pattern during model training
-is the periodic visual inspection of generated outputs or loss curves.
-One notebook displays a GAN-generated image
-at regular intervals during training
-to assess whether the generator is producing realistic samples.
-Another plots the training log-likelihood over epochs
-to monitor convergence.
-These statements serve as progress signals that are cheaper
-and more immediate than a formal metric computation.
-
-A distinct theme in GH notebooks
-is the use of inspection to debug internal model state.
-Practitioners surface the names of specific layers in a neural network,
-the values of learned weight slices,
-or the output of a forward hook
-to understand what the model is doing internally.
-
-\begin{lstlisting}[caption={}, label={lst:302}]
-weights_conv1[:, :, 0, 0]
-\end{lstlisting}
-
-Listing~\ref{lst:302} slices a 4D convolutional weight tensor
-to expose a single filter's learned spatial kernel,
-which is then visualized to check what the filter has learned.
-Inspection of this kind is not possible with a high-level metric,
-as it requires looking directly at model internals.
-
-\paragraph{EXP-COMPUTE (n=185, 26.7\%).}
-
-Compute statements execute a transformation,
-aggregation,
-or model operation
-and return a result that the practitioner examines.
-The key distinction from inspection is that the result is not
-already present in a variable,
-rather it is produced on the fly by the statement itself.
-
-The dominant use of EXP-COMPUTE in both GH and KG notebooks
-is metric computation at the evaluation stage.
-Practitioners compute accuracy, RMSE, F1, NDCG, AUC, and log-loss
-as last-cell expressions
-to obtain an immediate reading of model performance.
-
-\begin{lstlisting}[caption={}, label={lst:339}]
-accuracy_score(test_y, rf_pred_y)
-\end{lstlisting}
-
-These calls,
-such as the one shown in Listing~\ref{lst:339}
-are often repeated across multiple experimental runs,
-each with a different model or hyperparameter setting,
-to drive an iterative selection process.
-One notebook computes cross-validated mean and standard deviation
-of a Random Forest regressor's score
-and compares it against a Logistic Regression
-to decide which model to retain.
-
-A second prominent theme is the use of EXP-COMPUTE
-to check whether individual preprocessing steps worked as intended.
-After applying a standard scaler,
-a practitioner computes the mean and standard deviation of the transformed features
-to verify that both are near their expected values (Listing~\ref{lst:293}).
-After a \lstinline{dropna} operation,
-a practitioner computes a null count to confirm that missing values were removed (Listing~\ref{lst:284}).
-
-
-\begin{lstlisting}[caption={}, label={lst:293}]
-(y_test.mean(), y_test.std())
-\end{lstlisting}
-
-\begin{lstlisting}[caption={}, label={lst:284}]
-data.isnull().sum(axis=0)
-\end{lstlisting}
-
-These are informal postconditions.
-They express an expectation about the output of the preceding operation,
-but they rely on the practitioner's visual judgment
-rather than a programmatic threshold.
-
-A third theme,
-distinctive to GH notebooks,
-is the use of model fitting calls as pipeline integrity checks.
-Practitioners run \lstinline{model.fit()} calls
-and observe the training output
-to confirm that the pipeline wiring is correct
-before committing to a full training run.
-One notebook runs a capsule network training call for 15 epochs
-with a fraction of the data
-to verify that loss decreases before launching the full experiment.
-
-We code these statements as EXP-COMPUTE
-because the fitting call is the statement under analysis
-and the practitioner's intent is to observe whether the pipeline runs without error
-rather than to record a final trained model.
-
-In KG notebooks,
-EXP-COMPUTE statements are also used extensively for exploratory feature analysis.
-Practitioners compute grouped aggregations and correlation matrices
-to understand whether a candidate feature
-has a meaningful relationship with the target
-before deciding whether to include it (Listing~\ref{lst:564}).
-
-\begin{lstlisting}[caption={}, label={lst:564}]
-train.drop('Type', axis=1).apply(lambda x: x.corr(train.Type))
-\end{lstlisting}
-
-\begin{lstlisting}[caption={}, label={lst:397}]
-df_train.groupby(['Pclass', 'Sex'])['Survived'].value_counts(normalize=True)
-\end{lstlisting}
-
-Listing~\ref{lst:397} reveals a survival rate interaction between passenger class and sex.
-The practitioner uses this insight
-to motivate a subsequent feature engineering step.
-This pattern of computing a grouped statistic
-and acting on the result in the next cell,
-is a core workflow unit in competition notebooks.
-
-\begin{lstlisting}[caption={}, label={lst:480}]
-test\_raw.shape[0] == test.shape[0]
-\end{lstlisting}
-
-A KG notebook uses Listing~\ref{lst:480}
-as a last-cell boolean expression
-to verify that no rows were lost during a transformation.
-The expression is not wrapped in an \lstinline{assert},
-so a False result would be visible in the cell output
-but would not halt execution.
-We code this statement as EXP-COMPUTE rather than VAL-SHAPE,
-but the intent is identical to a shape assertion.
-
-\paragraph{EXP-STRUCT (n=126, 18.2\%).}
-
-Structural inspection statements
-query the metadata of a data structure
-rather than its values.
-They surface shape, column names, dtypes, unique values, cardinality, or value counts.
-EXP-STRUCT concentrates overwhelmingly at the preparation stage (78 of 126 statements),
-where practitioners use these lightweight queries
-to understand and verify the current state of the data
-before applying the next transformation.
-
-A pervasive theme is the use of structural inspection
-as a lightweight checkpoint after each cleaning or encoding step.
-After dropping columns,
-a practitioner inspects \lstinline{.columns}
-to confirm the drop worked.
-After one-hot encoding,
-a practitioner checks \lstinline{.shape}
-to confirm that the column count increased as expected.
-After undersampling the majority class,
-a practitioner inspects the shape of the resulting arrays
-to confirm that the class ratio changed (Listing~\ref{lst:593}).
-
-\begin{lstlisting}[caption={}, label={lst:593}]
-(X_train_under.shape, y_train_under.shape, X_test_under.shape)
-\end{lstlisting}
-
-These checkpoints serve the same purpose as postcondition assertions
-but rely on visual confirmation
-rather than programmatic enforcement.
-
-A second theme is the use of \lstinline{.unique()} and \lstinline{.value\_counts()}
-to audit the actual contents of a categorical column
-before deciding on an encoding strategy.
-Practitioners check whether unexpected values or label inconsistencies
-are present before applying \lstinline{LabelEncoder} or \lstinline{OneHotEncoder}.
-
-\begin{lstlisting}[caption={}, label={lst:528}]
-combi['Item_Fat_Content'].value_counts()
-\end{lstlisting}
-
-The practitioner uses the output of Listing~\ref{lst:528}
-to map all five variants of a categorical feature
-to a binary encoding
-before applying feature tools
-for automated feature engineering.
-Without this inspection,
-the encoding library would treat the five strings as five distinct categories
-and produce a semantically incorrect feature.
-
-A third theme,
-more common in GH notebooks,
-is the use of structural queries to set downstream model parameters dynamically.
-Practitioners inspect \lstinline{.vector\_size} of a word embedding
-to determine the input layer dimension of a neural network,
-or check \lstinline{X\_train.shape[2]}
-to set the \lstinline{input\_shape} parameter of a 1D CNN.
-These statements serve as interface checks
-between the data preparation and model construction stages.
-
-\paragraph{EXP-STATS (n=78, 11.3\%).}
-
-Statistical summary statements
-produce distributional views of a feature or target variable.
-They include calls to \lstinline{.describe()},
-\lstinline{.hist()},
-\lstinline{.value\_counts()},
-and distribution or box plots via seaborn and matplotlib.
-EXP-STATS is proportionally more prevalent in KG notebooks (13.5\% of KG EXP)
-than in GH notebooks (7.6\% of GH EXP),
-which reflects Kaggle's culture of systematic exploratory data analysis before modelling.
-
-The dominant theme is pre-modelling data auditing.
-Practitioners use distribution plots and summary statistics
-to detect outliers,
-assess class imbalance,
-and check whether a feature's distribution motivates a transformation.
-A seaborn \lstinline{distplot} of insurance charges in Listing~\ref{lst:634}
-reveals a right-skewed distribution,
-which motivates a log transform
-before fitting a linear regression model
-whose residuals are assumed to be normally distributed.
-
-\begin{lstlisting}[caption={}, label={lst:634}]
-sns.distplot(data.charges)
-\end{lstlisting}
-
-A box plot of engine power values
-in a used car dataset
-drives a decision to remove extreme outliers.
-A histogram of model prediction confidence scores
-reveals whether the model is well-calibrated
-or uncertain across its predictions.
-In each case,
-the statistical summary is not an end in itself
-but a decision point that gates the next preprocessing or modelling step.
-
-A second theme is post-processing verification.
-After scaling features with \lstinline{StandardScaler},
-practitioners call \lstinline{.describe()}
-to confirm that the mean is near zero and the standard deviation is near one
-(Listing~\ref{lst:580}).
-
-\begin{lstlisting}[caption={}, label={lst:580}]
-bikesData[columnsToScale].describe()
-\end{lstlisting}
-
-After imputing missing values for a column,
-a practitioner plots the column's distribution
-to confirm that the imputed values
-do not distort the shape of the distribution
-in a physiologically implausible direction.
-These verification uses of EXP-STATS
-occupy the same functional niche as EXP-STRUCT checkpoints,
-by confirming that a preceding operation produced the expected result.
-But they do so through distributional inspection
-rather than structural metadata.
-
-A third theme,
-present primarily in GH notebooks,
-is the use of statistical summaries to diagnose model behaviour.
-A histogram of a model's confidence scores across a held-out test set
-reveals whether predictions cluster near 0.5 (uncertain) or toward 0 and 1 (confident).
-A KDE plot of SARIMA residuals checks whether the model's errors
-approximate a normal distribution,
-which is a formal assumption of the ARIMA model class.
-These uses treat the statistical summary
-as a model diagnostic tool rather than a data auditing tool.
+the pipeline would execute and produce an incorrect score,
+without raising an exception in the cell output.
+Similarly, the training-serving skew detection theme within VAL-EQ (Listing~\ref{lst:118})
+catches a divergence that produces no crash signal at all.
+The data leakage prevention theme within VAL-EXIST (Listing~\ref{lst:84})
+catches a defect that inflates evaluation metrics
+without producing any error output.
+A study that examines only crashes,
+therefore cannot observe these practices
+because the practices exist precisely to prevent silent failures
+that never reach the cell output as an exception.
+The asymmetry suggests that the failure space of ML notebooks
+is wider than what crash analysis alone can capture.
+
+\paragraph*{Convergence on data preparation.}
+
+Despite the inverted lenses,
+the two studies converge on data preparation
+as the empirical centre of gravity
+in ML notebook development.
+Wang et al.\ measure where execution failes,
+and report that 33.0\% of crashes occur during data preparation.
+We measure where practitioners author feedback statements,
+and independently report
+that 40\% of feedback statements occur during the same stage.
+The convergence of these two independent studies,
+suggests that data preparation stage
+demands the most attention and effort from pracitioners to handle crashes,
+and consequently the largest share of tooling investment.
+
+The platform asymmetry from RQ1 and RQ3 is also consistent across both studies.
+Wang et al.\ report that GitHub notebooks contain four times more crashes than Kaggle (10.67\% vs.\ 2.61\%),
+and that the crash distribution across pipeline stages
+diverges between the two platforms in the same direction we observe for feedback.
 
 \section{Discussion}
 
@@ -1565,147 +1500,6 @@ that draw on a single source systematically under-sample
 the practices concentrated on the other.
 Source should be treated as a confounder by default.}
 
-\subsection{Comparison With the Wang et al.\ Taxonomy}
-\label{sec:wang-comparison}
-
-Wang et al.~\cite{wang2025why} examined ML Jupyter notebooks
-collected from GitHub and Kaggle,
-and cataloged \emph{crashes}
-which halt execution and surface an exception in the cell output.
-In contrast,
-we catalog the statements practitioners write
-to gain confidence in code that has not yet crashed.
-While the Wang taxonomy identifies the failure mode,
-our taxonomy provides validation statements
-designed to pre-emptively catch such errors.
-The two taxonomies therefore provide complementary views,
-and their duality is summarized in Table~\ref{tab:wang-mapping}.
-
-We establish this mapping
-by checking if a VAL subcode
-maps to a crash type from Wang.
-This is done
-by checking if the assertion would either prevent the crash from occurring
-or surface an upstream defect
-that would otherwise to that crash type at a later stage.
-
-\begin{table}
-  \centering
-  \caption{Mapping of our VAL subcodes to Wang et al.~\cite{wang2025why} crash types.
-  Each row identifies the crash types that the corresponding VAL subcode is designed to pre-empt.}
-  \label{tab:wang-mapping}
-  \begin{tabularx}{\textwidth}{l X}
-    \toprule
-    \textbf{VAL subcode} & \textbf{Wang crash types pre-empted} \\
-    \midrule
-    SHAPE  & Tensor Shape Mismatch, Unsupported Broadcast, Feature Name Mismatch \\
-    EQ     & Data Value Violation, Invalid Argument, Model Initialization Error \\
-    BOOL   & Data Value Violation, Invalid Argument \\
-    EXIST  & Variable Not Found, Key Error \\
-    TYPE   & Type Error, Attribute Error \\
-    APPROX & (no direct counterpart) \\
-    \bottomrule
-  \end{tabularx}
-\end{table}
-
-VAL-SHAPE maps to three of the six ML-specific crash types Wang et al.\ identify.
-Wang et al.\ report that Tensor Shape Mismatch (5.5\%),
-Unsupported Broadcast (1.6\%),
-and Feature Name Mismatch (1.2\%)
-together account for 8.3\% of crashes in their sample.
-Our results are consistent with this finding
-since we find that
-VAL-SHAPE is the most prominent validation subcode (38.84\% of VAL).
-
-Wang et al.\ report that API misuse alone accounts for 66\% of Invalid Argument crashes
-and 31\% of Data Value Violation crashes.
-VAL-EQ and VAL-BOOL,
-both pre-empt these crashes that arise
-when downstream code receives semantically incorrect inputs.
-Architectural constraints (Listing~\ref{lst:4})
-pre-empt Model Initialization Error,
-while data quality checks (Listing~\ref{lst:54})
-pre-empt Data Value Violation crashes
-and directly mirror the data confusion root cause in the Wang taxonomy.
-
-Wang et al.\ attribute Variable Not Found crashes
-primarily to notebook-specific issues such as out-of-order execution,
-which a code-level assertion cannot prevent.
-However, a subset of these crashes
-arise from references to objects
-that should have been constructed earlier in the same cell
-or earlier in a logically ordered sequence of cells.
-VAL-EXIST statements that check for the presence of a key, attribute, or filename
-before the dependent operation runs
-catch this subset of Variable Not Found crashes
-and surface the missing dependency as an explicit assertion failure
-rather than a downstream cryptic error.
-
-Wang et al.\ report that 42\% of Type Error crashes
-are caused by API misuse
-and that 44\% of Attribute Error crashes
-share the same root cause.
-VAL-TYPE statements (e.g., \lstinline{assert type(embedding_layer) == Embedding})
-pre-empt these crashes
-by enforcing the type contract that the API expects.
-
-% \paragraph*{Coverage gaps in both directions}
-
-Wang et al.\ report
-Out of Memory, Module Not Found, IO Error, Environment Error, and Request Error crash types
-that together account for 28\% of crashes in the Wang sample.
-These crash types however are not captured by our taxonomy of validation statements
-because these crashes are not preventable through code-level assertions.
-In contrast,
-our taxonomy captures defensive practices
-that are invisible to a crash-based study.
-For instance,
-The training-serving skew detection theme within VAL-EQ (Listing~\ref{lst:118})
-catches a divergence that produces no crash signal at all.
-The data leakage prevention theme within VAL-EXIST (Listing~\ref{lst:84})
-catches a defect that inflates evaluation metrics
-without producing any error output.
-A study that examines only crashes cannot observe these practices
-because the practices exist precisely to prevent silent failures
-that never reach the cell output as an exception.
-The asymmetry suggests that the failure space of ML notebooks
-is wider than what crash analysis alone can capture.
-
-% \paragraph*{Convergence on data preparation}
-
-Despite the inverted lenses,
-the two studies converge on data preparation
-as the empirical centre of gravity
-in ML notebook development.
-Wang et al.\ measure where execution failes,
-and report that 33.0\% of crashes occur during data preparation.
-We measure where practitioners author feedback statements,
-and independently report
-that 40\% of feedback statements occur during the same stage.
-The convergence of these two independent studies,
-strongly suggests that data preparation stage
-demands the most attention and effort from pracitioners to handle crashes,
-and consequently the largest share of tooling investment.
-
-% \paragraph{Synthesis}
-
-% TODO: this part needs more work
-The two taxonomies together provide a more complete picture
-of ML notebook development than either alone.
-Wang et al.\ answer \emph{what goes wrong and why}.
-Our taxonomy answers \emph{what practitioners check, and where}.
-A combined view supports two distinct tooling directions.
-The first is detection of patterns that already cause crashes,
-which the Wang taxonomy informs.
-The second is amplification of defensive practices that practitioners already author,
-which our taxonomy informs.
-The two directions are not in competition.
-A static analyser that recognises VAL-SHAPE patterns on GitHub notebooks
-and proposes equivalent assertions for Kaggle notebooks
-addresses both the prevention of Tensor Shape Mismatch crashes
-and the platform asymmetry in validation effort
-that our study and Wang et al.\ both observe.
-
 \section{Threats to Validity}
 \label{sec:threats}
 
@@ -1718,10 +1512,10 @@ along three dimensions: external, internal, and construct.
 Our corpus consists of publicly shared notebooks from GitHub and Kaggle.
 This excludes notebooks that practitioners author privately
 and notebooks that are part of proprietary or industrial workflows.
-Validation practices in industrial ML notebooks may differ from public ones,
+Feedback practices in industrial ML notebooks may differ from public ones,
 particularly where production handoffs, code review, or compliance requirements
 introduce stricter validation discipline.
-Our findings therefore reflect the validation practices visible in public notebooks
+Our findings therefore reflect the feedback practices visible in public notebooks
 and may not generalise to industrial settings.
 A study of industrial ML prototype notebooks would be required
 to assess how far our findings extend.
@@ -1816,16 +1610,20 @@ by ensuring that each high-density semantic cluster contributes at least one sta
 The residual stratum of merged small clusters bounds the effect to clusters
 that individually account for fewer than 1\% of the population.
 
-\textbf{Primary intent rule for compound assertions.}
+\textbf{Primary intent rule for compound statements.}
 Some assertions chain multiple checks within a single statement
 (e.g., \lstinline{assert len(top_negative_words) == 25 and [isinstance(w, str) for w in top_negative_words]}
 which combines a length check with an element-wise type check).
-We adopt the primary intent rule
-and code each compound assertion under the dominant check.
+Similarly,
+some exploratory statements chain a transformation (e.g., \lstinline{.groupby()})
+with a structural probe (e.g., \lstinline{.head()}).
+For such cases,
+we adopt the primary intent rule
+and code each compound statement under the dominant check.
 This compresses the type distribution toward the dominant types
 and may under represent secondary types within compound statements.
 The effect is small in practice however,
-as compound assertions account for fewer than 5\% of the corpus.
+as compound statements account for fewer than 5\% of the corpus.
 
 \textbf{Stage assignment.}
 Pipeline stage is assigned
@@ -1889,7 +1687,7 @@ to allow replication and disagreement.
 
 We position our study against three bodies of prior work.
 First, empirical studies of bugs and crashes in ML notebooks,
-which characterise the failure modes that we treat as the dual of practitioner-authored validation.
+which characterize the failure modes that we treat as the dual of practitioner-authored validation.
 Second, large-scale mining and analysis of computational notebooks,
 which establishes the methodological foundation for working with notebook corpora at scale.
 Third, validation and testing practice in ML and software engineering more broadly,
@@ -1899,21 +1697,17 @@ which provides the conceptual grounding for our intent dimension.
 \label{sec:related-bugs}
 
 Wang et al.~\cite{wang2025why} present the closest prior study to ours.
-They catalogue 92,542 crashes across 64,031 ML notebooks
+They catalog 92,542 crashes across 64,031 ML notebooks
 collected from GitHub and Kaggle
-and classify each crash along four dimensions:
-crash type, root cause, ML pipeline stage, and the ML library responsible.
-The two studies share a substantial methodological overlap.
-Both draw from GitHub and Kaggle as the two complementary data sources for ML notebook research,
-both apply proportional stratified sampling over a clustered population
-to obtain a representative manual-analysis sample,
-and both adopt grounded theory open coding
-with iterative codebook refinement and inter-rater agreement validation.
+and classify the crashes based on their
+type, root cause, ML pipeline stage, and the ML library responsible.
 The two studies differ in what they observe.
 Wang et al.\ examine error outputs that surface as exceptions in the cell.
-We examine assertions and last-cell expressions that practitioners author
+In contrast,
+we examine assertions and last-cell expressions
+that practitioners write
+% TODO: an assertion will raise an AssertError exception
 to confirm that no exception will surface.
-Section~\ref{sec:wang-comparison} establishes the duality between the two taxonomies in detail.
 
 De Santana et al.~\cite{desantana2024bug} classify general bugs in Jupyter notebooks
 into eight categories,
@@ -1990,19 +1784,6 @@ We adopt a similar set of stages
 but apply them at the statement level rather than the cell level
 and assign stage through manual coding rather than static analysis.
 
-The broader landscape of empirical research on Jupyter notebooks is mapped
-by Siddik et al.~\cite{siddik2025slr},
-whose systematic literature review identifies eleven research themes
-including testing and debugging, visualisation, cell execution order, and best practices.
-Our study contributes to the testing and debugging theme
-but reframes the question
-from \emph{what defects exist} to \emph{what practitioners check}.
-Studies of practitioner workflow inside notebooks
-have established that ML practitioners work iteratively
-and rely heavily on visible cell outputs to inspect intermediate state~\cite{kandel2012enterprise,kery2018story,liu2019understanding,chattopadhyay2020whats,rule2018exploration,head2019managing}.
-Our quantitative finding that 85\% of feedback statements are exploratory
-empirically grounds this qualitative consensus at the statement level.
-
 \subsection{Validation and Testing Practice}
 \label{sec:related-testing}
 
@@ -2052,14 +1833,6 @@ Second, we include exploratory feedback alongside formal validation,
 which captures a class of practice that test-suite analysis cannot observe
 because exploratory feedback is structurally distinct from a unit test.
 
-A related thread of work targets dataset construction for empirical ML research.
-Nahar et al.~\cite{nahar2025dataset} curate a dataset of open-source ML projects
-intended to support studies of production ML practice.
-Simmons et al.~\cite{simmons2020understanding} contribute to the same area
-through an earlier ESEM study of ML project structure.
-Our publicly released dataset of coded feedback statements
-contributes to this thread by providing a complementary resource
-focused on within-notebook practice rather than project-level structure.
 \bibliography{bibliography}
 
 \end{document}
