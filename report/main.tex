@@ -210,12 +210,6 @@ which captures what the practitioner is trying to learn or confirm,
 and \textbf{(2)} the \emph{pipeline stage},
 which captures where in the ML workflow the statement appears.
 
-% The intent dimension distinguishes exploratory feedback (EXP)
-% from formal validation (VAL),
-% each with its own set of subcodes.
-% The pipeline stage dimension follows the standard ML workflow
-% from data ingestion through evaluation.
-
 We use a combination of statistical hypothesis testing
 and qualitative analysis
 to answer the following research questions.
@@ -223,9 +217,10 @@ to answer the following research questions.
 \begin{description}
   \item[RQ1.] \textbf{What feedback mechanisms do practitioners use in ML notebooks,
     and how do they vary by platform?}
-  \item[RQ2.] \textbf{Where in the ML pipeline do practitioners author feedback statements?}
-  \item[RQ3.] \textbf{What does the practitioner intend to learn or confirm
+  \item[RQ2.] \textbf{What does the practitioner intend to learn or confirm
     from each feedback statement?}
+  \item[RQ3.] \textbf{Where in the ML pipeline do practitioners author feedback statements?}
+  \item[RQ4.] \textbf{How does the feedback taxonomy relate to known crash modes in ML notebooks?}
 \end{description}
 
 This study makes four contributions.
@@ -238,7 +233,7 @@ The taxonomy is created using grounded theory,
 and is coded along the intent and pipeline stage.
 \textbf{Third},
 we establish a mapping between our feedback taxonomy
-and the Wang et al.~\cite{wang2025why} crash taxonomy.
+and the crash taxonomy of Wang et al.~\cite{wang2025why}.
 The mapping surfaces the duality
 between defensive practice and observed failure,
 and identifies regions of the failure space
