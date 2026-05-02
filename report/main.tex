@@ -278,7 +278,7 @@ that integrates with the current iterative notebook workflow.
  \caption{\textcolor{red}{TODO}}\label{fig:method}
 \end{figure}
 
-The research goal is to \emph{characterize} the validation methods used in ML
+The research goal is to \emph{characterize} the feedback statements used in ML
 Jupyter notebooks. This research goal guides the data collection and analysis
 methodology outlined in this section.
 
@@ -378,7 +378,7 @@ and 872,685 statements (9,572 asserts and 863,113 lasts) from Kaggle.
 In a premiminary analysis,
 we apply clustering to the entire dataset,
 and manually analyze 100 statements (50 from GH and KG) sampled randomly from GH and KG.
-we find that duplicate statements coflate the cluster structure
+we find that duplicate statements conflate the cluster structure
 and cause a random sample to under-represent diverse patterns.
 We therefore remove exact duplicate statements prior to clustering.
 We delimerately trade-off diversity with representativeness for the taxonomy.
@@ -403,7 +403,7 @@ to ensure that each retained stratum is large enough to yield a meaningful propo
 We apply proportional stratified sampling
 with a 95\% confidence interval (CI)
 and a 5\% margin of error (MoE)
-to estimate a representative sample of validation statements.
+to estimate a representative sample of feedback statements.
 This gives a minimum sample size of 383 statements for GH and KG.
 To ensure comprehensive coverage,
 we sample from all strata
@@ -413,12 +413,14 @@ In total, we obtain 383 statements from GitHub and 433 statements from Kaggle.
 
 \subsection{Data Analysis}
 
-We apply grounded theory and analyze all validation statements manually.
-A code book is developed using a seed of 50 validation statements, targetted to the top 5 clusters.
+We apply grounded theory and analyze all feedback statements manually.
+A code book is developed using a seed of 50 statements,
+targetted to the top 5 clusters.
 Two members of the research team analyze each statement independently,
 to answer ``What the developer is trying to learn or confirm?'' with the statement,
 and ``Where in the development lifecycle?'' is the statement defined.
-In addition to the statement, the entire code cell of the statement,
+In addition to the statement,
+the entire code cell of the statement,
 any related code cells where variables or functions are defined,
 and the markdown cells containing documentation is analyzed to bring in additional context.
 
@@ -426,40 +428,25 @@ The authors then meet to compare the codes and discuss on disagreements until co
 is reached on a definition that both can apply consistenly. After two additional iterations,
 no new codes are added to the codebook.
 
-The stability of the codebook is verified with a fresh set of 50 validation statements.
-Cohen's kappa score of X is observed.
-Following this one researcher analyzed all remaining statements.
-
-% One assertion from GH
-% \lstinline{assert len(top_negative_words) == 25 and [isinstance(w, str) for w in top_negative_words]}
-% contained multiple conditions.
-% In such situations, the primary intent of the assertion was adopted.
-% Conflicts resolved through discussion amongst raters until consensus is reached.
-
-% I also used the primary intent rule
-% to code statements under EXP-STRUCT
-% that chained a transformation (e.g., \lstinline{.groupby()})
-% with a structural probe (e.g., \lstinline{.head()}).
-% The ambiguity is between EXP-STRUCT and EXP-COMPUTE.
-% The boundary is: does the statement retrieve structure,
-% or compute something from the data?
-
-% I think the use of precondition assertions are interesting. E.g., GH227 is a
-% precondition assertion defined inside a function that creates a visualization.
-% Writing a test for such a function does not make sense,
-% yet we might make decisions downstream using this visualization.
-% In such a case, using a precondition assert that explicitly fails
-% when there is a fault in the data prevents error being propagated.
+The stability of the codebook is verified with a fresh set of 50 statements.
+Cohen's kappa score of 0.8 is observed,
+which indicates high agreement.
+Following this one researcher analyzed and coded all remaining statements.
 
 \subsection{Resampling}
 
 While conducting the manual analysis,
-we oberve 91 validation statements that are not within the scope of this study,
-and were excluded from the study.
+we oberve 91 feedback statements that are not within the scope of this study,
+and are excluded from the study.
 For instance,
-we observe exploratory statements meant to quickly explore an API or how an imported function works (EC:EXP),
-statements that perform scientific simulations, but do not train any ML model (EX:NOML),
-misuse of notebook cells by writing documentation using block quotes in a code cell or commented out code with stale output from a prior execution (EC:ERROR),
+we observe exploratory statements
+meant to quickly explore an API
+or how an imported function works (EC:EXP),
+statements that perform scientific simulations,
+but do not train any ML model (EC:NOML),
+misuse notebook cells
+by writing documentation using block quotes in a code cell
+or commented out code with stale output from a prior execution (EC:ERROR),
 statements with no functional intent relevant to this study such as \lstinline{plt.ylabel('Win %')} (EC:NOINT),
 statements that are not authored in English (EC:ENG),
 and finally assertions written in academic notebooks for automatic grading (EC:HW).
