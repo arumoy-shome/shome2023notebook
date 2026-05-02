@@ -458,33 +458,126 @@ We perform resampling iteratively until the target sample size (383 for both GH 
 
 \section{Results}
 
-This section presents our findings for the three research questions.
-Section~\ref{sec:rq1} reports the prevalence of feedback mechanisms and their variation across platforms,
-section~\ref{sec:rq2} characterises their distribution across ML pipeline stages,
-and section~\ref{sec:rq3} presents the intent taxonomy derived from open coding.
+\begin{table}
+  \centering
+  \caption{Taxonomy of feedback statements in ML Jupyter notebooks.
+  The intent dimension distinguishes exploratory feedback (EXP)
+  from formal validation(VAL).
+  Each intent is refined into subcodes
+  derived through open coding of 815 feedback statements.}\label{tab:taxonomy}
+  \begin{tabularx}{\textwidth}{l X X X X}
+    \toprule
+    \multicolumn{5}{l}{\emph{\textbf{Validation Statements (VAL)}}} \\
+    \midrule
+    \textbf{Type} &
+    \textbf{Label} &
+    \textbf{Definition} &
+    \textbf{Example} &
+    \textbf{$n$(\%)} \\
+    SHAPE &
+    Dimensionality check &
+    Assert tensor/array shape or length &
+    \lstinline{assert x.shape == means.shape} \newline
+    \lstinline{assert x.ndims > 1} &
+    47 (39\%) \\
+    EQ &
+    Value equality check &
+    Assert that a result equals a known correct value &
+    \lstinline{assert dataY[0] == 35} \newline
+    \lstinline{assert type in ['healthy', 'failed']} \newline
+    \lstinline{assert_frame_equal(...)} &
+    34 (28\%) \\
+    BOOL &
+    Boolean invariant &
+    Assert a boolean condition holds &
+    \lstinline{assert bb2['y1'] < bb2['y2']} &
+    21 (17\%) \\
+    APPROX &
+    Approximate equality &
+    Assert numerical closeness within tolerance &
+    \lstinline{assert np.allclose(..., atol=0.001)} \newline
+    \lstinline{assert np.isclose} \newline
+    \lstinline{np.abs(...) < 0.001} &
+    7 (6\%) \\
+    EXIST &
+    Check for existane of value &
+    Assert that checks if a value exists inside a dynamically generated collection in RHS &
+    \lstinline{assert i in sig.parameters.keys()} &
+    6 (5\%) \\
+    TYPE &
+    Type check &
+    Assert object type or class membership &
+    \lstinline{assert type(embedding_layer) == Embedding} &
+    6 (5\%) \\
+    \midrule
+
+    \multicolumn{5}{l}{\emph{\textbf{Exploratory Statements (EXP)}}} \\
+    \midrule
+    INSPECT &
+    Object inspection &
+    Display an object as-is (no transformation applied) to visually verify its contents &
+    \lstinline{decoder_prediction} \newline
+    \lstinline{df.head()} \newline
+    \lstinline{sns.heatmap(...)} &
+    303 (44\%) \\
+    COMPUTE &
+    Exploratory computation &
+    Apply a function or transformation and inspect the result &
+    \lstinline{softmax(np.array[[1, 2, 3]]) - 1} \newline
+    \lstinline{.sort_values()} &
+    185 (27\%) \\
+    STRUCT &
+    Structural probe &
+    Inspect shape, size, keys, columns and type metadata &
+    \lstinline{wv.vector_size} \newline
+    \lstinline{df.shape} \newline
+    \lstinline{df.columns} &
+    126 (18\%) \\
+    STATS &
+    Statistical summary &
+    Compute and display descriptive statistics or visualizations that provide statistical summaries &
+    \lstinline{plt.hist(...)} \newline
+    \lstinline{df.describe()} &
+    78 (11\%) \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+This section presents our findings for the four research questions.
+Section~\ref{sec:rq1} establishes what feedback statements practitions author
+and how their prevalence varies between GitHub and Kaggle.
+In Section~\ref{sec:rq2}, we present the taxonomy of feedback statements
+derived from open coding,
+and describe the subcodes within each top-level intent.
+Section~\ref{sec:rq3}, presents a cross-cutting analysis with the ML pipeline stage
+to characterize where each kind of feedback appears
+in the development workflow.
+Finally, in Section~\ref{sec:rq4}
+we relate the feedback taxonomy to the crash taxonomy from Wang et al.\
+to surface the duality between defensive practice and observed failure.
+A summary of the feedback taxonomy is presented in Table~\ref{tab:taxonomy}.
 
 \paragraph*{Statistical framework}
-We test whether two categorical variables are associated.
-The null hypothesis states that the variables are independent.
-We adopt a 95\% confidence level and treat any p-value below 0.05 as a statistically significant association.
-We select the test based on the expected cell frequencies of the contingency table.
-When all expected frequencies are at least five and Cochran's rule holds,
+We test whether two categorical variables are associated,
+with the null hypothesis
+that the variables are independent.
+We adopt a 95\% confidence level
+and treat any p-value below 0.05
+as a statistically significant association.
+We select the test
+based on the expected cell frequencies of the contingency table.
+% TODO: explicitly state Cochran's rule
+When all expected frequencies are at least five
+and Cochran's rule holds,
 we apply Pearson's chi-squared ($\chi^2$) test.
-Otherwise we apply Fisher's exact test with Monte Carlo simulation (with 9999 resamples).
-% TODO: decide if Cramer's V is necessary
-We report bias-corrected Cram\'er's $V$ as the effect size,
-where the contingency table is larger than $2x2$.
-Before each test we verify that the validity conditions hold and we report only the outcome.
+Otherwise we apply Fisher's exact test
+with Monte Carlo simulation ($n=9999$ resamples).
+% TODO: describe how to interpret this value
+We also report the bias-corrected Cram\'er's $V$ as the effect size for all tests.
+Before each test we verify that the validity conditions hold
+and we report the outcome by analyzing the residuals that drive the association.
 When the marginal distribution of a variable is severely imbalanced,
 no test has adequate power and we report descriptive statistics only.
-
-Because notebook source is associated with both intent and pipeline stage,
-source acts as a confounder.
-When testing the association between two other variables,
-we stratify by source and report separate tests for GH and KG.
-
-% TODO: mention that for tests where H_0 is rejected,
-% we analyze the residuals and report what drives the associations
 
 \subsection{RQ1: Prevalence and Variation of Feedback Mechanisms}
 \label{sec:rq1}
@@ -494,82 +587,86 @@ EXP statements account for 85\% of the corpus.
 Formal assertions are rare on Kaggle and common on GitHub.
 This platform asymmetry is large and highly significant.}
 
-Our corpus consists of 815 validation statements,
-collected from GH ($n=382$, 46\%) and KG ($n=433$, 54\%).
-The validation statements consist of two top level intent codes
-EXP (n=692, 85\%) and VAL (n=123, 15\%).
+Our corpus consists of 815 feedback statements
+collected from GitHub ($n=382$, 46\%) and Kaggle ($n=433$, 54\%).
+The statements split into two top-level intent codes.
+EXP accounts for 692 statements (85\%) and VAL accounts for 123 statements (15\%).
+The split is highly skewed toward exploratory feedback on both platforms.
 
 \begin{figure}
   \begin{subfigure}[t]{0.4\textwidth}
     \centering
     \includegraphics[width=\linewidth]{distribution-intent.pdf}
-    \caption{Distribution of the intent (EXP vs.\ VAL) across GH and KG, normalized by source.}
+    \caption{Top-level intent (EXP vs.\ VAL) across GH and KG, normalized within source.}
     \label{fig:distribution-intent}
   \end{subfigure}
   \begin{subfigure}[t]{0.6\textwidth}
     \centering
     \includegraphics[width=\linewidth]{distribution-type.pdf}
-    \caption{Distribution of type across VAL and EXP, normalized by type.}
+    \caption{Subcode distribution within each intent, normalized within intent.}
     \label{fig:distribution-type}
   \end{subfigure}
-  \caption{\textcolor{red}{TODO}: think of a better caption.}
-  % \label{fig:distribution-intent-all}
+  \caption{Distribution of feedback statements across intent and subcode.
+  GitHub contains a substantially higher share of formal assertions than Kaggle.
+  Within EXP, INSPECT dominates on both platforms.
+  Within VAL, SHAPE and EQ together account for two-thirds of all assertions.}
 \end{figure}
 
-% Intent x Source
+\paragraph*{Intent varies sharply by platform.}
 
 We apply $\chi^2$ to test whether intent is associated with notebook source.
 The test reveals a significant and large association ($\chi^2(1) = 144.72$, $p < 0.001$, Cram\'er's $V = 0.421$).
 Figure~\ref{fig:distribution-intent} shows the distribution.
 GH notebooks contain proportionally more formal assertions (31.2\%).
 KG notebooks are overwhelmingly exploratory and contain only four assertions (0.9\%).
-This pattern is a platform-level effect.
-GH hosts software engineering projects where assertions are a natural practice.
-In contrst, KG hosts data exploration and competition submission workflows
+
+The asymmetry is consistent with the contrasting purposes of the two platforms.
+GitHub hosts software engineering projects
+where assertions are a natural practice.
+Kaggle hosts data exploration and competition submission workflows
 where programmatic validation is uncommon.
+Section~\ref{sec:rq3} explores this asymmetry further,
+where we show that it interacts with pipeline stage as well.
 
-% Intent x Type
+\paragraph*{Within-intent subcode distributions.}
 
-The statements are also coded along 10 sub-types based on the intent.
-We restrict the analysis to EXP ($n=692$)
-and VAL ($n=123$) coded statements individually.
-For EXP coded statements,
-we apply $\chi^2$ to test whether the type of statements is associated with notebook source.
+Each statement is further coded
+along ten subcodes that are disjoint across intent.
+For EXP statements ($n=692$),
+we apply $\chi^2$ to test
+whether the subcode is associated with source.
 The test reveals a statistically significant but weak association
 ($\chi^2(3) = 10.77$, $p=0.013$, Cram\'er's $V=0.125$).
-Looking at VAL coded statements,
-we observe that no statistical test for independence can be applied reliably,
-due to the marginal imbalance in the data which leaves little power to detect any association.
+For VAL statements ($n=123$),
+no statistical test for independence applies reliably,
+because the marginal imbalance leaves little power to detect any association.
+Figure~\ref{fig:distribution-type} therefore presents
+the subcode distribution descriptively for both intents.
 
-Figure~\ref{fig:distribution-type} thus presents
-a descriptive distribution of the types of statements.
-The statements contain 10 types,
-which are disjoint across the intent of the statements.
-Within EXP, four sub-types account for the entire distribution.
+Within EXP, four subcodes account for the entire distribution.
 INSPECT (44\%) is the most frequent,
 followed by COMPUTE (27\%), STRUCT (18\%), and STATS (11\%).
 The rank order is consistent with a notebook-as-scratchpad model of feedback.
-Practitioners most often print or display values
+Practitioners most often display values
 to confirm what an expression evaluates to (INSPECT),
-then compute derived quantities they intend to read off (COMPUTE),
-then probe the structure of an object (STRUCT),
+compute derived quantities they read off the cell output (COMPUTE),
+probe the structure of an object (STRUCT),
 and least often request a statistical summary (STATS).
-The same rank order holds on both platforms, with proportions within five percentage points.
+The same rank order holds on both platforms,
+with proportions within five percentage points of each other.
 
 Within VAL, the distribution is more skewed.
-SHAPE (38\%) and EQ (29\%),
-together covering two-thirds of all VAL statements,
+SHAPE (38\%) and EQ (29\%)
+together cover two-thirds of all VAL statements,
 followed by BOOL (17\%).
 Practitioners predominantly assert dimensional and equality invariants.
 Type checks, existence checks, and approximate equality are present
 but appear in fewer than one in ten validation statements.
-
 The within-VAL distribution is concentrated almost entirely on GitHub.
-Of the 123 VAL statements, 119 occur in GH notebooks.
-The four KG VAL statements consist of three BOOL and one EQ.
-Four of the six VAL sub-types (SHAPE, APPROX, EXIST, TYPE)
-do not appear in any KG notebook in the sample.
-This may indicate that
+Of the 123 VAL statements, 119 occur in GitHub notebooks.
+The four Kaggle VAL statements consist of three BOOL and one EQ.
+Four of the six VAL subcodes (SHAPE, APPROX, EXIST, TYPE)
+do not appear in any Kaggle notebook in the sample.
 Kaggle contributors effectively do not use structural validation at all.
 
 \subsection{RQ2: Pipeline Stage Distribution of Validation Statements}
