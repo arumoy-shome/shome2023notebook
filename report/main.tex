@@ -463,17 +463,15 @@ until the target sample size is reached.
     \textbf{Definition} &
     \textbf{Example} &
     \textbf{$n$(\%)} \\
+    \midrule
     SHAPE &
     Dimensionality check &
     Assert tensor/array shape or length &
-    \lstinline{assert x.shape == means.shape} \newline
-    \lstinline{assert x.ndims > 1} &
+    \lstinline{assert x.shape == means.shape} &
     47 (39\%) \\
     EQ &
     Value equality check &
     Assert that a result equals a known correct value &
-    \lstinline{assert dataY[0] == 35} \newline
-    \lstinline{assert type in ['healthy', 'failed']} \newline
     \lstinline{assert_frame_equal(...)} &
     34 (28\%) \\
     BOOL &
@@ -484,13 +482,11 @@ until the target sample size is reached.
     APPROX &
     Approximate equality &
     Assert numerical closeness within tolerance &
-    \lstinline{assert np.allclose(..., atol=0.001)} \newline
-    \lstinline{assert np.isclose} \newline
-    \lstinline{np.abs(...) < 0.001} &
+    \lstinline{assert np.allclose(..., atol=0.001)} &
     7 (6\%) \\
     EXIST &
     Check for existane of value &
-    Assert that checks if a value exists inside a dynamically generated collection in RHS &
+    Assert that a value exists &
     \lstinline{assert i in sig.parameters.keys()} &
     6 (5\%) \\
     TYPE &
@@ -504,28 +500,22 @@ until the target sample size is reached.
     \midrule
     INSPECT &
     Object inspection &
-    Display an object as-is (no transformation applied) to visually verify its contents &
-    \lstinline{decoder_prediction} \newline
-    \lstinline{df.head()} \newline
-    \lstinline{sns.heatmap(...)} &
+    Display and visually verify an object &
+    \lstinline{df.head()} &
     303 (44\%) \\
     COMPUTE &
     Exploratory computation &
-    Apply a function or transformation and inspect the result &
-    \lstinline{softmax(np.array[[1, 2, 3]]) - 1} \newline
+    Inspect the result of a transformation &
     \lstinline{.sort_values()} &
     185 (27\%) \\
     STRUCT &
     Structural probe &
     Inspect shape, size, keys, columns and type metadata &
-    \lstinline{wv.vector_size} \newline
-    \lstinline{df.shape} \newline
-    \lstinline{df.columns} &
+    \lstinline{df.shape} &
     126 (18\%) \\
     STATS &
     Statistical summary &
-    Compute and display descriptive statistics or visualizations that provide statistical summaries &
-    \lstinline{plt.hist(...)} \newline
+    Display descriptive statistics &
     \lstinline{df.describe()} &
     78 (11\%) \\
     \bottomrule
@@ -546,7 +536,7 @@ we relate the feedback taxonomy to the crash taxonomy from Wang et al.\
 to surface the duality between defensive practice and observed failure.
 A summary of the feedback taxonomy is presented in Table~\ref{tab:taxonomy}.
 
-\paragraph*{Statistical framework}
+\textbf{Statistical framework}.
 We test whether two categorical variables are associated,
 with the null hypothesis
 that the variables are independent.
@@ -555,7 +545,6 @@ and treat any p-value below 0.05
 as a statistically significant association.
 We select the test
 based on the expected cell frequencies of the contingency table.
-% TODO: explicitly state Cochran's rule
 When all expected frequencies are at least five
 and Cochran's rule holds,
 we apply Pearson's chi-squared ($\chi^2$) test.
@@ -571,13 +560,13 @@ no test has adequate power and we report descriptive statistics only.
 \subsection{RQ1: Prevalence and Variation of Feedback Mechanisms}
 \label{sec:rq1}
 
-\highlight{\textbf{Finding 1.} Feedback in ML notebooks is overwhelmingly exploratory.
-EXP statements account for 85\% of the corpus.
-Formal assertions are rare on Kaggle and common on GitHub.
-This platform asymmetry is large and highly significant.}
+% \highlight{\textbf{Finding 1.} Feedback in ML notebooks is overwhelmingly exploratory.
+% EXP statements account for 85\% of the corpus.
+% Formal assertions are rare on Kaggle and common on GitHub.
+% This platform asymmetry is large and highly significant.}
 
 Our corpus consists of 815 feedback statements
-collected from GitHub ($n=382$, 46\%) and Kaggle ($n=433$, 54\%).
+collected from GitHub ($n=383$, 46\%) and Kaggle ($n=433$, 54\%).
 The statements split into two top-level intent codes.
 EXP accounts for 692 statements (85\%) and VAL accounts for 123 statements (15\%).
 The split is highly skewed toward exploratory feedback on both platforms.
@@ -601,13 +590,13 @@ The split is highly skewed toward exploratory feedback on both platforms.
   Within VAL, SHAPE and EQ together account for two-thirds of all assertions.}
 \end{figure}
 
-\paragraph*{Intent varies sharply by platform.}
-
+\textbf{Intent varies sharply by platform}.
 We apply $\chi^2$ to test whether intent is associated with notebook source.
-The test reveals a significant and large association ($\chi^2(1) = 144.72$, $p < 0.001$, Cram\'er's $V = 0.421$).
-Figure~\ref{fig:distribution-intent} shows the distribution.
-GH notebooks contain proportionally more formal assertions (31.2\%).
-KG notebooks are overwhelmingly exploratory and contain only four assertions (0.9\%).
+The test reveals a significant and large association ($\chi^2(1) = 144.72$, $p < 0.001$, Cram\'er's $V = 0.421$),
+and Figure~\ref{fig:distribution-intent} shows the distribution.
+GH notebooks contain proportionally more formal assertions (31.2\%),
+while KG notebooks are overwhelmingly exploratory
+and contain only four assertions (0.9\%).
 
 The asymmetry is consistent with the contrasting purposes of the two platforms.
 GitHub hosts software engineering projects
@@ -615,10 +604,9 @@ where assertions are a natural practice.
 Kaggle hosts data exploration and competition submission workflows
 where programmatic validation is uncommon.
 Section~\ref{sec:rq3} explores this asymmetry further,
-where we show that it interacts with pipeline stage as well.
+where we show that the source interacts with pipeline stage as well.
 
-\paragraph*{Within-intent subcode distributions.}
-
+\textbf{Within-intent subcode distributions.}
 Each statement is further coded
 along ten subcodes that are disjoint across intent.
 For EXP statements ($n=692$),
@@ -635,7 +623,7 @@ the subcode distribution descriptively for both intents.
 Within EXP, four subcodes account for the entire distribution.
 INSPECT (44\%) is the most frequent,
 followed by COMPUTE (27\%), STRUCT (18\%), and STATS (11\%).
-The rank order is consistent with a notebook-as-scratchpad model of feedback.
+The rank order is consistent with a \emph{notebook-as-scratchpad} model of feedback.
 Practitioners most often display values
 to confirm what an expression evaluates to (INSPECT),
 compute derived quantities they read off the cell output (COMPUTE),
@@ -651,22 +639,21 @@ followed by BOOL (17\%).
 Practitioners predominantly assert dimensional and equality invariants.
 Type checks, existence checks, and approximate equality are present
 but appear in fewer than one in ten validation statements.
-The within-VAL distribution is concentrated almost entirely on GitHub.
 Of the 123 VAL statements, 119 occur in GitHub notebooks.
 The four Kaggle VAL statements consist of three BOOL and one EQ.
 Four of the six VAL subcodes (SHAPE, APPROX, EXIST, TYPE)
 do not appear in any Kaggle notebook in the sample.
-Kaggle contributors effectively do not use structural validation at all.
+This indicates that Kaggle contributors rarely use structural validation.
 
 \subsection{RQ2: Intent Taxonomy of Feedback Statements}
 \label{sec:rq2}
 
-\highlight{\textbf{Finding 2.} The intent taxonomy resolves into ten subcodes
-across the EXP and VAL families.
-Within VAL, practitioners predominantly check shape, equality, and boolean invariants.
-Within EXP, practitioners predominantly inspect, compute, and probe structure.
-The subcodes capture distinct concerns
-that motivate different tooling responses.}
+% \highlight{\textbf{Finding 2.} The intent taxonomy resolves into ten subcodes
+% across the EXP and VAL families.
+% Within VAL, practitioners predominantly check shape, equality, and boolean invariants.
+% Within EXP, practitioners predominantly inspect, compute, and probe structure.
+% The subcodes capture distinct concerns
+% that motivate different tooling responses.}
 
 Open coding of the 815 feedback statements
 produces ten subcodes
@@ -888,8 +875,6 @@ to audit the actual contents of a categorical column before deciding on an encod
 or check \lstinline{X_train.shape[2]}
 to set the \lstinline{input_shape} parameter of a 1D CNN.
 
-% TODO: this maps to VAL-SHAPE, use it to motivate the move towards automated checks (rather than implicit ones).
-
 \textbf{Statistical summary (EXP-STATS)}.
 Statistical summary statements produce distributional views of a feature or target variable.
 They include calls to \lstinline{.describe()}, \lstinline{.hist()}, \lstinline{.value_counts()},
@@ -918,11 +903,11 @@ but do so through distributional inspection rather than structural metadata.
 \subsection{RQ3: Pipeline Stage Distribution of Feedback Statements}
 \label{sec:rq3}
 
-\highlight{\textbf{Finding 3.} Feedback concentrates in different pipeline stages on each platform.
-Kaggle notebooks concentrate on data preparation.
-GitHub notebooks distribute feedback across data ingestion, training, and evaluation.
-Within GitHub, intent is associated with stage,
-but the choice of subcode within each intent is largely stage-agnostic.}
+% \highlight{\textbf{Finding 3.} Feedback concentrates in different pipeline stages on each platform.
+% Kaggle notebooks concentrate on data preparation.
+% GitHub notebooks distribute feedback across data ingestion, training, and evaluation.
+% Within GitHub, intent is associated with stage,
+% but the choice of subcode within each intent is largely stage-agnostic.}
 
 This section examines where in the ML pipeline
 practitioners author feedback statements,
@@ -936,13 +921,11 @@ stratified by source to control for the platform-level confound established in R
 Finally, we examine subcode by stage on the GitHub subset only,
 because Kaggle's heavy concentration in data preparation
 and its small VAL count
-preclude meaningful comparisons.
+prevent meaningful comparisons.
 
-\paragraph*{Stage distribution and platform asymmetry.}
-
+\textbf{Stage distribution and platform asymmetry}.
 PREP (40\%) is the single largest stage,
 followed by EVAL (21\%), DATA (12\%), FEAT (12\%), TRAIN (9\%) and MODEL (6\%).
-The corpus contains 2 statements (0.25\%) where the stage was unclear (UNC).
 Notebook feedback is concentrated upstream of model training, not downstream.
 
 \begin{figure}
@@ -967,11 +950,11 @@ Notebook feedback is concentrated upstream of model training, not downstream.
 
 We apply the $\chi^2$ test
 to examine whether ML pipeline stage is independent of notebook source.
-The UNC stage ($N=2$) is excluded which leaves $N=813$ statements across six stages.
-% All remaining expected frequencies exceed 5 (min = 19.63).
+The corpus contains 2 statements (0.25\%) where the stage was unclear (UNC).
+These statements are excluded which leaves $N=813$ statements across six stages.
 The test indicates a highly significant and large association
-($\chi^2(5) = 158.04$, $p<0.001$, Cram\'er's $V=0.441$).
-Figure~\ref{fig:distribution-stage} shows the distribution.
+($\chi^2(5) = 158.04$, $p<0.001$, Cram\'er's $V=0.441$),
+and Figure~\ref{fig:distribution-stage} shows the distribution.
 Kaggle notebooks concentrate predominantly on the PREP stage (58\%),
 while GitHub notebooks distribute more evenly
 across DATA (19\%), EVAL (25\%) and TRAIN (13\%).
@@ -983,9 +966,9 @@ Competition notebooks concentrate on data preparation pipelines
 and typically consume pre-configured model APIs
 rather than defining model architectures.
 
-\paragraph*{Intent varies with stage on GitHub.}
-
-We examine if the intent of statements is associated with the stage in which they occur.
+\textbf{Intent varies with stage on GitHub.}
+We examine if the intent of statements
+is associated with the stage in which they occur.
 We stratify the analysis by source,
 since source is associated with both intent and stage
 and thus acts as a confounding variable.
@@ -1000,8 +983,8 @@ We therefore restrict further analysis to GitHub statements ($n=380$).
 
 We apply $\chi^2$ to examine whether intent is associated with pipeline stage on GitHub.
 The test reveals a statistically significant association
-($\chi^2(5)=20.34$, $p=0.001$, Cram\'er's $V=0.231$).
-Figure~\ref{fig:distribution-stage-intent} shows that the VAL share varies by stage.
+($\chi^2(5)=20.34$, $p=0.001$, Cram\'er's $V=0.231$),
+and Figure~\ref{fig:distribution-stage-intent} shows that the VAL share varies by stage.
 MODEL is the most validation-heavy stage (60\%),
 followed by TRAIN (34\%) and FEAT (29\%).
 DATA (76\% EXP) and EVAL (77\% EXP) are more exploratory.
@@ -1009,8 +992,6 @@ Practitioners validate when the code defines reusable structure,
 such as model definitions and training loops,
 and inspect when the code is exploratory and data-facing,
 such as preprocessing and evaluation.
-
-\paragraph*{Within each intent, subcode is largely stage-agnostic.}
 
 \begin{figure}
   \begin{center}
@@ -1024,6 +1005,7 @@ such as preprocessing and evaluation.
   \label{fig:distribution-stage-type}
 \end{figure}
 
+\textbf{Within each intent, subcode is largely stage-agnostic.}
 We restrict the subcode-stage analysis to GitHub for the same reason as above.
 Kaggle contains too few VAL statements to support inference,
 and Kaggle's heavy concentration in PREP obscures within-stage subcode patterns.
@@ -1087,14 +1069,14 @@ not according to where in the pipeline the assertion appears.
   \end{tabularx}
 \end{table}
 
-\highlight{\textbf{Finding 4.}
-Each VAL subcode pre-empts a distinct family of crashes
-catalogued by Wang et al.~\cite{wang2025why}.
-The two studies converge on data preparation
-as the empirical centre of gravity in ML notebook development,
-where 40\% of feedback statements and 33\% of crashes occur.
-A subset of practitioner-authored validations
-catches silent failures that crash analysis alone cannot observe.}
+% \highlight{\textbf{Finding 4.}
+% Each VAL subcode pre-empts a distinct family of crashes
+% catalogued by Wang et al.~\cite{wang2025why}.
+% The two studies converge on data preparation
+% as the empirical centre of gravity in ML notebook development,
+% where 40\% of feedback statements and 33\% of crashes occur.
+% A subset of practitioner-authored validations
+% catches silent failures that crash analysis alone cannot observe.}
 
 RQ1 and RQ2 characterize what feedback statements practitioners author,
 and RQ3 shows where they author them.
@@ -1110,15 +1092,14 @@ by identifying validation statements
 designed to pre-emptively catch such errors.
 % TODO: this part is not clear
 To make this duality concrete,
-we map each VAL subcode to the crash types it pre-empts.
-Next, we compare the stage distribution of feedback statements
+we map each VAL subcode to the crash types it pre-empts,
+and compare the stage distribution of feedback statements
 to the stage distribution of crashes.
 Additionally, we identify defensive practices in our corpus
 that crash analysis cannot observe
 because the practices exist precisely to prevent silent failures.
 
-\paragraph*{Mapping VAL subcodes to crash types.}
-
+\textbf{Mapping VAL subcodes to crash types.}
 We construct the mapping in Table~\ref{tab:wang-mapping}
 by checking, for each VAL subcode,
 whether an assertion either prevents the crash from occurring
@@ -1163,8 +1144,7 @@ VAL-TYPE statements (e.g., \lstinline{assert type(embedding_layer) == Embedding}
 enforce the type contract that the API expects
 and convert a downstream cryptic error into an explicit assertion failure.
 
-\paragraph*{Crashes and validations cover different parts of the failure space.}
-
+\textbf{Crashes and validations cover different parts of the failure space.}
 Wang et al.\ report
 Out of Memory, Module Not Found, IO Error, Environment Error, and Request Error crash types
 that together account for 28\% of crashes in the Wang sample.
@@ -1198,8 +1178,7 @@ that never reach the cell output as an exception.
 The asymmetry suggests that the failure space of ML notebooks
 is wider than what crash analysis alone can capture.
 
-\paragraph*{Convergence on data preparation.}
-
+\textbf{Convergence on data preparation.}
 Despite the inverted lenses,
 the two studies converge on data preparation
 as the empirical centre of gravity
