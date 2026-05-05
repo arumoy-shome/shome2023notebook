@@ -1200,64 +1200,12 @@ diverges between the two platforms in the same direction we observe for feedback
 
 \section{Discussion}
 
-\subsection{Practical Implications}
-\label{sec:practical-implications}
+In this section,
+we interpret our key findings,
+connect them to prior work,
+and discuss implications for researchers, practitioners and tool designers.
 
-\subsubsection{Notebooks as scratchpads, not test harnesses}
-\label{sec:scratchpad}
-
-Our results show that 85\% of feedback statements in ML notebooks are exploratory,
-which indicates that practitioners read values off the cell output
-rather than enforce them programmatically.
-This pattern holds on both platforms
-but is most extreme on Kaggle,
-where formal assertions account for fewer than one in a hundred feedback statements.
-The dominant feedback mode in ML notebook development
-is therefore visual confirmation, not assertion-based validation.
-
-Breck et al.~\cite{breck2017ml} argue
-that training data deserves the same testing discipline as production code,
-and propose a rubric for assessing the readiness of an ML pipeline.
-The same authors later introduce \emph{TensorFlow Data Validation}~\cite{breck2019data},
-a tool that validates each batch of data against a declared schema.
-Data validation libraries such as TFDV and Great Expectations
-require practitioners to author the schema as a separate artefact.
-Our results indicate that
-practitioners already author the same checks in their notebooks,
-but in an exploratory rather than declarative form.
-
-We see two concrete directions for tool developers
-that amplify what practitioners already do.
-First,
-EXP-STRUCT statements
-such as \lstinline{df.shape} and \lstinline{X_train_under.shape}
-serve as informal post-condition checkpoints after data transformations.
-A static analyser can detect these statements,
-record the values they produce on a successful run,
-and propose a corresponding shape assertion.
-or a shape constraint in a data schema.
-The taxonomy proposed in Section~\ref{sec:rq3}
-can be used to identify candidate assertions
-that were authored by practitioners as structural probes.
-
-Second,
-EXP-STATS calls to \lstinline{.describe()}
-that follow a scaling or imputation step
-encode an expected post-condition (e.g., mean near zero, no missing values).
-A tool can extract these expectations from the visible output
-and emit an explicit precondition for the next cell,
-or contribute the same expectation
-to a Great Expectations suite attached to the notebook.
-
-\highlight{\textbf{Takeaway 1.}
-ML notebook feedback is predominantly visual, not programmatic.
-Tooling that treats exploratory statements as first-class feedback signals
-covers a much larger surface area
-than assertion-based tooling alone.}
-
-\subsubsection{Implicit validation through last-cell expressions}
-\label{sec:implicit-validation}
-
+\textbf{Implicit validation through last-cell expressions}.
 Within the EXP-COMPUTE category,
 practitioners author boolean expressions in the last cell of a code block
 that are structurally exploratory
@@ -1270,6 +1218,19 @@ verifies that all expected columns are present after one-hot encoding.
 Since neither expression is wrapped in an \lstinline{assert},
 a False result is visible in the cell output
 but does not halt execution.
+
+% TODO: incorporate Listing 480 into this dicussion point
+% Listing~\ref{lst:480} appears in a KG notebook as a last-cell boolean expression
+% that verifies no rows were lost during a transformation.
+% The expression is not wrapped in an \lstinline{assert},
+% so a False result is visible in the cell output but does not halt execution.
+% The intent is identical to a shape assertion,
+% which we return to in Section~\ref{sec:implicit-validation}.
+
+\begin{lstlisting}[caption={A last-cell boolean expression
+that verifies no rows were lost during a transformation.}, label={lst:480}]
+test_raw.shape[0] == test.shape[0]
+\end{lstlisting}
 
 The observed pattern
 bridges the boundary between exploratory and formal validation statements,
@@ -1313,16 +1274,64 @@ regardless of the order in which surrounding cells were run.
 % TODO: how does this help? I think the point is to prevent silent data
 % quality corrosion.
 
-\highlight{\textbf{Takeaway 2.}
-Practitioners author validation logic in the form of last-cell boolean expressions
-that are structurally exploratory but functionally equivalent to assertions.
-Static analysers can detect these expressions
-and propose their promotion to formal assertions
-without changing practitioner intent.}
+% \highlight{\textbf{Takeaway 2.}
+% Practitioners author validation logic in the form of last-cell boolean expressions
+% that are structurally exploratory but functionally equivalent to assertions.
+% Static analysers can detect these expressions
+% and propose their promotion to formal assertions
+% without changing practitioner intent.}
 
-\subsubsection{Platform asymmetry}
-\label{sec:platform-asymmetry}
+\textbf{Implications for tool design.}
+Our results show that 85\% of feedback statements in ML notebooks are exploratory,
+which indicates that practitioners read values off the cell output
+rather than enforce them programmatically.
+This pattern holds on both platforms
+but is most extreme on Kaggle,
+where formal assertions account for fewer than one in a hundred feedback statements.
+The dominant feedback mode in ML notebook development
+is therefore visual confirmation, not assertion-based validation.
 
+Breck et al.~\cite{breck2017ml} argue
+that training data deserves the same testing discipline as production code,
+and propose a rubric for assessing the readiness of an ML pipeline.
+The same authors later introduce \emph{TensorFlow Data Validation}~\cite{breck2019data},
+a tool that validates each batch of data against a declared schema.
+Data validation libraries such as TFDV and Great Expectations
+require practitioners to author the schema as a separate artefact.
+Our results indicate that
+practitioners already author the same checks in their notebooks,
+but in an exploratory rather than declarative form.
+
+We see two concrete directions for tool developers
+that amplify what practitioners already do.
+First,
+EXP-STRUCT statements
+such as \lstinline{df.shape} and \lstinline{X_train_under.shape}
+serve as informal post-condition checkpoints after data transformations.
+A static analyser can detect these statements,
+record the values they produce on a successful run,
+and propose a corresponding shape assertion.
+or a shape constraint in a data schema.
+The taxonomy proposed in Section~\ref{sec:rq3}
+can be used to identify candidate assertions
+that were authored by practitioners as structural probes.
+
+Second,
+EXP-STATS calls to \lstinline{.describe()}
+that follow a scaling or imputation step
+encode an expected post-condition (e.g., mean near zero, no missing values).
+A tool can extract these expectations from the visible output
+and emit an explicit precondition for the next cell,
+or contribute the same expectation
+to a Great Expectations suite attached to the notebook.
+
+% \highlight{\textbf{Takeaway 1.}
+% ML notebook feedback is predominantly visual, not programmatic.
+% Tooling that treats exploratory statements as first-class feedback signals
+% covers a much larger surface area
+% than assertion-based tooling alone.}
+
+\textbf{Implications for research.}
 The two platforms in our study host two qualitatively different modes of ML work.
 Kaggle notebooks concentrate 58\% of feedback in the data preparation stage
 and contain almost no model-construction code.
@@ -1342,12 +1351,12 @@ diverge similar to our observations for feedback statements.
 Our findings highlight the difference in the kind of work each platform hosts,
 and show that the platforms are not interchangeable data sources.
 
-\highlight{\textbf{Takeaway 3.}
-GitHub and Kaggle host qualitatively different modes of ML work.
-Studies of ML developer practice
-that draw on a single source systematically under-sample
-the practices concentrated on the other.
-Source should be treated as a confounder by default.}
+% \highlight{\textbf{Takeaway 3.}
+% GitHub and Kaggle host qualitatively different modes of ML work.
+% Studies of ML developer practice
+% that draw on a single source systematically under-sample
+% the practices concentrated on the other.
+% Source should be treated as a confounder by default.}
 
 \section{Threats to Validity}
 \label{sec:threats}
