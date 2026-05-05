@@ -275,14 +275,13 @@ that integrates with the current iterative notebook workflow.
 
 \begin{figure}
  \includegraphics[width=0.95\textwidth]{method.pdf}
- \caption{\textcolor{red}{TODO}}\label{fig:method}
+ \caption{Overview of the methodology.}\label{fig:method}
 \end{figure}
 
-The research goal is to \emph{characterize} the feedback statements used in ML
-Jupyter notebooks. This research goal guides the data collection and analysis
+The research goal of this study
+is to \emph{characterize} the feedback statements used in ML Jupyter notebooks.
+This research goal guides the data collection and analysis
 methodology outlined in this section.
-
-\subsection{Data Collection}
 
 Figure~\ref{fig:method} illustrates the
 data collection,
@@ -293,7 +292,6 @@ employed in this study
 to gather and analyze
 Jupyter notebooks written in Python
 from GitHub and Kaggle.
-
 GitHub is a popular platform to host and collaborate on software projects.
 It offers extensive tools for project management
 such as issue tracking,
@@ -304,12 +302,6 @@ Kaggle is focused specifically on data science and machine learning.
 It provides integrated computational resources,
 a rich repository of datasets,
 and a platform to host machine learning competitions.
-While GitHub supports formal project workflows,
-Kaggle encourages a more informal approach to data exploration and modeling,
-making it a preferred choice
-for data science practitioners
-looking for hands-on experience
-with developing machine learning models.
 
 We use GitHub's advanced search syntax~\footnote{https://docs.github.com/en/search-github/searching-on-github/searching-code},
 ~\footnote{We use the following search query: \lstinline[language={}]$language:"Jupyter Notebook"$}
@@ -317,13 +309,10 @@ to collect \emph{all} Jupyter notebooks from public repositories
 authored on June 22, 2023.
 We use the pre-existing dataset KGTorrent~\cite{quaranta2021kgtorrent,kgtorrent-zenodo} for Kaggle
 since it does not support advanced code-based search like GitHub.
-To the best of our knowledge,
-KGTorrent is the largest dataset of Python Jupyter notebooks obtained from Kaggle.
 Consequently, we start with 297,851 notebooks (283 GB)
 comprising of 49,090 notebooks from GitHub and 248,761 notebooks from Kaggle.
 
-\subsection{Data Filtering}
-
+\textbf{Data Filtering}.
 For the notebooks collected from GitHub,
 we excluded notebooks that did not contain Python code.
 This step is not applied to the Kaggle notebooks
@@ -349,11 +338,11 @@ that import Pandas, NumPy, and SciPy.
 Despite their widespread usage in ML,
 these libraries serve numerous purposes beyond ML
 and are not specifically designed for model training.
-
 After applying these
 filters, we exclude 102,276 (41\%) notebooks
 and retain 195,575 notebooks (25,947 from GH and 169,628 from KG) for analysis.
 
+% NOTE: can cut this if space required
 We extract the contents of \emph{all} code cells from the notebooks
 by parsing the underlying JSON structure.
 We then use the \lstinline{ast} module provided by the Python standard library,
@@ -373,49 +362,52 @@ using the \lstinline{unparse} method provided by the \lstinline{ast} module.
 We obtain a population of 220,095 statements (80,034 asserts and 140,951 lasts) from GitHub
 and 872,685 statements (9,572 asserts and 863,113 lasts) from Kaggle.
 
-\subsection{Sampling}
-
+\textbf{Sampling}.
 In a premiminary analysis,
 we apply clustering to the entire dataset,
-and manually analyze 100 statements (50 from GH and KG) sampled randomly from GH and KG.
+and manually analyze 100 statements sampled randomly from GH and KG.
 we find that duplicate statements conflate the cluster structure
 and cause a random sample to under-represent diverse patterns.
-We therefore remove exact duplicate statements prior to clustering.
-We delimerately trade-off diversity with representativeness for the taxonomy.
+We therefore remove exact duplicate statements prior to clustering,
+and deliberately trade-off diversity with representativeness for the taxonomy.
 
 We use CodeBERT to obtain semantic code embeddings for each unique statement.
 Semantic embeddings are appropriate
 because statements with different surface forms can express the same intent.
 E.g., \lstinline{assert X == Y} and \lstinline{assert X is Y}
 are syntactically distinct but semantically related.
-We apply UMAP~\cite{McInnes2018} to reduce the embedding dimentionality to 10.
-We then apply HDBSCAN~\cite{McInnes2017} to cluster the reduced embeddings
-into groups based on semantic similarity of the embeddings.
+We use UMAP~\cite{McInnes2018} to reduce the embedding dimentionality to 10,
+and apply HDBSCAN~\cite{McInnes2017} to cluster the reduced embeddings
+based on their semantic similarity.
 
 We obtain 277 clusters from GH and 1031 clusters from KG.
 Prior to sampling,
 we collapse small clusters to prevent excessive fragmentation of the strata.
-We rank clusters by size and compute their cumulative coverage of the entire population.
-Clusters that together account for the top 70\% of statements are retrained as individual strata.
-All remaining clusters are merged into a single residual stratum
-to ensure that each retained stratum is large enough to yield a meaningful proportional allocation.
+We rank clusters by size
+and compute their cumulative coverage of the entire population.
+Clusters that together account for the top 70\% of statements
+are retrained as individual strata.
+All remaining clusters are merged into a single residual stratum,
+which ensures that each retained stratum
+is large enough to yield a meaningful proportional allocation.
 
 We apply proportional stratified sampling
 with a 95\% confidence interval (CI)
 and a 5\% margin of error (MoE)
 to estimate a representative sample of feedback statements.
-This gives a minimum sample size of 383 statements for GH and KG.
+This gives a minimum sample size of 383 statements for GH
+and 384 statements for KG.
 To ensure comprehensive coverage,
 we sample from all strata
 and ensure that at least one statement is sampled from each stratum.
-The sampling is done separately for GitHub and Kaggle.
-In total, we obtain 383 statements from GitHub and 433 statements from Kaggle.
+In total, we obtain 383 statements from GitHub
+and 433 statements from Kaggle.
 
-\subsection{Data Analysis}
-
-We apply grounded theory and analyze all feedback statements manually.
+\textbf{Data Analysis}.
+We apply grounded theory
+and analyze all feedback statements manually.
 A code book is developed using a seed of 50 statements,
-targetted to the top 5 clusters.
+from the top 5 clusters.
 Two members of the research team analyze each statement independently,
 to answer ``What the developer is trying to learn or confirm?'' with the statement,
 and ``Where in the development lifecycle?'' is the statement defined.
@@ -427,17 +419,13 @@ and the markdown cells containing documentation is analyzed to bring in addition
 The authors then meet to compare the codes and discuss on disagreements until consensus
 is reached on a definition that both can apply consistenly. After two additional iterations,
 no new codes are added to the codebook.
-
 The stability of the codebook is verified with a fresh set of 50 statements.
 Cohen's kappa score of 0.8 is observed,
 which indicates high agreement.
-Following this one researcher analyzed and coded all remaining statements.
-
-\subsection{Resampling}
+Following this the first author analyzes and codes all remaining statements.
 
 While conducting the manual analysis,
-we oberve 91 feedback statements that are not within the scope of this study,
-and are excluded from the study.
+we observe 91 feedback statements that are not within the scope of this study.
 For instance,
 we observe exploratory statements
 meant to quickly explore an API
@@ -453,8 +441,9 @@ and finally assertions written in academic notebooks for automatic grading (EC:H
 
 To ensure a statistically significant sample size,
 we resample replacements from the same clusters where the exclusions occured.
-Replacements are verified and if necessary replaced once again.
-We perform resampling iteratively until the target sample size (383 for both GH and KG) is reached.
+Replacements are verified
+and if necessary replaced once again,
+until the target sample size is reached.
 
 \section{Results}
 
