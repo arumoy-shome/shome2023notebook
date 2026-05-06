@@ -19,7 +19,7 @@
 
 \Copyright{Arumoy Shome, Lu\'is Cruz, Diomidis Spinellis, and Arie van Deursen} %TODO mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
 
-\ccsdesc[100]{Software and its engineering} %TODO mandatory: Please choose ACM 2012 classifications from https://dl.acm.org/ccs/ccs_flat.cfm 
+\ccsdesc[100]{Software and its engineering} %TODO mandatory: Please choose ACM 2012 classifications from https://dl.acm.org/ccs/ccs_flat.cfm
 
 \keywords{Dummy keyword} %TODO mandatory; please add comma-separated list of keywords
 
@@ -272,6 +272,7 @@ This asymmetry motivates the development of validation tooling,
 that integrates with the current iterative notebook workflow.
 
 \section{Methodology}
+\label{sec:method}
 
 \begin{figure}
  \includegraphics[width=\textwidth]{method.pdf}
@@ -1361,55 +1362,24 @@ and show that the platforms are not interchangeable data sources.
 \section{Threats to Validity}
 \label{sec:threats}
 
-We discuss threats to the validity of our findings
-along three dimensions: external, internal, and construct.
-
-\paragraph*{External Validity}
-
-\textbf{Data selection bias.}
+\textbf{External Validity}.
 Our corpus consists of publicly shared notebooks from GitHub and Kaggle.
-This excludes notebooks that practitioners author privately
-and notebooks that are part of proprietary or industrial workflows.
-Feedback practices in industrial ML notebooks may differ from public ones,
-particularly where production handoffs, code review, or compliance requirements
-introduce stricter validation discipline.
-Our findings therefore reflect the feedback practices visible in public notebooks
-and may not generalise to industrial settings.
-A study of industrial ML prototype notebooks would be required
+This excludes notebooks authored privately or as part of proprietary workflows,
+where production handoffs, code review, or compliance requirements
+may impose stricter validation discipline.
+Our findings reflect the feedback practices visible in public notebooks
+and future work should focus on industrial ML prototype notebooks
 to assess how far our findings extend.
 
-\textbf{Temporal scope.}
 The GitHub data is collected through GitHub's code search on a single date in June 2023.
 The Kaggle data is drawn from KGTorrent,
-% TODO: confirm these dates
 which was collected between November--December 2021.
-Notebook practices evolve as libraries, tooling, and platform features change.
-Patterns observed in our corpus may not reflect the most recent conventions.
+Notebook practices evolve as libraries, tooling, and platform features change,
+and patterns observed in our corpus may not reflect the most recent conventions.
 We mitigate this threat by collecting notebooks across a broad time window
 and by focusing on patterns rather than specific API usage.
-Replication on a more recent corpus is the appropriate way to test temporal stability.
 
-\textbf{Library scope.}
-We restrict the corpus to notebooks that import at least one of four ML libraries:
-Scikit Learn, PyTorch, TensorFlow, or Keras.
-This excludes notebooks that use alternative ML libraries such as
-JAX, XGBoost, or LightGBM as their primary modelling tool.
-Prior work~\cite{psallidas2019data} examined six million GitHub Jupyter notebooks
-and confirmed that most ML notebooks use the four libraries we include,
-which limits but does not eliminate the threat.
-The exclusion of Pandas, NumPy, and SciPy as standalone qualifiers is deliberate
-and is necessary to avoid conflating data science notebooks with ML notebooks.
-
-\textbf{Platform asymmetry.}
-GitHub and Kaggle host different modes of ML work
-and produce qualitatively different feedback patterns.
-Findings derived from GitHub may not transfer to Kaggle and vice versa.
-We address this directly in the analysis by stratifying every test by source
-and reporting platform-level differences.
-
-\paragraph*{Internal Validity}
-
-\textbf{Last-cell expression and output drift.}
+\textbf{Internal Validity}.
 Our extraction of last-cell expressions
 assumes that the source code in the cell matches the output stored in the notebook.
 A practitioner who edits a cell after execution,
@@ -1423,85 +1393,72 @@ by analysing the static intent of the expression
 rather than its runtime value.
 Our taxonomy is thus anchored in what the practitioner authored,
 not what was last executed.
-For instance,
-a statement coded as EXP-STRUCT
-remains a structural probe
-regardless of whether the displayed output matches the current code.
 The threat is therefore confined
 to cases where the static intent itself is ambiguous,
 which the codebook resolution process is designed to handle.
 
-\textbf{Manual coding and inter-rater reliability.}
 Our analysis depends on manual coding of feedback statements,
 which introduces subjectivity,
 and the risk of inconsistent application of codes.
-We mitigate this through several measures.
-Two researchers independently code an initial seed of 50 statements
-and Cohen's kappa is reported as a measure of inter-rater agreement.
-The codebook is then validated on a fresh set of 50 statements
-and further iterations are performed
-until consensus is reached on the definition of each code.
-The remaining statements
-are coded by a single researcher after stabilization,
-which carry a residual risk,
-since these statements are not coded by both researchers.
-% TODO: validate coding with the clusters
+We took several measures to mitigate this threat as described in Section~\ref{sec:method}).
+However, once the codebook stabilized,
+the remaining statements
+are coded by a single researcher,
+which carry a residual risk.
 Spot-checks during the analysis surface no systematic drift,
 but a complete double-coding of the corpus is the most rigorous remedy
 and is left to future replication work.
 
-%TODO: the last sentence is overly complex, needs simplification
-\textbf{Codebook saturation.}
-Saturation is reached
-when no new codes are introduced
-across two consecutive iterations of the codebook.
-We meet this criterion within three iterations.
-However,
-saturation is a property of the sample,
-not the population.
-Therefore,
-it is possible that rare patterns exist in the broader population
-that our sample does not surface.
-The proportional stratified sampling design (Section~\ref{sec:sampling})
-is intended to mitigate this threat
-by ensuring that each high-density semantic cluster contributes at least one statement to the sample.
-The residual stratum of merged small clusters bounds the effect to clusters
-that individually account for fewer than 1\% of the population.
+%%TODO: the last sentence is overly complex, needs simplification
+%\textbf{Codebook saturation.}
+%Saturation is reached
+%when no new codes are introduced
+%across two consecutive iterations of the codebook.
+%We meet this criterion within three iterations.
+%However,
+%saturation is a property of the sample,
+%not the population.
+%Therefore,
+%it is possible that rare patterns exist in the broader population
+%that our sample does not surface.
+%The proportional stratified sampling design (Section~\ref{sec:sampling})
+%is intended to mitigate this threat
+%by ensuring that each high-density semantic cluster contributes at least one statement to the sample.
+%The residual stratum of merged small clusters bounds the effect to clusters
+%that individually account for fewer than 1\% of the population.
 
-\textbf{Primary intent rule for compound statements.}
-Some assertions chain multiple checks within a single statement
-(e.g., \lstinline{assert len(top_negative_words) == 25 and [isinstance(w, str) for w in top_negative_words]}
-which combines a length check with an element-wise type check).
-Similarly,
-some exploratory statements chain a transformation (e.g., \lstinline{.groupby()})
-with a structural probe (e.g., \lstinline{.head()}).
-For such cases,
-we adopt the primary intent rule
-and code each compound statement under the dominant check.
-This compresses the type distribution toward the dominant types
-and may under represent secondary types within compound statements.
-The effect is small in practice however,
-as compound statements account for fewer than 5\% of the corpus.
+% \textbf{Primary intent rule for compound statements.}
+% Some assertions chain multiple checks within a single statement
+% (e.g., \lstinline{assert len(top_negative_words) == 25 and [isinstance(w, str) for w in top_negative_words]}
+% which combines a length check with an element-wise type check).
+% Similarly,
+% some exploratory statements chain a transformation (e.g., \lstinline{.groupby()})
+% with a structural probe (e.g., \lstinline{.head()}).
+% For such cases,
+% we adopt the primary intent rule
+% and code each compound statement under the dominant check.
+% This compresses the type distribution toward the dominant types
+% and may under represent secondary types within compound statements.
+% The effect is small in practice however,
+% as compound statements account for fewer than 5\% of the corpus.
 
-\textbf{Stage assignment.}
-Pipeline stage is assigned
-by tracing the role of the statement
-in the surrounding cell and notebook context.
-Assignment is unambiguous in most cases
-but can be uncertain
-when a single cell contains code spanning multiple stages.
-We resolve such cases through the codebook rule
-that assigns a statement
-to the stage of the construct it operates on,
-and give priority to the most upstream stage
-when the construct spans several.
-Two statements (0.25\% of the corpus) are coded as UNC because no rule could be applied.
-The small share of UNC statements
-indicates that the rule is broadly applicable.
+% \textbf{Stage assignment.}
+% Pipeline stage is assigned
+% by tracing the role of the statement
+% in the surrounding cell and notebook context.
+% Assignment is unambiguous in most cases
+% but can be uncertain
+% when a single cell contains code spanning multiple stages.
+% We resolve such cases through the codebook rule
+% that assigns a statement
+% to the stage of the construct it operates on,
+% and give priority to the most upstream stage
+% when the construct spans several.
+% Two statements (0.25\% of the corpus) are coded as UNC because no rule could be applied.
+% The small share of UNC statements
+% indicates that the rule is broadly applicable.
 
-\paragraph*{Construct Validity}
-
-\textbf{Definition of feedback.}
+\textbf{Construct Validity}.
 We define feedback
 as a combination of assertion statements,
 and last-cell expressions that produce visible output.
@@ -1510,36 +1467,35 @@ such as inline print statements that are not in the last position,
 logging calls,
 and visualisations rendered through magic commands~\footnote{Built-in
 magic commands in IPython: https://ipython.readthedocs.io/en/stable/interactive/magics.html}.
-Our choice is grounded in the practitioner workflow,
-since last-cell expressions are the canonical idiom for inspecting state in Jupyter
-and assertions are the canonical idiom for enforcing invariants.
+Our choice is grounded in prior work that establish the practitioner workflow.
+Last-cell expressions are the canonical idiom for inspecting state in Jupyter~\cite{kery2018story,head2019managing}
+and assertions are the canonical idiom for enforcing invariants~\cite{kochhar2017revisiting}.
 This scope may nevertheless under-represent practitioners
 who prefer print-based or log-based feedback.
 Our corpus does not exhaust the space of feedback in ML notebooks,
 but it captures the two dominant idioms.
 
-\textbf{Cluster structure and sample composition.}
-We cluster statements using semantic embeddings from CodeBERT
-and use the resulting clusters as strata for proportional sampling.
-The clustering serves only as a sampling device to ensure diversity.
-Classification is done through manual coding,
-that determines the intent of each sampled statement,
-independently of the cluster it came from.
+% The mapping in Section~\ref{sec:wang-comparison}
+% is established on functional grounds,
+% by judging whether an assertion would prevent
+% or surface a given crash type.
+% The judgement is informed by the Wang root cause analysis
+% but is itself a construction of this study.
+% Different judgements are possible at the boundaries,
+% particularly for the VAL-EXIST to Variable Not Found mapping
+% which depends on whether the missing reference is a within-cell defect
+% or a notebook-semantic defect.
+% % TODO: remove last sentence? Where did we document this?
+% We document the mapping rule explicitly
+% to allow replication and disagreement.
 
-\textbf{Mapping to the Wang taxonomy.}
-The mapping in Section~\ref{sec:wang-comparison}
-is established on functional grounds,
-by judging whether an assertion would prevent
-or surface a given crash type.
-The judgement is informed by the Wang root cause analysis
-but is itself a construction of this study.
-Different judgements are possible at the boundaries,
-particularly for the VAL-EXIST to Variable Not Found mapping
-which depends on whether the missing reference is a within-cell defect
-or a notebook-semantic defect.
-% TODO: remove last sentence? Where did we document this?
-We document the mapping rule explicitly
-to allow replication and disagreement.
+% \textbf{Cluster structure and sample composition.}
+% We cluster statements using semantic embeddings from CodeBERT
+% and use the resulting clusters as strata for proportional sampling.
+% The clustering serves only as a sampling device to ensure diversity.
+% Classification is done through manual coding,
+% that determines the intent of each sampled statement,
+% independently of the cluster it came from.
 
 \section{Related Work}
 
