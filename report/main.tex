@@ -1499,76 +1499,36 @@ but it captures the two dominant idioms.
 
 \section{Related Work}
 
-We position our study against three bodies of prior work.
-First, empirical studies of bugs and crashes in ML notebooks,
-which characterize the failure modes that we treat as the dual of practitioner-authored validation.
-Second, large-scale mining and analysis of computational notebooks,
-which establishes the methodological foundation for working with notebook corpora at scale.
-Third, validation and testing practice in ML and software engineering more broadly,
-which provides the conceptual grounding for our intent dimension.
-
-\subsection{Bugs and Crashes in ML Notebooks}
-\label{sec:related-bugs}
-
-Wang et al.~\cite{wang2025why} present the closest prior study to ours.
-They catalog 92,542 crashes across 64,031 ML notebooks
-collected from GitHub and Kaggle
+\textbf{Bugs and Crashes in ML Notebooks}.
+Wang et al.~\cite{wang2025why} catalog 92,542 crashes across 64,031 ML notebooks
+collected from GitHub and Kaggle,
 and classify the crashes based on their
 type, root cause, ML pipeline stage, and the ML library responsible.
-The two studies differ in what they observe.
-Wang et al.\ examine error outputs that surface as exceptions in the cell.
-In contrast,
-we examine assertions and last-cell expressions
+De Santana et al.~\cite{desantana2024bug} study Stack Overflow posts,
+GitHub commits and interviews with developers to identify high-level issues
+when working with notebooks.
+Jiang et al.~\cite{jiang2025exploring} extend this taxonomy,
+by conducting an empirical study of bugs and vulnerabilities in the source code.
+Our study, complements this work
+by focusing on asserts and last-cell statements
 that practitioners write
-% TODO: an assertion will raise an AssertError exception
-to confirm that no exception will surface.
-
-De Santana et al.~\cite{desantana2024bug} classify general bugs in Jupyter notebooks
-into eight categories,
-focusing on environment setup, kernel, notebook conversion, and implementation issues.
-Their study draws from Stack Overflow posts, GitHub commits, interviews, and surveys
-rather than from the cell outputs of executed notebooks.
-The category breakdown reflects this difference.
-Environment and settings issues dominate their data
-because the underlying notebooks are predominantly demonstrations and documentation
-authored by ML library maintainers,
-where commits update dependencies rather than fix implementation defects.
-Our study draws from notebooks authored by ML library users
-and observes a different distribution of practice.
-Together with Wang et al.,
-the two studies establish the failure side of ML notebook development.
-Our study addresses the success side.
-
-Jiang et al.~\cite{jiang2025exploring} conduct a contemporary empirical study
-of bugs and vulnerabilities across the Jupyter ecosystem.
-They analyse 1000 notebooks from GitHub
-filtered by repository activity and project type,
-and apply clustering followed by stratified manual analysis
-in a methodology closely related to ours.
-Their focus is on bug categories at the project level
-rather than feedback mechanisms at the statement level,
-which makes their findings complementary to ours.
+to confirm that no failure surfaces in the first place.
 
 A separate line of work targets specific defect classes in notebooks.
 Patra and Pradel~\cite{patra2022nalin}
 present \textsc{Nalin},
-a technique that detects name-value inconsistencies
+a technique that detects name-value inconsistencies,
 where a variable's name suggests one type or shape
 but its runtime value carries another.
-This is one of the few prior efforts that operates on the same kind of artefact
-that we study (variables visible in the cell context)
-and that targets the same class of latent defect
-that VAL-TYPE assertions are designed to catch.
-\textsc{Nalin} is a runtime detection technique
-whereas our study is an empirical characterisation of practitioner-authored checks.
+\textsc{Nalin} is a runtime detection technique,
+that targets the same class of latent defects
+caught by the VAL-TYPE assertions,
+indentified in this study.
 
-\subsection{Mining and Analysis of Computational Notebooks}
-\label{sec:related-mining}
-
+\textbf{Mining and Analysis of Computational Notebooks}.
 Large-scale mining of Jupyter notebooks has become an established methodology.
 Pimentel et al.~\cite{pimentel2019large-scale} mine 1.4 million notebooks from GitHub
-to study quality and reproducibility,
-and propose guidelines for improving notebook reproducibility.
+to study quality and reproducibility.
 Psallidas et al.~\cite{psallidas2019data} analyse six million notebooks,
 two million enterprise data science pipelines,
 and metadata from twelve major data science libraries
@@ -1576,31 +1536,22 @@ to characterise the evolving landscape of computational notebook usage.
 Quaranta et al.~\cite{quaranta2021kgtorrent} construct \textsc{KGTorrent},
 a public corpus of approximately 250,000 Python notebooks from Kaggle
 together with a relational database of metadata.
-We use \textsc{KGTorrent} as our Kaggle data source
-and follow the broader filtering pattern established by Pimentel et al.\ for the GitHub corpus.
-
-Two recent contributions extend this foundation.
-Ghahfarokhi et al.~\cite{ghahfarokhi2024distilkaggle}
-present \textsc{DistilKaggle},
+Ghahfarokhi et al.~\cite{ghahfarokhi2024distilkaggle} extend this foundation,
+and present \textsc{DistilKaggle},
 a curated dataset of Kaggle notebooks
 with finer-grained metadata than \textsc{KGTorrent}.
 Grotov et al.~\cite{grotov2022large-scale} compare
 code quality between Jupyter notebooks and Python scripts on GitHub.
-Their finding that notebooks systematically deviate from script-style coding conventions
-is the broader pattern in which our platform asymmetry result sits.
 
-A complementary methodological contribution comes from Jiang et al.~\cite{jiang2022evolution}
+A complementary methodological contribution comes from Jiang et al.~\cite{jiang2022elevating}
 who label notebook cells with their position in the ML development lifecycle
 through static data flow analysis.
 Their stage taxonomy informs the pipeline stage dimension we use in our coding.
-We adopt a similar set of stages
-(data ingestion, preprocessing, feature engineering, model construction, training, evaluation)
+We adopt a similar set of stages,
 but apply them at the statement level rather than the cell level
 and assign stage through manual coding rather than static analysis.
 
-\subsection{Validation and Testing Practice}
-\label{sec:related-testing}
-
+\textbf{Validation and Testing Practice}.
 Empirical work on testing and validation practice in software engineering
 has examined how developers use assertions and lightweight checks.
 Kochhar et al.~\cite{kochhar2017revisiting} replicate and extend a prior study
@@ -1609,43 +1560,38 @@ and report that assertion adoption remains low despite established benefits.
 Vidoni~\cite{vidoni2021evaluating} studies unit testing practices in 177 R packages
 and identifies systematic gaps in test coverage
 together with sources of testing technical debt.
-Both studies establish a baseline.
-Programmatic validation is under-adopted across language ecosystems.
-Our finding that formal assertions account for 15\% of feedback statements
-on GitHub and under 1\% on Kaggle
-extends this baseline to the ML notebook setting.
+Both studies establish a baseline,
+and report that programmatic validation is under-adopted across language ecosystems.
+Our study extends this baseline to the ML notebook setting,
+and finds that formal assertions account for 15\% of feedback statements
+on GitHub and under 1\% on Kaggle.
 
-In the ML domain specifically,
+In the ML domain,
 two prior taxonomies bear directly on our work.
-Humbatova et al.~\cite{humbatova2020taxonomy} construct a comprehensive taxonomy of faults
-in deep learning systems
-through the analysis of 1059 artefacts from GitHub and Stack Overflow
-and structured interviews with 20 practitioners.
-Their five-category taxonomy (model, data, training, deployment, infrastructure)
-covers the failure space at a coarser granularity than Wang et al.,
-and several of their categories map onto the Wang crash types
-that our VAL subcodes pre-empt.
 Morovati et al.~\cite{morovati2023bugs} present \textsc{defect4ML},
 a benchmark of 100 reproducible bugs
 focused on TensorFlow and Keras.
-The benchmark is constructed from GitHub and Stack Overflow reports
+The benchmark is constructed from GitHub and Stack Overflow reports,
 and serves as a fault-injection target for downstream tooling research.
-Both taxonomies catalogue defects.
-Our taxonomy catalogues the practices designed to catch them.
+Humbatova et al.~\cite{humbatova2020taxonomy} construct a comprehensive taxonomy of faults
+in deep learning systems
+by analyzing 1059 artefacts from GitHub and Stack Overflow,
+and structured interviews with 20 practitioners.
+While both taxonomies catalogue defects,
+our taxonomy catalogues the practices designed to catch them.
 
-The closest empirical study of practitioner-authored validation in ML projects
-is Openja et al.~\cite{openja_empirical_2024},
+The closest empirical study of validation in ML projects
+is Openja et al.~\cite{openja2024empirical},
 who investigate the test code present in eleven ML projects across four application domains.
 Their study examines the formal test suites that ML projects ship
 and reports that test coverage and structure
 deviate substantially from conventional software projects.
-Our study extends this finding in two directions.
-First, we examine validation that is authored within notebooks
+Our study extends this finding
+by examining validation authored within notebooks
 rather than in separate test files,
 which is the dominant locus of ML development before production handoff.
-Second, we include exploratory feedback alongside formal validation,
-which captures a class of practice that test-suite analysis cannot observe
-because exploratory feedback is structurally distinct from a unit test.
+Additionally, we include exploratory feedback alongside formal validation,
+which captures a class of practice that test-suite analysis cannot observe.
 
 \bibliography{bibliography}
 
