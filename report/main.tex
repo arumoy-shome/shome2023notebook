@@ -113,6 +113,56 @@
 \maketitle
 
 \begin{abstract}
+\textbf{Background.}
+Machine learning development in Jupyter notebooks
+is iterative and feedback-driven.
+Practitioners author statements
+that surface information about program execution
+and use this information
+to decide what to do next.
+We call these \emph{feedback statements}
+and study two forms.
+Exploratory statements display values for visual inspection,
+while validation statements enforce conditions programmatically through assertions.
+
+\textbf{Aim.}
+Prior empirical work on ML notebooks
+have examined points where execution halts
+by analyzing crashes and bugs.
+In contrast, this study examines
+what practitioners check when execution does not halt,
+by characterizing feedback statements
+that encode the practitioner's mental model
+of what the code should do,
+and what could go wrong.
+
+\textbf{Method.}
+We mine 297,851 publicly available Python Jupyter notebooks
+from GitHub and Kaggle,
+and extract 1,092,780 feedback statements.
+We sample 815 statements
+through proportional stratified sampling
+from semantic clusters obtained from CodeBERT embeddings,
+and apply grounded theory and open coding
+to manually label and analyze each statement.
+
+\textbf{Results}.
+We find that feedback in ML notebooks is overwhelmingly exploratory,
+and the two platforms host qualitatively different modes of ML work.
+We further map our taxonomy to an existing crash taxonomy.
+We find that both converge on data preparation
+as the empirical centre of gravity in ML notebook development.
+Additionally, our taxonomy captures defensive practices
+that crash analysis cannot observe.
+
+\textbf{Conclusion.}
+Our findings indicate
+that ML notebook feedback is predominantly visual rather than programmatic,
+and that source platform should be treated
+as a confounder in studies of ML developer practice.
+We release the corpus of 1,092,780 feedback statements
+and the codebook,
+to support replication and tooling research.
 \end{abstract}
 
 \section{Introduction}
@@ -1592,6 +1642,31 @@ rather than in separate test files,
 which is the dominant locus of ML development before production handoff.
 Additionally, we include exploratory feedback alongside formal validation,
 which captures a class of practice that test-suite analysis cannot observe.
+
+\section{Conclusion}
+
+We mine 297,851 notebooks from GitHub and Kaggle,
+extract 1,092,780 feedback statements,
+and code a sample of 815 statements
+along their functional intent and ML pipeline stage,
+to characterize the feedback practice
+in machine learning Jupyter notebooks.
+The resulting taxonomy distinguishes
+exploratory feedback from formal validation,
+and finds that feedback in ML notebooks is predominantly visual.
+Further mapping with existing taxonomy of crashes in Jupyter notebooks,
+shows that both taxonomies converge on data preparation
+as the empirical centre of gravity in ML notebook development,
+and our taxonomy additionally captures defensive practices
+that prevent silent failures
+that crash analysis cannot observe.
+Future work should extend the analysis
+to industrial ML notebooks
+where production handoffs and code review
+may impose stricter validation discipline,
+and to longitudinal corpora
+that capture how feedback practice evolves
+as notebook tooling matures.
 
 \bibliography{bibliography}
 
