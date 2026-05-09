@@ -127,7 +127,7 @@ and use this information
 to decide what to do next.
 We call these \emph{feedback statements}
 and study two forms:
-exploratory statements, that display values for visual inspection,
+exploratory statements that display values for visual inspection
 and validation statements that enforce conditions programmatically through assertions.
 
 \textbf{Aim.}
@@ -483,8 +483,8 @@ and Cochran's rule holds,
 we apply Pearson's chi-squared ($\chi^2$) test.
 Otherwise we apply Fisher's exact test
 with Monte Carlo simulation ($n=9999$ resamples).
-% TODO: describe how to interpret this value
-We also report the bias-corrected Cram\'er's $V$ as the effect size for all tests.
+We also report the bias-corrected Cram\'er's $V$ as the effect size for all tests
+(small: $V < 0.1$, medium: $0.1 \le V < 0.3$, large: $V \ge 0.3$).
 Before each test we verify that the validity conditions hold
 and we report the outcome by analyzing the residuals that drive the association.
 When the marginal distribution of a variable is severely imbalanced,
@@ -497,7 +497,7 @@ no test has adequate power and we report descriptive statistics only.
   \caption{Taxonomy of feedback statements in ML Jupyter notebooks.
   The intent dimension distinguishes exploratory feedback (EXP)
   from formal validation(VAL).
-  Each intent is refined into subcodes
+  Each intent is refined into type subcodes
   derived through open coding of 815 feedback statements.}\label{tab:taxonomy}
   \begin{tabularx}{\textwidth}{l X X X r}
     \toprule
@@ -568,7 +568,7 @@ no test has adequate power and we report descriptive statistics only.
 \end{table}
 
 This section presents our findings for the four research questions.
-Section~\ref{sec:rq1} establishes what feedback statements practitions author
+Section~\ref{sec:rq1} establishes what feedback statements practitioners author
 and how their prevalence varies between GitHub and Kaggle.
 In Section~\ref{sec:rq2}, we present the taxonomy of feedback statements
 derived from open coding,
@@ -584,17 +584,6 @@ A summary of the feedback taxonomy is presented in Table~\ref{tab:taxonomy}.
 \subsection{RQ1: Prevalence and Variation of Feedback Statements}
 \label{sec:rq1}
 
-% \highlight{\textbf{Finding 1.} Feedback in ML notebooks is overwhelmingly exploratory.
-% EXP statements account for 85\% of the corpus.
-% Formal assertions are rare on Kaggle and common on GitHub.
-% This platform asymmetry is large and highly significant.}
-
-Our corpus consists of 815 feedback statements
-collected from GitHub ($n=383$, 46\%) and Kaggle ($n=433$, 54\%).
-The statements split into two top-level intent codes.
-EXP accounts for 692 statements (85\%) and VAL accounts for 123 statements (15\%).
-The split is highly skewed toward exploratory feedback on both platforms.
-
 \begin{figure}
   \begin{subfigure}[t]{0.4\textwidth}
     \centering
@@ -605,88 +594,71 @@ The split is highly skewed toward exploratory feedback on both platforms.
   \begin{subfigure}[t]{0.6\textwidth}
     \centering
     \includegraphics[width=\linewidth]{distribution-type.pdf}
-    \caption{Subcode distribution within each intent, normalized within intent.}
+    \caption{Type distribution within each intent, normalized within intent.}
     \label{fig:distribution-type}
   \end{subfigure}
-  \caption{Distribution of feedback statements across intent and subcode.
+  \caption{Distribution of feedback statements across intent and type.
   GitHub contains a substantially higher share of formal assertions than Kaggle.
   Within EXP, INSPECT dominates on both platforms.
   Within VAL, SHAPE and EQ together account for two-thirds of all assertions.}
 \end{figure}
 
-\textbf{Intent varies sharply by platform}.
-We apply $\chi^2$ to test whether intent is associated with notebook source.
-The test reveals a significant and large association ($\chi^2(1) = 144.72$, $p < 0.001$, Cram\'er's $V = 0.421$),
-and Figure~\ref{fig:distribution-intent} shows the distribution.
-GH notebooks contain proportionally more formal assertions (31.2\%),
+\textbf{Feedback in ML notebooks is overwhelmingly exploratory.}
+EXP accounts for 85\% ($n=692$) of the corpus
+and VAL accounts for the remaining 15\% ($n=123$).
+The split is highly skewed toward exploratory feedback on both platforms.
+A $\chi^2$ test between intent and notebook source,
+reveals a significant and large association ($\chi^2(1) = 144.72$, $p < 0.001$, Cram\'er's $V = 0.421$).
+Figure~\ref{fig:distribution-intent} shows that
+GH notebooks contain proportionally more formal assertions (31\%),
 while KG notebooks are overwhelmingly exploratory
-and contain only four assertions (0.9\%).
-
-The asymmetry is consistent with the contrasting purposes of the two platforms.
+and contain only four assertions (1\%).
+This asymmetry is consistent with the contrasting purposes of the two platforms.
 GitHub hosts software engineering projects
-where assertions are a natural practice.
-Kaggle hosts data exploration and competition submission workflows
+where assertions are a natural practice,
+while Kaggle hosts data exploration and competition submission workflows
 where programmatic validation is uncommon.
 Section~\ref{sec:rq3} explores this asymmetry further,
 where we show that the source interacts with pipeline stage as well.
 
-\textbf{Within-intent subcode distributions.}
-Each statement is further coded
-along ten subcodes that are disjoint across intent.
 For EXP statements ($n=692$),
-we apply $\chi^2$ to test
-whether the subcode is associated with source.
-The test reveals a statistically significant but weak association
+a $\chi^2$ test reveals a statistically significant but weak association
+between type and source
 ($\chi^2(3) = 10.77$, $p=0.013$, Cram\'er's $V=0.125$).
 For VAL statements ($n=123$),
-no statistical test for independence applies reliably,
-because the marginal imbalance leaves little power to detect any association.
+the marginal imbalance leaves too little power for a meaningful test of independence.
 Figure~\ref{fig:distribution-type} therefore presents
-the subcode distribution descriptively for both intents.
+the type distribution descriptively for both intents.
 
-Within EXP, four subcodes account for the entire distribution.
-INSPECT (44\%) is the most frequent,
-followed by COMPUTE (27\%), STRUCT (18\%), and STATS (11\%).
-The rank order is consistent with a \emph{notebook-as-scratchpad} model of feedback.
-Practitioners most often display values
+Within EXP,
+practitioners most often display values
 to confirm what an expression evaluates to (INSPECT),
 compute derived quantities they read off the cell output (COMPUTE),
 probe the structure of an object (STRUCT),
 and least often request a statistical summary (STATS).
-The same rank order holds on both platforms,
-with proportions within five percentage points of each other.
-
-Within VAL, the distribution is more skewed.
-SHAPE (38\%) and EQ (29\%)
-together cover two-thirds of all VAL statements,
-followed by BOOL (17\%).
-Practitioners predominantly assert dimensional and equality invariants.
+This rank order is consistent with a \emph{notebook-as-scratchpad} model of feedback,
+and holds on both platforms.
+Within VAL,
+practitioners predominantly assert dimensional (SHAPE) and equality (EQ) invariants.
 Type checks, existence checks, and approximate equality are present
 but appear in fewer than one in ten validation statements.
-Of the 123 VAL statements, 119 occur in GitHub notebooks.
-The four Kaggle VAL statements consist of three BOOL and one EQ.
-Four of the six VAL subcodes (SHAPE, APPROX, EXIST, TYPE)
-do not appear in any Kaggle notebook in the sample.
-This indicates that Kaggle contributors rarely use structural validation.
+
+\textbf{Of the 123 VAL statements, and only four occur in Kaggle notebooks.}
+Within these assertions, four of the six VAL types (SHAPE, APPROX, EXIST, TYPE)
+are entirely absent,
+suggesting that Kaggle contributors rarely use structural validation.
 
 \subsection{RQ2: Intent Taxonomy of Feedback Statements}
 \label{sec:rq2}
 
-% \highlight{\textbf{Finding 2.} The intent taxonomy resolves into ten subcodes
-% across the EXP and VAL families.
-% Within VAL, practitioners predominantly check shape, equality, and boolean invariants.
-% Within EXP, practitioners predominantly inspect, compute, and probe structure.
-% The subcodes capture distinct concerns
-% that motivate different tooling responses.}
-
 Open coding of the 815 feedback statements
-produces ten subcodes
+produces ten types
 distributed across the two top-level intents
 (see Table~\ref{tab:taxonomy}).
-We briefly describe each subcode below
+We briefly describe each type below
 and ground the description in the use cases that emerge from the data.
-We organize the description by intent and by subcode frequency.
-A more detailed version of the taxonomy can be found in our replication package.
+We organize the description by intent and by type frequency.
+A more detailed version of the taxonomy can be found in our replication package~\cite{replication}.
 
 \begin{lstlisting}[caption={Checks the shape of the fifth feature map from a VGG16 encoder
 immediately before it is connected to a segmentation decoder.}, label={lst:61}]
@@ -715,32 +687,32 @@ on misaligned prediction and label arrays,
 which either crashes the metric computation
 or produces a numerically plausible but incorrect score.
 
-\begin{lstlisting}[caption={Assertion used to enforce network architectural constraints.
-E.g., this assertion can be used to check that the sinusoidal positional embeddings
-have an even dimension because the vector is split between sine and cosine components.}, label={lst:4}]
+\begin{lstlisting}[caption={Check that the sinusoidal positional embeddings have an even dimension
+because the vector is split between sine and cosine components.}, label={lst:4}]
 assert dim % 2 == 0
 \end{lstlisting}
 
-\textbf{Value check (VAL-EQ)}.
+\textbf{Value equality check (VAL-EQ)}.
 Practitioners check that a specific value, configuration parameter, or computed result
-matches a known expected value.
-The expected value is known at the time of writing the assertion
+matches a known expected value,
+which is known at the time of writing the assertion
 and is derived from domain knowledge, architectural constraints, or a prior specification.
 
 Practitioners perform schema validation on loaded data,
 by checking that a CSV file has the expected number of classes,
 that a required column appears in the correct position,
 that an index contains no duplicates,
-and that a normalization step produced a zero-sum result.
+and that a normalization step produces the expected result.
 Assertions also enforce model architectural constraints
-that have no runtime enforcement in the framework (Listing~\ref{lst:4}),
-where a violated constraint would otherwise produce a shape error deep inside the forward pass
+that the framework does not check at runtime (Listing~\ref{lst:4}),
+Without the assertion,
+a violated constraint would surface as a shape error deep inside the forward pass,
 whose connection to the misconfigured hyperparameter is not obvious.
 A third use is the detection of training-serving skew (Listing~\ref{lst:118}),
 where a divergence between the offline and production preprocessing pipelines
 would cause the deployed model
 to operate on a different feature distribution than the one it was trained on,
-which would result in a silent failure with no crash signal.
+producing a silent failure with no crash signal.
 
 \begin{lstlisting}[caption={Verify that the offline preprocessing pipeline
 and the production preprocessing pipeline
@@ -824,11 +796,9 @@ where practitioners establish a running mental model of the dataset
 before any transformation is applied.
 A bare \lstinline{.head()} call after loading a CSV
 confirms that column names parsed correctly,
-that data types look plausible,
-and that no obvious loading artefact is present.
+and that data types look plausible.
 The same lightweight pattern monitors the effect of individual cleaning operations,
 such as inspecting a column after imputing missing values to confirm that the fill worked.
-
 During training,
 a recurring pattern is the periodic visual inspection of generated outputs
 or loss curves.
@@ -839,7 +809,7 @@ confusion matrices,
 learned coefficients,
 and cross-validation results as bare last-cell expressions.
 
-A theme distinctive to GH notebooks
+A theme distinctive to GitHub notebooks
 is the use of inspection to debug internal model state.
 Practitioners surface the names of specific layers in a neural network,
 the values of learned weight slices,
@@ -852,7 +822,7 @@ and return a result that the practitioner examines.
 The distinction from inspection is that the result is not already present in a variable
 but is produced on the fly by the statement itself.
 
-The dominant use of EXP-COMPUTE in both GH and KG notebooks
+The dominant use of EXP-COMPUTE in both GitHub and Kaggle notebooks
 is metric computation at the evaluation stage.
 Practitioners compute accuracy, RMSE, F1, NDCG, AUC, and log-loss
 as last-cell expressions
@@ -874,83 +844,29 @@ to understand whether a candidate feature has a meaningful relationship with the
 before deciding whether to include it.
 
 \textbf{Structural probe (EXP-STRUCT)}.
-Structural inspection statements query the metadata of a data structure rather than its values.
-They surface shape, column names, dtypes, unique values, cardinality, or value counts.
-EXP-STRUCT concentrates overwhelmingly at the preparation stage (78 of 126 statements),
-where practitioners use these lightweight queries
-to understand and verify the current state of the data
-before applying the next transformation.
-
-A pervasive theme is the use of structural inspection
-as a checkpoint after each cleaning or encoding step.
-After dropping columns, a practitioner inspects \lstinline{.columns} to confirm the drop worked.
-After one-hot encoding, a practitioner checks \lstinline{.shape}
-to confirm that the column count increased as expected.
-And, after undersampling the majority class,
-a practitioner inspects the shape of the resulting arrays
-to confirm that the class ratio changed.
-These checkpoints serve the same purpose as postcondition assertions
-but rely on visual confirmation rather than programmatic enforcement.
-
-A complementary theme, is the use of these inspection statements,
-to inform the next step.
-Practitioners use \lstinline{.unique()} and \lstinline{.value_counts()}
+Structural inspection statements surface
+shape, column names, dtypes, unique values, cardinality, or value counts of a data structure.
+A pervasive theme is to use structural probes
+to inform how a data transformation should be configured,
+and after to confirm that it had the intended effect.
+For instance, practitioners use \lstinline{.unique()} and \lstinline{.value_counts()}
 to audit the actual contents of a categorical column before deciding on an encoding strategy,
-or check \lstinline{X_train.shape[2]}
-to set the \lstinline{input_shape} parameter of a 1D CNN.
+and check \lstinline{.shape} after one-hot encoding
+to confirm that the column count increased as expected.
 
 \textbf{Statistical summary (EXP-STATS)}.
-Statistical summary statements produce distributional views of a feature or target variable.
-They include calls to \lstinline{.describe()}, \lstinline{.hist()}, \lstinline{.value_counts()},
-and distribution or box plots via seaborn and matplotlib.
-
 Practitioners use distribution plots and summary statistics
 to detect outliers,
 assess class imbalance,
 and check whether a feature's distribution motivates a transformation.
-In each case,
-the statistical summary is a decision point
-that gates the next preprocessing or modelling step.
-
-A second theme is post-processing verification.
-After scaling features with \lstinline{StandardScaler},
+Similar to structural probes,
+these statements appear on both sides of a transformation.
+For instance, after scaling features with \lstinline{StandardScaler},
 practitioners call \lstinline{.describe()}
 to confirm that the mean is near zero and the standard deviation is near one.
-After imputing missing values,
-a practitioner plots the column's distribution
-to confirm that the imputed values do not distort the shape
-in a physiologically implausible direction.
-These verification uses of EXP-STATS
-occupy the same functional niche as EXP-STRUCT checkpoints,
-but do so through distributional inspection rather than structural metadata.
 
 \subsection{RQ3: Pipeline Stage Distribution of Feedback Statements}
 \label{sec:rq3}
-
-% \highlight{\textbf{Finding 3.} Feedback concentrates in different pipeline stages on each platform.
-% Kaggle notebooks concentrate on data preparation.
-% GitHub notebooks distribute feedback across data ingestion, training, and evaluation.
-% Within GitHub, intent is associated with stage,
-% but the choice of subcode within each intent is largely stage-agnostic.}
-
-This section examines where in the ML pipeline
-practitioners author feedback statements,
-and how the choice of intent and subcode varies by stage.
-We organize the analysis as a sequence of three cross-tabulations
-of increasing granularity.
-First, we examine stage by source
-to characterize platform-level differences in where feedback appears.
-Next, we examine intent by stage,
-stratified by source to control for the platform-level confound established in RQ1.
-Finally, we examine subcode by stage on the GitHub subset only,
-because Kaggle's heavy concentration in data preparation
-and its small VAL count
-prevent meaningful comparisons.
-
-\textbf{Stage distribution and platform asymmetry}.
-PREP (40\%) is the single largest stage,
-followed by EVAL (21\%), DATA (12\%), FEAT (12\%), TRAIN (9\%) and MODEL (6\%).
-Notebook feedback is concentrated upstream of model training, not downstream.
 
 \begin{figure}
   \begin{subfigure}[t]{0.5\textwidth}
@@ -972,47 +888,55 @@ Notebook feedback is concentrated upstream of model training, not downstream.
   is highest in MODEL, TRAIN, and FEAT.}
 \end{figure}
 
-We apply the $\chi^2$ test
-to examine whether ML pipeline stage is independent of notebook source.
-The corpus contains 2 statements (0.25\%) where the stage was unclear (UNC).
-These statements are excluded which leaves $N=813$ statements across six stages.
-The test indicates a highly significant and large association
+This section examines where in the ML pipeline
+practitioners author feedback statements,
+and how the choice of intent and its type varies by stage.
+We organize the analysis as a sequence of three cross-tabulations of increasing granularity.
+First, we examine stage by source
+to characterize platform-level differences in where feedback appears.
+Next, we examine intent by stage,
+stratified by source to control for the platform-level effect established in RQ1.
+Finally, we examine type by stage on the GitHub subset only,
+because Kaggle's heavy concentration in data preparation
+and its small VAL count
+prevent meaningful comparisons.
+Note that the corpus contains 2 statements (0.25\%) where the stage was unclear (UNC),
+and are excluded from the analysis,
+leaving $n=813$ statements across six stages.
+
+\textbf{Notebook feedback is concentrated upstream of model training, not downstream.}
+PREP (40\%) is the single largest stage,
+followed by EVAL (21\%), DATA (12\%), FEAT (12\%), TRAIN (9\%) and MODEL (6\%).
+A $\chi^2$ test indicates a highly significant and large association
+between the ML pipeline stage and the notebook source
 ($\chi^2(5) = 158.04$, $p<0.001$, Cram\'er's $V=0.441$),
-and Figure~\ref{fig:distribution-stage} shows the distribution.
+and is visualized in Figure~\ref{fig:distribution-stage}.
 Kaggle notebooks concentrate predominantly on the PREP stage (58\%),
 while GitHub notebooks distribute more evenly
 across DATA (19\%), EVAL (25\%) and TRAIN (13\%).
 The MODEL stage is almost entirely absent on Kaggle (0.5\% vs. 11\% in GitHub).
-
-The dominance of the PREP stage and absence of the MODEL stage in Kaggle notebooks,
-reflects the competition format.
-Competition notebooks concentrate on data preparation pipelines
+This pattern reflects the competition format,
+which concentrate on data preparation pipelines
 and typically consume pre-configured model APIs
-rather than defining model architectures.
+rather than defining model architectures from scratch.
 
-\textbf{Intent varies with stage on GitHub.}
-We examine if the intent of statements
-is associated with the stage in which they occur.
-We stratify the analysis by source,
-since source is associated with both intent and stage
-and thus acts as a confounding variable.
+To examine whether intent is associated with pipeline stage,
+we stratify the analysis by source,
+since RQ1 established that it has an effect on both variables.
 For Kaggle statements ($n=433$),
-we apply Fisher's exact test
-which reveals a statistically significant association
-($p=0.009$, Cram\'er's $V=0.364$).
-The test is valid under these conditions
-but rests on only 4 VAL statements,
-which makes the effect size estimate unstable at such low counts.
-We therefore restrict further analysis to GitHub statements ($n=380$).
+Fisher's exact test reveals a statistically significant association
+($p=0.009$, Cram\'er's $V=0.364$),
+but the result rests on only 4 VAL statements,
+which makes the effect size estimate unstable.
 
-We apply $\chi^2$ to examine whether intent is associated with pipeline stage on GitHub.
-The test reveals a statistically significant association
-($\chi^2(5)=20.34$, $p=0.001$, Cram\'er's $V=0.231$),
-and Figure~\ref{fig:distribution-stage-intent} shows that the VAL share varies by stage.
+We therefore restrict further analysis to GitHub statements ($n=380$),
+where a $\chi^2$ test reveals a statistically significant association
+($\chi^2(5)=20.34$, $p=0.001$, Cram\'er's $V=0.231$).
+Figure~\ref{fig:distribution-stage-intent} shows that
 MODEL is the most validation-heavy stage (60\%),
-followed by TRAIN (34\%) and FEAT (29\%).
-DATA (76\% EXP) and EVAL (77\% EXP) are more exploratory.
-Practitioners validate when the code defines reusable structure,
+followed by TRAIN (34\%) and FEAT (29\%),
+while DATA and EVAL are more exploratory.
+\textbf{Practitioners validate when the code defines reusable structure,}
 such as model definitions and training loops,
 and inspect when the code is exploratory and data-facing,
 such as preprocessing and evaluation.
@@ -1021,86 +945,55 @@ such as preprocessing and evaluation.
   \begin{center}
     \includegraphics[width=\textwidth]{distribution-stage-type.pdf}
   \end{center}
-  \caption{Subcode distribution by stage on GitHub statements.
+  \caption{Type distribution by stage on GitHub statements.
   Within EXP, COMPUTE peaks in TRAIN and EVAL, STATS in PREP and DATA,
-  AND INSPECT dominates every stage.
-  Within VAL, SHAPE is the modal subcode in four of six stages,
-  and EQ appears at every stage.}
+  and INSPECT dominates every stage.
+  Within VAL, SHAPE is the modal type in four of six stages,
+  and EQ appears at every stage.
+  The cells show the count, while the colorbar shows the percentage
+  normalized within stage.}
   \label{fig:distribution-stage-type}
 \end{figure}
 
-\textbf{Within each intent, subcode is largely stage-agnostic.}
-We restrict the subcode-stage analysis to GitHub for the same reason as above.
-Kaggle contains too few VAL statements to support inference,
-and Kaggle's heavy concentration in PREP obscures within-stage subcode patterns.
-We report the GitHub distribution descriptively
-since the substantive question is which feedback subcodes appear at which stages,
-not whether the two variables are statistically dependent.
-
 Within the GitHub EXP statements ($n=263$),
-INSPECT is the dominant exploratory subcode at every stage
+INSPECT is the dominant exploratory type at every stage
 and accounts for 36\% to 57\% of EXP within each stage.
-Three patterns stand out for the remaining subcodes.
 COMPUTE peaks in TRAIN (52\%) and EVAL (47\%),
 where practitioners compute losses, predictions, and metrics inline.
-STATS appears almost exclusively in PREP (19\%) and DATA (9\%)
-and is absent from FEAT and TRAIN.
-This matches the role of summary statistics in early data understanding.
-STRUCT is small but spread across DATA (20\%), FEAT (23\%), MODEL (25\%), and PREP (17\%),
-reflecting structural probing of inputs, engineered features, and model components.
-
-Within the GitHub VAL statements ($n=117$), the picture differs.
-The choice of validation subcode is largely stage-agnostic.
-SHAPE is the modal validation subcode in four of the six stages
+STATS appears almost exclusively in PREP (19\%) and DATA (9\%),
+which matches the role of summary statistics in early data understanding.
+STRUCT is small but spread across DATA (20\%), FEAT (23\%), MODEL (25\%), and PREP (17\%).
+\textbf{The choice of validation type is largely stage-agnostic,}
+within the GitHub VAL statements ($n=117$).
+SHAPE is the modal validation type in four of the six stages
 (DATA, EVAL, MODEL, PREP)
 and accounts for 39\% to 55\% of VAL within those stages.
-EQ is modal in FEAT (50\%) and TRAIN (29\%)
-and appears at every stage.
-BOOL appears at every stage in small numbers (4\% to 26\%).
-The rarer subcodes (APPROX, EXIST, TYPE) appear too few times
-to support stage-level claims,
-with the single exception of EXIST in TRAIN
-where four of the six EXIST statements occur.
-
-The above patterns together show that
-whether a statement is validation or exploration depends on stage,
-but within each intent the choice of subcode does not.
-Practitioners pick exploratory subcodes
-according to what each stage demands of them
-and pick validation subcodes
-according to what each statement asserts about,
-not according to where in the pipeline the assertion appears.
+EQ is modal in FEAT (50\%) and TRAIN (29\%),
+and BOOL appears at every stage in small numbers (4\% to 26\%).
+The rarer subtypes (APPROX, EXIST, TYPE) appear too few times
+to support stage-level claims.
 
 \subsection{RQ4: Relationship to Known Crash Modes}
 \label{sec:rq4}
 
 \begin{table}
   \centering
-  \caption{Mapping of VAL subcodes to crash types reported by Wang et al.~\cite{wang2025why}.
-  Each row identifies the crash types that the corresponding VAL subcode is designed to pre-empt.}
+  \caption{Mapping of VAL types to crash types reported by Wang et al.~\cite{wang2025why}.
+  Each row identifies the crash types that the corresponding VAL type is designed to pre-empt.}
   \label{tab:wang-mapping}
   \begin{tabularx}{\textwidth}{l X}
     \toprule
     \textbf{VAL subcode} & \textbf{Wang crash types pre-empted} \\
     \midrule
-    SHAPE  & Tensor Shape Mismatch, Unsupported Broadcast, Feature Name Mismatch \\
+    SHAPE  & Tensor Shape Mismatch, Unsupported Broadcast\\
     EQ     & Data Value Violation, Invalid Argument, Model Initialization Error \\
     BOOL   & Data Value Violation, Invalid Argument \\
-    EXIST  & Variable Not Found, Key Error \\
+    EXIST  & Variable Not Found, Key Error, IO Error \\
     TYPE   & Type Error, Attribute Error \\
     APPROX & (no direct counterpart) \\
     \bottomrule
   \end{tabularx}
 \end{table}
-
-% \highlight{\textbf{Finding 4.}
-% Each VAL subcode pre-empts a distinct family of crashes
-% catalogued by Wang et al.~\cite{wang2025why}.
-% The two studies converge on data preparation
-% as the empirical centre of gravity in ML notebook development,
-% where 40\% of feedback statements and 33\% of crashes occur.
-% A subset of practitioner-authored validations
-% catches silent failures that crash analysis alone cannot observe.}
 
 RQ1 and RQ2 characterize what feedback statements practitioners author,
 and RQ3 shows where they author them.
@@ -1114,72 +1007,58 @@ While the Wang taxonomy identifies the failure mode,
 our taxonomy provides a complementary view,
 by identifying validation statements
 designed to pre-emptively catch such errors.
-% TODO: this part is not clear
-To make this duality concrete,
-we map each VAL subcode to the crash types it pre-empts,
-and compare the stage distribution of feedback statements
-to the stage distribution of crashes.
-Additionally, we identify defensive practices in our corpus
-that crash analysis cannot observe
-because the practices exist precisely to prevent silent failures.
+For each VAL subtype,
+we check whether an assertion would
+either prevent the crash from occurring
+or surface an upstream defect that would otherwise trigger the crash later.
+The resulting mapping is shown in Table~\ref{tab:wang-mapping}.
 
-\textbf{Mapping VAL subcodes to crash types.}
-We construct the mapping in Table~\ref{tab:wang-mapping}
-by checking, for each VAL subcode,
-whether an assertion either prevents the crash from occurring
-or surfaces an upstream defect
-that would otherwise produce that crash type at a later stage.
+\textbf{VAL-SHAPE} assertions pre-empt
+Tensor Shape Mismatch and Unsupported Broadcast crashes,
+which are among the most common ML-specific crash types.
+Our results are consistent with this prevalence,
+as VAL-SHAPE is the most prominent validation type in our corpus,
+and accounts for 39\% of VAL statements.
 
-VAL-SHAPE maps to three of the six ML-specific crash types Wang et al.\ identify.
-Tensor Shape Mismatch (5.5\%), Unsupported Broadcast (1.6\%), and Feature Name Mismatch (1.2\%)
-together account for 8.3\% of crashes in their sample.
-Our results are consistent with this prevalence.
-VAL-SHAPE is the most prominent validation subcode in our corpus
-and accounts for 38.84\% of VAL statements.
-
-VAL-EQ and VAL-BOOL pre-empt crashes that arise
+\textbf{VAL-EQ and VAL-BOOL} pre-empt crashes that arise
 when downstream code receives semantically incorrect inputs.
 Wang et al.\ report that API misuse alone accounts for
 66\% of Invalid Argument crashes and 31\% of Data Value Violation crashes.
-Architectural constraint assertions (Listing~\ref{lst:4})
+In our corpus,
+architectural constraint assertions (Listing~\ref{lst:4})
 pre-empt Model Initialization Error,
-and data quality checks (Listing~\ref{lst:54})
-pre-empt Data Value Violation crashes.
-The latter directly mirrors the data confusion root cause identified by Wang et al.
+while data quality checks (Listing~\ref{lst:54})
+pre-empt Data Value Violation crashes,
+mirroring the data confusion root cause identified by Wang et al.
 
-Wang et al.\ attribute Variable Not Found crashes
-primarily to notebook-specific issues such as out-of-order execution,
+\textbf{VAL-EXIST} catches a subset of Variable Not Found and IO Error crashes.
+Wang et al.\ attribute most Variable Not Found crashes
+to notebook-specific issues such as out-of-order execution,
 which a code-level assertion cannot prevent.
-However, a subset of these crashes
-arise from references to objects
-that should have been constructed earlier in the same cell
-or earlier in a logically ordered sequence of cells.
+The remaining cases arise from references to objects
+that should have been constructed earlier,
+and from missing files or keys.
 VAL-EXIST statements that check for the presence of a key, attribute, or filename
-before the dependent operation runs
-catch this subset of Variable Not Found crashes
-and surface the missing dependency as an explicit assertion failure
-rather than a downstream cryptic error.
+bbefore the dependent operation runs
+surface the missing dependency as an explicit assertion failure
+rather than a cryptic downstream error.
 
-VAL-TYPE pre-empts the API-misuse subset of type-related crashes.
-Wang et al.\ report that 42\% of Type Error crashes
-are caused by API misuse,
-and that 44\% of Attribute Error crashes share the same root cause.
-VAL-TYPE statements (e.g., \lstinline{assert type(embedding_layer) == Embedding})
-enforce the type contract that the API expects
-and convert a downstream cryptic error into an explicit assertion failure.
+% TODO: revisit this part, is there another way to organize this section?
+\textbf{VAL-TYPE} pre-empts the API-misuse subset of type-related crashes.
+Wang et al.\ report that 42\% of Type Error and 44\% of Attribute Error crashes
+share API misuse as a root cause.
+VAL-TYPE statements enforce the type contract the API expects.
 
 \textbf{Crashes and validations cover different parts of the failure space.}
-Wang et al.\ report
-Out of Memory, Module Not Found, IO Error, Environment Error, and Request Error crash types
-that together account for 28\% of crashes in the Wang sample.
-These crash types however are not captured by our taxonomy of validation statements
-because these crashes are not preventable through code-level assertions.
-
-In contrast,
-our taxonomy captures defensive practices
+Wang et al.\ also report
+Out of Memory, Module Not Found, Environment Error, and Request Error crashes,
+that fall outside our taxonomy
+because they are not preventable through code-level assertions.
+Conversely, our taxonomy captures defensive programming practices
 that are invisible to a crash-based study.
-For instance,
-VAL-APPROX has no direct counterpart in the Wang taxonomy.
+
+This is demonstrated by VAL-APPROX statements
+that have no direct counterpart in the Wang taxonomy.
 Approximate equality assertions verify reproducibility
 and catch large drifts in the results
 across multiple pipeline runs
@@ -1195,6 +1074,7 @@ catches a divergence that produces no crash signal at all.
 The data leakage prevention theme within VAL-EXIST (Listing~\ref{lst:84})
 catches a defect that inflates evaluation metrics
 without producing any error output.
+
 A study that examines only crashes,
 therefore cannot observe these practices
 because the practices exist precisely to prevent silent failures
@@ -1202,19 +1082,18 @@ that never reach the cell output as an exception.
 The asymmetry suggests that the failure space of ML notebooks
 is wider than what crash analysis alone can capture.
 
-\textbf{Convergence on data preparation.}
-Despite the inverted lenses,
-the two studies converge on data preparation
+\textbf{The two studies converge on data preparation
 as the empirical centre of gravity
-in ML notebook development.
-Wang et al.\ measure where execution failes,
+in ML notebook development.}
+Wang et al.\ measure where execution fails,
 and report that 33.0\% of crashes occur during data preparation.
 We measure where practitioners author feedback statements,
 and independently report
 that 40\% of feedback statements occur during the same stage.
-The convergence of these two independent studies,
+Despite the inverted lenses,
+the convergence of these two independent studies,
 suggests that data preparation stage
-demands the most attention and effort from pracitioners to handle crashes,
+demands the most attention and effort from practitioners to handle crashes,
 and consequently the largest share of tooling investment.
 
 The platform asymmetry from RQ1 and RQ3 is also consistent across both studies.
@@ -1229,51 +1108,30 @@ we interpret our key findings,
 connect them to prior work,
 and discuss implications for researchers, practitioners and tool designers.
 
-\textbf{Implicit validation through last-cell expressions}.
-Within the EXP-COMPUTE category,
-practitioners author boolean expressions in the last cell of a code block
-that are structurally exploratory
-but functionally equivalent to assertions.
-For instance,
-Listing~\ref{lst:480} verifies that no rows were lost during a transformation.
-Similarly,
-the statement \lstinline{pd.Series(options_short_list).isin(dummies.columns).all()}
-verifies that all expected columns are present after one-hot encoding.
-Since neither expression is wrapped in an \lstinline{assert},
-a False result is visible in the cell output
-but does not halt execution.
-
-% TODO: incorporate Listing 480 into this dicussion point
-% Listing~\ref{lst:480} appears in a KG notebook as a last-cell boolean expression
-% that verifies no rows were lost during a transformation.
-% The expression is not wrapped in an \lstinline{assert},
-% so a False result is visible in the cell output but does not halt execution.
-% The intent is identical to a shape assertion,
-% which we return to in Section~\ref{sec:implicit-validation}.
-
 \begin{lstlisting}[caption={A last-cell boolean expression
 that verifies no rows were lost during a transformation.}, label={lst:480}]
 test_raw.shape[0] == test.shape[0]
 \end{lstlisting}
 
-The observed pattern
-bridges the boundary between exploratory and formal validation statements,
-and reveals a class of latent assertions
-already present in notebooks.
-Each last-cell boolean expression that evaluates to True on a successful run
-is a candidate that can be promoted to a formal assertion
-without any change in practitioner intent.
-This can be done automatically by a static analyzer
-that identifies last-cell expressions
-whose root AST node is a comparison or boolean operation.
-The tool can record the expression's value across executions of the notebook,
-and surface candidates whose value is consistently True.
+\textbf{Implicit validation through last-cell expressions}.
+Within the EXP-COMPUTE category,
+practitioners author boolean expressions in the last cell of a code block
+that are structurally exploratory
+but functionally equivalent to assertions.
+For instance, Listing~\ref{lst:480} verifies that no rows were lost during a transformation.
+Similarly, Listing~\ref{lst:491} verifies that all expected columns are present after one-hot encoding.
 
-Since these statements produces visible output but does not halt execution,
-downstream cells in the notebook
+\begin{lstlisting}[caption={Verify that all expected columns are present after one-hot encoding.}, label={lst:491}]
+pd.Series(options_short_list).isin(dummies.columns).all()
+\end{lstlisting}
+
+Since neither expression is wrapped in an \lstinline{assert},
+a False result is visible in the cell output
+but does not halt execution.
+Consequently, downstream cells in the notebook
 continue to run on data
 that violates an assumption
-the practitioner authored and enforced manually.
+that the practitioner authored and enforced manually.
 The decision to proceed despite the violation
 is therefore implicit and undocumented,
 and accumulates as technical debt
@@ -1282,6 +1140,20 @@ over the lifetime of the notebook~\cite{sculley2015hidden,sambasivan2021everyone
 Promoting the same expression to an \lstinline{assert}
 makes the assumption explicit
 and turns an undocumented decision into a checked invariant.
+
+% TODO: the automated too angle is possibly unnecessary
+%
+% This observed pattern
+% reveals a class of latent assertions
+% that are already present in notebooks.
+% Each last-cell boolean expression that evaluates to True on a successful run
+% is a candidate that can be promoted to a formal assertion
+% without any change in practitioner intent.
+% This can be done automatically by a static analyzer
+% that identifies last-cell expressions
+% whose root AST node is a comparison or boolean operation.
+% The tool can record the expression's value across executions of the notebook,
+% and surface candidates whose value is consistently True.
 
 The promotion also addresses a reproducibility threat
 that is specific to the notebook format.
@@ -1298,15 +1170,9 @@ regardless of the order in which surrounding cells were run.
 % TODO: how does this help? I think the point is to prevent silent data
 % quality corrosion.
 
-% \highlight{\textbf{Takeaway 2.}
-% Practitioners author validation logic in the form of last-cell boolean expressions
-% that are structurally exploratory but functionally equivalent to assertions.
-% Static analysers can detect these expressions
-% and propose their promotion to formal assertions
-% without changing practitioner intent.}
-
 \textbf{Implications for tool design.}
-Our results show that 85\% of feedback statements in ML notebooks are exploratory,
+Our results from RQ1 (Section~\ref{sec:rq1})
+show that 85\% of feedback statements in ML notebooks are exploratory,
 which indicates that practitioners read values off the cell output
 rather than enforce them programmatically.
 This pattern holds on both platforms
@@ -1334,12 +1200,12 @@ such as \lstinline{df.shape} and \lstinline{X_train_under.shape}
 serve as informal post-condition checkpoints after data transformations.
 A static analyser can detect these statements,
 record the values they produce on a successful run,
-and propose a corresponding shape assertion.
+and propose a corresponding shape assertion,
 or a shape constraint in a data schema.
-The taxonomy proposed in Section~\ref{sec:rq3}
+The taxonomy proposed in Section~\ref{sec:rq2}
 can be used to identify candidate assertions
 that were authored by practitioners as structural probes.
-
+% TODO: a bit far-fetched, but okay
 Second,
 EXP-STATS calls to \lstinline{.describe()}
 that follow a scaling or imputation step
@@ -1349,22 +1215,7 @@ and emit an explicit precondition for the next cell,
 or contribute the same expectation
 to a Great Expectations suite attached to the notebook.
 
-% \highlight{\textbf{Takeaway 1.}
-% ML notebook feedback is predominantly visual, not programmatic.
-% Tooling that treats exploratory statements as first-class feedback signals
-% covers a much larger surface area
-% than assertion-based tooling alone.}
-
 \textbf{Implications for research.}
-The two platforms in our study host two qualitatively different modes of ML work.
-Kaggle notebooks concentrate 58\% of feedback in the data preparation stage
-and contain almost no model-construction code.
-GitHub notebooks distribute feedback across data ingestion (18.7\%),
-evaluation (24.7\%), training (13.2\%), and model construction (11\%).
-The MODEL stage is almost entirely absent on Kaggle (0.5\%).
-Validation effort follows the same asymmetry,
-as GitHub contains 119 of the 123 VAL statements in our corpus.
-
 Kaggle competition workflows operate primarily on data exploration,
 and delegate evaluation of the model to the platform leaderboard.
 GitHub on the other hand, hosts a broader range of activities that spans the entire ML development lifecycle.
@@ -1374,13 +1225,10 @@ and the crash distributions across pipeline stages
 diverge similar to our observations for feedback statements.
 Our findings highlight the difference in the kind of work each platform hosts,
 and show that the platforms are not interchangeable data sources.
-
-% \highlight{\textbf{Takeaway 3.}
-% GitHub and Kaggle host qualitatively different modes of ML work.
-% Studies of ML developer practice
-% that draw on a single source systematically under-sample
-% the practices concentrated on the other.
-% Source should be treated as a confounder by default.}
+Future studies of ML developer practice
+should take this into account,
+since drawing data from a single source
+will miss the practices on the other.
 
 \section{Threats to Validity}
 \label{sec:threats}
@@ -1432,24 +1280,6 @@ Spot-checks during the analysis surface no systematic drift,
 but a complete double-coding of the corpus is the most rigorous remedy
 and is left to future replication work.
 
-%%TODO: the last sentence is overly complex, needs simplification
-%\textbf{Codebook saturation.}
-%Saturation is reached
-%when no new codes are introduced
-%across two consecutive iterations of the codebook.
-%We meet this criterion within three iterations.
-%However,
-%saturation is a property of the sample,
-%not the population.
-%Therefore,
-%it is possible that rare patterns exist in the broader population
-%that our sample does not surface.
-%The proportional stratified sampling design (Section~\ref{sec:sampling})
-%is intended to mitigate this threat
-%by ensuring that each high-density semantic cluster contributes at least one statement to the sample.
-%The residual stratum of merged small clusters bounds the effect to clusters
-%that individually account for fewer than 1\% of the population.
-
 % \textbf{Primary intent rule for compound statements.}
 % Some assertions chain multiple checks within a single statement
 % (e.g., \lstinline{assert len(top_negative_words) == 25 and [isinstance(w, str) for w in top_negative_words]}
@@ -1498,19 +1328,18 @@ who prefer print-based or log-based feedback.
 Our corpus does not exhaust the space of feedback in ML notebooks,
 but it captures the two dominant idioms.
 
-% The mapping in Section~\ref{sec:wang-comparison}
-% is established on functional grounds,
-% by judging whether an assertion would prevent
-% or surface a given crash type.
-% The judgement is informed by the Wang root cause analysis
-% but is itself a construction of this study.
-% Different judgements are possible at the boundaries,
-% particularly for the VAL-EXIST to Variable Not Found mapping
-% which depends on whether the missing reference is a within-cell defect
-% or a notebook-semantic defect.
-% % TODO: remove last sentence? Where did we document this?
-% We document the mapping rule explicitly
-% to allow replication and disagreement.
+The mapping in Section~\ref{sec:rq4}
+is established on functional grounds,
+by judging whether an assertion would prevent
+or surface a given crash type.
+The judgement is informed by the Wang root cause analysis
+but is itself a construction of this study.
+Different judgements are possible at the boundaries,
+particularly for the VAL-EXIST to Variable Not Found mapping
+which depends on whether the missing reference is a within-cell defect
+or a notebook-semantic defect.
+We document the mapping rule explicitly in our replication package~\cite{replication}
+and welcome others to audit or revise it.
 
 % \textbf{Cluster structure and sample composition.}
 % We cluster statements using semantic embeddings from CodeBERT
@@ -1546,7 +1375,7 @@ but its runtime value carries another.
 \textsc{Nalin} is a runtime detection technique,
 that targets the same class of latent defects
 caught by the VAL-TYPE assertions,
-indentified in this study.
+identified in this study.
 
 \textbf{Mining and Analysis of Computational Notebooks}.
 Large-scale mining of Jupyter notebooks has become an established methodology.
@@ -1622,24 +1451,18 @@ We mine 297,851 notebooks from GitHub and Kaggle,
 extract 1,092,780 feedback statements,
 and code a sample of 815 statements
 along their functional intent and ML pipeline stage,
-to characterize the feedback practice
-in machine learning Jupyter notebooks.
-The resulting taxonomy distinguishes
-exploratory feedback from formal validation,
-and finds that feedback in ML notebooks is predominantly visual.
-Further mapping with existing taxonomy of crashes in Jupyter notebooks,
-shows that both taxonomies converge on data preparation
-as the empirical centre of gravity in ML notebook development,
-and our taxonomy additionally captures defensive practices
-that prevent silent failures
-that crash analysis cannot observe.
-Future work should extend the analysis
-to industrial ML notebooks
+to characterize feedback practice in machine learning Jupyter notebooks.
+The resulting taxonomy distinguishes exploratory feedback from formal validation
+and shows that feedback in ML notebooks is predominantly visual.
+Mapping our taxonomy onto an existing taxonomy of notebook crashes
+reveals that the two converge on data preparation,
+while ours additionally captures defensive practices
+that prevent silent failures invisible to crash analysis.
+Future work should extend the analysis to industrial ML notebooks,
 where production handoffs and code review
 may impose stricter validation discipline,
 and to longitudinal corpora
-that capture how feedback practice evolves
-as notebook tooling matures.
+that capture how feedback practice evolves as notebook tooling matures.
 
 \bibliography{bibliography}
 
