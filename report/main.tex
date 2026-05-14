@@ -398,8 +398,8 @@ Semantic embeddings are appropriate
 because statements with different surface forms can express the same intent.
 E.g., \lstinline{assert X == Y} and \lstinline{assert X is Y}
 are syntactically distinct but semantically related.
-We use UMAP~\cite{McInnes2018} to reduce the embedding dimentionality to 10,
-and apply HDBSCAN~\cite{McInnes2017} to cluster the reduced embeddings
+We use UMAP~\cite{mcinnes2018} to reduce the embedding dimentionality to 10,
+and apply HDBSCAN~\cite{mcinnes2017} to cluster the reduced embeddings
 based on their semantic similarity.
 We obtain 277 clusters from GH and 1031 clusters from KG.
 Prior to sampling,
