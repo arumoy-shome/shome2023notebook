@@ -1,9 +1,10 @@
 \documentclass[a4paper,USenglish,cleveref,autoref,thm-restate,anonymous]{lipics-v2021}       % onecolumn (second format)
 
-\bibliographystyle{unsrturl}% the mandatory bibstyle
+% \bibliographystyle{unsrturl}% sort references by order of citation, but can't use this apparently
+\bibliographystyle{plainurl}% the mandatory bibstyle
 
-\title{Understanding Feedback Mechanisms in Machine Learning Jupyter Notebooks}
-%\titlerunning{Dummy short title} %TODO optional, please use if title is longer than one line
+\title{Characterizing Feedback Statements in Machine Learning Jupyter Notebooks}
+% \titlerunning{Characterizing Feedback Statements in Machine Learning Jupyter Notebooks} %TODO optional, please use if title is longer than one line
 
 %TODO mandatory, please use full name; only 1 author per \author macro; first
 %two parameters are mandatory, other parameters can be empty. Please provide at
@@ -11,7 +12,7 @@
 %optional. Use additional curly braces to indicate the correct name splitting
 %when the last name consists of multiple name parts.
 \author{Arumoy Shome}{Delft University of Technology, The Netherlands}{a.shome@tudelft.nl}{}{}
-\author{Lu\'is Cruz}{Delft University of Technology, The Netherlands}{d.cruz@tudelft.nl}{}{}
+\author{Lu\'is Cruz}{Delft University of Technology, The Netherlands}{l.cruz@tudelft.nl}{}{}
 \author{Diomidis Spinellis}{Delft University of Technology, The Netherlands}{d.spinellis@tudelft.nl}{}{}
 \author{Arie van Deursen}{Delft University of Technology, The Netherlands}{arie.vandeursen@tudelft.nl}{}{}
 
@@ -19,7 +20,7 @@
 
 \Copyright{Arumoy Shome, Lu\'is Cruz, Diomidis Spinellis, and Arie van Deursen} %TODO mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
 
-\ccsdesc[100]{Software and its engineering} %TODO mandatory: Please choose ACM 2012 classifications from https://dl.acm.org/ccs/ccs_flat.cfm
+\ccsdesc[100]{Software and its engineering~Empirical software validation} %TODO mandatory: Please choose ACM 2012 classifications from https://dl.acm.org/ccs/ccs_flat.cfm
 
 \keywords{Empirical software engineering,
 machine learning,
@@ -73,11 +74,6 @@ mining software repositories} %TODO mandatory; please add comma-separated list o
 \usepackage{longtable}
 \usepackage{wrapfig}
 \usepackage{framed}
-
-\newcommand{\highlight}[1]{
-  \begin{framed}%
-    \noindent#1
-\end{framed}}
 
 \definecolor{backcolor}{rgb}{0.95,0.95,0.92}
 \colorlet{punct}{red!60!black}
@@ -1338,7 +1334,7 @@ Different judgements are possible at the boundaries,
 particularly for the VAL-EXIST to Variable Not Found mapping
 which depends on whether the missing reference is a within-cell defect
 or a notebook-semantic defect.
-We document the mapping rule explicitly in our replication package~\cite{replication}
+We document the mapping rule explicitly
 and welcome others to audit or revise it.
 
 % \textbf{Cluster structure and sample composition.}
@@ -1463,6 +1459,13 @@ where production handoffs and code review
 may impose stricter validation discipline,
 and to longitudinal corpora
 that capture how feedback practice evolves as notebook tooling matures.
+
+\section{Data Availability}
+
+Our replication package contains
+the full dataset of 1M+ feedback statements,
+data collection and analysis scripts,
+and the final code book used to derive the taxonomy~\cite{replication}.
 
 \bibliography{bibliography}
 
