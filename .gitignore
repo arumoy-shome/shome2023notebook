@@ -30,3 +30,7 @@ report/.$figures.drawio.bkp
 /report/main.fdb_latexmk
 /report/main.bbl
 /report/main.aux
+/notebooks/codebook.pdf
+/notebooks/codebook_files/libs
+/notebooks/data-collection-numbers.pdf
+/notebooks/results.pdf
