@@ -3,7 +3,7 @@ import pandas as pd
 from bin.sampling import collapse_clusters
 
 # %%
-data = pd.read_csv("data/shome2023notebook/clusters-dedup.csv", index_col=0)
+data = pd.read_csv("data/anon/clusters-dedup.csv", index_col=0)
 GH = data.loc[data["source"] == "GH"]
 KG = data.loc[data["source"] == "KG"]
 

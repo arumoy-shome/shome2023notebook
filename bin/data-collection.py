@@ -146,7 +146,7 @@ lasts.loc[:, "last"] = lasts.loc[:, "ast"].apply(lambda x: x.body[-1])
 lasts.loc[:, "last"] = lasts.loc[:, "last"].map(lambda x: ast.unparse(x))
 
 dirname, filename = os.path.split(args.notebook)
-dirname = dirname.replace("data/", "data/shome2023notebook/", 1)
+dirname = dirname.replace("data/", "data/anon/", 1)
 if not os.path.exists(dirname):
     os.makedirs(dirname)
 

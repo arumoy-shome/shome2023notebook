@@ -27,12 +27,12 @@ def embed_batch(texts: list[str], batch_size: int = 32) -> np.ndarray:
 
 if __name__ == "__main__":
     asserts = pd.read_csv(
-        "data/shome2023notebook/asserts.csv",
+        "data/anon/asserts.csv",
         header=None,
         names=["notebook", "stmt"]
     )
     lasts = pd.read_csv(
-        "data/shome2023notebook/lasts.csv",
+        "data/anon/lasts.csv",
         header=None,
         names=["notebook", "stmt"]
     )
@@ -80,4 +80,4 @@ if __name__ == "__main__":
     data.loc[data["source"] == "GH", "CGH"] = pipeline.fit_predict(XGH)
     data.loc[data["source"] == "KG", "CKG"] = pipeline.fit_predict(XKG)
 
-    data.to_csv("data/shome2023notebook/clusters.csv")
+    data.to_csv("data/anon/clusters.csv")

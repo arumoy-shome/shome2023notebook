@@ -66,7 +66,7 @@ def main(data: pd.DataFrame, col: str):
 
 
 if __name__ == "__main__":
-    data = pd.read_csv("data/shome2023notebook/clusters-dedup.csv", index_col=0)
+    data = pd.read_csv("data/anon/clusters-dedup.csv", index_col=0)
 
     GH = data.loc[data["CGH"].notna()]
     GH_sample = main(GH, "CGH")
@@ -76,5 +76,5 @@ if __name__ == "__main__":
 
     print(f"GH sample: {GH_sample.shape} KG sample: {KG_sample.shape}")
 
-    GH_sample.to_csv("data/shome2023notebook/GH_sample.csv", index=False)
-    KG_sample.to_csv("data/shome2023notebook/KG_sample.csv", index=False)
+    GH_sample.to_csv("data/anon/GH_sample.csv", index=False)
+    KG_sample.to_csv("data/anon/KG_sample.csv", index=False)
