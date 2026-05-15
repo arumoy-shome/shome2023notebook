@@ -183,8 +183,8 @@ that advocate for short feedback loops
 and frequent revision in response to what each cycle reveals.
 
 Jupyter notebooks have become the dominant medium for developing ML prototypes
-since they support a feedback-driven workflow
-through a read-eval-print loop style of development.
+since they support such a feedback-driven workflow,
+through a \emph{read-eval-print} loop style of development.
 Practitioners write a small unit of code within a \emph{cell},
 execute it,
 read the result,
@@ -199,10 +199,23 @@ Existing empirical work on ML notebooks
 has examined such points of failure,
 by analyzing crashes~\cite{wang2025why}, bugs~\cite{desantana2024bug} and vulnerabilities~\cite{jiang2025exploring}
 that occur within Jupyter notebooks.
+However, many failures in ML systems do not surface as exceptions.
+Sculley et al.~\cite{sculley2015hidden} show
+that machine learning carries a higher technical debt burden than conventional software,
+since data dependencies, feedback loops, and configuration changes
+can degrade model behavior without raising an error.
+Breck et al.~\cite{breck2019data} make a similar argument for training data,
+and show that a single corrupted feature
+can shift a model's predictions
+while the training pipeline continues to execute without complaint.
+
 In contrast to prior work,
 this study focuses on \emph{feedback statements},
 which we define as statements that the practitioner intentionally adds to the code
 to obtain information about the program's execution.
+Practitioners rely on this feedback
+to confirm that the program behaves as intended,
+and to catch the failures that would otherwise pass silently.
 Based on this definition,
 code statements that crash and produce an output,
 are excluded from this study.
@@ -225,7 +238,7 @@ This form of feedback is obtained from \lstinline{assert} statements,
 which are used by practitioners to validate assumptions regarding a piece of code.
 Notebooks are primarily used to develop a prototype of an ML model,
 prior to operationalizing it within a production environment~\cite{shankar2024we,nahar2023meta-summary}.
-Assertions are therefore a suitable candidate for studying validation behaviour,
+Assertions are therefore a suitable candidate for studying validation behavior,
 since they are commonly employed in the early stages of the development lifecycle~\cite{kochhar2017revisiting}.
 Pimentel et al.~\cite{pimentel2019large-scale} report
 that unit tests are virtually absent from Jupyter notebooks,
@@ -266,7 +279,7 @@ to answer the following research questions.
 
     The two platforms host qualitatively different modes of ML work.
     Kaggle notebooks concentrate 58\% of feedback in the data preparation stage
-    and contain almost no model construction code.
+    and barely touches the model construction code.
     GitHub notebooks on the other hand,
     distribute feedback across data ingestion, model construction, training, and evaluation.
 
@@ -275,7 +288,7 @@ to answer the following research questions.
     We establish a mapping between our feedback taxonomy
     and the crash taxonomy of Wang et al.~\cite{wang2025why},
     and find that both taxonomies converge on data preparation
-    as the empirical centre of gravity in ML notebook development.
+    as the empirical center of gravity in ML notebook development.
     Wang et al.\ report that 33\% of crashes occur in data preparation,
     while we report that 40\% of feedback statements occur in the same stage.
 \end{description}
@@ -324,7 +337,7 @@ data collection, filtering, sampling, and manual analysis
 employed in this study
 to gather and analyze feedback statements
 written in Python ML notebooks
-from GitHub and Kaggle.
+from GitHub (GH) and Kaggle (KG).
 GitHub is a popular platform to host and collaborate on software projects,
 and offers extensive tools for project management
 such as issue tracking,
@@ -352,7 +365,7 @@ comprising of 49,090 notebooks from GitHub and 248,761 notebooks from Kaggle.
 
 \textbf{Extracting validation statements}.
 Since the focus of this study is to analyze Python code in ML Jupyter notebooks,
-We exclude notebooks that are not authored in the Python programming language,
+we exclude notebooks that are not authored in the Python programming language,
 contain invalid JSON structures,
 or no code cells.
 To concentrate specifically on machine learning projects,
@@ -377,8 +390,8 @@ using Python's \lstinline{ast} module.
 For assertions, we gather both built-in \lstinline{assert} statements
 and assertion-style calls from third-party libraries
 (i.e., function calls whose name contains ``assert''),
-which lets us capture validation behaviour beyond the Python standard library.
-For last statements, we restrict our analysis to cells that produced output
+which lets us capture validation behavior beyond the Python standard library.
+For last statements, we restrict our analysis to cells that produce an output
 and extract the final top-level statement from each.
 Consequently, we obtain a population of
 220,095 statements (80,034 asserts and 140,951 lasts) from GitHub
@@ -388,7 +401,7 @@ and 872,685 statements (9,572 asserts and 863,113 lasts) from Kaggle.
 In a preliminary analysis,
 we apply clustering to the entire dataset,
 and manually analyze 100 statements sampled randomly from GH and KG.
-we find that duplicate statements conflate the cluster structure
+We find that duplicate statements conflate the cluster structure
 and cause a random sample to under-represent diverse patterns.
 We therefore remove exact duplicate statements prior to clustering,
 and deliberately trade-off diversity with representativeness for the taxonomy.
@@ -398,7 +411,7 @@ Semantic embeddings are appropriate
 because statements with different surface forms can express the same intent.
 E.g., \lstinline{assert X == Y} and \lstinline{assert X is Y}
 are syntactically distinct but semantically related.
-We use UMAP~\cite{mcinnes2018} to reduce the embedding dimentionality to 10,
+We use UMAP~\cite{mcinnes2018} to reduce the embedding dimensionality to 10,
 and apply HDBSCAN~\cite{mcinnes2017} to cluster the reduced embeddings
 based on their semantic similarity.
 We obtain 277 clusters from GH and 1031 clusters from KG.
@@ -444,7 +457,7 @@ following which
 the first author analyzes and codes the remaining 566 statements.
 To verify the coding done by the first author on the 566 statements,
 the second author independently analyzes 125 (22\%) of these statements,
-and a Cohen's kappa score of 0.93 for the intent dimension,
+and a Cohen's $\kappa$ score of 0.93 for the intent dimension,
 and 0.94 for the stage dimension is observed,
 which indicates high agreement.
 
@@ -487,6 +500,10 @@ We also report the bias-corrected Cram\'er's $V$ as the effect size for all test
 (small: $V < 0.1$, medium: $0.1 \le V < 0.3$, large: $V \ge 0.3$).
 Before each test we verify that the validity conditions hold
 and we report the outcome by analyzing the residuals that drive the association.
+We do not adjust for multiple comparisons across hypotheses
+because each test answers a distinct research question
+and is reported with its own effect size,
+following the recommendations of Rubin~\cite{rubin2021}.
 When the marginal distribution of a variable is severely imbalanced,
 no test has adequate power and we report descriptive statistics only.
 
@@ -498,7 +515,8 @@ no test has adequate power and we report descriptive statistics only.
   The intent dimension distinguishes exploratory feedback (EXP)
   from formal validation (VAL).
   Each intent is refined into type subcodes
-  derived through open coding of 816 feedback statements.}\label{tab:taxonomy}
+  derived through open coding of 816 feedback statements.
+  Percentage is normalized within each top-level intent.}\label{tab:taxonomy}
   \begin{tabularx}{\textwidth}{l p{2cm} X X r}
     \toprule
     \multicolumn{5}{l}{\emph{\textbf{Validation Statements (VAL)}}} \\
@@ -518,7 +536,7 @@ no test has adequate power and we report descriptive statistics only.
     Value equality check &
     Assert that a result equals a known correct value &
     \lstinline{assert_frame_equal(...)} &
-    34 (28\%) \\
+    35 (28\%) \\
     BOOL &
     Boolean invariant &
     Assert a boolean condition holds &
@@ -528,9 +546,9 @@ no test has adequate power and we report descriptive statistics only.
     Approximate equality &
     Assert numerical closeness within tolerance &
     \lstinline{assert np.allclose(..., atol=0.001)} &
-    7 (6\%) \\
+    8 (6\%) \\
     EXIST &
-    Check for existane of value &
+    Check for existence of value &
     Assert that a value exists &
     \lstinline{assert i in sig.parameters.keys()} &
     6 (5\%) \\
@@ -552,7 +570,7 @@ no test has adequate power and we report descriptive statistics only.
     Exploratory computation &
     Inspect the result of a transformation &
     \lstinline{.sort_values()} &
-    185 (27\%) \\
+    186 (27\%) \\
     STRUCT &
     Structural probe &
     Inspect shape, size, keys, columns and type metadata &
@@ -604,20 +622,23 @@ A summary of the feedback taxonomy is presented in Table~\ref{tab:taxonomy}.
 \end{figure}
 
 \textbf{Feedback in ML notebooks is overwhelmingly exploratory.}
-Exploratory statements (EXP) accounts for 85\% ($n=693$) of the corpus
-and validation statements (VAL) accounts for the remaining 15\% ($n=123$).
+Exploratory statements (EXP) account for 85\% ($n=693$) of the corpus
+and validation statements (VAL) account for the remaining 15\% ($n=123$).
 The split is highly skewed toward exploratory feedback on both platforms.
-A $\chi^2$ test between intent and notebook source,
-reveals a significant and large association ($\chi^2(1) = 144.72$, $p < 0.001$, Cram\'er's $V = 0.421$).
-Figure~\ref{fig:distribution-intent} shows that
-GH notebooks contain proportionally more formal assertions (31\%),
-while KG notebooks are overwhelmingly exploratory
-and contain only four assertions (1\%).
-This asymmetry is consistent with the contrasting purposes of the two platforms.
+
+We hypothesise that the intent of the feedback statements
+on GitHub and Kaggle differ based on the contrasting purposes of the two platforms.
 GitHub hosts software engineering projects
 where assertions are a natural practice,
 while Kaggle hosts data exploration and competition submission workflows
 where programmatic validation is uncommon.
+A $\chi^2$ test between intent and notebook source
+reveals a significant and large association ($\chi^2(1) = 144.72$, $p < 0.001$, Cram\'er's $V = 0.421$),
+and the direction of the association matches the prediction.
+Figure~\ref{fig:distribution-intent} shows that
+GH notebooks contain proportionally more formal assertions (31\%),
+while KG notebooks are overwhelmingly exploratory
+and contain only four assertions (1\%).
 Section~\ref{sec:rq3} explores this asymmetry further,
 where we show that the source interacts with pipeline stage as well.
 
@@ -625,7 +646,7 @@ For EXP statements ($n=693$),
 a $\chi^2$ test reveals a statistically significant but weak association
 between type and source
 ($\chi^2(3) = 10.77$, $p=0.013$, Cram\'er's $V=0.125$),
-confirming that the two platforms GH and KG
+further confirming that the two platforms
 are used for different purposes.
 For VAL statements ($n=123$),
 the marginal imbalance leaves too little power for a meaningful test of independence.
@@ -660,9 +681,11 @@ distributed across the two top-level intents
 We briefly describe each type below
 and ground the description in the use cases that emerge from the data.
 We organize the description by the frequency of the intent subtypes.
-A more detailed version of the taxonomy can be found in our replication package~\cite{replication}.
+A more detailed version of the taxonomy
+along with axial and boundary coding decisions for the codebook
+can be found in our replication package~\cite{replication}.
 
-\begin{lstlisting}[caption={Checks the shape of the fifth feature map from a VGG16 encoder
+\begin{lstlisting}[caption={Check that the shape of the fifth feature map from a VGG16 encoder
 immediately before it is connected to a segmentation decoder.}, label={lst:61}]
 assert output['x5'].size() == torch.Size([BATCH_SIZE, 512, 7, 7])
 \end{lstlisting}
@@ -696,18 +719,18 @@ assert dim % 2 == 0
 
 \textbf{Value equality check (VAL-EQ)}.
 Practitioners check that a specific value, configuration parameter, or computed result
-matches a known expected value,
+matches an expected value,
 which is known at the time of writing the assertion
 and is derived from domain knowledge, architectural constraints, or a prior specification.
 
-Practitioners perform schema validation on loaded data,
+Practitioners perform schema validation on loaded data
 by checking that a CSV file has the expected number of classes,
 that a required column appears in the correct position,
 that an index contains no duplicates,
 and that a normalization step produces the expected result.
 Assertions also enforce model architectural constraints
-that the framework does not check at runtime (Listing~\ref{lst:4}),
-Without the assertion,
+that the framework does not check at runtime.
+For instance, without the assertion in Listing~\ref{lst:4},
 a violated constraint would surface as a shape error deep inside the forward pass,
 whose connection to the misconfigured hyperparameter is not obvious.
 A third use is the detection of training-serving skew (Listing~\ref{lst:118}),
@@ -797,7 +820,7 @@ but most prominent at the data loading and preparation stages,
 where practitioners establish a running mental model of the dataset
 before any transformation is applied.
 A bare \lstinline{.head()} call after loading a CSV
-confirms that column names parsed correctly,
+confirms that column names were parsed correctly,
 and that data types look plausible.
 The same lightweight pattern monitors the effect of individual cleaning operations,
 such as inspecting a column after imputing missing values to confirm that the fill worked.
@@ -839,8 +862,8 @@ to verify that both are near their expected values.
 Similarly, after a \lstinline{dropna} operation,
 practitioners compute a null count to confirm that missing values were removed.
 
-In KG notebooks,
-EXP-COMPUTE is also used extensively for exploratory feature analysis.
+In Kaggle notebooks,
+EXP-COMPUTE is used extensively for exploratory feature analysis.
 Practitioners compute grouped aggregations and correlation matrices
 to understand whether a candidate feature has a meaningful relationship with the target
 before deciding whether to include it.
@@ -902,40 +925,46 @@ Finally, we examine intent type by stage on the GitHub subset only,
 because Kaggle's heavy concentration in data preparation
 and its small VAL count
 prevent meaningful comparisons.
-Note that the corpus contains 2 GitHub validation statements (0.25\%)
-where the stage was unclear (UNC),
-and are excluded from the analysis,
-leaving $n=814$ statements across six stages.
+Two statements (0.25\%) receive a stage code of UNC
+because their context did not permit unambiguous assignment,
+and we exclude them from the analysis.
+This leaves $n=814$ statements across six stages.
 
 \textbf{Notebook feedback is concentrated upstream of model training, not downstream.}
 PREP (40\%) is the single largest stage,
 followed by EVAL (21\%), DATA (12\%), FEAT (12\%), TRAIN (9\%) and MODEL (6\%).
-A $\chi^2$ test indicates a highly significant and large association
-between the ML pipeline stage and the notebook source
+
+Based on the results of RQ1
+which establishes that the type of intent varies by platform,
+we hypothesise that the ML pipeline stage in which feedback statements are used
+also differ by platform.
+A $\chi^2$ test confirms our hypothesis,
+indicating a highly significant and large association
 ($\chi^2(5) = 158.04$, $p<0.001$, Cram\'er's $V=0.441$),
 and is visualized in Figure~\ref{fig:distribution-stage}.
 Feedback in Kaggle notebooks
-concentrate predominantly on the PREP stage (58\%),
+concentrates predominantly on the PREP stage (58\%),
 while feedback in GitHub notebooks
 distribute more evenly across DATA (19\%), EVAL (25\%) and TRAIN (13\%).
-The MODEL stage is almost entirely absent on Kaggle (0.5\% vs. 11\% in GitHub).
+The MODEL stage is almost entirely absent on Kaggle (0.5\% vs.\ 11\% in GitHub).
 This pattern reflects the competition format,
 which concentrate on data preparation pipelines
 and typically consume pre-configured model APIs
 rather than defining model architectures from scratch.
 
 To examine whether intent is associated with pipeline stage,
-we stratify the analysis by source,
-since RQ1 established that it has an effect on both variables.
-For Kaggle statements ($n=433$),
-Fisher's exact test reveals a statistically significant association
-($p=0.009$, Cram\'er's $V=0.364$),
-but the result rests on only 4 VAL statements,
+we stratify the analysis by source
+since the prior tests establish that it has an effect on both variables.
+We restrict further analysis to GitHub statements ($n=381$),
+since Kaggle statements ($n=433$) contain only four VAL statements
 which makes the effect size estimate unstable.
 
-We therefore restrict further analysis to GitHub statements ($n=381$),
-where a $\chi^2$ test reveals a statistically significant association
-($\chi^2(5)=20.34$, $p=0.001$, Cram\'er's $V=0.231$).
+We hypothesise that assertions are less common in the exploratory ML stages,
+since practitioners do not yet know what to test,
+and the purpose of these stages is to explore and identify.
+A $\chi^2$ test reveals a statistically significant association
+($\chi^2(5)=20.34$, $p<0.001$, Cram\'er's $V=0.231$)
+and the direction of the association match our prediction.
 Figure~\ref{fig:distribution-stage-intent} shows that
 MODEL is the most validation-heavy stage (60\%),
 followed by TRAIN (34\%) and FEAT (29\%),
@@ -1049,21 +1078,18 @@ The remaining cases arise from references to objects
 that should have been constructed earlier,
 and from missing files or keys.
 VAL-EXIST statements that check for the presence of a key, attribute, or filename
-bbefore the dependent operation runs
+before the dependent operation runs,
 surface the missing dependency as an explicit assertion failure
 rather than a cryptic downstream error.
 
-% TODO: revisit this part, is there another way to organize this section?
-\textbf{VAL-TYPE} pre-empts the API-misuse subset of type-related crashes.
-Wang et al.\ report that 42\% of Type Error and 44\% of Attribute Error crashes
-share API misuse as a root cause.
-VAL-TYPE statements enforce the type contract the API expects.
+\textbf{VAL-TYPE} statements enforce the type contract that APIs expect,
+and pre-empt the API-misuse subset of Type Error (42\%) and Attribute Error (44\%)
+crashes reported by Wang et al.
 
 \textbf{Crashes and validations cover different parts of the failure space.}
 Wang et al.\ also report
 Out of Memory, Module Not Found, Environment Error, and Request Error crashes,
-that fall outside our taxonomy
-because they are not preventable through code-level assertions.
+that fall outside our taxonomy.
 Conversely, our taxonomy captures defensive programming practices
 that are invisible to a crash-based study.
 This is demonstrated by VAL-APPROX statements
@@ -1075,7 +1101,7 @@ and different data versions.
 For instance,
 Listing~\ref{lst:374} pre-emptively stops the execution
 when the NDCG diverges from the expected value.
-Without the assertion,
+In the absence of the assertion,
 the pipeline would execute and produce an incorrect score,
 without raising an exception in the cell output.
 Similarly, the training-serving skew detection theme within VAL-EQ (Listing~\ref{lst:118})
@@ -1094,7 +1120,7 @@ is wider than what crash analysis alone can capture.
 \textbf{Our taxonomy of feedback statements
 and the Wang et al.\ crash taxonomy,
 both converge on data preparation
-as the empirical centre of gravity
+as the empirical center of gravity
 in ML notebook development.}
 Wang et al.\ measure where execution fails,
 and report that 33\% of crashes occur during data preparation.
@@ -1140,7 +1166,7 @@ pd.Series(options_short_list).isin(dummies.columns).all()
 \end{lstlisting}
 
 Since neither expression is wrapped in an \lstinline{assert},
-a False result is visible in the cell output
+a \lstinline{False} result is visible in the cell output
 but does not halt execution.
 Consequently, downstream cells in the notebook
 continue to run on data
@@ -1148,41 +1174,31 @@ that violates an assumption
 that the practitioner authored and enforced manually.
 The decision to proceed despite the violation
 is therefore implicit and undocumented,
-and accumulates as technical debt
+and accumulates technical debt
 as data, personnel, and execution environments change
 over the lifetime of the notebook~\cite{sculley2015hidden,sambasivan2021everyone,pimentel2019large-scale}.
 Promoting the same expression to an \lstinline{assert}
 makes the assumption explicit
 and turns an undocumented decision into a checked invariant.
 
-% TODO: the automated tool angle is possibly unnecessary
-%
-% This observed pattern
-% reveals a class of latent assertions
-% that are already present in notebooks.
-% Each last-cell boolean expression that evaluates to True on a successful run
-% is a candidate that can be promoted to a formal assertion
-% without any change in practitioner intent.
-% This can be done automatically by a static analyzer
-% that identifies last-cell expressions
-% whose root AST node is a comparison or boolean operation.
-% The tool can record the expression's value across executions of the notebook,
-% and surface candidates whose value is consistently True.
-
 The promotion also addresses a reproducibility threat
 that is specific to the notebook format.
 Notebook cells can execute in any order,
-and an out-of-order execution
-can leave the kernel in a state
+which can leave the kernel in a state
 that does not reflect the source code~\cite{wang2020assessing,pimentel2019large-scale}.
+A variable assigned in an earlier cell can be silently overwritten,
+shadowed by a stale value,
+or computed from inputs
+that the source code no longer reflects.
 A last-cell boolean expression
-evaluates against the kernel state at the moment of execution
-but does not offer protection against a later out-of-order run.
+evaluates against the kernel state at the moment it is first executed,
+but offers no protection
+when the kernel state diverges from the source
+due to an out-of-order execution of the surrounding cells.
 An \lstinline{assert} authored at the same point
-fires every time the cell is re-executed,
-regardless of the order in which surrounding cells were run.
-% TODO: how does this help? I think the point is to prevent silent data
-% quality corrosion.
+re-evaluates the condition every time the cell runs,
+and fires when the kernel state
+no longer satisfies the invariant the practitioner originally checked.
 
 \textbf{Implications for tool design.}
 Our results from RQ1 (Section~\ref{sec:rq1})
@@ -1232,7 +1248,7 @@ to a Great Expectations suite attached to the notebook.
 \textbf{Implications for research.}
 Kaggle competition workflows operate primarily on data exploration,
 and delegate evaluation of the model to the platform leaderboard.
-GitHub on the other hand, hosts a broader range of activities that spans the entire ML development lifecycle.
+GitHub, on the other hand, hosts a broader range of activities that spans the entire ML development lifecycle.
 The Wang et al.\ study reports a similar asymmetry
 where GitHub notebooks contain four times more crashes compared to Kaggle (10.67\% vs.\ 2.61\%),
 and the crash distributions across pipeline stages
@@ -1282,15 +1298,14 @@ to cases where the static intent itself is ambiguous,
 which the codebook resolution process is designed to handle.
 
 Our analysis depends on manual coding of feedback statements,
-which introduces subjectivity,
+which introduces subjectivity
 and the risk of inconsistent application of codes.
-We took several measures to mitigate this threat as described in Section~\ref{sec:method}).
-However, once the codebook stabilized,
-the remaining statements
-are coded by a single researcher,
-which carry a residual risk.
-Spot-checks during the analysis surface no systematic drift,
-but a complete double-coding of the corpus is the most rigorous remedy
+We mitigate this threat through the iterative codebook development
+and the double-coding procedure described in Section~\ref{sec:method},
+which yields $\kappa = 0.93$ for intent and $\kappa = 0.94$ for stage
+on 22\% of the residual sample.
+A complete double-coding of the corpus
+is the most rigorous remedy
 and is left to future replication work.
 
 % \textbf{Primary intent rule for compound statements.}
