@@ -126,7 +126,7 @@ and identify two forms:
 exploratory statements that display values for visual inspection
 and validation statements that enforce conditions programmatically through assertions.
 
-\textbf{Aim.}
+\textbf{Aims.}
 Many failures in ML systems do not surface as exceptions,
 and consequently escape the crash-based analyses
 that dominate prior empirical work on ML notebooks.
@@ -158,7 +158,7 @@ We further map our taxonomy to an existing crash taxonomy
 and find that our taxonomy captures defensive practices against silent failures
 that crash analysis cannot observe.
 
-\textbf{Conclusion.}
+\textbf{Conclusions.}
 Our findings indicate
 that ML notebook feedback is predominantly visual rather than programmatic,
 and that source platform should be treated
@@ -288,31 +288,33 @@ to answer the following research questions.
 
     We establish a mapping between our feedback taxonomy
     and the crash taxonomy of Wang et al.~\cite{wang2025why},
-    and find that both taxonomies converge on data preparation
-    as the empirical center of gravity in ML notebook development.
-    Wang et al.\ report that 33\% of crashes occur in data preparation,
-    while we report that 40\% of feedback statements occur in the same stage.
+    and find that both converge on data preparation.
+    Our taxonomy additionally captures defensive practices
+    that prevent silent failures,
+    which are otherwise invisible to crash analysis.
 \end{description}
 
-This study makes four contributions.
+This study makes three contributions.
 \textbf{First},
-we provide an empirical characterization of feedback practice in ML Jupyter notebooks,
-and highlight the platform-level differences between GitHub and Kaggle.
+we present a taxonomy of feedback statements in ML Jupyter notebooks,
+derived through grounded theory
+and organized along the functional intent of the statement
+and the ML pipeline stage in which they appear.
+The taxonomy reveals
+that feedback in ML notebooks is overwhelmingly exploratory,
+and that GitHub and Kaggle host qualitatively different modes of ML work.
 \textbf{Second},
-we present a taxonomy of feedback statements in ML Jupyter notebooks.
-The taxonomy is created using grounded theory,
-and is coded along the intent and pipeline stage.
+we map the taxonomy to the crash taxonomy of Wang et al.~\cite{wang2025why}
+and surface a region of the failure space
+that crash analysis alone cannot observe,
+consisting of silent failures
+that practitioners defend against
+through assertions and last-cell expressions.
 \textbf{Third},
-using the mapping between our feedback taxonomy
-and the crash taxonomy of Wang et al.~\cite{wang2025why},
-we surface the duality between
-defensive programming practice and observed failure
-in ML Jupyter notebooks,
-and identify regions of the failure space that crash analysis alone cannot capture.
-\textbf{Finally},
 we release a publicly available dataset
-consisting of 1M+ feedback statements,
-suitable for replication and downstream tooling research.
+of 1M+ feedback statements
+together with the codebook,
+to support replication and downstream tooling research.
 
 \section{Methodology}
 \label{sec:method}
@@ -337,18 +339,10 @@ Figure~\ref{fig:method} illustrates the
 data collection, filtering, sampling, and manual analysis
 employed in this study
 to gather and analyze feedback statements
-written in Python ML notebooks
-from GitHub (GH) and Kaggle (KG).
-GitHub is a popular platform to host and collaborate on software projects,
-and offers extensive tools for project management
-such as issue tracking,
-pull requests,
-code reviews and tooling for continuous integration and delivery.
-In contrast,
-Kaggle is focused specifically on data science and machine learning.
-It provides integrated computational resources,
-a rich repository of datasets,
-and a platform to host machine learning competitions.
+written in Python ML notebooks.
+We collect feedback statements from GitHub (GH)
+that hosts general software projects under version control,
+and Kaggle (KG), which is focused on data science and machine learning competitions.
 
 We use GitHub's advanced search syntax~\footnote{https://docs.github.com/en/search-github/searching-on-github/searching-code},
 \footnote{We use the following search query: \lstinline[language={}]$language:"Jupyter Notebook"$}
@@ -362,7 +356,7 @@ that adopt a similar strategy to mine ML Jupyter notebook from GitHub.
 We use the pre-existing dataset KGTorrent~\cite{quaranta2021kgtorrent,kgtorrent-zenodo} for Kaggle
 since it does not support advanced code-based search like GitHub.
 Consequently, we start with 297,851 notebooks (283 GB)
-comprising of 49,090 notebooks from GitHub and 248,761 notebooks from Kaggle.
+comprising 49,090 notebooks from GitHub and 248,761 notebooks from Kaggle.
 
 \textbf{Extracting validation statements}.
 Since the focus of this study is to analyze Python code in ML Jupyter notebooks,
@@ -405,7 +399,7 @@ and manually analyze 100 statements sampled randomly from GH and KG.
 We find that duplicate statements conflate the cluster structure
 and cause a random sample to under-represent diverse patterns.
 We therefore remove exact duplicate statements prior to clustering,
-and deliberately trade-off diversity with representativeness for the taxonomy.
+and deliberately trade off diversity with representativeness for the taxonomy.
 
 We use CodeBERT to obtain semantic code embeddings for each unique statement.
 Semantic embeddings are appropriate
@@ -442,7 +436,7 @@ and 433 statements from Kaggle.
 \textbf{Data Analysis}.
 We apply grounded theory~\cite{seaman1999qualitative}
 and analyze all feedback statements manually.
-A code book is developed using a seed of 50 statements,
+A codebook is developed using a seed of 50 statements,
 from the top 5 clusters.
 Two members of the research team analyze each statement independently,
 to answer ``What the developer is trying to learn or confirm?'' with the statement (RQ2),
@@ -940,7 +934,7 @@ which establishes that the type of intent varies by platform,
 we hypothesise that the ML pipeline stage in which feedback statements are used
 also differ by platform.
 A $\chi^2$ test confirms our hypothesis,
-indicating a highly significant and large association
+indicating a significant and large association
 ($\chi^2(5) = 158.04$, $p<0.001$, Cram\'er's $V=0.441$),
 and is visualized in Figure~\ref{fig:distribution-stage}.
 Feedback in Kaggle notebooks
@@ -948,7 +942,7 @@ concentrates predominantly on the PREP stage (58\%),
 while feedback in GitHub notebooks
 distribute more evenly across DATA (19\%), EVAL (25\%) and TRAIN (13\%).
 The MODEL stage is almost entirely absent on Kaggle (0.5\% vs.\ 11\% in GitHub).
-This pattern reflects the competition format,
+This pattern is consistent with the competition format,
 which concentrate on data preparation pipelines
 and typically consume pre-configured model APIs
 rather than defining model architectures from scratch.
@@ -965,7 +959,7 @@ since practitioners do not yet know what to test,
 and the purpose of these stages is to explore and identify.
 A $\chi^2$ test reveals a statistically significant association
 ($\chi^2(5)=20.34$, $p<0.001$, Cram\'er's $V=0.231$)
-and the direction of the association match our prediction.
+and the direction of the association matches our prediction.
 Figure~\ref{fig:distribution-stage-intent} shows that
 MODEL is the most validation-heavy stage (60\%),
 followed by TRAIN (34\%) and FEAT (29\%),
@@ -1135,19 +1129,16 @@ demands the most attention and effort from practitioners to handle crashes,
 and consequently the largest share of tooling investment.
 
 The platform asymmetry from RQ1 and RQ3 is also consistent across both studies.
-Wang et al.\ report that GitHub notebooks contain four times more crashes than Kaggle (10.67\% vs.\ 2.61\%),
+Wang et al.\ report that GitHub notebooks contain four times more crashes than Kaggle (11\% vs.\ 3\%),
 and that the crash distribution across pipeline stages
 diverges between the two platforms in the same direction we observe for feedback.
 
 \section{Discussion}
 
-% NOTE: RQ3 indicates that feedback is primarily exploratory in DATA and EVAL.
-% We can link this to the data-centric ML philosophy and echo how testing the data stages is really important.
-
-In this section,
-we interpret our key findings,
-connect them to prior work,
-and discuss implications for researchers, practitioners and tool designers.
+% In this section,
+% we interpret our key findings,
+% connect them to prior work,
+% and discuss implications for researchers, practitioners and tool designers.
 
 \begin{lstlisting}[caption={A last-cell boolean expression
 that verifies no rows were lost during a transformation.}, label={lst:480}]
@@ -1217,7 +1208,7 @@ that training data deserves the same testing discipline as production code,
 and propose a rubric for assessing the readiness of an ML pipeline.
 The same authors later introduce \emph{TensorFlow Data Validation}~\cite{breck2019data},
 a tool that validates each batch of data against a declared schema.
-Data validation libraries such as TFDV and Great Expectations
+Data validation libraries such as TFDV and Great Expectations~\footnote{https://greatexpectations.io/}
 require practitioners to author the schema as a separate artefact.
 Our results indicate that
 practitioners already author the same checks in their notebooks,
@@ -1236,7 +1227,6 @@ or a shape constraint in a data schema.
 The taxonomy proposed in Section~\ref{sec:rq2}
 can be used to identify candidate assertions
 that were authored by practitioners as structural probes.
-% TODO: a bit far-fetched, but okay
 Second,
 EXP-STATS calls to \lstinline{.describe()}
 that follow a scaling or imputation step
@@ -1250,10 +1240,6 @@ to a Great Expectations suite attached to the notebook.
 Kaggle competition workflows operate primarily on data exploration,
 and delegate evaluation of the model to the platform leaderboard.
 GitHub, on the other hand, hosts a broader range of activities that spans the entire ML development lifecycle.
-The Wang et al.\ study reports a similar asymmetry
-where GitHub notebooks contain four times more crashes compared to Kaggle (10.67\% vs.\ 2.61\%),
-and the crash distributions across pipeline stages
-diverge similar to our observations for feedback statements.
 Our findings highlight the difference in the kind of work each platform hosts,
 and show that the platforms are not interchangeable data sources.
 Future studies of ML developer practice
@@ -1302,9 +1288,7 @@ Our analysis depends on manual coding of feedback statements,
 which introduces subjectivity
 and the risk of inconsistent application of codes.
 We mitigate this threat through the iterative codebook development
-and the double-coding procedure described in Section~\ref{sec:method},
-which yields $\kappa = 0.93$ for intent and $\kappa = 0.94$ for stage
-on 22\% of the residual sample.
+and the double-coding procedure described in Section~\ref{sec:method}.
 A complete double-coding of the corpus
 is the most rigorous remedy
 and is left to future replication work.
@@ -1481,12 +1465,19 @@ extract 1,092,780 feedback statements,
 and code a sample of 816 statements
 along their functional intent and ML pipeline stage,
 to characterize feedback practice in machine learning Jupyter notebooks.
-The resulting taxonomy distinguishes exploratory feedback from formal validation
-and shows that feedback in ML notebooks is predominantly visual.
-Mapping our taxonomy onto an existing taxonomy of notebook crashes
-reveals that the two converge on data preparation,
-while ours additionally captures defensive practices
-that prevent silent failures invisible to crash analysis.
+Our central contribution is a taxonomy of feedback statements,
+that distinguishes exploratory feedback from formal validation
+and refines each into subtypes grounded in practitioner intent.
+The taxonomy reveals that GitHub and Kaggle host qualitatively different modes of ML work,
+which indicates that source platform should be treated as a confounder
+in empirical studies of ML developer practice,
+rather than as an interchangeable data source.
+Mapping the taxonomy onto an existing taxonomy of notebook crashes
+surfaces a region of the failure space
+that crash analysis cannot observe,
+consisting of silent failures
+that practitioners defend against
+through assertions and last-cell expressions.
 Future work should extend the analysis to industrial ML notebooks,
 where production handoffs and code review
 may impose stricter validation discipline,
@@ -1498,7 +1489,7 @@ that capture how feedback practice evolves as notebook tooling matures.
 Our replication package contains
 the full dataset of 1M+ feedback statements,
 data collection and analysis scripts,
-and the final code book used to derive the taxonomy~\cite{replication}.
+and the final codebook used to derive the taxonomy~\cite{replication}.
 
 \bibliography{bibliography}
 
