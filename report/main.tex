@@ -118,23 +118,23 @@ mining software repositories} %TODO mandatory; please add comma-separated list o
 Machine learning development in Jupyter notebooks
 is iterative and feedback-driven.
 Practitioners author statements
-that surface information about program execution
+that reveal information about program execution
 and use this information
 to decide what to do next.
 We call these \emph{feedback statements}
-and study two forms:
+and identify two forms:
 exploratory statements that display values for visual inspection
 and validation statements that enforce conditions programmatically through assertions.
 
 \textbf{Aim.}
-Prior empirical work on ML notebooks
-have examined points where execution halts
-by analyzing crashes and bugs.
-In contrast, this study examines
-what practitioners check when execution does not halt,
+Many failures in ML systems do not surface as exceptions,
+and consequently escape the crash-based analyses
+that dominate prior empirical work on ML notebooks.
+This study examines what practitioners check
+to catch the failures that would otherwise pass silently,
 by characterizing feedback statements
 that encode the practitioner's mental model
-of what the code should do,
+of what the code should do
 and what could go wrong.
 
 \textbf{Method.}
@@ -148,12 +148,14 @@ and apply grounded theory and open coding
 to manually label and analyze each statement.
 
 \textbf{Results}.
-We find that feedback in ML notebooks is overwhelmingly exploratory,
-and the two platforms host qualitatively different modes of ML work.
-We further map our taxonomy to an existing crash taxonomy.
-We find that both converge on data preparation
-as the empirical centre of gravity in ML notebook development.
-Additionally, our taxonomy captures defensive practices
+We contribute a taxonomy of feedback statements in ML Jupyter notebooks,
+organized along the functional intent of the statement
+and the ML pipeline stage in which it appears.
+The taxonomy reveals
+that feedback in ML notebooks is overwhelmingly exploratory,
+and that the two platforms host qualitatively different modes of ML work.
+We further map our taxonomy to an existing crash taxonomy
+and find that our taxonomy captures defensive practices against silent failures
 that crash analysis cannot observe.
 
 \textbf{Conclusion.}
@@ -161,8 +163,7 @@ Our findings indicate
 that ML notebook feedback is predominantly visual rather than programmatic,
 and that source platform should be treated
 as a confounder in studies of ML developer practice.
-We release the corpus of 1,092,780 feedback statements
-and the codebook,
+We release the corpus of 1,092,780 feedback statements and the codebook,
 to support replication and tooling research.
 \end{abstract}
 
