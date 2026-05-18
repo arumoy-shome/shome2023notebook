@@ -905,7 +905,7 @@ to confirm that the mean is near zero and the standard deviation is near one.
   Kaggle concentrates feedback in the PREP stage and barely touches the MODEL stage,
   while GitHub spreads feedback more evenly across stages.
   On GitHub, the share of VAL statements within each stage
-  is highest in the MODEL, TRAIN, and FEAT stages.}
+  is highest in the MODEL, TRAIN, and PREP stages.}
 \end{figure}
 
 This section examines where in the ML pipeline
@@ -1067,8 +1067,7 @@ mirroring the data confusion root cause identified by Wang et al.
 
 \textbf{VAL-EXIST} catches a subset of Variable Not Found and IO Error crashes.
 Wang et al.\ attribute most Variable Not Found crashes
-to notebook-specific issues such as out-of-order execution,
-which a code-level assertion cannot prevent.
+to notebook-specific issues such as out-of-order execution.
 The remaining cases arise from references to objects
 that should have been constructed earlier,
 and from missing files or keys.
@@ -1131,7 +1130,8 @@ and consequently the largest share of tooling investment.
 The platform asymmetry from RQ1 and RQ3 is also consistent across both studies.
 Wang et al.\ report that GitHub notebooks contain four times more crashes than Kaggle (11\% vs.\ 3\%),
 and that the crash distribution across pipeline stages
-diverges between the two platforms in the same direction we observe for feedback.
+diverges between the two platforms,
+which is similar to what we observe for feedback.
 
 \section{Discussion}
 
