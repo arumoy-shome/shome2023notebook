@@ -160,9 +160,10 @@ that crash analysis cannot observe.
 
 \textbf{Conclusions.}
 Our findings indicate
-that ML notebook feedback is predominantly visual rather than programmatic,
-and that source platform should be treated
-as a confounder in studies of ML developer practice.
+that notebook source should be treated
+as a confounder in studies of ML developer practice,
+surface opportunities for notebook tooling,
+and motivate empirical study of silent ML failures.
 We release the corpus of 1,092,780 feedback statements and the codebook,
 to support replication and tooling research.
 \end{abstract}
@@ -263,18 +264,18 @@ and qualitative analysis
 to answer the following research questions.
 
 \begin{description}
-  \item[RQ1.] \textbf{How prevalent are exploratory and validation feedback statements in ML notebooks?}
+  \item[RQ1.] \textbf{What do practitioners intend to learn or confirm from feedback statements?}
 
     We find that
-    feedback in ML notebooks is overwhelmingly exploratory,
+    practitioners predominantly inspect, compute, and probe structure when exploring,
+    and check shape, equality, and boolean invariants when validating.
+
+  \item[RQ2.] \textbf{How prevalent are exploratory and validation feedback statements in ML notebooks?}
+
+    Feedback in ML notebooks is overwhelmingly exploratory,
     and account for 85\% of the corpus.
     Formal assertions account for the remaining 15\%
     and are concentrated almost entirely in GitHub.
-
-  \item[RQ2.] \textbf{What do practitioners intend to learn or confirm from feedback statements?}
-
-    Practitioners predominantly inspect, compute, and probe structure when exploring,
-    and check shape, equality, and boolean invariants when validating.
 
   \item[RQ3.] \textbf{Where in the ML pipeline do practitioners author feedback statements?}
 
@@ -294,27 +295,24 @@ to answer the following research questions.
     which are otherwise invisible to crash analysis.
 \end{description}
 
-This study makes three contributions.
-\textbf{First},
-we present a taxonomy of feedback statements in ML Jupyter notebooks,
-derived through grounded theory
-and organized along the functional intent of the statement
-and the ML pipeline stage in which they appear.
-The taxonomy reveals
-that feedback in ML notebooks is overwhelmingly exploratory,
-and that GitHub and Kaggle host qualitatively different modes of ML work.
-\textbf{Second},
-we map the taxonomy to the crash taxonomy of Wang et al.~\cite{wang2025why}
-and surface a region of the failure space
-that crash analysis alone cannot observe,
-consisting of silent failures
-that practitioners defend against
-through assertions and last-cell expressions.
-\textbf{Third},
-we release a publicly available dataset
+We identify a repertoire of exploratory feedback statements
+that practitioners author on both platforms,
+dominated by inspection and exploratory computation.
+We find wide use of validation on GitHub,
+especially shape and equality checks,
+but near absence on Kaggle.
+Kaggle further concentrates feedback in data preparation,
+while GitHub distributes it across all pipeline stages.
+Our findings indicate that notebook source
+should be treated as a confounder in studies of ML developer practice,
+surface opportunities for notebook tooling
+that builds on what practitioners already author,
+and motivate empirical study of silent ML failures
+that crash-based analysis cannot observe.
+We release a publicly available dataset
 of 1M+ feedback statements
 together with the codebook,
-to support replication and downstream tooling research.
+to support replication and downstream tooling research~\cite{replication}.
 
 \section{Methodology}
 \label{sec:method}
@@ -439,8 +437,17 @@ and analyze all feedback statements manually.
 A codebook is developed using a seed of 50 statements,
 from the top 5 clusters.
 Two members of the research team analyze each statement independently,
-to answer ``What the developer is trying to learn or confirm?'' with the statement (RQ2),
-and ``Where in the development lifecycle?'' is the statement defined (RQ3).
+to answer ``What the developer is trying to learn or confirm?'' with the statement,
+and ``In which stage of the ML application development pipeline?'' is the statement defined.
+In line with Amershi et al.~\cite{amershi2019software},
+we distinguish six stages,
+corresponding to data collection (DATA),
+preparation (PREP),
+feature engineering (FEAT),
+model construction (MODEL),
+training (TRAIN),
+and evaluation (EVAL).
+
 In addition to the statement,
 the entire code cell of the statement,
 any related code cells where variables or functions are defined,
@@ -453,7 +460,7 @@ the first author analyzes and codes the remaining 566 statements.
 To verify the coding done by the first author on the 566 statements,
 the second author independently analyzes 125 (22\%) of these statements,
 and a Cohen's $\kappa$ score of 0.93 for the intent dimension,
-and 0.94 for the stage dimension is observed,
+and 0.89 for the stage dimension is observed,
 which indicates high agreement.
 
 While conducting the manual analysis,
@@ -461,16 +468,16 @@ we observe 90 feedback statements that fall outside the scope of this study,
 grouped into 6 exclusion categories.
 We exclude exploratory statements
 used to probe an API
-or inspect how an imported function behaves (EC:EXP);
+or inspect how an imported function behaves;
 statements from scientific simulations
-that do not involve training an ML model (EC:NOML);
+that do not involve training an ML model;
 misused code cells
 that contain block-quoted documentation
-or commented-out code with stale output (EC:ERROR);
+or commented-out code with stale output;
 statements with no functional intent relevant to this study,
-such as \lstinline{plt.ylabel('Win %')} (EC:NOINT);
-statements not authored in English (EC:ENG);
-and assertions found in academic notebooks used for automatic grading (EC:HW).
+such as \lstinline{plt.ylabel('Win %')};
+statements not authored in English;
+and assertions found in academic notebooks used for automatic grading.
 To preserve our target sample size,
 we resample replacements from the same clusters where the exclusions occurred.
 Replacements are verified
@@ -581,11 +588,11 @@ no test has adequate power and we report descriptive statistics only.
 \end{table}
 
 This section presents our findings for the four research questions.
-Section~\ref{sec:rq1} establishes what feedback statements practitioners author
-and how their prevalence varies between GitHub and Kaggle.
-In Section~\ref{sec:rq2}, we present the taxonomy of feedback statements
+In Section~\ref{sec:rq1}, we present the taxonomy of feedback statements
 derived from open coding,
 and describe the subtypes within each top-level intent.
+Section~\ref{sec:rq2} establishes what feedback statements practitioners author
+and how their prevalence varies between GitHub and Kaggle.
 Section~\ref{sec:rq3}, presents a cross-cutting analysis with the ML pipeline stage
 to characterize where each kind of feedback appears
 in the development workflow.
@@ -594,80 +601,8 @@ we relate the feedback taxonomy to the crash taxonomy from Wang et al.~\cite{wan
 to surface the duality between defensive practice and observed failure.
 A summary of the feedback taxonomy is presented in Table~\ref{tab:taxonomy}.
 
-\subsection{RQ1: Prevalence and Variation of Feedback Statements}
+\subsection{RQ1: Intent Taxonomy of Feedback Statements}
 \label{sec:rq1}
-
-\begin{figure}
-  \begin{subfigure}[t]{0.4\textwidth}
-    \centering
-    \includegraphics[width=\linewidth]{distribution-intent.pdf}
-    \caption{Top-level intent (EXP vs.\ VAL) across GH and KG, normalized within source.}
-    \label{fig:distribution-intent}
-  \end{subfigure}
-  \begin{subfigure}[t]{0.6\textwidth}
-    \centering
-    \includegraphics[width=\linewidth]{distribution-type.pdf}
-    \caption{Subtype distribution within each top-level intent, normalized within intent.}
-    \label{fig:distribution-type}
-  \end{subfigure}
-  \caption{Distribution of feedback statements across top-level intent and its subtypes.
-  GitHub contains a substantially higher share of formal assertions than Kaggle.
-  Within EXP statements, the INSPECT subtype dominates on both platforms.
-  Within VAL statements, SHAPE and EQ subtypes together account for two-thirds of all assertions.}
-\end{figure}
-
-\textbf{Feedback in ML notebooks is overwhelmingly exploratory.}
-Exploratory statements (EXP) account for 85\% ($n=693$) of the corpus
-and validation statements (VAL) account for the remaining 15\% ($n=123$).
-The split is highly skewed toward exploratory feedback on both platforms.
-
-We hypothesise that the intent of the feedback statements
-on GitHub and Kaggle differ based on the contrasting purposes of the two platforms.
-GitHub hosts software engineering projects
-where assertions are a natural practice,
-while Kaggle hosts data exploration and competition submission workflows
-where programmatic validation is uncommon.
-A $\chi^2$ test between intent and notebook source
-reveals a significant and large association ($\chi^2(1) = 144.72$, $p < 0.001$, Cram\'er's $V = 0.421$),
-and the direction of the association matches the prediction.
-Figure~\ref{fig:distribution-intent} shows that
-GH notebooks contain proportionally more formal assertions (31\%),
-while KG notebooks are overwhelmingly exploratory
-and contain only four assertions (1\%).
-Section~\ref{sec:rq3} explores this asymmetry further,
-where we show that the source interacts with pipeline stage as well.
-
-For EXP statements ($n=693$),
-a $\chi^2$ test reveals a statistically significant but weak association
-between type and source
-($\chi^2(3) = 10.77$, $p=0.013$, Cram\'er's $V=0.125$),
-further confirming that the two platforms
-are used for different purposes.
-For VAL statements ($n=123$),
-the marginal imbalance leaves too little power for a meaningful test of independence.
-Figure~\ref{fig:distribution-type} therefore presents
-the type distribution descriptively for both intents.
-
-Within EXP statements,
-practitioners most often display values
-to confirm what an expression evaluates to (intent type coded as INSPECT),
-compute derived quantities they read off the cell output (COMPUTE),
-probe the structure of an object (STRUCT),
-and least often request a statistical summary (STATS).
-This rank order is consistent with a \emph{notebook-as-scratchpad} model of feedback,
-and holds on both platforms.
-Within VAL statements,
-practitioners predominantly assert dimensional (SHAPE) and equality (EQ) invariants.
-Type checks, existence checks, and approximate equality are present
-but appear in fewer than one in ten validation statements.
-
-\textbf{Of the 123 VAL statements, only four occur in Kaggle notebooks.}
-Within these assertions, four of the six VAL types (SHAPE, APPROX, EXIST, TYPE)
-are entirely absent,
-suggesting that Kaggle contributors rarely use structural validation.
-
-\subsection{RQ2: Intent Taxonomy of Feedback Statements}
-\label{sec:rq2}
 
 Open coding of the 816 feedback statements
 produces ten types
@@ -885,6 +820,78 @@ For instance, after scaling features with \lstinline{StandardScaler},
 practitioners call \lstinline{.describe()}
 to confirm that the mean is near zero and the standard deviation is near one.
 
+\subsection{RQ2: Prevalence and Variation of Feedback Statements}
+\label{sec:rq2}
+
+\begin{figure}
+  \begin{subfigure}[t]{0.4\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{distribution-intent.pdf}
+    \caption{Top-level intent (EXP vs.\ VAL) across GH and KG, normalized within source.}
+    \label{fig:distribution-intent}
+  \end{subfigure}
+  \begin{subfigure}[t]{0.6\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{distribution-type.pdf}
+    \caption{Subtype distribution within each top-level intent, normalized within intent.}
+    \label{fig:distribution-type}
+  \end{subfigure}
+  \caption{Distribution of feedback statements across top-level intent and its subtypes.
+  GitHub contains a substantially higher share of formal assertions than Kaggle.
+  Within EXP statements, the INSPECT subtype dominates on both platforms.
+  Within VAL statements, SHAPE and EQ subtypes together account for two-thirds of all assertions.}
+\end{figure}
+
+\textbf{Feedback in ML notebooks is overwhelmingly exploratory.}
+Exploratory statements (EXP) account for 85\% ($n=693$) of the corpus
+and validation statements (VAL) account for the remaining 15\% ($n=123$).
+The split is highly skewed toward exploratory feedback on both platforms.
+
+We hypothesise that the intent of the feedback statements
+on GitHub and Kaggle differ based on the contrasting purposes of the two platforms.
+GitHub hosts software engineering projects
+where assertions are a natural practice,
+while Kaggle hosts data exploration and competition submission workflows
+where programmatic validation is uncommon.
+A $\chi^2$ test between intent and notebook source
+reveals a significant and large association ($\chi^2(1) = 144.72$, $p < 0.001$, Cram\'er's $V = 0.421$),
+and the direction of the association matches the prediction.
+Figure~\ref{fig:distribution-intent} shows that
+GH notebooks contain proportionally more formal assertions (31\%),
+while KG notebooks are overwhelmingly exploratory
+and contain only four assertions (1\%).
+Section~\ref{sec:rq3} explores this asymmetry further,
+where we show that the source interacts with pipeline stage as well.
+
+For EXP statements ($n=693$),
+a $\chi^2$ test reveals a statistically significant but weak association
+between type and source
+($\chi^2(3) = 10.77$, $p=0.013$, Cram\'er's $V=0.125$),
+further confirming that the two platforms
+are used for different purposes.
+For VAL statements ($n=123$),
+the marginal imbalance leaves too little power for a meaningful test of independence.
+Figure~\ref{fig:distribution-type} therefore presents
+the type distribution descriptively for both intents.
+
+Within EXP statements,
+practitioners most often display values
+to confirm what an expression evaluates to (intent type coded as INSPECT),
+compute derived quantities they read off the cell output (COMPUTE),
+probe the structure of an object (STRUCT),
+and least often request a statistical summary (STATS).
+This rank order is consistent with a \emph{notebook-as-scratchpad} model of feedback,
+and holds on both platforms.
+Within VAL statements,
+practitioners predominantly assert dimensional (SHAPE) and equality (EQ) invariants.
+Type checks, existence checks, and approximate equality are present
+but appear in fewer than one in ten validation statements.
+
+\textbf{Of the 123 VAL statements, only four occur in Kaggle notebooks.}
+Within these assertions, four of the six VAL types (SHAPE, APPROX, EXIST, TYPE)
+are entirely absent,
+suggesting that Kaggle contributors rarely use structural validation.
+
 \subsection{RQ3: Pipeline Stage Distribution of Feedback Statements}
 \label{sec:rq3}
 
@@ -915,7 +922,7 @@ We organize the analysis as a sequence of three cross-tabulations of increasing 
 First, we examine stage by source
 to characterize platform-level differences in where feedback appears.
 Next, we examine intent by stage,
-stratified by source to control for the platform-level effect established in RQ1.
+stratified by source to control for the platform-level effect established in RQ2.
 Finally, we examine intent type by stage on the GitHub subset only,
 because Kaggle's heavy concentration in data preparation
 and its small VAL count
@@ -929,7 +936,7 @@ This leaves $n=814$ statements across six stages.
 PREP (40\%) is the single largest stage,
 followed by EVAL (21\%), DATA (12\%), FEAT (12\%), TRAIN (9\%) and MODEL (6\%).
 
-Based on the results of RQ1
+Based on the results of RQ2
 which establishes that the type of intent varies by platform,
 we hypothesise that the ML pipeline stage in which feedback statements are used
 also differ by platform.
@@ -1127,7 +1134,7 @@ suggests that data preparation stage
 demands the most attention and effort from practitioners to handle crashes,
 and consequently the largest share of tooling investment.
 
-The platform asymmetry from RQ1 and RQ3 is also consistent across both studies.
+The platform asymmetry from RQ2 and RQ3 is also consistent across both studies.
 Wang et al.\ report that GitHub notebooks contain four times more crashes than Kaggle (11\% vs.\ 3\%),
 and that the crash distribution across pipeline stages
 diverges between the two platforms,
@@ -1135,19 +1142,58 @@ which is similar to what we observe for feedback.
 
 \section{Discussion}
 
-% In this section,
-% we interpret our key findings,
-% connect them to prior work,
-% and discuss implications for researchers, practitioners and tool designers.
+\textbf{Implications for tool design.}
+Our results from RQ2 (Section~\ref{sec:rq2})
+show that 85\% of feedback statements in ML notebooks are exploratory,
+which indicates that practitioners read values off the cell output
+rather than enforce them programmatically.
+This pattern holds on both platforms
+but is most extreme on Kaggle,
+where formal assertions account for fewer than one in a hundred feedback statements.
+The dominant feedback mode in ML notebook development
+is therefore visual confirmation, not assertion-based validation.
+
+Breck et al.~\cite{breck2017ml} argue
+that training data deserves the same testing discipline as production code,
+and propose a rubric for assessing the readiness of an ML pipeline.
+The same authors later introduce \emph{TensorFlow Data Validation}~\cite{breck2019data},
+a tool that validates each batch of data against a declared schema.
+Data validation libraries such as TFDV and Great Expectations~\footnote{https://greatexpectations.io/}
+require practitioners to author the schema as a separate artefact.
+Our results indicate that
+practitioners already author the same checks in their notebooks,
+but in an exploratory rather than declarative form.
+
+We see two concrete directions for tool developers
+that amplify what practitioners already do.
+First,
+EXP-STRUCT statements
+such as \lstinline{df.shape} and \lstinline{X_train_under.shape}
+serve as informal post-condition checkpoints after data transformations.
+A static analyser can detect these statements,
+record the values they produce on a successful run,
+and propose a corresponding shape assertion,
+or a shape constraint in a data schema.
+The taxonomy proposed in Section~\ref{sec:rq2}
+can be used to identify candidate assertions
+that were authored by practitioners as structural probes.
+Second,
+EXP-STATS calls to \lstinline{.describe()}
+that follow a scaling or imputation step
+encode an expected post-condition (e.g., mean near zero, no missing values).
+A tool can extract these expectations from the visible output
+and emit an explicit precondition for the next cell,
+or contribute the same expectation
+to a Great Expectations suite attached to the notebook.
 
 \begin{lstlisting}[caption={A last-cell boolean expression
 that verifies no rows were lost during a transformation.}, label={lst:480}]
 test_raw.shape[0] == test.shape[0]
 \end{lstlisting}
 
-\textbf{Implicit validation through last-cell expressions}.
-Within the EXP-COMPUTE category,
-practitioners author boolean expressions in the last cell of a code block
+\textbf{Exploration versus validation}.
+Our taxonomy of feedack statements from RQ1 (Section~\ref{sec:rq1})
+reveal last-cell statements within the EXP-COMPUTE category,
 that are structurally exploratory
 but functionally equivalent to assertions.
 For instance, Listing~\ref{lst:480} verifies that no rows were lost during a transformation.
@@ -1192,51 +1238,8 @@ re-evaluates the condition every time the cell runs,
 and fires when the kernel state
 no longer satisfies the invariant the practitioner originally checked.
 
-\textbf{Implications for tool design.}
-Our results from RQ1 (Section~\ref{sec:rq1})
-show that 85\% of feedback statements in ML notebooks are exploratory,
-which indicates that practitioners read values off the cell output
-rather than enforce them programmatically.
-This pattern holds on both platforms
-but is most extreme on Kaggle,
-where formal assertions account for fewer than one in a hundred feedback statements.
-The dominant feedback mode in ML notebook development
-is therefore visual confirmation, not assertion-based validation.
-
-Breck et al.~\cite{breck2017ml} argue
-that training data deserves the same testing discipline as production code,
-and propose a rubric for assessing the readiness of an ML pipeline.
-The same authors later introduce \emph{TensorFlow Data Validation}~\cite{breck2019data},
-a tool that validates each batch of data against a declared schema.
-Data validation libraries such as TFDV and Great Expectations~\footnote{https://greatexpectations.io/}
-require practitioners to author the schema as a separate artefact.
-Our results indicate that
-practitioners already author the same checks in their notebooks,
-but in an exploratory rather than declarative form.
-
-We see two concrete directions for tool developers
-that amplify what practitioners already do.
-First,
-EXP-STRUCT statements
-such as \lstinline{df.shape} and \lstinline{X_train_under.shape}
-serve as informal post-condition checkpoints after data transformations.
-A static analyser can detect these statements,
-record the values they produce on a successful run,
-and propose a corresponding shape assertion,
-or a shape constraint in a data schema.
-The taxonomy proposed in Section~\ref{sec:rq2}
-can be used to identify candidate assertions
-that were authored by practitioners as structural probes.
-Second,
-EXP-STATS calls to \lstinline{.describe()}
-that follow a scaling or imputation step
-encode an expected post-condition (e.g., mean near zero, no missing values).
-A tool can extract these expectations from the visible output
-and emit an explicit precondition for the next cell,
-or contribute the same expectation
-to a Great Expectations suite attached to the notebook.
-
 \textbf{Implications for research.}
+Our results from RQ3 (Section~\ref{sec:rq3}) show that
 Kaggle competition workflows operate primarily on data exploration,
 and delegate evaluation of the model to the platform leaderboard.
 GitHub, on the other hand, hosts a broader range of activities that spans the entire ML development lifecycle.
@@ -1462,22 +1465,17 @@ which captures a class of practice that test-suite analysis cannot observe.
 
 We mine 297,851 notebooks from GitHub and Kaggle,
 extract 1,092,780 feedback statements,
-and code a sample of 816 statements
-along their functional intent and ML pipeline stage,
-to characterize feedback practice in machine learning Jupyter notebooks.
+and code a sample of 816
+to characterize feedback practice in ML Jupyter notebooks.
 Our central contribution is a taxonomy of feedback statements,
 that distinguishes exploratory feedback from formal validation
 and refines each into subtypes grounded in practitioner intent.
 The taxonomy reveals that GitHub and Kaggle host qualitatively different modes of ML work,
-which indicates that source platform should be treated as a confounder
-in empirical studies of ML developer practice,
-rather than as an interchangeable data source.
-Mapping the taxonomy onto an existing taxonomy of notebook crashes
-surfaces a region of the failure space
-that crash analysis cannot observe,
-consisting of silent failures
-that practitioners defend against
-through assertions and last-cell expressions.
+and that source platform should be treated as a confounder
+in empirical studies of ML developer practice.
+Mapping the taxonomy onto a crash taxonomy
+surfaces silent failures
+that crash analysis cannot observe.
 Future work should extend the analysis to industrial ML notebooks,
 where production handoffs and code review
 may impose stricter validation discipline,
